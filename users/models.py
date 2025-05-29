@@ -178,6 +178,25 @@ class DiveActivity(models.Model):
     def __str__(self):
         return self.name
 
+class DivingSite(models.Model):
+    diving_center = models.ForeignKey(User, on_delete=models.CASCADE, related_name='diving_sites')
+    name = models.CharField(max_length=100)
+    location = models.CharField(max_length=200)
+    depth_min = models.FloatField(help_text="Minimum depth in meters")
+    depth_max = models.FloatField(help_text="Maximum depth in meters")
+    difficulty_level = models.CharField(max_length=20, choices=[
+        ('BEGINNER', 'Beginner'),
+        ('INTERMEDIATE', 'Intermediate'),
+        ('ADVANCED', 'Advanced'),
+        ('EXPERT', 'Expert'),
+    ], default='BEGINNER')
+    description = models.TextField(blank=True)
+    special_requirements = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+
 class DiveSchedule(models.Model):
     diving_center = models.ForeignKey(User, on_delete=models.CASCADE, related_name='dive_schedules')
     date = models.DateField()
@@ -243,24 +262,7 @@ def create_user_profile(sender, instance, created, **kwargs):
     if created:
         UserProfile.objects.create(user=instance)
 
-class DivingSite(models.Model):
-    diving_center = models.ForeignKey(User, on_delete=models.CASCADE, related_name='diving_sites')
-    name = models.CharField(max_length=100)
-    location = models.CharField(max_length=200)
-    depth_min = models.FloatField(help_text="Minimum depth in meters")
-    depth_max = models.FloatField(help_text="Maximum depth in meters")
-    difficulty_level = models.CharField(max_length=20, choices=[
-        ('BEGINNER', 'Beginner'),
-        ('INTERMEDIATE', 'Intermediate'),
-        ('ADVANCED', 'Advanced'),
-        ('EXPERT', 'Expert'),
-    ], default='BEGINNER')
-    description = models.TextField(blank=True)
-    special_requirements = models.TextField(blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
 
-    def __str__(self):
-        return self.name
 
 class InventoryItem(models.Model):
     CATEGORY_CHOICES = [
