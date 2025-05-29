@@ -141,7 +141,7 @@ def schedule_dive(request):
         return redirect('users:profile')
 
     if request.method == 'POST':
-        form = DiveScheduleForm(request.POST)
+        form = DiveScheduleForm(diving_center=request.user, data=request.POST)
         if form.is_valid():
             dive = form.save(commit=False)
             dive.diving_center = request.user
@@ -149,7 +149,7 @@ def schedule_dive(request):
             messages.success(request, 'Dive scheduled successfully!')
             return redirect('users:dive_calendar')
     else:
-        form = DiveScheduleForm()
+        form = DiveScheduleForm(diving_center=request.user)
     return render(request, 'users/schedule_dive.html', {'form': form})
 
 
@@ -299,6 +299,8 @@ def calendar_view(request):
         day = dive.date.day
         if day not in dives_by_day:
             dives_by_day[day] = []
+        # Add participant count to dive object
+        dive.participant_count = dive.get_participant_count()
         dives_by_day[day].append(dive)
 
     # Navigation dates
@@ -347,7 +349,7 @@ def quick_schedule_dive(request):
     selected_date = request.GET.get('date')
 
     if request.method == 'POST':
-        form = DiveScheduleForm(request.POST)
+        form = DiveScheduleForm(diving_center=request.user, data=request.POST)
         if form.is_valid():
             dive = form.save(commit=False)
             dive.diving_center = request.user
@@ -358,7 +360,7 @@ def quick_schedule_dive(request):
         initial_data = {}
         if selected_date:
             initial_data['date'] = selected_date
-        form = DiveScheduleForm(initial=initial_data)
+        form = DiveScheduleForm(diving_center=request.user, initial=initial_data)
 
     return render(request, 'users/quick_schedule_dive.html', {
         'form': form,
@@ -405,15 +407,40 @@ def manage_dive_participants(request, dive_id):
                 messages.success(request, 'Participant updated successfully!')
                 return redirect('users:manage_dive_participants', dive_id=dive.id)
         
-        # Handle adding a participant
+        # Handle adding a participant or group
         elif 'add_participant' in request.POST:
             form = CustomerDiveActivityForm(diving_center=request.user, dive_schedule=dive, data=request.POST)
             if form.is_valid():
-                participant = form.save(commit=False)
-                participant.dive_schedule = dive
-                participant.save()
-                messages.success(request, 'Participant added to dive!')
+                selected_group = form.cleaned_data.get('selected_group')
+                if selected_group:
+                    # Add all group members
+                    group_members = DivingGroupMember.objects.filter(group=selected_group)
+                    added_count = 0
+                    for member in group_members:
+                        # Check if member not already participating
+                        if not CustomerDiveActivity.objects.filter(dive_schedule=dive, customer=member.customer).exists():
+                            CustomerDiveActivity.objects.create(
+                                customer=member.customer,
+                                dive_schedule=dive,
+                                activity=form.cleaned_data['activity'],
+                                tank_size=form.cleaned_data['tank_size'],
+                                needs_wetsuit=form.cleaned_data['needs_wetsuit'],
+                                needs_bcd=form.cleaned_data['needs_bcd'],
+                                needs_regulator=form.cleaned_data['needs_regulator'],
+                                needs_guide=form.cleaned_data['needs_guide'],
+                                needs_insurance=form.cleaned_data['needs_insurance'],
+                            )
+                            added_count += 1
+                    messages.success(request, f'Added {added_count} group members to dive!')
+                else:
+                    # Add single participant
+                    participant = form.save(commit=False)
+                    participant.dive_schedule = dive
+                    participant.save()
+                    messages.success(request, 'Participant added to dive!')
                 return redirect('users:manage_dive_participants', dive_id=dive.id)
+            else:
+                messages.error(request, 'Please correct the form errors.')
         
         # Handle adding new customer
         elif 'add_new_customer' in request.POST:

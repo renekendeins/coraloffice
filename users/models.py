@@ -182,7 +182,7 @@ class DiveSchedule(models.Model):
     diving_center = models.ForeignKey(User, on_delete=models.CASCADE, related_name='dive_schedules')
     date = models.DateField()
     time = models.TimeField()
-    dive_site = models.CharField(max_length=100)
+    dive_site = models.ForeignKey(DivingSite, on_delete=models.CASCADE, related_name='scheduled_dives')
     max_participants = models.IntegerField(default=46)
     description = models.TextField(blank=True)
     special_notes = models.TextField(blank=True, help_text="Special requirements or important notes for this dive")

@@ -92,7 +92,7 @@
 .status-departed { background-color: #17a2b8; color: #fff; }
 .status-finished { background-color: #28a745; color: #fff; }
 
-.customer-suggestions {
+.search-suggestions {
     border: 1px solid #ddd;
     max-height: 200px;
     overflow-y: auto;
@@ -107,10 +107,29 @@
     padding: 10px;
     cursor: pointer;
     border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .suggestion-item:hover {
     background-color: #f5f5f5;
+}
+
+.suggestion-type {
+    background: #007bff;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 11px;
+}
+
+.group-badge {
+    background: #28a745;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 11px;
 }
 
 .quick-edit-form {
@@ -122,7 +141,7 @@
 }
 </style>
 
-<h2>Manage Participants for {{ dive.dive_site }}</h2>
+<h2>Manage Participants for {{ dive.dive_site.name }}</h2>
 <p><strong>Date:</strong> {{ dive.date }} | <strong>Time:</strong> {{ dive.time }}</p>
 <p><strong>Current Participants:</strong> {{ participants.count }}/{{ dive.max_participants }}</p>
 {% if dive.special_notes %}
@@ -149,8 +168,8 @@
                     </div>
                     <div class="equipment-list">
                         <strong>Equipment Needed:</strong>
-                        {% if participant.needs_wetsuit %}<span class="equipment-item">Wetsuit</span>{% endif %}
-                        {% if participant.needs_bcd %}<span class="equipment-item">BCD</span>{% endif %}
+                        {% if participant.needs_wetsuit %}<span class="equipment-item">Wetsuit ({{ participant.customer.get_wetsuit_size }})</span>{% endif %}
+                        {% if participant.needs_bcd %}<span class="equipment-item">BCD ({{ participant.customer.get_bcd_size }})</span>{% endif %}
                         {% if participant.needs_regulator %}<span class="equipment-item">Regulator</span>{% endif %}
                         {% if participant.needs_guide %}<span class="equipment-item">Guide</span>{% endif %}
                         {% if participant.needs_insurance %}<span class="equipment-item">Insurance</span>{% endif %}
@@ -213,7 +232,7 @@
     <p>No participants registered for this dive yet.</p>
 {% endif %}
 
-<h3>Add Participant</h3>
+<h3>Add Participant or Group</h3>
 <div style="margin-bottom: 20px;">
     <button onclick="openModal()" class="btn" style="background-color: #2196F3;">Add New Customer</button>
 </div>
@@ -222,10 +241,11 @@
     {% csrf_token %}
     <div class="form-row">
         <div class="form-group" style="position: relative;">
-            <label for="customer-search">Search Customer:</label>
-            <input type="text" id="customer-search" placeholder="Start typing customer name..." autocomplete="off" class="form-control">
-            <div id="customer-suggestions" class="customer-suggestions"></div>
+            <label for="customer-search">Search Customer or Group:</label>
+            <input type="text" id="customer-search" placeholder="Start typing customer or group name..." autocomplete="off" class="form-control">
+            <div id="search-suggestions" class="search-suggestions"></div>
             {{ form.customer }}
+            {{ form.selected_group }}
         </div>
         <div class="form-group">
             <label for="{{ form.activity.id_for_label }}">Activity:</label>
@@ -246,7 +266,7 @@
     </div>
     
     <div style="margin-top: 20px;">
-        <button type="submit" name="add_participant" class="btn">Add Participant</button>
+        <button type="submit" name="add_participant" class="btn">Add Participant/Group</button>
         <a href="{% url 'users:dive_detail' dive.id %}" class="btn" style="background: #6c757d;">Back to Dive Details</a>
     </div>
 </form>
@@ -339,10 +359,37 @@ function hideQuickEdit(participantId) {
     document.getElementById("edit-form-" + participantId).style.display = "none";
 }
 
-// Customer search functionality
+// Enhanced search functionality for customers and groups
 const customerSearch = document.getElementById('customer-search');
 const customerSelect = document.getElementById('{{ form.customer.id_for_label }}');
-const suggestionsDiv = document.getElementById('customer-suggestions');
+const groupSelect = document.getElementById('{{ form.selected_group.id_for_label }}');
+const suggestionsDiv = document.getElementById('search-suggestions');
+
+// Create combined data structure for customers and groups
+const searchData = {
+    customers: [
+        {% for customer in form.customer.field.queryset %}
+        {
+            id: {{ customer.id }},
+            name: "{{ customer.first_name }} {{ customer.last_name }}",
+            type: "customer",
+            country: "{{ customer.get_country_display|default:'Unknown' }}",
+            certification: "{{ customer.get_certification_level_display }}"
+        },
+        {% endfor %}
+    ],
+    groups: [
+        {% for group in form.selected_group.field.queryset %}
+        {
+            id: {{ group.id }},
+            name: "{{ group.name }}",
+            type: "group",
+            country: "{{ group.get_country_display|default:'Unknown' }}",
+            members: {{ group.members.count }}
+        },
+        {% endfor %}
+    ]
+};
 
 customerSearch.addEventListener('input', function() {
     const query = this.value.toLowerCase();
@@ -351,16 +398,37 @@ customerSearch.addEventListener('input', function() {
         return;
     }
     
-    // Filter customers based on search
-    const options = Array.from(customerSelect.options);
-    const matches = options.filter(option => 
-        option.text.toLowerCase().includes(query) && option.value !== ''
+    // Search both customers and groups
+    const customerMatches = searchData.customers.filter(customer => 
+        customer.name.toLowerCase().includes(query)
     );
     
-    if (matches.length > 0) {
-        suggestionsDiv.innerHTML = matches.map(option => 
-            `<div class="suggestion-item" data-value="${option.value}">${option.text}</div>`
-        ).join('');
+    const groupMatches = searchData.groups.filter(group => 
+        group.name.toLowerCase().includes(query)
+    );
+    
+    const allMatches = [...customerMatches, ...groupMatches];
+    
+    if (allMatches.length > 0) {
+        suggestionsDiv.innerHTML = allMatches.map(item => {
+            if (item.type === 'customer') {
+                return `<div class="suggestion-item" data-type="customer" data-id="${item.id}">
+                    <div>
+                        <strong>${item.name}</strong><br>
+                        <small>${item.country} • ${item.certification}</small>
+                    </div>
+                    <span class="suggestion-type">Customer</span>
+                </div>`;
+            } else {
+                return `<div class="suggestion-item" data-type="group" data-id="${item.id}">
+                    <div>
+                        <strong>${item.name}</strong><br>
+                        <small>${item.country} • ${item.members} members</small>
+                    </div>
+                    <span class="group-badge">Group</span>
+                </div>`;
+            }
+        }).join('');
         suggestionsDiv.style.display = 'block';
     } else {
         suggestionsDiv.style.display = 'none';
@@ -369,12 +437,23 @@ customerSearch.addEventListener('input', function() {
 
 // Handle suggestion clicks
 suggestionsDiv.addEventListener('click', function(e) {
-    if (e.target.classList.contains('suggestion-item')) {
-        const value = e.target.getAttribute('data-value');
-        const text = e.target.textContent;
+    const suggestionItem = e.target.closest('.suggestion-item');
+    if (suggestionItem) {
+        const type = suggestionItem.getAttribute('data-type');
+        const id = suggestionItem.getAttribute('data-id');
         
-        customerSelect.value = value;
-        customerSearch.value = text;
+        if (type === 'customer') {
+            const customer = searchData.customers.find(c => c.id == id);
+            customerSelect.value = id;
+            groupSelect.value = '';
+            customerSearch.value = customer.name;
+        } else if (type === 'group') {
+            const group = searchData.groups.find(g => g.id == id);
+            groupSelect.value = id;
+            customerSelect.value = '';
+            customerSearch.value = group.name + ' (Group)';
+        }
+        
         suggestionsDiv.style.display = 'none';
     }
 });

@@ -1,164 +1,211 @@
 
 {% extends 'users/base.html' %}
 
-{% block users_title %}Diving Medical Form - CoralOffice{% endblock %}
+{% block users_title %}Medical Questionnaire - CoralOffice{% endblock %}
 
 {% block users_content %}
 <div style="max-width: 800px; margin: 0 auto;">
-    <h2>Diving Medical Declaration Form</h2>
-    
-    <div style="background-color: #e3f2fd; border: 1px solid #2196f3; padding: 20px; border-radius: 5px; margin-bottom: 30px;">
-        <h4 style="color: #1976d2; margin-top: 0;">Medical Questionnaire for Recreational Scuba Diving</h4>
-        <p>This form is required before participating in any diving activities. Please answer all questions honestly and completely. If you answer "YES" to any question, you may need medical clearance from a physician before diving.</p>
+    <div style="text-align: center; margin-bottom: 30px;">
+        <h2>Diving Medical Questionnaire</h2>
+        <p style="color: #666;">Please complete this form before your diving activity. All information is confidential.</p>
     </div>
 
     {% if messages %}
         {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+            <div style="background-color: {% if message.tags == 'success' %}#d4edda{% else %}#f8d7da{% endif %}; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+                {{ message }}
+            </div>
         {% endfor %}
     {% endif %}
 
-    <form method="post" style="background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+    <form method="post" style="background: #f8f9fa; padding: 30px; border-radius: 10px;">
         {% csrf_token %}
         
-        <h3 style="color: #333; border-bottom: 2px solid #2196f3; padding-bottom: 10px;">Personal Information</h3>
-        
-        <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
-            <div class="form-group">
-                <label for="{{ form.first_name.id_for_label }}">First Name *</label>
-                {{ form.first_name }}
-            </div>
-            <div class="form-group">
-                <label for="{{ form.last_name.id_for_label }}">Last Name *</label>
-                {{ form.last_name }}
-            </div>
+        <!-- Language Selection -->
+        <div style="text-align: right; margin-bottom: 20px;">
+            <label for="{{ form.language.id_for_label }}" style="margin-right: 10px;">Language / Idioma / Langue / Sprache / Taal:</label>
+            {{ form.language }}
         </div>
-        
-        <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
-            <div class="form-group">
-                <label for="{{ form.email.id_for_label }}">Email *</label>
-                {{ form.email }}
+
+        <!-- Personal Information -->
+        <fieldset style="border: 2px solid #dee2e6; padding: 20px; margin-bottom: 30px; border-radius: 8px;">
+            <legend style="font-weight: bold; color: #495057; padding: 0 10px;">Personal Information</legend>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                <div class="form-group">
+                    <label for="{{ form.first_name.id_for_label }}">First Name *</label>
+                    {{ form.first_name }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.last_name.id_for_label }}">Last Name *</label>
+                    {{ form.last_name }}
+                </div>
             </div>
-            <div class="form-group">
-                <label for="{{ form.phone_number.id_for_label }}">Phone Number *</label>
-                {{ form.phone_number }}
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                <div class="form-group">
+                    <label for="{{ form.email.id_for_label }}">Email *</label>
+                    {{ form.email }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.phone_number.id_for_label }}">Phone Number *</label>
+                    {{ form.phone_number }}
+                </div>
             </div>
-        </div>
-        
-        <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px;">
-            <div class="form-group">
-                <label for="{{ form.country.id_for_label }}">Country</label>
-                {{ form.country }}
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                <div class="form-group">
+                    <label for="{{ form.birthday.id_for_label }}">Date of Birth *</label>
+                    {{ form.birthday }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.country.id_for_label }}">Country</label>
+                    {{ form.country }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.certification_level.id_for_label }}">Diving Certification</label>
+                    {{ form.certification_level }}
+                </div>
             </div>
-            <div class="form-group">
-                <label for="{{ form.language.id_for_label }}">Preferred Language</label>
-                {{ form.language }}
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                <div class="form-group">
+                    <label for="{{ form.weight.id_for_label }}">Weight (kg)</label>
+                    {{ form.weight }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.height.id_for_label }}">Height (cm)</label>
+                    {{ form.height }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.foot_size.id_for_label }}">Foot Size (EU)</label>
+                    {{ form.foot_size }}
+                </div>
             </div>
+            
             <div class="form-group">
-                <label for="{{ form.birthday.id_for_label }}">Date of Birth</label>
-                {{ form.birthday }}
+                <label for="{{ form.emergency_contact.id_for_label }}">Emergency Contact *</label>
+                {{ form.emergency_contact }}
             </div>
-        </div>
-        
-        <h3 style="color: #333; border-bottom: 2px solid #2196f3; padding-bottom: 10px; margin-top: 30px;">Physical Measurements (for equipment fitting)</h3>
-        
-        <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+        </fieldset>
+
+        <!-- Medical Questions -->
+        <fieldset style="border: 2px solid #dc3545; padding: 20px; margin-bottom: 30px; border-radius: 8px;">
+            <legend style="font-weight: bold; color: #dc3545; padding: 0 10px;">Medical History</legend>
+            <p style="color: #666; margin-bottom: 20px; font-style: italic;">
+                Please answer ALL questions honestly. Your safety depends on it. If you answer YES to any question, please provide details in the additional information section below.
+            </p>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px 30px; margin-bottom: 20px;">
+                <label class="medical-question">
+                    {{ form.heart_problems }}
+                    <span>Do you have heart problems?</span>
+                </label>
+                
+                <label class="medical-question">
+                    {{ form.high_blood_pressure }}
+                    <span>Do you have high blood pressure?</span>
+                </label>
+                
+                <label class="medical-question">
+                    {{ form.breathing_problems }}
+                    <span>Do you have breathing problems or asthma?</span>
+                </label>
+                
+                <label class="medical-question">
+                    {{ form.diabetes }}
+                    <span>Do you have diabetes?</span>
+                </label>
+                
+                <label class="medical-question">
+                    {{ form.epilepsy }}
+                    <span>Do you have epilepsy or seizures?</span>
+                </label>
+                
+                <label class="medical-question">
+                    {{ form.pregnant }}
+                    <span>Are you pregnant?</span>
+                </label>
+                
+                <label class="medical-question">
+                    {{ form.medications }}
+                    <span>Are you taking any medications?</span>
+                </label>
+                
+                <label class="medical-question">
+                    {{ form.allergies }}
+                    <span>Do you have any allergies?</span>
+                </label>
+                
+                <label class="medical-question">
+                    {{ form.surgery_recent }}
+                    <span>Have you had surgery in the last 6 months?</span>
+                </label>
+                
+                <label class="medical-question">
+                    {{ form.ear_problems }}
+                    <span>Do you have ear or sinus problems?</span>
+                </label>
+            </div>
+            
+            <div class="form-group" style="margin-bottom: 20px;">
+                <label for="{{ form.swimming_ability.id_for_label }}">Swimming Ability *</label>
+                {{ form.swimming_ability }}
+            </div>
+            
             <div class="form-group">
-                <label for="{{ form.weight.id_for_label }}">Weight (kg)</label>
-                {{ form.weight }}
+                <label for="{{ form.medical_conditions.id_for_label }}">Additional Medical Information</label>
+                {{ form.medical_conditions }}
+                <small style="color: #666;">Please provide details about any YES answers above, current medications, allergies, or other relevant medical information.</small>
             </div>
-            <div class="form-group">
-                <label for="{{ form.height.id_for_label }}">Height (cm)</label>
-                {{ form.height }}
+        </fieldset>
+
+        <!-- Declaration -->
+        <fieldset style="border: 2px solid #28a745; padding: 20px; margin-bottom: 30px; border-radius: 8px;">
+            <legend style="font-weight: bold; color: #28a745; padding: 0 10px;">Declaration</legend>
+            <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; font-size: 14px; line-height: 1.5;">
+                <p><strong>I declare that:</strong></p>
+                <ul style="margin: 10px 0; padding-left: 20px;">
+                    <li>All information provided is true and complete</li>
+                    <li>I understand that diving activities carry inherent risks</li>
+                    <li>I am physically and mentally fit to participate in diving activities</li>
+                    <li>I will inform the diving center of any changes to my medical condition</li>
+                    <li>I understand that this information will be kept confidential</li>
+                </ul>
             </div>
-            <div class="form-group">
-                <label for="{{ form.foot_size.id_for_label }}">Foot Size (EU)</label>
-                {{ form.foot_size }}
-            </div>
-        </div>
-        
-        <h3 style="color: #333; border-bottom: 2px solid #2196f3; padding-bottom: 10px; margin-top: 30px;">Diving Experience</h3>
-        
-        <div class="form-group" style="margin-bottom: 20px;">
-            <label for="{{ form.certification_level.id_for_label }}">Certification Level</label>
-            {{ form.certification_level }}
-        </div>
-        
-        <h3 style="color: #333; border-bottom: 2px solid #2196f3; padding-bottom: 10px; margin-top: 30px;">Emergency Contact</h3>
-        
-        <div class="form-group" style="margin-bottom: 20px;">
-            <label for="{{ form.emergency_contact.id_for_label }}">Emergency Contact (Name and Phone)</label>
-            {{ form.emergency_contact }}
-        </div>
-        
-        <h3 style="color: #333; border-bottom: 2px solid #2196f3; padding-bottom: 10px; margin-top: 30px;">Medical Information</h3>
-        
-        <div style="background-color: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
-            <p><strong>Important:</strong> Please list any medical conditions, allergies, medications you are currently taking, or any health concerns. This information is confidential and will only be used for safety purposes.</p>
-        </div>
-        
-        <div class="form-group" style="margin-bottom: 30px;">
-            <label for="{{ form.medical_conditions.id_for_label }}">Medical Conditions, Allergies, and Medications</label>
-            {{ form.medical_conditions }}
-        </div>
-        
-        <div style="background-color: #f8f9fa; border: 1px solid #dee2e6; padding: 20px; border-radius: 5px; margin-bottom: 20px;">
-            <h4>Declaration</h4>
-            <p>I declare that the information provided above is true and complete. I understand that withholding information or providing false information may result in injury or death and that I participate in diving activities at my own risk.</p>
-            <label style="display: flex; align-items: center; gap: 10px; margin-top: 15px;">
-                <input type="checkbox" required style="transform: scale(1.2);">
-                <span>I agree to the above declaration and understand the risks involved in scuba diving *</span>
-            </label>
-        </div>
-        
+        </fieldset>
+
         <div style="text-align: center;">
-            <button type="submit" class="btn" style="background: #2196f3; padding: 15px 30px; font-size: 16px;">Submit Medical Form</button>
+            <button type="submit" class="btn" style="background: #28a745; padding: 15px 40px; font-size: 16px;">Submit Medical Form</button>
         </div>
     </form>
 </div>
 
 <style>
-.form-group {
-    margin-bottom: 15px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
-    color: #333;
-}
-
-.form-group input, .form-group select, .form-group textarea {
-    width: 100%;
+.medical-question {
+    display: flex;
+    align-items: center;
+    gap: 10px;
     padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 14px;
+    background: #f8f9fa;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
 }
 
-.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-    outline: none;
-    border-color: #2196f3;
-    box-shadow: 0 0 5px rgba(33, 150, 243, 0.3);
+.medical-question:hover {
+    background: #e9ecef;
 }
 
-.alert {
-    padding: 15px;
-    border-radius: 4px;
-    margin-bottom: 20px;
+.medical-question input[type="checkbox"] {
+    width: auto !important;
+    margin: 0;
+    transform: scale(1.2);
 }
 
-.alert-success {
-    background-color: #d4edda;
-    border-color: #c3e6cb;
-    color: #155724;
-}
-
-.alert-error {
-    background-color: #f8d7da;
-    border-color: #f5c6cb;
-    color: #721c24;
+.medical-question span {
+    font-weight: 500;
+    color: #495057;
 }
 </style>
 {% endblock %}

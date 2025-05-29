@@ -50,6 +50,12 @@ class DiveActivityForm(forms.ModelForm):
         }
 
 class DiveScheduleForm(forms.ModelForm):
+    dive_site = forms.ModelChoiceField(
+        queryset=DivingSite.objects.none(),
+        empty_label="Select a diving site",
+        widget=forms.Select(attrs={'class': 'form-control'})
+    )
+    
     class Meta:
         model = DiveSchedule
         fields = ('date', 'time', 'dive_site', 'max_participants', 'description', 'special_notes')
@@ -60,20 +66,32 @@ class DiveScheduleForm(forms.ModelForm):
             'special_notes': forms.Textarea(attrs={'rows': 2}),
         }
 
+    def __init__(self, diving_center=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if diving_center:
+            self.fields['dive_site'].queryset = DivingSite.objects.filter(diving_center=diving_center)
+
 class CustomerDiveActivityForm(forms.ModelForm):
     customer_search = forms.CharField(
         required=False,
         widget=forms.TextInput(attrs={
-            'placeholder': 'Start typing customer name...',
+            'placeholder': 'Start typing customer or group name...',
             'autocomplete': 'off',
             'id': 'customer-search'
         }),
-        label='Search Customer'
+        label='Search Customer or Group'
+    )
+    
+    selected_group = forms.ModelChoiceField(
+        queryset=DivingGroup.objects.none(),
+        required=False,
+        widget=forms.HiddenInput(),
+        label='Selected Group'
     )
     
     class Meta:
         model = CustomerDiveActivity
-        fields = ('customer', 'activity', 'tank_size', 'needs_wetsuit', 'needs_bcd', 'needs_regulator', 'needs_guide', 'needs_insurance', 'status', 'has_arrived', 'is_paid')
+        fields = ('customer', 'activity', 'tank_size', 'needs_wetsuit', 'needs_bcd', 'needs_regulator', 'needs_guide', 'needs_insurance')
         widgets = {
             'customer': forms.Select(attrs={'class': 'form-control', 'style': 'display: none;'}),
             'activity': forms.Select(attrs={'class': 'form-control'}),
@@ -85,6 +103,7 @@ class CustomerDiveActivityForm(forms.ModelForm):
         if diving_center:
             self.fields['customer'].queryset = Customer.objects.filter(diving_center=diving_center)
             self.fields['activity'].queryset = DiveActivity.objects.filter(diving_center=diving_center)
+            self.fields['selected_group'].queryset = DivingGroup.objects.filter(diving_center=diving_center)
         
         if dive_schedule:
             # Exclude customers already participating in this dive
@@ -132,13 +151,42 @@ class DivingGroupForm(forms.ModelForm):
 
 class MedicalForm(forms.ModelForm):
     """Form for external users to fill medical information"""
+    # Medical questions as boolean fields
+    heart_problems = forms.BooleanField(required=False, label="Do you have heart problems?")
+    high_blood_pressure = forms.BooleanField(required=False, label="Do you have high blood pressure?")
+    breathing_problems = forms.BooleanField(required=False, label="Do you have breathing problems or asthma?")
+    diabetes = forms.BooleanField(required=False, label="Do you have diabetes?")
+    epilepsy = forms.BooleanField(required=False, label="Do you have epilepsy or seizures?")
+    pregnant = forms.BooleanField(required=False, label="Are you pregnant?")
+    medications = forms.BooleanField(required=False, label="Are you taking any medications?")
+    allergies = forms.BooleanField(required=False, label="Do you have any allergies?")
+    surgery_recent = forms.BooleanField(required=False, label="Have you had surgery in the last 6 months?")
+    ear_problems = forms.BooleanField(required=False, label="Do you have ear or sinus problems?")
+    swimming_ability = forms.ChoiceField(
+        choices=[
+            ('excellent', 'Excellent'),
+            ('good', 'Good'),
+            ('fair', 'Fair'),
+            ('poor', 'Poor'),
+        ],
+        label="Swimming ability",
+        required=True
+    )
+    
     class Meta:
         model = Customer
         fields = ('first_name', 'last_name', 'email', 'phone_number', 'country', 'language', 'birthday', 'certification_level', 'emergency_contact', 'medical_conditions', 'weight', 'height', 'foot_size')
         widgets = {
-            'medical_conditions': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Please list any medical conditions, allergies, medications, or health concerns...'}),
+            'medical_conditions': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Please provide additional medical information or details about any conditions mentioned above...'}),
             'birthday': forms.DateInput(attrs={'type': 'date'}),
             'weight': forms.NumberInput(attrs={'step': '0.1', 'placeholder': 'kg'}),
             'height': forms.NumberInput(attrs={'step': '0.1', 'placeholder': 'cm'}),
             'foot_size': forms.NumberInput(attrs={'step': '0.5', 'placeholder': 'EU size'}),
+            'language': forms.Select(choices=[
+                ('EN', 'English'),
+                ('ES', 'Español'),
+                ('FR', 'Français'),
+                ('DE', 'Deutsch'),
+                ('NL', 'Nederlands'),
+            ])
         }

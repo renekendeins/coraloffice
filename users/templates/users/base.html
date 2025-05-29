@@ -33,7 +33,25 @@
 .user-card:hover { border-color: #006994; transform: translateY(-2px); }
 </style>
 {% endblock %}
-<li class="dropdown">
+{% if user.is_authenticated and user.userprofile.is_diving_center %}
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle">Management</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="{% url 'users:diving_center_dashboard' %}">Dashboard</a></li>
+                        <li><a href="{% url 'users:customer_list' %}">Customers</a></li>
+                        <li><a href="{% url 'users:activity_list' %}">Activities</a></li>
+                        <li><a href="{% url 'users:dive_calendar' %}">Dive Calendar</a></li>
+                        <li><a href="{% url 'users:calendar_view' %}">Calendar View</a></li>
+                        <li><hr style="margin: 5px 0;"></li>
+                        <li><a href="{% url 'users:diving_sites_list' %}">Diving Sites</a></li>
+                        <li><a href="{% url 'users:inventory_list' %}">Inventory</a></li>
+                        <li><a href="{% url 'users:diving_groups_list' %}">Diving Groups</a></li>
+                        <li><hr style="margin: 5px 0;"></li>
+                        <li><a href="{% url 'users:dashboard_analytics' %}">Analytics</a></li>
+                    </ul>
+                </li>
+                {% endif %}
+                <li class="dropdown">
                     <a href="#" class="dropdown-toggle">Services</a>
                     <ul class="dropdown-menu">
                         <li><a href="{% url 'home:services' %}">Our Services</a></li>
