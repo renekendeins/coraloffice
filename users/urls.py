@@ -32,6 +32,25 @@ urlpatterns = [
     path('dive/<int:dive_id>/add-customer/', views.add_customer_to_dive, name='add_customer_to_dive'),
     path('dive/<int:dive_id>/', views.dive_detail, name='dive_detail'),
     path('customers/<int:customer_id>/history/', views.customer_activity_history, name='customer_activity_history'),
-    path('analytics/', views.dashboard_analytics, name='dashboard_analytics'),
-]
+    path('dashboard-analytics/', views.dashboard_analytics, name='dashboard_analytics'),
 
+    # Diving Sites
+    path('diving-sites/', views.diving_sites_list, name='diving_sites_list'),
+    path('diving-sites/add/', views.add_diving_site, name='add_diving_site'),
+
+    # Inventory
+    path('inventory/', views.inventory_list, name='inventory_list'),
+    path('inventory/add/', views.add_inventory_item, name='add_inventory_item'),
+
+    # Diving Groups
+    path('diving-groups/', views.diving_groups_list, name='diving_groups_list'),
+    path('diving-groups/add/', views.add_diving_group, name='add_diving_group'),
+    path('diving-groups/<int:group_id>/members/', views.manage_group_members, name='manage_group_members'),
+
+    # Edit/Delete Dives
+    path('dives/<int:dive_id>/edit/', views.edit_dive, name='edit_dive'),
+    path('dives/<int:dive_id>/delete/', views.delete_dive, name='delete_dive'),
+
+    # Medical Form (public access)
+    path('forms/medical/', views.medical_form, name='medical_form'),
+]

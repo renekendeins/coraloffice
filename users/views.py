@@ -6,8 +6,8 @@ from django.contrib import messages
 from django.db import transaction
 from datetime import datetime, timedelta
 import calendar
-from .forms import SignUpForm, UserForm, UserProfileForm, CustomerForm, DiveScheduleForm, DiveActivityForm, CustomerDiveActivityForm
-from .models import UserProfile, Customer, DiveSchedule, DiveActivity, CustomerDiveActivity
+from .forms import SignUpForm, UserForm, UserProfileForm, CustomerForm, DiveScheduleForm, DiveActivityForm, CustomerDiveActivityForm, DivingSiteForm, InventoryItemForm, DivingGroupForm, MedicalForm
+from .models import UserProfile, Customer, DiveSchedule, DiveActivity, CustomerDiveActivity, DivingSite, InventoryItem, DivingGroup, DivingGroupMember
 
 
 def signup(request):
@@ -584,3 +584,189 @@ def dashboard_analytics(request):
     }
 
     return render(request, 'users/dashboard_analytics.html', context)
+
+
+# Diving Sites Management
+@login_required
+def diving_sites_list(request):
+    if not request.user.userprofile.is_diving_center:
+        messages.error(request, 'Access denied.')
+        return redirect('users:profile')
+    
+    sites = DivingSite.objects.filter(diving_center=request.user)
+    return render(request, 'users/diving_sites_list.html', {'sites': sites})
+
+
+@login_required
+def add_diving_site(request):
+    if not request.user.userprofile.is_diving_center:
+        messages.error(request, 'Access denied.')
+        return redirect('users:profile')
+
+    if request.method == 'POST':
+        form = DivingSiteForm(request.POST)
+        if form.is_valid():
+            site = form.save(commit=False)
+            site.diving_center = request.user
+            site.save()
+            messages.success(request, 'Diving site added successfully!')
+            return redirect('users:diving_sites_list')
+    else:
+        form = DivingSiteForm()
+    return render(request, 'users/add_diving_site.html', {'form': form})
+
+
+# Inventory Management
+@login_required
+def inventory_list(request):
+    if not request.user.userprofile.is_diving_center:
+        messages.error(request, 'Access denied.')
+        return redirect('users:profile')
+    
+    items = InventoryItem.objects.filter(diving_center=request.user)
+    return render(request, 'users/inventory_list.html', {'items': items})
+
+
+@login_required
+def add_inventory_item(request):
+    if not request.user.userprofile.is_diving_center:
+        messages.error(request, 'Access denied.')
+        return redirect('users:profile')
+
+    if request.method == 'POST':
+        form = InventoryItemForm(request.POST)
+        if form.is_valid():
+            item = form.save(commit=False)
+            item.diving_center = request.user
+            item.save()
+            messages.success(request, 'Inventory item added successfully!')
+            return redirect('users:inventory_list')
+    else:
+        form = InventoryItemForm()
+    return render(request, 'users/add_inventory_item.html', {'form': form})
+
+
+# Diving Groups Management
+@login_required
+def diving_groups_list(request):
+    if not request.user.userprofile.is_diving_center:
+        messages.error(request, 'Access denied.')
+        return redirect('users:profile')
+    
+    groups = DivingGroup.objects.filter(diving_center=request.user)
+    return render(request, 'users/diving_groups_list.html', {'groups': groups})
+
+
+@login_required
+def add_diving_group(request):
+    if not request.user.userprofile.is_diving_center:
+        messages.error(request, 'Access denied.')
+        return redirect('users:profile')
+
+    if request.method == 'POST':
+        form = DivingGroupForm(request.POST)
+        if form.is_valid():
+            group = form.save(commit=False)
+            group.diving_center = request.user
+            group.save()
+            messages.success(request, 'Diving group added successfully!')
+            return redirect('users:diving_groups_list')
+    else:
+        form = DivingGroupForm()
+    return render(request, 'users/add_diving_group.html', {'form': form})
+
+
+@login_required
+def manage_group_members(request, group_id):
+    if not request.user.userprofile.is_diving_center:
+        messages.error(request, 'Access denied.')
+        return redirect('users:profile')
+
+    group = get_object_or_404(DivingGroup, id=group_id, diving_center=request.user)
+    members = DivingGroupMember.objects.filter(group=group)
+    available_customers = Customer.objects.filter(diving_center=request.user).exclude(
+        id__in=members.values_list('customer_id', flat=True)
+    )
+
+    if request.method == 'POST':
+        if 'add_member' in request.POST:
+            customer_id = request.POST.get('customer_id')
+            if customer_id:
+                customer = get_object_or_404(Customer, id=customer_id, diving_center=request.user)
+                DivingGroupMember.objects.create(group=group, customer=customer)
+                messages.success(request, f'{customer} added to group!')
+                return redirect('users:manage_group_members', group_id=group.id)
+        
+        elif 'remove_member' in request.POST:
+            member_id = request.POST.get('member_id')
+            if member_id:
+                member = get_object_or_404(DivingGroupMember, id=member_id, group=group)
+                member.delete()
+                messages.success(request, 'Member removed from group!')
+                return redirect('users:manage_group_members', group_id=group.id)
+
+    return render(request, 'users/manage_group_members.html', {
+        'group': group,
+        'members': members,
+        'available_customers': available_customers
+    })
+
+
+# Edit and Delete Dive Views
+@login_required
+def edit_dive(request, dive_id):
+    if not request.user.userprofile.is_diving_center:
+        messages.error(request, 'Access denied.')
+        return redirect('users:profile')
+
+    dive = get_object_or_404(DiveSchedule, id=dive_id, diving_center=request.user)
+
+    if request.method == 'POST':
+        form = DiveScheduleForm(request.POST, instance=dive)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Dive updated successfully!')
+            return redirect('users:dive_detail', dive_id=dive.id)
+    else:
+        form = DiveScheduleForm(instance=dive)
+    
+    return render(request, 'users/edit_dive.html', {'form': form, 'dive': dive})
+
+
+@login_required
+def delete_dive(request, dive_id):
+    if not request.user.userprofile.is_diving_center:
+        messages.error(request, 'Access denied.')
+        return redirect('users:profile')
+
+    dive = get_object_or_404(DiveSchedule, id=dive_id, diving_center=request.user)
+
+    if request.method == 'POST':
+        dive_info = f"{dive.dive_site} on {dive.date}"
+        dive.delete()
+        messages.success(request, f'Dive "{dive_info}" deleted successfully!')
+        return redirect('users:dive_calendar')
+
+    return render(request, 'users/delete_dive.html', {'dive': dive})
+
+
+# Medical Form (accessible without login)
+def medical_form(request):
+    if request.method == 'POST':
+        form = MedicalForm(request.POST)
+        if form.is_valid():
+            # Create customer but assign to first diving center found
+            # In a real app, you'd want to handle this differently
+            diving_center = User.objects.filter(userprofile__is_diving_center=True).first()
+            if diving_center:
+                customer = form.save(commit=False)
+                customer.diving_center = diving_center
+                customer.save()
+                messages.success(request, 'Medical form submitted successfully! A diving center will contact you soon.')
+                return redirect('users:medical_form')
+            else:
+                messages.error(request, 'No diving center available. Please contact us directly.')
+    else:
+        form = MedicalForm()
+    
+    return render(request, 'users/medical_form.html', {'form': form})

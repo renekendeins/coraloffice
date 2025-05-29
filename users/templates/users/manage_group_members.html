@@ -1,0 +1,62 @@
+
+{% extends 'users/base.html' %}
+
+{% block users_title %}Manage Group Members - {{ group.name }}{% endblock %}
+
+{% block users_content %}
+<h2>Manage Members - {{ group.name }}</h2>
+
+<div style="margin-bottom: 20px;">
+    <a href="{% url 'users:diving_groups_list' %}" class="btn" style="background: #6c757d;">Back to Groups</a>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+    <!-- Current Members -->
+    <div>
+        <h3>Current Members ({{ members.count }})</h3>
+        {% if members %}
+            {% for member in members %}
+            <div class="participant-card" style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h4>{{ member.customer.first_name }} {{ member.customer.last_name }}</h4>
+                    <p>{{ member.customer.email }}</p>
+                    <p><strong>Certification:</strong> {{ member.customer.get_certification_level_display }}</p>
+                    {% if member.is_leader %}
+                        <span style="background-color: #ff9800; color: white; padding: 2px 6px; border-radius: 3px; font-size: 12px;">Group Leader</span>
+                    {% endif %}
+                </div>
+                <form method="post" style="margin: 0;">
+                    {% csrf_token %}
+                    <input type="hidden" name="member_id" value="{{ member.id }}">
+                    <button type="submit" name="remove_member" class="btn" style="background: #f44336; padding: 5px 10px; font-size: 12px;">Remove</button>
+                </form>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>No members in this group yet.</p>
+        {% endif %}
+    </div>
+
+    <!-- Add Members -->
+    <div>
+        <h3>Add Members</h3>
+        {% if available_customers %}
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group" style="margin-bottom: 15px;">
+                    <label>Select Customer to Add:</label>
+                    <select name="customer_id" class="form-control" required>
+                        <option value="">Choose a customer...</option>
+                        {% for customer in available_customers %}
+                            <option value="{{ customer.id }}">{{ customer.first_name }} {{ customer.last_name }} ({{ customer.email }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" name="add_member" class="btn" style="background: #4caf50;">Add to Group</button>
+            </form>
+        {% else %}
+            <p>All customers are already in this group or no customers available.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

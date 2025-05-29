@@ -13,8 +13,23 @@
     <h3>{{ customer.first_name }} {{ customer.last_name }}</h3>
     <p><strong>Email:</strong> {{ customer.email }}</p>
     <p><strong>Phone:</strong> {{ customer.phone_number }}</p>
+    <p><strong>Country:</strong> {{ customer.get_country_display }}</p>
     {% if customer.certification_level %}
-        <p><strong>Certification:</strong> {{ customer.certification_level }}</p>
+        <p><strong>Certification:</strong> {{ customer.get_certification_level_display }}</p>
+    {% endif %}
+    {% if customer.weight or customer.height or customer.foot_size %}
+        <div style="background-color: #f8f9fa; padding: 10px; border-radius: 5px; margin: 10px 0;">
+            <strong>Physical Info & Equipment Sizes:</strong><br>
+            {% if customer.weight %}<small>Weight: {{ customer.weight }}kg</small><br>{% endif %}
+            {% if customer.height %}<small>Height: {{ customer.height }}cm</small><br>{% endif %}
+            {% if customer.foot_size %}<small>Foot Size: EU {{ customer.foot_size }}</small><br>{% endif %}
+            <small><strong>Recommended:</strong> 
+                Wetsuit: {{ customer.get_wetsuit_size }}, 
+                BCD: {{ customer.get_bcd_size }}, 
+                Fins: {{ customer.get_fins_size }}, 
+                Boots: {{ customer.get_boots_size }}
+            </small>
+        </div>
     {% endif %}
     {% if customer.emergency_contact %}
         <p><strong>Emergency Contact:</strong> {{ customer.emergency_contact }}</p>

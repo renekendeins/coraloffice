@@ -1,0 +1,51 @@
+
+{% extends 'users/base.html' %}
+
+{% block users_title %}Add Diving Site - CoralOffice{% endblock %}
+
+{% block users_content %}
+<h2>Add New Diving Site</h2>
+
+<form method="post">
+    {% csrf_token %}
+    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+        <div class="form-group">
+            <label for="{{ form.name.id_for_label }}">Site Name:</label>
+            {{ form.name }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.difficulty_level.id_for_label }}">Difficulty Level:</label>
+            {{ form.difficulty_level }}
+        </div>
+    </div>
+    
+    <div class="form-group" style="margin-bottom: 20px;">
+        <label for="{{ form.location.id_for_label }}">Location:</label>
+        {{ form.location }}
+    </div>
+    
+    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+        <div class="form-group">
+            <label for="{{ form.depth_min.id_for_label }}">Minimum Depth (m):</label>
+            {{ form.depth_min }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.depth_max.id_for_label }}">Maximum Depth (m):</label>
+            {{ form.depth_max }}
+        </div>
+    </div>
+    
+    <div class="form-group" style="margin-bottom: 20px;">
+        <label for="{{ form.description.id_for_label }}">Description:</label>
+        {{ form.description }}
+    </div>
+    
+    <div class="form-group" style="margin-bottom: 20px;">
+        <label for="{{ form.special_requirements.id_for_label }}">Special Requirements:</label>
+        {{ form.special_requirements }}
+    </div>
+    
+    <button type="submit" class="btn">Add Diving Site</button>
+    <a href="{% url 'users:diving_sites_list' %}" class="btn" style="background: #6c757d;">Cancel</a>
+</form>
+{% endblock %}

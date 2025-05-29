@@ -2,7 +2,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import UserProfile, Customer, DiveSchedule, DiveActivity, CustomerDiveActivity
+from .models import UserProfile, Customer, DiveSchedule, DiveActivity, CustomerDiveActivity, DivingSite, InventoryItem, DivingGroup
 
 class SignUpForm(UserCreationForm):
     first_name = forms.CharField(max_length=30, required=False, help_text='Optional.')
@@ -32,10 +32,13 @@ class UserProfileForm(forms.ModelForm):
 class CustomerForm(forms.ModelForm):
     class Meta:
         model = Customer
-        fields = ('first_name', 'last_name', 'email', 'phone_number', 'country', 'language', 'birthday', 'certification_level', 'emergency_contact', 'medical_conditions')
+        fields = ('first_name', 'last_name', 'email', 'phone_number', 'country', 'language', 'birthday', 'certification_level', 'emergency_contact', 'medical_conditions', 'weight', 'height', 'foot_size')
         widgets = {
             'medical_conditions': forms.Textarea(attrs={'rows': 3}),
             'birthday': forms.DateInput(attrs={'type': 'date'}),
+            'weight': forms.NumberInput(attrs={'step': '0.1', 'placeholder': 'kg'}),
+            'height': forms.NumberInput(attrs={'step': '0.1', 'placeholder': 'cm'}),
+            'foot_size': forms.NumberInput(attrs={'step': '0.5', 'placeholder': 'EU size'}),
         }
 
 class DiveActivityForm(forms.ModelForm):
@@ -96,4 +99,46 @@ class QuickUpdateParticipantForm(forms.ModelForm):
         fields = ('tank_size', 'needs_wetsuit', 'needs_bcd', 'needs_regulator', 'needs_guide', 'needs_insurance', 'status', 'has_arrived', 'is_paid')
         widgets = {
             'tank_size': forms.Select(attrs={'class': 'form-control'}),
+        }
+
+class DivingSiteForm(forms.ModelForm):
+    class Meta:
+        model = DivingSite
+        fields = ('name', 'location', 'depth_min', 'depth_max', 'difficulty_level', 'description', 'special_requirements')
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 3}),
+            'special_requirements': forms.Textarea(attrs={'rows': 2}),
+        }
+
+class InventoryItemForm(forms.ModelForm):
+    class Meta:
+        model = InventoryItem
+        fields = ('name', 'category', 'size', 'quantity_total', 'quantity_available', 'condition', 'purchase_date', 'last_maintenance', 'notes')
+        widgets = {
+            'purchase_date': forms.DateInput(attrs={'type': 'date'}),
+            'last_maintenance': forms.DateInput(attrs={'type': 'date'}),
+            'notes': forms.Textarea(attrs={'rows': 3}),
+        }
+
+class DivingGroupForm(forms.ModelForm):
+    class Meta:
+        model = DivingGroup
+        fields = ('name', 'country', 'contact_person', 'email', 'phone', 'description', 'arrival_date', 'departure_date')
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 3}),
+            'arrival_date': forms.DateInput(attrs={'type': 'date'}),
+            'departure_date': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+class MedicalForm(forms.ModelForm):
+    """Form for external users to fill medical information"""
+    class Meta:
+        model = Customer
+        fields = ('first_name', 'last_name', 'email', 'phone_number', 'country', 'language', 'birthday', 'certification_level', 'emergency_contact', 'medical_conditions', 'weight', 'height', 'foot_size')
+        widgets = {
+            'medical_conditions': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Please list any medical conditions, allergies, medications, or health concerns...'}),
+            'birthday': forms.DateInput(attrs={'type': 'date'}),
+            'weight': forms.NumberInput(attrs={'step': '0.1', 'placeholder': 'kg'}),
+            'height': forms.NumberInput(attrs={'step': '0.1', 'placeholder': 'cm'}),
+            'foot_size': forms.NumberInput(attrs={'step': '0.5', 'placeholder': 'EU size'}),
         }

@@ -1,0 +1,45 @@
+
+{% extends 'users/base.html' %}
+
+{% block users_title %}Diving Groups - CoralOffice{% endblock %}
+
+{% block users_content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+    <h2>Diving Groups Management</h2>
+    <a href="{% url 'users:add_diving_group' %}" class="btn">Add New Group</a>
+</div>
+
+<div style="margin-bottom: 20px;">
+    <a href="{% url 'users:diving_center_dashboard' %}" class="btn" style="background: #6c757d;">Back to Dashboard</a>
+</div>
+
+{% if groups %}
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px;">
+        {% for group in groups %}
+        <div class="card">
+            <h3>{{ group.name }}</h3>
+            <p><strong>Country:</strong> {{ group.get_country_display }}</p>
+            <p><strong>Contact Person:</strong> {{ group.contact_person }}</p>
+            <p><strong>Email:</strong> {{ group.email }}</p>
+            <p><strong>Phone:</strong> {{ group.phone }}</p>
+            {% if group.arrival_date %}
+                <p><strong>Arrival:</strong> {{ group.arrival_date }}</p>
+            {% endif %}
+            {% if group.departure_date %}
+                <p><strong>Departure:</strong> {{ group.departure_date }}</p>
+            {% endif %}
+            {% if group.description %}
+                <p><strong>Description:</strong> {{ group.description|truncatewords:20 }}</p>
+            {% endif %}
+            <p><strong>Members:</strong> {{ group.members.count }}</p>
+            <div style="margin-top: 15px;">
+                <a href="{% url 'users:manage_group_members' group.id %}" class="btn" style="background: #2196f3; font-size: 14px;">Manage Members</a>
+            </div>
+            <p><small>Created: {{ group.created_at|date:"F d, Y" }}</small></p>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p>No diving groups added yet.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,51 @@
+
+{% extends 'users/base.html' %}
+
+{% block users_title %}Diving Sites - CoralOffice{% endblock %}
+
+{% block users_content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+    <h2>Diving Sites Management</h2>
+    <a href="{% url 'users:add_diving_site' %}" class="btn">Add New Site</a>
+</div>
+
+<div style="margin-bottom: 20px;">
+    <a href="{% url 'users:diving_center_dashboard' %}" class="btn" style="background: #6c757d;">Back to Dashboard</a>
+</div>
+
+{% if sites %}
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 20px;">
+        {% for site in sites %}
+        <div class="card">
+            <h3>{{ site.name }}</h3>
+            <p><strong>Location:</strong> {{ site.location }}</p>
+            <p><strong>Depth:</strong> {{ site.depth_min }}m - {{ site.depth_max }}m</p>
+            <p><strong>Difficulty:</strong> <span class="status-badge status-{{ site.difficulty_level|lower }}">{{ site.get_difficulty_level_display }}</span></p>
+            {% if site.description %}
+                <p><strong>Description:</strong> {{ site.description|truncatewords:20 }}</p>
+            {% endif %}
+            {% if site.special_requirements %}
+                <p><strong>Special Requirements:</strong> {{ site.special_requirements|truncatewords:15 }}</p>
+            {% endif %}
+            <p><small>Added: {{ site.created_at|date:"F d, Y" }}</small></p>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p>No diving sites added yet.</p>
+{% endif %}
+
+<style>
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.status-beginner { background-color: #4caf50; color: #fff; }
+.status-intermediate { background-color: #ff9800; color: #fff; }
+.status-advanced { background-color: #f44336; color: #fff; }
+.status-expert { background-color: #9c27b0; color: #fff; }
+</style>
+{% endblock %}

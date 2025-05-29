@@ -4,10 +4,18 @@
 
 {% block users_content %}
 <h2>Dive Details: {{ dive.dive_site }}</h2>
-<p><strong>Date:</strong> {{ dive.date }}</p>
-<p><strong>Time:</strong> {{ dive.time }}</p>
-<p><strong>Description:</strong> {{ dive.description }}</p>
+<p><strong>Date:</strong> {{ dive.date }} | <strong>Time:</strong> {{ dive.time }}</p>
 <p><strong>Max Participants:</strong> {{ dive.max_participants }}</p>
+<p><strong>Current Participants:</strong> {{ participants.count }}</p>
+{% if dive.description %}
+    <p><strong>Description:</strong> {{ dive.description }}</p>
+{% endif %}
+{% if dive.special_notes %}
+    <div style="background-color: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 5px; margin: 15px 0;">
+        <h4 style="color: #856404; margin-top: 0;">⚠️ Important Notes</h4>
+        <p style="margin-bottom: 0; white-space: pre-line;">{{ dive.special_notes }}</p>
+    </div>
+{% endif %}
 
 <h3>Current Participants ({{ participants.count }}/{{ dive.max_participants }})</h3>
 {% if participants %}
@@ -38,4 +46,108 @@
 
 <a href="{% url 'users:manage_dive_participants' dive.id %}" class="btn">Manage Participants</a>
 <a href="{% url 'users:dive_calendar' %}" class="btn" style="background: #6c757d;">Back to Calendar</a>
+{% endblock %}
+```
+
+```html
+{% extends 'users/base.html' %}
+
+{% block users_title %}Dive Details - CoralOffice{% endblock %}
+
+{% block users_content %}
+<h2>Dive Details: {{ dive.dive_site }}</h2>
+<p><strong>Date:</strong> {{ dive.date }} | <strong>Time:</strong> {{ dive.time }}</p>
+<p><strong>Max Participants:</strong> {{ dive.max_participants }}</p>
+<p><strong>Current Participants:</strong> {{ participants.count }}</p>
+{% if dive.description %}
+    <p><strong>Description:</strong> {{ dive.description }}</p>
+{% endif %}
+{% if dive.special_notes %}
+    <div style="background-color: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 5px; margin: 15px 0;">
+        <h4 style="color: #856404; margin-top: 0;">⚠️ Important Notes</h4>
+        <p style="margin-bottom: 0; white-space: pre-line;">{{ dive.special_notes }}</p>
+    </div>
+{% endif %}
+
+<h3>Current Participants ({{ participants.count }}/{{ dive.max_participants }})</h3>
+{% if participants %}
+<div style="margin-bottom: 20px;">
+    {% for participant in participants %}
+    <div style="border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 5px;">
+        <h4>{{ participant.customer.first_name }} {{ participant.customer.last_name }}</h4>
+        <p><strong>Certification Level:</strong> {{ participant.customer.certification_level|default:"Not specified" }}</p>
+        <p><strong>Tank Size:</strong> {{ participant.get_tank_size_display }}</p>
+        <p><strong>Activity:</strong> {{ participant.activity.name }}</p>
+        <div style="margin-top: 10px;">
+            <strong>Equipment Needed:</strong>
+            {% if participant.needs_wetsuit %}<span style="background: #4CAF50; color: white; padding: 2px 6px; margin: 2px; border-radius: 3px; font-size: 12px;">Wetsuit</span>{% endif %}
+            {% if participant.needs_bcd %}<span style="background: #4CAF50; color: white; padding: 2px 6px; margin: 2px; border-radius: 3px; font-size: 12px;">BCD</span>{% endif %}
+            {% if participant.needs_regulator %}<span style="background: #4CAF50; color: white; padding: 2px 6px; margin: 2px; border-radius: 3px; font-size: 12px;">Regulator</span>{% endif %}
+            {% if participant.needs_guide %}<span style="background: #4CAF50; color: white; padding: 2px 6px; margin: 2px; border-radius: 3px; font-size: 12px;">Guide</span>{% endif %}
+            {% if participant.needs_insurance %}<span style="background: #4CAF50; color: white; padding: 2px 6px; margin: 2px; border-radius: 3px; font-size: 12px;">Insurance</span>{% endif %}
+            {% if not participant.needs_wetsuit and not participant.needs_bcd and not participant.needs_regulator and not participant.needs_guide and not participant.needs_insurance %}
+                <span style="color: #666;">None</span>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p>No participants registered for this dive.</p>
+{% endif %}
+
+<a href="{% url 'users:manage_dive_participants' dive.id %}" class="btn">Manage Participants</a>
+<a href="{% url 'users:dive_calendar' %}" class="btn" style="background: #6c757d;">Back to Calendar</a>
+{% endblock %}
+```
+
+```replit_final_file
+{% extends 'users/base.html' %}
+
+{% block users_title %}Dive Details - CoralOffice{% endblock %}
+
+{% block users_content %}
+<h2>Dive Details: {{ dive.dive_site }}</h2>
+<p><strong>Date:</strong> {{ dive.date }} | <strong>Time:</strong> {{ dive.time }}</p>
+<p><strong>Max Participants:</strong> {{ dive.max_participants }}</p>
+<p><strong>Current Participants:</strong> {{ participants.count }}</p>
+{% if dive.description %}
+    <p><strong>Description:</strong> {{ dive.description }}</p>
+{% endif %}
+{% if dive.special_notes %}
+    <div style="background-color: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 5px; margin: 15px 0;">
+        <h4 style="color: #856404; margin-top: 0;">⚠️ Important Notes</h4>
+        <p style="margin-bottom: 0; white-space: pre-line;">{{ dive.special_notes }}</p>
+    </div>
+{% endif %}
+
+<h3>Current Participants ({{ participants.count }}/{{ dive.max_participants }})</h3>
+{% if participants %}
+<div style="margin-bottom: 20px;">
+    {% for participant in participants %}
+    <div style="border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 5px;">
+        <h4>{{ participant.customer.first_name }} {{ participant.customer.last_name }}</h4>
+        <p><strong>Certification Level:</strong> {{ participant.customer.certification_level|default:"Not specified" }}</p>
+        <p><strong>Tank Size:</strong> {{ participant.get_tank_size_display }}</p>
+        <p><strong>Activity:</strong> {{ participant.activity.name }}</p>
+        <div style="margin-top: 10px;">
+            <strong>Equipment Needed:</strong>
+            {% if participant.needs_wetsuit %}<span style="background: #4CAF50; color: white; padding: 2px 6px; margin: 2px; border-radius: 3px; font-size: 12px;">Wetsuit</span>{% endif %}
+            {% if participant.needs_bcd %}<span style="background: #4CAF50; color: white; padding: 2px 6px; margin: 2px; border-radius: 3px; font-size: 12px;">BCD</span>{% endif %}
+            {% if participant.needs_regulator %}<span style="background: #4CAF50; color: white; padding: 2px 6px; margin: 2px; border-radius: 3px; font-size: 12px;">Regulator</span>{% endif %}
+            {% if participant.needs_guide %}<span style="background: #4CAF50; color: white; padding: 2px 6px; margin: 2px; border-radius: 3px; font-size: 12px;">Guide</span>{% endif %}
+            {% if participant.needs_insurance %}<span style="background: #4CAF50; color: white; padding: 2px 6px; margin: 2px; border-radius: 3px; font-size: 12px;">Insurance</span>{% endif %}
+            {% if not participant.needs_wetsuit and not participant.needs_bcd and not participant.needs_regulator and not participant.needs_guide and not participant.needs_insurance %}
+                <span style="color: #666;">None</span>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p>No participants registered for this dive.</p>
+{% endif %}
+
+<a href="{% url 'users:manage_dive_participants' dive.id %}" class="btn">Manage Participants</a>
+<a href="{% url 'users:dive_calendar' %}" class="btn" style="background: #6c75:7d;">Back to Calendar</a>
 {% endblock %}

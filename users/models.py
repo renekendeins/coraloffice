@@ -21,6 +21,7 @@ class UserProfile(models.Model):
 
 class Customer(models.Model):
     DIVING_LEVEL_CHOICES = [
+        ('NONE', 'No certification'),
         ('BEGINNER', 'Beginner'),
         ('OPEN_WATER', 'Open Water'),
         ('ADVANCED_OPEN_WATER', 'Advanced Open Water'),
@@ -42,17 +43,58 @@ class Customer(models.Model):
         ('OTHER', 'Other'),
     ]
     
+    COUNTRY_CHOICES = [
+        ('US', 'United States'),
+        ('CA', 'Canada'),
+        ('GB', 'United Kingdom'),
+        ('FR', 'France'),
+        ('DE', 'Germany'),
+        ('IT', 'Italy'),
+        ('ES', 'Spain'),
+        ('PT', 'Portugal'),
+        ('NL', 'Netherlands'),
+        ('BE', 'Belgium'),
+        ('CH', 'Switzerland'),
+        ('AT', 'Austria'),
+        ('SE', 'Sweden'),
+        ('NO', 'Norway'),
+        ('DK', 'Denmark'),
+        ('FI', 'Finland'),
+        ('AU', 'Australia'),
+        ('NZ', 'New Zealand'),
+        ('JP', 'Japan'),
+        ('KR', 'South Korea'),
+        ('CN', 'China'),
+        ('IN', 'India'),
+        ('BR', 'Brazil'),
+        ('AR', 'Argentina'),
+        ('MX', 'Mexico'),
+        ('RU', 'Russia'),
+        ('ZA', 'South Africa'),
+        ('EG', 'Egypt'),
+        ('TH', 'Thailand'),
+        ('ID', 'Indonesia'),
+        ('MY', 'Malaysia'),
+        ('SG', 'Singapore'),
+        ('PH', 'Philippines'),
+        ('VN', 'Vietnam'),
+        ('OTHER', 'Other'),
+    ]
+    
     diving_center = models.ForeignKey(User, on_delete=models.CASCADE, related_name='customers')
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     email = models.EmailField()
     phone_number = models.CharField(max_length=20)
-    country = models.CharField(max_length=100, blank=True)
+    country = models.CharField(max_length=10, choices=COUNTRY_CHOICES, default='OTHER')
     language = models.CharField(max_length=10, choices=LANGUAGE_CHOICES, default='EN')
     birthday = models.DateField(null=True, blank=True)
-    certification_level = models.CharField(max_length=50, choices=DIVING_LEVEL_CHOICES, default='BEGINNER')
+    certification_level = models.CharField(max_length=50, choices=DIVING_LEVEL_CHOICES, default='NONE')
     emergency_contact = models.CharField(max_length=100, blank=True)
     medical_conditions = models.TextField(blank=True)
+    weight = models.FloatField(null=True, blank=True, help_text="Weight in kg")
+    height = models.FloatField(null=True, blank=True, help_text="Height in cm")
+    foot_size = models.FloatField(null=True, blank=True, help_text="Foot size (EU)")
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -64,6 +106,66 @@ class Customer(models.Model):
             today = date.today()
             return today.year - self.birthday.year - ((today.month, today.day) < (self.birthday.month, self.birthday.day))
         return None
+    
+    def get_wetsuit_size(self):
+        """Calculate wetsuit size based on height and weight"""
+        if not self.height or not self.weight:
+            return "Not calculated"
+        
+        # Basic wetsuit sizing logic
+        if self.height < 160:
+            if self.weight < 50: return "XS"
+            elif self.weight < 60: return "S"
+            elif self.weight < 70: return "M"
+            else: return "L"
+        elif self.height < 170:
+            if self.weight < 55: return "S"
+            elif self.weight < 65: return "M"
+            elif self.weight < 75: return "L"
+            else: return "XL"
+        elif self.height < 180:
+            if self.weight < 60: return "M"
+            elif self.weight < 70: return "L"
+            elif self.weight < 80: return "XL"
+            else: return "XXL"
+        else:
+            if self.weight < 70: return "L"
+            elif self.weight < 80: return "XL"
+            else: return "XXL"
+    
+    def get_bcd_size(self):
+        """Calculate BCD size based on chest measurement approximated from height/weight"""
+        if not self.height or not self.weight:
+            return "Not calculated"
+        
+        # Approximate BCD sizing
+        if self.weight < 55: return "XS"
+        elif self.weight < 65: return "S"
+        elif self.weight < 75: return "M"
+        elif self.weight < 85: return "L"
+        elif self.weight < 95: return "XL"
+        else: return "XXL"
+    
+    def get_fins_size(self):
+        """Calculate fin size based on foot size"""
+        if not self.foot_size:
+            return "Not calculated"
+        
+        # EU to fin size conversion
+        if self.foot_size <= 36: return "XS"
+        elif self.foot_size <= 38: return "S"
+        elif self.foot_size <= 41: return "M"
+        elif self.foot_size <= 43: return "L"
+        elif self.foot_size <= 45: return "XL"
+        else: return "XXL"
+    
+    def get_boots_size(self):
+        """Calculate boots size based on foot size"""
+        if not self.foot_size:
+            return "Not calculated"
+        
+        # Direct EU size mapping for boots
+        return f"EU {int(self.foot_size)}"
 
 class DiveActivity(models.Model):
     diving_center = models.ForeignKey(User, on_delete=models.CASCADE, related_name='dive_activities')
@@ -140,6 +242,96 @@ class CustomerDiveActivity(models.Model):
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         UserProfile.objects.create(user=instance)
+
+class DivingSite(models.Model):
+    diving_center = models.ForeignKey(User, on_delete=models.CASCADE, related_name='diving_sites')
+    name = models.CharField(max_length=100)
+    location = models.CharField(max_length=200)
+    depth_min = models.FloatField(help_text="Minimum depth in meters")
+    depth_max = models.FloatField(help_text="Maximum depth in meters")
+    difficulty_level = models.CharField(max_length=20, choices=[
+        ('BEGINNER', 'Beginner'),
+        ('INTERMEDIATE', 'Intermediate'),
+        ('ADVANCED', 'Advanced'),
+        ('EXPERT', 'Expert'),
+    ], default='BEGINNER')
+    description = models.TextField(blank=True)
+    special_requirements = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+
+class InventoryItem(models.Model):
+    CATEGORY_CHOICES = [
+        ('WETSUIT', 'Wetsuit'),
+        ('BCD', 'BCD'),
+        ('REGULATOR', 'Regulator'),
+        ('FINS', 'Fins'),
+        ('MASK', 'Mask'),
+        ('BOOTS', 'Boots'),
+        ('TANK', 'Tank'),
+        ('WEIGHT', 'Weight'),
+        ('OTHER', 'Other'),
+    ]
+    
+    SIZE_CHOICES = [
+        ('XS', 'Extra Small'),
+        ('S', 'Small'),
+        ('M', 'Medium'),
+        ('L', 'Large'),
+        ('XL', 'Extra Large'),
+        ('XXL', 'Extra Extra Large'),
+        ('N/A', 'Not Applicable'),
+    ]
+    
+    diving_center = models.ForeignKey(User, on_delete=models.CASCADE, related_name='inventory_items')
+    name = models.CharField(max_length=100)
+    category = models.CharField(max_length=20, choices=CATEGORY_CHOICES)
+    size = models.CharField(max_length=10, choices=SIZE_CHOICES, default='N/A')
+    quantity_total = models.IntegerField(default=1)
+    quantity_available = models.IntegerField(default=1)
+    condition = models.CharField(max_length=20, choices=[
+        ('EXCELLENT', 'Excellent'),
+        ('GOOD', 'Good'),
+        ('FAIR', 'Fair'),
+        ('POOR', 'Poor'),
+        ('OUT_OF_SERVICE', 'Out of Service'),
+    ], default='GOOD')
+    purchase_date = models.DateField(null=True, blank=True)
+    last_maintenance = models.DateField(null=True, blank=True)
+    notes = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.name} ({self.size}) - {self.quantity_available}/{self.quantity_total}"
+
+class DivingGroup(models.Model):
+    diving_center = models.ForeignKey(User, on_delete=models.CASCADE, related_name='diving_groups')
+    name = models.CharField(max_length=100)
+    country = models.CharField(max_length=10, choices=Customer.COUNTRY_CHOICES, default='OTHER')
+    contact_person = models.CharField(max_length=100)
+    email = models.EmailField()
+    phone = models.CharField(max_length=20)
+    description = models.TextField(blank=True)
+    arrival_date = models.DateField(null=True, blank=True)
+    departure_date = models.DateField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+
+class DivingGroupMember(models.Model):
+    group = models.ForeignKey(DivingGroup, on_delete=models.CASCADE, related_name='members')
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='group_memberships')
+    is_leader = models.BooleanField(default=False)
+    added_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ['group', 'customer']
+
+    def __str__(self):
+        return f"{self.customer} in {self.group}"
 
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):

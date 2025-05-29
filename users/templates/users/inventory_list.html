@@ -1,0 +1,69 @@
+
+{% extends 'users/base.html' %}
+
+{% block users_title %}Inventory Management - CoralOffice{% endblock %}
+
+{% block users_content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+    <h2>Inventory Management</h2>
+    <a href="{% url 'users:add_inventory_item' %}" class="btn">Add Equipment</a>
+</div>
+
+<div style="margin-bottom: 20px;">
+    <a href="{% url 'users:diving_center_dashboard' %}" class="btn" style="background: #6c757d;">Back to Dashboard</a>
+</div>
+
+{% if items %}
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; margin-bottom: 20px;">
+            <thead>
+                <tr style="background-color: #f8f9fa;">
+                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Item</th>
+                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Category</th>
+                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Size</th>
+                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Availability</th>
+                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Condition</th>
+                    <th style="border: 1px solid #ddd; padding: 12px; text-align: left;">Last Maintenance</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td style="border: 1px solid #ddd; padding: 12px;">{{ item.name }}</td>
+                    <td style="border: 1px solid #ddd; padding: 12px;">{{ item.get_category_display }}</td>
+                    <td style="border: 1px solid #ddd; padding: 12px;">{{ item.get_size_display }}</td>
+                    <td style="border: 1px solid #ddd; padding: 12px;">
+                        <span style="color: {% if item.quantity_available > 0 %}#4caf50{% else %}#f44336{% endif %}">
+                            {{ item.quantity_available }}/{{ item.quantity_total }}
+                        </span>
+                    </td>
+                    <td style="border: 1px solid #ddd; padding: 12px;">
+                        <span class="condition-badge condition-{{ item.condition|lower }}">{{ item.get_condition_display }}</span>
+                    </td>
+                    <td style="border: 1px solid #ddd; padding: 12px;">
+                        {{ item.last_maintenance|date:"M d, Y"|default:"Never" }}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% else %}
+    <p>No inventory items added yet.</p>
+{% endif %}
+
+<style>
+.condition-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.condition-excellent { background-color: #4caf50; color: #fff; }
+.condition-good { background-color: #8bc34a; color: #fff; }
+.condition-fair { background-color: #ff9800; color: #fff; }
+.condition-poor { background-color: #f44336; color: #fff; }
+.condition-out_of_service { background-color: #9e9e9e; color: #fff; }
+</style>
+{% endblock %}
