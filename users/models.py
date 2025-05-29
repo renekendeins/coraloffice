@@ -20,18 +20,50 @@ class UserProfile(models.Model):
         return f"{self.user.username}'s Profile"
 
 class Customer(models.Model):
+    DIVING_LEVEL_CHOICES = [
+        ('BEGINNER', 'Beginner'),
+        ('OPEN_WATER', 'Open Water'),
+        ('ADVANCED_OPEN_WATER', 'Advanced Open Water'),
+        ('RESCUE_DIVER', 'Rescue Diver'),
+        ('DIVEMASTER', 'Divemaster'),
+        ('INSTRUCTOR', 'Instructor'),
+    ]
+    
+    LANGUAGE_CHOICES = [
+        ('EN', 'English'),
+        ('ES', 'Spanish'),
+        ('FR', 'French'),
+        ('DE', 'German'),
+        ('IT', 'Italian'),
+        ('PT', 'Portuguese'),
+        ('RU', 'Russian'),
+        ('ZH', 'Chinese'),
+        ('JA', 'Japanese'),
+        ('OTHER', 'Other'),
+    ]
+    
     diving_center = models.ForeignKey(User, on_delete=models.CASCADE, related_name='customers')
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
     email = models.EmailField()
     phone_number = models.CharField(max_length=20)
-    certification_level = models.CharField(max_length=50, blank=True)
+    country = models.CharField(max_length=100, blank=True)
+    language = models.CharField(max_length=10, choices=LANGUAGE_CHOICES, default='EN')
+    birthday = models.DateField(null=True, blank=True)
+    certification_level = models.CharField(max_length=50, choices=DIVING_LEVEL_CHOICES, default='BEGINNER')
     emergency_contact = models.CharField(max_length=100, blank=True)
     medical_conditions = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
+    
+    def get_age(self):
+        if self.birthday:
+            from datetime import date
+            today = date.today()
+            return today.year - self.birthday.year - ((today.month, today.day) < (self.birthday.month, self.birthday.day))
+        return None
 
 class DiveActivity(models.Model):
     diving_center = models.ForeignKey(User, on_delete=models.CASCADE, related_name='dive_activities')
@@ -51,6 +83,7 @@ class DiveSchedule(models.Model):
     dive_site = models.CharField(max_length=100)
     max_participants = models.IntegerField(default=46)
     description = models.TextField(blank=True)
+    special_notes = models.TextField(blank=True, help_text="Special requirements or important notes for this dive")
     created_at = models.DateTimeField(auto_now_add=True)
     activity = models.ForeignKey(DiveActivity, on_delete=models.SET_NULL, null=True, blank=True)
 
@@ -64,6 +97,10 @@ class DiveSchedule(models.Model):
     def get_participant_count(self):
         """Get the count of participants for this dive"""
         return self.customer_activities.count()
+    
+    def has_special_notes(self):
+        """Check if this dive has special notes"""
+        return bool(self.special_notes.strip())
 
 class CustomerDiveActivity(models.Model):
     TANK_SIZE_CHOICES = [
@@ -71,6 +108,12 @@ class CustomerDiveActivity(models.Model):
         ('12L', '12 Liters'),
         ('15L', '15 Liters'),
         ('18L', '18 Liters'),
+    ]
+    
+    STATUS_CHOICES = [
+        ('PENDING', 'Pending'),
+        ('DEPARTED', 'Departed'),
+        ('FINISHED', 'Finished'),
     ]
     
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='dive_activities')
@@ -82,6 +125,9 @@ class CustomerDiveActivity(models.Model):
     needs_regulator = models.BooleanField(default=False)
     needs_guide = models.BooleanField(default=False)
     needs_insurance = models.BooleanField(default=False)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
+    has_arrived = models.BooleanField(default=False)
+    is_paid = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

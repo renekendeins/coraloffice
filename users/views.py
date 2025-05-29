@@ -76,13 +76,20 @@ def diving_center_dashboard(request):
                        'Access denied. This area is for diving centers only.')
         return redirect('users:profile')
 
+    from datetime import date, timedelta
+    
     customers = Customer.objects.filter(diving_center=request.user)
-    recent_dives = DiveSchedule.objects.filter(
-        diving_center=request.user).order_by('-date')[:5]
+    today = date.today()
+    tomorrow = today + timedelta(days=1)
+    
+    upcoming_dives = DiveSchedule.objects.filter(
+        diving_center=request.user,
+        date__in=[today, tomorrow]
+    ).order_by('date', 'time')
 
     return render(request, 'users/diving_center_dashboard.html', {
         'customers': customers,
-        'recent_dives': recent_dives
+        'upcoming_dives': upcoming_dives
     })
 
 
@@ -380,6 +387,24 @@ def manage_dive_participants(request, dive_id):
                 messages.success(request, 'Participant removed from the dive!')
                 return redirect('users:manage_dive_participants', dive_id=dive.id)
         
+        # Handle quick update participant
+        elif 'quick_update_participant' in request.POST:
+            participant_id = request.POST.get('participant_id')
+            if participant_id:
+                participant = get_object_or_404(CustomerDiveActivity, id=int(participant_id))
+                participant.tank_size = request.POST.get('tank_size', participant.tank_size)
+                participant.status = request.POST.get('status', participant.status)
+                participant.needs_wetsuit = 'needs_wetsuit' in request.POST
+                participant.needs_bcd = 'needs_bcd' in request.POST
+                participant.needs_regulator = 'needs_regulator' in request.POST
+                participant.needs_guide = 'needs_guide' in request.POST
+                participant.needs_insurance = 'needs_insurance' in request.POST
+                participant.has_arrived = 'has_arrived' in request.POST
+                participant.is_paid = 'is_paid' in request.POST
+                participant.save()
+                messages.success(request, 'Participant updated successfully!')
+                return redirect('users:manage_dive_participants', dive_id=dive.id)
+        
         # Handle adding a participant
         elif 'add_participant' in request.POST:
             form = CustomerDiveActivityForm(diving_center=request.user, dive_schedule=dive, data=request.POST)
@@ -408,7 +433,9 @@ def manage_dive_participants(request, dive_id):
         'dive': dive,
         'participants': participants,
         'form': form,
-        'customer_form': customer_form
+        'customer_form': customer_form,
+        'tank_size_choices': CustomerDiveActivity.TANK_SIZE_CHOICES,
+        'status_choices': CustomerDiveActivity.STATUS_CHOICES,
     })
 
 
@@ -492,14 +519,30 @@ def dashboard_analytics(request):
         customer__diving_center=request.user
     )
 
-    # Age range analysis (approximate based on birth_date if available)
+    # Age range analysis
     age_ranges = {
         '18-25': 0,
         '26-35': 0,
         '36-45': 0,
         '46-55': 0,
-        '55+': 0
+        '55+': 0,
+        'Unknown': 0
     }
+    
+    for customer in customers:
+        age = customer.get_age()
+        if age is None:
+            age_ranges['Unknown'] += 1
+        elif 18 <= age <= 25:
+            age_ranges['18-25'] += 1
+        elif 26 <= age <= 35:
+            age_ranges['26-35'] += 1
+        elif 36 <= age <= 45:
+            age_ranges['36-45'] += 1
+        elif 46 <= age <= 55:
+            age_ranges['46-55'] += 1
+        else:
+            age_ranges['55+'] += 1
 
     # Activities per customer
     activities_per_customer = activities.values('customer').annotate(
@@ -517,8 +560,17 @@ def dashboard_analytics(request):
     date_labels = [item['dive_schedule__date'].strftime('%Y-%m-%d') for item in activities_by_date]
     date_counts = [item['count'] for item in activities_by_date]
 
-    # Country data (placeholder - you'd need to add country field to Customer model)
-    countries = {'Spain': 15, 'France': 10, 'Germany': 8, 'UK': 12, 'Other': 5}
+    # Country data
+    countries_data = customers.values('country').annotate(
+        count=Count('id')
+    ).order_by('-count')
+    countries = {item['country'] or 'Unknown': item['count'] for item in countries_data}
+
+    # Language data
+    languages_data = customers.values('language').annotate(
+        count=Count('id')
+    ).order_by('-count')
+    languages = {dict(Customer.LANGUAGE_CHOICES).get(item['language'], item['language']): item['count'] for item in languages_data}
 
     context = {
         'total_customers': customers.count(),
@@ -526,6 +578,7 @@ def dashboard_analytics(request):
         'age_ranges': age_ranges,
         'avg_activities': activities_per_customer['avg_activities'] or 0,
         'countries': countries,
+        'languages': languages,
         'date_labels': json.dumps(date_labels),
         'date_counts': json.dumps(date_counts),
     }

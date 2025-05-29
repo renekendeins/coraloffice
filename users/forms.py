@@ -32,9 +32,10 @@ class UserProfileForm(forms.ModelForm):
 class CustomerForm(forms.ModelForm):
     class Meta:
         model = Customer
-        fields = ('first_name', 'last_name', 'email', 'phone_number', 'certification_level', 'emergency_contact', 'medical_conditions')
+        fields = ('first_name', 'last_name', 'email', 'phone_number', 'country', 'language', 'birthday', 'certification_level', 'emergency_contact', 'medical_conditions')
         widgets = {
             'medical_conditions': forms.Textarea(attrs={'rows': 3}),
+            'birthday': forms.DateInput(attrs={'type': 'date'}),
         }
 
 class DiveActivityForm(forms.ModelForm):
@@ -48,19 +49,30 @@ class DiveActivityForm(forms.ModelForm):
 class DiveScheduleForm(forms.ModelForm):
     class Meta:
         model = DiveSchedule
-        fields = ('date', 'time', 'dive_site', 'max_participants', 'description')
+        fields = ('date', 'time', 'dive_site', 'max_participants', 'description', 'special_notes')
         widgets = {
             'date': forms.DateInput(attrs={'type': 'date'}),
             'time': forms.TimeInput(attrs={'type': 'time'}),
             'description': forms.Textarea(attrs={'rows': 3}),
+            'special_notes': forms.Textarea(attrs={'rows': 2}),
         }
 
 class CustomerDiveActivityForm(forms.ModelForm):
+    customer_search = forms.CharField(
+        required=False,
+        widget=forms.TextInput(attrs={
+            'placeholder': 'Start typing customer name...',
+            'autocomplete': 'off',
+            'id': 'customer-search'
+        }),
+        label='Search Customer'
+    )
+    
     class Meta:
         model = CustomerDiveActivity
-        fields = ('customer', 'activity', 'tank_size', 'needs_wetsuit', 'needs_bcd', 'needs_regulator', 'needs_guide', 'needs_insurance')
+        fields = ('customer', 'activity', 'tank_size', 'needs_wetsuit', 'needs_bcd', 'needs_regulator', 'needs_guide', 'needs_insurance', 'status', 'has_arrived', 'is_paid')
         widgets = {
-            'customer': forms.Select(attrs={'class': 'form-control'}),
+            'customer': forms.Select(attrs={'class': 'form-control', 'style': 'display: none;'}),
             'activity': forms.Select(attrs={'class': 'form-control'}),
             'tank_size': forms.Select(attrs={'class': 'form-control'}),
         }
@@ -77,3 +89,11 @@ class CustomerDiveActivityForm(forms.ModelForm):
                 dive_schedule=dive_schedule).values_list('customer_id', flat=True)
             self.fields['customer'].queryset = self.fields['customer'].queryset.exclude(
                 id__in=already_participating)
+
+class QuickUpdateParticipantForm(forms.ModelForm):
+    class Meta:
+        model = CustomerDiveActivity
+        fields = ('tank_size', 'needs_wetsuit', 'needs_bcd', 'needs_regulator', 'needs_guide', 'needs_insurance', 'status', 'has_arrived', 'is_paid')
+        widgets = {
+            'tank_size': forms.Select(attrs={'class': 'form-control'}),
+        }

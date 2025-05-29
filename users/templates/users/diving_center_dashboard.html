@@ -1,3 +1,4 @@
+
 {% extends 'users/base.html' %}
 
 {% block users_title %}Diving Center Dashboard - CoralOffice{% endblock %}
@@ -14,36 +15,80 @@
 
     <div class="card" style="background: #e8f5e8; border-left: 5px solid #4caf50;">
         <h3>Upcoming Dives</h3>
-        <p style="font-size: 2rem; font-weight: bold; color: #4caf50;">{{ recent_dives.count }}</p>
+        <p style="font-size: 2rem; font-weight: bold; color: #4caf50;">{{ upcoming_dives.count }}</p>
         <a href="{% url 'users:dive_calendar' %}" style="color: #4caf50;">View Calendar →</a>
     </div>
 </div>
 
-<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
-    <section>
-        <h3>Quick Actions</h3>
-        <div style="display: flex; flex-direction: column; gap: 10px;">
-            <a href="{% url 'users:add_customer' %}" class="btn">Add New Customer</a>
-            <a href="{% url 'users:schedule_dive' %}" class="btn" style="background: #ff9800;">Schedule New Dive</a>
-            <a href="{% url 'users:customer_list' %}" class="btn" style="background: #9c27b0;">View All Customers</a>
-            <a href="{% url 'users:activity_list' %}" class="btn" style="background: #673ab7;">Manage Activities</a>
-            <a href="{% url 'users:calendar_view' %}" class="btn">Calendar View</a>
-            <a href="{% url 'users:quick_schedule_dive' %}" class="btn" style="background: #9c27b0;">Quick Schedule</a>
-            <a href="{% url 'users:dashboard_analytics' %}" class="btn" style="background: #ff9800;">Analytics</a>
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 40px;">
+    <!-- Customer Management -->
+    <section class="card">
+        <h3 style="color: #2196f3; border-bottom: 2px solid #2196f3; padding-bottom: 10px;">👥 Customer Management</h3>
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+            <a href="{% url 'users:add_customer' %}" class="btn" style="background: #2196f3;">Add New Customer</a>
+            <a href="{% url 'users:customer_list' %}" class="btn" style="background: #64b5f6;">View All Customers</a>
         </div>
     </section>
 
-    <section>
-        <h3>Recent Dive Schedules</h3>
-        {% for dive in recent_dives %}
-        <div style="border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 8px;">
-            <strong>{{ dive.activity_type|title }}</strong><br>
-            <small>{{ dive.date }} at {{ dive.time }}</small><br>
-            <small>{{ dive.dive_site }} - {{ dive.customers.count }} participants</small>
+    <!-- Activity Management -->
+    <section class="card">
+        <h3 style="color: #ff9800; border-bottom: 2px solid #ff9800; padding-bottom: 10px;">🏊 Activity Management</h3>
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+            <a href="{% url 'users:add_activity' %}" class="btn" style="background: #ff9800;">Add New Activity</a>
+            <a href="{% url 'users:activity_list' %}" class="btn" style="background: #ffb74d;">Manage Activities</a>
         </div>
-        {% empty %}
-        <p>No recent dives scheduled.</p>
-        {% endfor %}
+    </section>
+
+    <!-- Calendar & Scheduling -->
+    <section class="card">
+        <h3 style="color: #4caf50; border-bottom: 2px solid #4caf50; padding-bottom: 10px;">📅 Calendar & Scheduling</h3>
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+            <a href="{% url 'users:schedule_dive' %}" class="btn" style="background: #4caf50;">Schedule New Dive</a>
+            <a href="{% url 'users:quick_schedule_dive' %}" class="btn" style="background: #81c784;">Quick Schedule</a>
+            <a href="{% url 'users:calendar_view' %}" class="btn" style="background: #66bb6a;">Calendar View</a>
+            <a href="{% url 'users:dive_calendar' %}" class="btn" style="background: #a5d6a7;">List View</a>
+        </div>
+    </section>
+
+    <!-- Analytics & Reports -->
+    <section class="card">
+        <h3 style="color: #9c27b0; border-bottom: 2px solid #9c27b0; padding-bottom: 10px;">📊 Analytics & Reports</h3>
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+            <a href="{% url 'users:dashboard_analytics' %}" class="btn" style="background: #9c27b0;">View Analytics</a>
+        </div>
     </section>
 </div>
+
+<!-- Upcoming Dives Section -->
+<section style="margin-top: 40px;">
+    <h3 style="color: #333; border-bottom: 2px solid #ddd; padding-bottom: 10px;">🏊‍♂️ Today & Tomorrow's Dives</h3>
+    {% if upcoming_dives %}
+        <div style="margin-top: 20px;">
+            {% for dive in upcoming_dives %}
+            <div style="border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; {% if dive.has_special_notes %}border-left: 5px solid #ff5722;{% endif %}">
+                <div style="flex: 1;">
+                    {% if dive.has_special_notes %}
+                        <span style="color: #ff5722; font-size: 18px; margin-right: 10px;" title="Special notes available">⚠️</span>
+                    {% endif %}
+                    <strong>{{ dive.dive_site }}</strong>
+                    <br>
+                    <small style="color: #666;">{{ dive.date|date:"l, F j, Y" }} at {{ dive.time|time:"H:i" }}</small>
+                    <br>
+                    <small style="color: #666;">{{ dive.get_participant_count }}/{{ dive.max_participants }} participants</small>
+                    {% if dive.special_notes %}
+                        <br>
+                        <small style="color: #ff5722;"><strong>Notes:</strong> {{ dive.special_notes|truncatechars:100 }}</small>
+                    {% endif %}
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <a href="{% url 'users:dive_detail' dive.id %}" class="btn" style="background: #4caf50; padding: 5px 10px; font-size: 12px;">View Details</a>
+                    <a href="{% url 'users:manage_dive_participants' dive.id %}" class="btn" style="background: #2196f3; padding: 5px 10px; font-size: 12px;">Manage Participants</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p style="color: #666; margin-top: 20px;">No dives scheduled for today or tomorrow.</p>
+    {% endif %}
+</section>
 {% endblock %}
