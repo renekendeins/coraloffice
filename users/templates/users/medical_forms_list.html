@@ -1,0 +1,74 @@
+
+{% extends 'users/base.html' %}
+
+{% block users_title %}Medical Forms - CoralOffice{% endblock %}
+
+{% block users_content %}
+<h2>Submitted Medical Forms</h2>
+<p>Review and manage medical forms submitted by customers.</p>
+
+{% if medical_forms %}
+    <div style="margin-top: 20px;">
+        {% for customer in medical_forms %}
+        <div style="border: 1px solid #ddd; padding: 20px; margin-bottom: 15px; border-radius: 8px; background: white;">
+            <div style="display: flex; justify-content: between; align-items: flex-start;">
+                <div style="flex: 1;">
+                    <h4>{{ customer.first_name }} {{ customer.last_name }}</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 10px;">
+                        <div>
+                            <strong>Email:</strong> {{ customer.email|default:"Not provided" }}<br>
+                            <strong>Phone:</strong> {{ customer.phone_number|default:"Not provided" }}<br>
+                            <strong>Country:</strong> {{ customer.country|default:"Not specified" }}
+                        </div>
+                        <div>
+                            <strong>Language:</strong> {{ customer.get_language_display }}<br>
+                            <strong>Birthday:</strong> {{ customer.birthday|default:"Not provided" }}<br>
+                            <strong>Certification:</strong> {{ customer.get_certification_level_display }}
+                        </div>
+                        <div>
+                            <strong>Weight:</strong> {{ customer.weight|default:"Not provided" }} kg<br>
+                            <strong>Height:</strong> {{ customer.height|default:"Not provided" }} cm<br>
+                            <strong>Foot Size:</strong> {{ customer.foot_size|default:"Not provided" }} EU
+                        </div>
+                    </div>
+                    
+                    {% if customer.emergency_contact %}
+                    <div style="margin-top: 15px;">
+                        <strong>Emergency Contact:</strong> {{ customer.emergency_contact }}
+                    </div>
+                    {% endif %}
+                    
+                    {% if customer.medical_conditions %}
+                    <div style="margin-top: 15px; padding: 10px; background: #fff3cd; border-radius: 5px;">
+                        <strong>Medical Information:</strong><br>
+                        <span style="white-space: pre-line;">{{ customer.medical_conditions }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    <div style="margin-top: 15px; font-size: 12px; color: #666;">
+                        <strong>Submitted:</strong> {{ customer.created_at|date:"F j, Y, g:i A" }}
+                    </div>
+                </div>
+                
+                <div style="margin-left: 20px; display: flex; flex-direction: column; gap: 5px;">
+                    <a href="{% url 'users:edit_customer' customer.id %}" class="btn" style="background: #007bff; padding: 5px 10px; font-size: 12px; text-align: center;">Edit</a>
+                    <a href="{% url 'users:customer_activity_history' customer.id %}" class="btn" style="background: #28a745; padding: 5px 10px; font-size: 12px; text-align: center;">History</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div style="text-align: center; padding: 40px; color: #666;">
+        <p>No medical forms have been submitted yet.</p>
+        <p>Share the medical form link with customers:</p>
+        <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin-top: 10px;">
+            <code>{{ request.build_absolute_uri }}{% url 'users:medical_form' %}</code>
+        </div>
+    </div>
+{% endif %}
+
+<div style="margin-top: 30px;">
+    <a href="{% url 'users:diving_center_dashboard' %}" class="btn" style="background: #6c757d;">Back to Dashboard</a>
+</div>
+{% endblock %}

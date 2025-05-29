@@ -77,6 +77,15 @@
             <a href="{% url 'users:diving_groups_list' %}" class="btn" style="background: #8d6e63;">Manage Groups</a>
         </div>
     </section>
+
+    <!-- Medical Forms Management -->
+    <section class="card">
+        <h3 style="color: #e91e63; border-bottom: 2px solid #e91e63; padding-bottom: 10px;">📋 Medical Forms</h3>
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+            <a href="{% url 'users:medical_forms_list' %}" class="btn" style="background: #e91e63;">View Submitted Forms</a>
+            <a href="{% url 'users:medical_form' %}" class="btn" style="background: #f06292;" target="_blank">Medical Form Link</a>
+        </div>
+    </section>
 </div>
 
 <!-- Upcoming Dives Section -->

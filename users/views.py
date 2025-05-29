@@ -777,6 +777,16 @@ def delete_dive(request, dive_id):
     return render(request, 'users/delete_dive.html', {'dive': dive})
 
 
+@login_required
+def medical_forms_list(request):
+    if not request.user.userprofile.is_diving_center:
+        messages.error(request, 'Access denied.')
+        return redirect('users:profile')
+    
+    medical_forms = Customer.objects.filter(diving_center=request.user).order_by('-created_at')
+    return render(request, 'users/medical_forms_list.html', {'medical_forms': medical_forms})
+
+
 # Medical Form (accessible without login)
 def medical_form(request):
     if request.method == 'POST':

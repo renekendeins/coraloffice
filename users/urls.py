@@ -53,4 +53,5 @@ urlpatterns = [
 
     # Medical Form (public access)
     path('forms/medical/', views.medical_form, name='medical_form'),
+    path('medical-forms/', views.medical_forms_list, name='medical_forms_list'),
 ]

@@ -134,11 +134,19 @@
         <nav class="nav-container">
             <div class="logo">CoralOffice</div>
             <ul class="nav-menu">
-                <li><a href="{% url 'home:home' %}">Home</a></li>
-                <li><a href="{% url 'home:services' %}">Services</a></li>
-                <li><a href="{% url 'home:about' %}">About</a></li>
-                <li><a href="{% url 'home:contact' %}">Contact</a></li>
-                <li><a href="{% url 'users:user_list' %}">Staff</a></li>
+                {% if user.is_authenticated and user.userprofile.is_diving_center %}
+                    <li><a href="{% url 'users:diving_center_dashboard' %}">Dashboard</a></li>
+                    <li><a href="{% url 'users:customer_list' %}">Customers</a></li>
+                    <li><a href="{% url 'users:calendar_view' %}">Calendar</a></li>
+                    <li><a href="{% url 'users:diving_sites_list' %}">Sites</a></li>
+                    <li><a href="{% url 'users:inventory_list' %}">Inventory</a></li>
+                {% else %}
+                    <li><a href="{% url 'home:home' %}">Home</a></li>
+                    <li><a href="{% url 'home:services' %}">Services</a></li>
+                    <li><a href="{% url 'home:about' %}">About</a></li>
+                    <li><a href="{% url 'home:contact' %}">Contact</a></li>
+                    <li><a href="{% url 'users:user_list' %}">Staff</a></li>
+                {% endif %}
             </ul>
             <div class="user-menu">
                 {% if user.is_authenticated %}
@@ -162,11 +170,19 @@
         <!-- Mobile Menu Overlay -->
         <div class="mobile-menu-overlay" id="mobileMenuOverlay">
             <div class="mobile-menu">
-                <a href="{% url 'home:home' %}">Home</a>
-                <a href="{% url 'home:services' %}">Services</a>
-                <a href="{% url 'home:about' %}">About</a>
-                <a href="{% url 'home:contact' %}">Contact</a>
-                <a href="{% url 'users:user_list' %}">Staff</a>
+                {% if user.is_authenticated and user.userprofile.is_diving_center %}
+                    <a href="{% url 'users:diving_center_dashboard' %}">Dashboard</a>
+                    <a href="{% url 'users:customer_list' %}">Customers</a>
+                    <a href="{% url 'users:calendar_view' %}">Calendar</a>
+                    <a href="{% url 'users:diving_sites_list' %}">Sites</a>
+                    <a href="{% url 'users:inventory_list' %}">Inventory</a>
+                {% else %}
+                    <a href="{% url 'home:home' %}">Home</a>
+                    <a href="{% url 'home:services' %}">Services</a>
+                    <a href="{% url 'home:about' %}">About</a>
+                    <a href="{% url 'home:contact' %}">Contact</a>
+                    <a href="{% url 'users:user_list' %}">Staff</a>
+                {% endif %}
                 <div style="border-top: 1px solid rgba(255,255,255,0.3); margin: 20px 0; width: 200px;"></div>
                 {% if user.is_authenticated %}
                     <a href="{% url 'users:profile' %}">{{ user.username }}</a>
@@ -210,6 +226,7 @@
                 <p><a href="{% url 'home:about' %}">About Us</a></p>
                 <p><a href="{% url 'users:user_list' %}">Staff Directory</a></p>
                 <p><a href="{% url 'home:contact' %}">Contact Support</a></p>
+                <p><a href="{% url 'users:medical_form' %}">Medical Form</a></p>
             </div>
             <div class="footer-section">
                 <h3>Services</h3>
