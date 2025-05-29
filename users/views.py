@@ -389,6 +389,26 @@ def manage_dive_participants(request, dive_id):
                 messages.success(request, 'Participant removed from the dive!')
                 return redirect('users:manage_dive_participants', dive_id=dive.id)
         
+        # Handle on board action
+        elif 'on_board' in request.POST:
+            participant_id = request.POST.get('participant_id')
+            if participant_id:
+                participant = get_object_or_404(CustomerDiveActivity, id=int(participant_id))
+                participant.status = 'ON_BOARD'
+                participant.save()
+                messages.success(request, f'{participant.customer} is now on board!')
+                return redirect('users:manage_dive_participants', dive_id=dive.id)
+        
+        # Handle back on boat action
+        elif 'back_on_boat' in request.POST:
+            participant_id = request.POST.get('participant_id')
+            if participant_id:
+                participant = get_object_or_404(CustomerDiveActivity, id=int(participant_id))
+                participant.status = 'BACK_ON_BOAT'
+                participant.save()
+                messages.success(request, f'{participant.customer} is back on boat!')
+                return redirect('users:manage_dive_participants', dive_id=dive.id)
+        
         # Handle quick update participant
         elif 'quick_update_participant' in request.POST:
             participant_id = request.POST.get('participant_id')
@@ -401,7 +421,6 @@ def manage_dive_participants(request, dive_id):
                 participant.needs_regulator = 'needs_regulator' in request.POST
                 participant.needs_guide = 'needs_guide' in request.POST
                 participant.needs_insurance = 'needs_insurance' in request.POST
-                participant.has_arrived = 'has_arrived' in request.POST
                 participant.is_paid = 'is_paid' in request.POST
                 participant.save()
                 messages.success(request, 'Participant updated successfully!')

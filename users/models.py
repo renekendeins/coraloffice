@@ -233,6 +233,8 @@ class CustomerDiveActivity(models.Model):
     
     STATUS_CHOICES = [
         ('PENDING', 'Pending'),
+        ('ON_BOARD', 'On Board'),
+        ('BACK_ON_BOAT', 'Back on Boat'),
         ('DEPARTED', 'Departed'),
         ('FINISHED', 'Finished'),
     ]

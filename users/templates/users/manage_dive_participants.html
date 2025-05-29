@@ -89,8 +89,10 @@
 }
 
 .status-pending { background-color: #ffc107; color: #000; }
-.status-departed { background-color: #17a2b8; color: #fff; }
-.status-finished { background-color: #28a745; color: #fff; }
+.status-on-board { background-color: #28a745; color: #fff; }
+.status-back-on-boat { background-color: #17a2b8; color: #fff; }
+.status-departed { background-color: #6c757d; color: #fff; }
+.status-finished { background-color: #007bff; color: #fff; }
 
 .search-suggestions {
     border: 1px solid #ddd;
@@ -163,7 +165,6 @@
                     <p><strong>Activity:</strong> {{ participant.activity.name }}</p>
                     <div style="margin-bottom: 10px;">
                         <span class="status-badge status-{{ participant.status|lower }}">{{ participant.get_status_display }}</span>
-                        {% if participant.has_arrived %}<span style="background-color: #28a745; color: white; padding: 2px 6px; border-radius: 3px; font-size: 12px; margin-left: 5px;">✓ Arrived</span>{% endif %}
                         {% if participant.is_paid %}<span style="background-color: #007bff; color: white; padding: 2px 6px; border-radius: 3px; font-size: 12px; margin-left: 5px;">💰 Paid</span>{% endif %}
                     </div>
                     <div class="equipment-list">
@@ -207,7 +208,6 @@
                             <div style="display: flex; flex-direction: column; gap: 5px;">
                                 <label><input type="checkbox" name="needs_guide" {% if participant.needs_guide %}checked{% endif %}> Guide</label>
                                 <label><input type="checkbox" name="needs_insurance" {% if participant.needs_insurance %}checked{% endif %}> Insurance</label>
-                                <label><input type="checkbox" name="has_arrived" {% if participant.has_arrived %}checked{% endif %}> Has Arrived</label>
                                 <label><input type="checkbox" name="is_paid" {% if participant.is_paid %}checked{% endif %}> Is Paid</label>
                             </div>
                             <div style="grid-column: span 2;">
@@ -218,11 +218,21 @@
                     </div>
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 5px; margin-left: 15px;">
-                    <button onclick="showQuickEdit({{ participant.id }})" class="btn" style="background-color: #ffc107; padding: 5px 10px; font-size: 12px;">Quick Edit</button>
-                    <form method="post">
+                    <form method="post" style="margin: 0;">
+                        {% csrf_token %}
+                        <input type="hidden" name="participant_id" value="{{ participant.id }}">
+                        <button type="submit" name="on_board" class="btn" style="background-color: #28a745; padding: 5px 10px; font-size: 12px; margin-bottom: 3px; width: 100%;">On Board</button>
+                    </form>
+                    <form method="post" style="margin: 0;">
+                        {% csrf_token %}
+                        <input type="hidden" name="participant_id" value="{{ participant.id }}">
+                        <button type="submit" name="back_on_boat" class="btn" style="background-color: #17a2b8; padding: 5px 10px; font-size: 12px; margin-bottom: 3px; width: 100%;">Back on Boat</button>
+                    </form>
+                    <button onclick="showQuickEdit({{ participant.id }})" class="btn" style="background-color: #ffc107; padding: 5px 10px; font-size: 12px; margin-bottom: 3px; width: 100%;">Quick Edit</button>
+                    <form method="post" style="margin: 0;">
                         {% csrf_token %}
                         <input type="hidden" name="customer" value="{{ participant.id }}">
-                        <button type="submit" name="remove_participant" class="btn" style="background-color: #f44336; padding: 5px 10px; font-size: 12px;">Remove</button>
+                        <button type="submit" name="remove_participant" class="btn" style="background-color: #f44336; padding: 5px 10px; font-size: 12px; width: 100%;">Remove</button>
                     </form>
                 </div>
             </div>
