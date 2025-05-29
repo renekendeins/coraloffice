@@ -31,5 +31,7 @@ urlpatterns = [
     path('dive/<int:dive_id>/participants/', views.manage_dive_participants, name='manage_dive_participants'),
     path('dive/<int:dive_id>/add-customer/', views.add_customer_to_dive, name='add_customer_to_dive'),
     path('dive/<int:dive_id>/', views.dive_detail, name='dive_detail'),
+    path('customers/<int:customer_id>/history/', views.customer_activity_history, name='customer_activity_history'),
+    path('analytics/', views.dashboard_analytics, name='dashboard_analytics'),
 ]
 

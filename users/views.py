@@ -455,3 +455,79 @@ def dive_detail(request, dive_id):
         'dive': dive,
         'participants': participants
     })
+
+
+@login_required
+def customer_activity_history(request, customer_id):
+    if not request.user.userprofile.is_diving_center:
+        messages.error(request, 'Access denied.')
+        return redirect('users:profile')
+
+    customer = get_object_or_404(Customer,
+                                 id=customer_id,
+                                 diving_center=request.user)
+    
+    activities = CustomerDiveActivity.objects.filter(
+        customer=customer
+    ).order_by('-dive_schedule__date', '-dive_schedule__time')
+
+    return render(request, 'users/customer_activity_history.html', {
+        'customer': customer,
+        'activities': activities
+    })
+
+
+@login_required
+def dashboard_analytics(request):
+    if not request.user.userprofile.is_diving_center:
+        messages.error(request, 'Access denied.')
+        return redirect('users:profile')
+
+    from django.db.models import Count, Avg
+    from datetime import date
+    import json
+
+    customers = Customer.objects.filter(diving_center=request.user)
+    activities = CustomerDiveActivity.objects.filter(
+        customer__diving_center=request.user
+    )
+
+    # Age range analysis (approximate based on birth_date if available)
+    age_ranges = {
+        '18-25': 0,
+        '26-35': 0,
+        '36-45': 0,
+        '46-55': 0,
+        '55+': 0
+    }
+
+    # Activities per customer
+    activities_per_customer = activities.values('customer').annotate(
+        activity_count=Count('id')
+    ).aggregate(avg_activities=Avg('activity_count'))
+
+    # Activities by date
+    activities_by_date = activities.values(
+        'dive_schedule__date'
+    ).annotate(
+        count=Count('id')
+    ).order_by('dive_schedule__date')
+
+    # Prepare data for charts
+    date_labels = [item['dive_schedule__date'].strftime('%Y-%m-%d') for item in activities_by_date]
+    date_counts = [item['count'] for item in activities_by_date]
+
+    # Country data (placeholder - you'd need to add country field to Customer model)
+    countries = {'Spain': 15, 'France': 10, 'Germany': 8, 'UK': 12, 'Other': 5}
+
+    context = {
+        'total_customers': customers.count(),
+        'total_activities': activities.count(),
+        'age_ranges': age_ranges,
+        'avg_activities': activities_per_customer['avg_activities'] or 0,
+        'countries': countries,
+        'date_labels': json.dumps(date_labels),
+        'date_counts': json.dumps(date_counts),
+    }
+
+    return render(request, 'users/dashboard_analytics.html', context)

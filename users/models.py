@@ -63,7 +63,7 @@ class DiveSchedule(models.Model):
 
     def get_participant_count(self):
         """Get the count of participants for this dive"""
-        return self.customerdiveactivity_set.count()
+        return self.customer_activities.count()
 
 class CustomerDiveActivity(models.Model):
     TANK_SIZE_CHOICES = [

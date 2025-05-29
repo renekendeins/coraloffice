@@ -1,0 +1,164 @@
+
+{% extends 'users/base.html' %}
+
+{% block users_title %}Analytics Dashboard - CoralOffice{% endblock %}
+
+{% block users_content %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<div style="margin-bottom: 20px;">
+    <h2>Analytics Dashboard</h2>
+</div>
+
+<div style="margin-bottom: 20px;">
+    <a href="{% url 'users:diving_center_dashboard' %}" class="btn" style="background: #6c757d;">Back to Dashboard</a>
+</div>
+
+<!-- Summary Cards -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">Total Customers</h5>
+                <h2 style="color: #4CAF50;">{{ total_customers }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">Total Activities</h5>
+                <h2 style="color: #2196F3;">{{ total_activities }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">Avg Activities/Customer</h5>
+                <h2 style="color: #9c27b0;">{{ avg_activities|floatformat:1 }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">Countries</h5>
+                <h2 style="color: #ff9800;">{{ countries|length }}</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Charts -->
+<div class="row">
+    <!-- Country Distribution -->
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>Customer Distribution by Country</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="countryChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Age Range Distribution -->
+    <div class="col-md-6 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>Age Range Distribution</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="ageChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Activities Timeline -->
+    <div class="col-md-12 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>Activities Over Time</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="timelineChart" width="400" height="100"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Country Chart
+const countryCtx = document.getElementById('countryChart').getContext('2d');
+const countryChart = new Chart(countryCtx, {
+    type: 'pie',
+    data: {
+        labels: {{ countries.keys|safe }},
+        datasets: [{
+            data: {{ countries.values|safe }},
+            backgroundColor: [
+                '#FF6384',
+                '#36A2EB',
+                '#FFCE56',
+                '#4BC0C0',
+                '#9966FF'
+            ]
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false
+    }
+});
+
+// Age Chart
+const ageCtx = document.getElementById('ageChart').getContext('2d');
+const ageChart = new Chart(ageCtx, {
+    type: 'bar',
+    data: {
+        labels: {{ age_ranges.keys|safe }},
+        datasets: [{
+            label: 'Customers',
+            data: {{ age_ranges.values|safe }},
+            backgroundColor: '#4CAF50'
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+
+// Timeline Chart
+const timelineCtx = document.getElementById('timelineChart').getContext('2d');
+const timelineChart = new Chart(timelineCtx, {
+    type: 'line',
+    data: {
+        labels: {{ date_labels|safe }},
+        datasets: [{
+            label: 'Activities',
+            data: {{ date_counts|safe }},
+            borderColor: '#2196F3',
+            backgroundColor: 'rgba(33, 150, 243, 0.1)',
+            tension: 0.1
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                beginAtZero: true
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

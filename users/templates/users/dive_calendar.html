@@ -1,4 +1,3 @@
-
 {% extends 'users/base.html' %}
 
 {% block users_title %}Dive Calendar - CoralOffice{% endblock %}
@@ -18,7 +17,7 @@
     {% if dive.description %}
         <p><strong>Description:</strong> {{ dive.description }}</p>
     {% endif %}
-    
+
     {% if dive.customers.exists %}
         <div style="margin-top: 15px;">
             <strong>Participants:</strong>
@@ -29,6 +28,8 @@
             </ul>
         </div>
     {% endif %}
+    <a href="{% url 'users:dive_detail' dive.id %}" class="btn">View Details</a>
+    <a href="{% url 'users:manage_dive_participants' dive.id %}" class="btn" style="background: #9c27b0;">Manage Participants</a>
 </div>
 {% empty %}
 <p>No dives scheduled yet. <a href="{% url 'users:schedule_dive' %}">Schedule your first dive</a>.</p>

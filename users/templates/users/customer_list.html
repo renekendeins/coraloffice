@@ -1,4 +1,3 @@
-
 {% extends 'users/base.html' %}
 
 {% block users_title %}Customer Management - CoralOffice{% endblock %}
@@ -22,6 +21,7 @@
     {% endif %}
     <p><strong>Added:</strong> {{ customer.created_at|date:"F d, Y" }}</p>
     <div style="margin-top: 15px;">
+        <a href="{% url 'users:customer_activity_history' customer.id %}" class="btn" style="background: #4CAF50;">Activity History</a>
         <a href="{% url 'users:edit_customer' customer.id %}" class="btn" style="background: #ff9800; margin-right: 10px;">Edit</a>
         <a href="{% url 'users:delete_customer' customer.id %}" class="btn" style="background: #f44336;">Delete</a>
     </div>
