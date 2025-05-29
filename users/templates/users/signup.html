@@ -1,0 +1,51 @@
+
+{% extends 'users/base.html' %}
+
+{% block users_title %}Sign Up - CoralOffice{% endblock %}
+
+{% block users_content %}
+<h2>Sign Up</h2>
+<form method="post" id="signupForm">
+    {% csrf_token %}
+    {% for field in form %}
+        <div class="form-group">
+            {{ field.label_tag }}
+            {{ field }}
+            {% if field.help_text %}
+                <small>{{ field.help_text }}</small>
+            {% endif %}
+            {% for error in field.errors %}
+                <div class="alert alert-error">{{ error }}</div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+    <button type="submit" class="btn">Sign Up</button>
+</form>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const isDivingCenterField = document.getElementById('id_is_diving_center');
+    const businessNameField = document.querySelector('[name="business_name"]').closest('.form-group');
+    const businessLicenseField = document.querySelector('[name="business_license"]').closest('.form-group');
+    
+    function toggleBusinessFields() {
+        if (isDivingCenterField.checked) {
+            businessNameField.style.display = 'block';
+            businessLicenseField.style.display = 'block';
+            document.querySelector('[name="business_name"]').required = true;
+        } else {
+            businessNameField.style.display = 'none';
+            businessLicenseField.style.display = 'none';
+            document.querySelector('[name="business_name"]').required = false;
+        }
+    }
+    
+    // Initial state
+    toggleBusinessFields();
+    
+    // Listen for changes
+    isDivingCenterField.addEventListener('change', toggleBusinessFields);
+});
+</script>
+<p><a href="{% url 'users:login' %}">Already have an account? Login here</a></p>
+{% endblock %}

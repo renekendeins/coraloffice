@@ -1,0 +1,120 @@
+
+{% extends 'users/base.html' %}
+{% load calendar_extras %}
+
+{% block users_title %}Calendar View - CoralOffice{% endblock %}
+
+{% block users_content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+    <h2>{{ month_name }} {{ year }}</h2>
+    <div>
+        <a href="?year={{ prev_year }}&month={{ prev_month }}" class="btn" style="background: #6c757d; margin-right: 10px;">← Previous</a>
+        <a href="?year={{ next_year }}&month={{ next_month }}" class="btn" style="background: #6c757d;">Next →</a>
+    </div>
+</div>
+
+<style>
+.calendar {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.calendar th, .calendar td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    vertical-align: top;
+    height: 120px;
+    width: 14.28%;
+}
+
+.calendar th {
+    background-color: #f8f9fa;
+    text-align: center;
+    height: auto;
+    font-weight: bold;
+}
+
+.calendar-day {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.calendar-today {
+    background-color: #e3f2fd;
+}
+
+.dive-item {
+    background-color: #4CAF50;
+    color: white;
+    padding: 2px 5px;
+    margin: 2px 0;
+    border-radius: 3px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.add-dive-link {
+    color: #007bff;
+    text-decoration: none;
+    font-size: 12px;
+}
+
+.add-dive-link:hover {
+    text-decoration: underline;
+}
+</style>
+
+<div style="margin-bottom: 20px;">
+    <a href="{% url 'users:diving_center_dashboard' %}" class="btn" style="background: #6c757d; margin-right: 10px;">Back to Dashboard</a>
+    <a href="{% url 'users:dive_calendar' %}" class="btn" style="background: #9c27b0; margin-right: 10px;">List View</a>
+    <a href="{% url 'users:quick_schedule_dive' %}" class="btn">Quick Schedule</a>
+</div>
+
+<table class="calendar">
+    <thead>
+        <tr>
+            <th>Monday</th>
+            <th>Tuesday</th>
+            <th>Wednesday</th>
+            <th>Thursday</th>
+            <th>Friday</th>
+            <th>Saturday</th>
+            <th>Sunday</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for week in calendar %}
+        <tr>
+            {% for day in week %}
+            <td {% if day == today %}class="calendar-today"{% endif %}>
+                {% if day != 0 %}
+                    <div class="calendar-day">{{ day }}</div>
+                    {% if day in dives_by_day %}
+                {% for dive in dives %}
+                    <div class="dive-item" title="{{ dive.dive_site }} at {{ dive.time }}">
+                        {{ dive.time|time:"H:i" }} - {{ dive.dive_site }}
+                        <small>({{ dive.get_participant_count }} participants)</small>
+                        <a href="{% url 'users:add_customer_to_dive' dive.id %}" class="btn">Add Customer</a>
+                    </div>
+                {% endfor %}
+                        {% for dive in dives_by_day|lookup:day %}
+                        <div class="dive-item" title="{{ dive.dive_site }} at {{ dive.time }}">
+                            {{ dive.time|time:"H:i" }} - {{ dive.dive_site }}
+                            <small>({{ dive.customers.count }} participants)</small>
+                            <div class="dive-item" title="{{ dive.dive_site }} at {{ dive.time }}">
+                                <a href="{% url 'users:add_customer_to_dive' dive.id %}" class="btn">Add Customer</a>
+                            <a href="{% url 'users:dive_detail' dive.id %}" class="btn">View Details</a></div>
+                        </div>
+                
+                        {% endfor %}
+                    {% endif %}
+                    <a href="{% url 'users:quick_schedule_dive' %}?date={{ year }}-{{ month|stringformat:'02d' }}-{{ day|stringformat:'02d' }}" class="add-dive-link">+ Add Dive</a>
+                {% endif %}
+            </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

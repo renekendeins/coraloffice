@@ -1,0 +1,64 @@
+
+{% extends 'home/base.html' %}
+
+{% block title %}Contact Us - CoralOffice{% endblock %}
+
+{% block content %}
+<div class="container">
+    <section style="text-align: center; margin-bottom: 60px;">
+        <h1 style="color: #006994; font-size: 3rem; margin-bottom: 20px;">Contact Us</h1>
+        <p style="font-size: 1.3rem; color: #666;">Get in touch with our team</p>
+    </section>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: start;">
+        <div>
+            <h2 style="color: #006994; margin-bottom: 30px;">Send us a Message</h2>
+            <form style="background: white; padding: 40px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1);">
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: bold; color: #333;">Name</label>
+                    <input type="text" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px;">
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: bold; color: #333;">Email</label>
+                    <input type="email" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px;">
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: bold; color: #333;">Subject</label>
+                    <input type="text" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px;">
+                </div>
+                <div style="margin-bottom: 30px;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: bold; color: #333;">Message</label>
+                    <textarea rows="5" style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 16px; resize: vertical;"></textarea>
+                </div>
+                <button type="submit" class="cta-button" style="width: 100%;">Send Message</button>
+            </form>
+        </div>
+
+        <div>
+            <h2 style="color: #006994; margin-bottom: 30px;">Get in Touch</h2>
+            <div style="space-y: 30px;">
+                <div class="card">
+                    <span class="card-icon">📧</span>
+                    <h3>Email Support</h3>
+                    <p>info@coraloffice.com<br>support@coraloffice.com</p>
+                </div>
+                <div class="card">
+                    <span class="card-icon">📞</span>
+                    <h3>Phone Support</h3>
+                    <p>+1 (555) CORAL-00<br>24/7 Emergency Hotline</p>
+                </div>
+                <div class="card">
+                    <span class="card-icon">🏢</span>
+                    <h3>Office Address</h3>
+                    <p>123 Ocean Drive<br>Coral Bay, Marine Islands<br>Postal Code: 12345</p>
+                </div>
+                <div class="card">
+                    <span class="card-icon">🕒</span>
+                    <h3>Business Hours</h3>
+                    <p>Monday - Friday: 9:00 AM - 6:00 PM<br>Weekend: Emergency support only</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

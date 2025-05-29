@@ -1,0 +1,48 @@
+
+{% extends 'users/base.html' %}
+
+{% block users_title %}Diving Center Dashboard - CoralOffice{% endblock %}
+
+{% block users_content %}
+<h2>{{ user.userprofile.business_name }} Dashboard</h2>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 40px;">
+    <div class="card" style="background: #e3f2fd; border-left: 5px solid #2196f3;">
+        <h3>Total Customers</h3>
+        <p style="font-size: 2rem; font-weight: bold; color: #2196f3;">{{ customers.count }}</p>
+        <a href="{% url 'users:customer_list' %}" style="color: #2196f3;">Manage Customers →</a>
+    </div>
+    
+    <div class="card" style="background: #e8f5e8; border-left: 5px solid #4caf50;">
+        <h3>Upcoming Dives</h3>
+        <p style="font-size: 2rem; font-weight: bold; color: #4caf50;">{{ recent_dives.count }}</p>
+        <a href="{% url 'users:dive_calendar' %}" style="color: #4caf50;">View Calendar →</a>
+    </div>
+</div>
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+    <section>
+        <h3>Quick Actions</h3>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+            <a href="{% url 'users:add_customer' %}" class="btn">Add New Customer</a>
+            <a href="{% url 'users:schedule_dive' %}" class="btn" style="background: #ff9800;">Schedule New Dive</a>
+            <a href="{% url 'users:customer_list' %}" class="btn" style="background: #9c27b0;">View All Customers</a>
+            <a href="{% url 'users:activity_list' %}" class="btn" style="background: #673ab7;">Manage Activities</a>
+            <a href="{% url 'users:calendar_view' %}" class="btn" style="background: #009688;">Calendar View</a>
+        </div>
+    </section>
+    
+    <section>
+        <h3>Recent Dive Schedules</h3>
+        {% for dive in recent_dives %}
+        <div style="border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 8px;">
+            <strong>{{ dive.activity_type|title }}</strong><br>
+            <small>{{ dive.date }} at {{ dive.time }}</small><br>
+            <small>{{ dive.dive_site }} - {{ dive.customers.count }} participants</small>
+        </div>
+        {% empty %}
+        <p>No recent dives scheduled.</p>
+        {% endfor %}
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,34 @@
+
+{% extends 'users/base.html' %}
+
+{% block users_title %}Customer Management - CoralOffice{% endblock %}
+
+{% block users_content %}
+<div style="display: flex; justify-content: between; align-items: center; margin-bottom: 30px;">
+    <h2>Customer Management</h2>
+    <a href="{% url 'users:add_customer' %}" class="btn">Add New Customer</a>
+</div>
+
+{% for customer in customers %}
+<div class="user-card">
+    <h3>{{ customer.first_name }} {{ customer.last_name }}</h3>
+    <p><strong>Email:</strong> {{ customer.email }}</p>
+    <p><strong>Phone:</strong> {{ customer.phone_number }}</p>
+    {% if customer.certification_level %}
+        <p><strong>Certification:</strong> {{ customer.certification_level }}</p>
+    {% endif %}
+    {% if customer.emergency_contact %}
+        <p><strong>Emergency Contact:</strong> {{ customer.emergency_contact }}</p>
+    {% endif %}
+    <p><strong>Added:</strong> {{ customer.created_at|date:"F d, Y" }}</p>
+    <div style="margin-top: 15px;">
+        <a href="{% url 'users:edit_customer' customer.id %}" class="btn" style="background: #ff9800; margin-right: 10px;">Edit</a>
+        <a href="{% url 'users:delete_customer' customer.id %}" class="btn" style="background: #f44336;">Delete</a>
+    </div>
+</div>
+{% empty %}
+<p>No customers added yet. <a href="{% url 'users:add_customer' %}">Add your first customer</a>.</p>
+{% endfor %}
+
+<a href="{% url 'users:diving_center_dashboard' %}" class="btn" style="background: #6c757d;">Back to Dashboard</a>
+{% endblock %}

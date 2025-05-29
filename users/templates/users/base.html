@@ -1,0 +1,36 @@
+
+{% extends 'home/base.html' %}
+
+{% block title %}{% block users_title %}Users - CoralOffice{% endblock %}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div style="background: white; padding: 40px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1);">
+        {% block users_content %}
+        {% endblock %}
+    </div>
+</div>
+
+<style>
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; margin-bottom: 8px; font-weight: bold; color: #333; }
+.form-group input, .form-group textarea, .form-group select { 
+    width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; 
+    font-size: 16px; transition: border-color 0.3s; 
+}
+.form-group input:focus, .form-group textarea:focus, .form-group select:focus { 
+    border-color: #006994; outline: none; 
+}
+.btn { 
+    padding: 12px 24px; background: #006994; color: white; border: none; 
+    border-radius: 8px; cursor: pointer; text-decoration: none; display: inline-block; 
+    font-weight: bold; transition: background 0.3s; margin-right: 10px;
+}
+.btn:hover { background: #004d6b; }
+.user-card { 
+    border: 2px solid #e0e0e0; padding: 25px; margin: 20px 0; border-radius: 12px; 
+    transition: all 0.3s; background: white;
+}
+.user-card:hover { border-color: #006994; transform: translateY(-2px); }
+</style>
+{% endblock %}

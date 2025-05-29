@@ -1,0 +1,23 @@
+
+{% extends 'users/base.html' %}
+
+{% block users_title %}Staff Directory - CoralOffice{% endblock %}
+
+{% block users_content %}
+<h2>All Users</h2>
+{% for user in users %}
+    <div class="user-card">
+        <h3><a href="{% url 'users:user_detail' user.id %}">{{ user.get_full_name|default:user.username }}</a></h3>
+        <p><strong>Username:</strong> {{ user.username }}</p>
+        {% if user.userprofile.bio %}
+            <p><strong>Bio:</strong> {{ user.userprofile.bio|truncatewords:20 }}</p>
+        {% endif %}
+        {% if user.userprofile.location %}
+            <p><strong>Location:</strong> {{ user.userprofile.location }}</p>
+        {% endif %}
+        <p><strong>Joined:</strong> {{ user.userprofile.created_at|date:"F Y" }}</p>
+    </div>
+{% empty %}
+    <p>No users found.</p>
+{% endfor %}
+{% endblock %}

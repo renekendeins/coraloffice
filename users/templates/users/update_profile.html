@@ -1,0 +1,35 @@
+
+{% extends 'users/base.html' %}
+
+{% block users_title %}Update Profile - CoralOffice{% endblock %}
+
+{% block users_content %}
+<h2>Update Profile</h2>
+<form method="post">
+    {% csrf_token %}
+    <h3>User Information</h3>
+    {% for field in user_form %}
+        <div class="form-group">
+            {{ field.label_tag }}
+            {{ field }}
+            {% for error in field.errors %}
+                <div class="alert alert-error">{{ error }}</div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+    
+    <h3>Profile Information</h3>
+    {% for field in profile_form %}
+        <div class="form-group">
+            {{ field.label_tag }}
+            {{ field }}
+            {% for error in field.errors %}
+                <div class="alert alert-error">{{ error }}</div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+    
+    <button type="submit" class="btn">Update Profile</button>
+    <a href="{% url 'users:profile' %}" class="btn" style="background: #6c757d;">Cancel</a>
+</form>
+{% endblock %}

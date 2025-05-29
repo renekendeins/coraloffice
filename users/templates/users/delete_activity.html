@@ -1,0 +1,26 @@
+
+{% extends 'users/base.html' %}
+
+{% block users_title %}Delete Activity - CoralOffice{% endblock %}
+
+{% block users_content %}
+<h2>Delete Activity</h2>
+<div class="alert alert-warning">
+    <strong>Warning:</strong> Are you sure you want to delete activity "{{ activity.name }}"? This action cannot be undone and will affect all scheduled dives using this activity.
+</div>
+
+<div class="user-card">
+    <h3>{{ activity.name }}</h3>
+    {% if activity.description %}
+        <p><strong>Description:</strong> {{ activity.description }}</p>
+    {% endif %}
+    <p><strong>Duration:</strong> {{ activity.duration_minutes }} minutes</p>
+    <p><strong>Price:</strong> ${{ activity.price }}</p>
+</div>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn" style="background: #f44336;">Yes, Delete Activity</button>
+    <a href="{% url 'users:activity_list' %}" class="btn" style="background: #6c757d;">Cancel</a>
+</form>
+{% endblock %}

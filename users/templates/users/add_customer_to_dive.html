@@ -1,0 +1,13 @@
+{% extends 'users/base.html' %}
+
+{% block users_title %}Add Customer to Dive{% endblock %}
+
+{% block users_content %}
+<h2>Add Customer to Dive: {{ dive.dive_site }}</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn">Add Customer</button>
+    <a href="{% url 'users:manage_dive_participants' dive.id %}" class="btn" style="background: #6c757d;">Cancel</a>
+</form>
+{% endblock %}

@@ -1,0 +1,25 @@
+{% extends 'users/base.html' %}
+
+{% block users_title %}Dive Details - CoralOffice{% endblock %}
+
+{% block users_content %}
+<h2>Dive Details: {{ dive.dive_site }}</h2>
+<p><strong>Date:</strong> {{ dive.date }}</p>
+<p><strong>Time:</strong> {{ dive.time }}</p>
+<p><strong>Description:</strong> {{ dive.description }}</p>
+<p><strong>Max Participants:</strong> {{ dive.max_participants }}</p>
+
+<h3>Current Participants</h3>
+{% if participants %}
+<ul>
+    {% for participant in participants %}
+    <li>{{ participant.customer.first_name }} {{ participant.customer.last_name }}</li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No participants registered for this dive.</p>
+{% endif %}
+
+<a href="{% url 'users:manage_dive_participants' dive.id %}" class="btn">Manage Participants</a>
+<a href="{% url 'users:dive_calendar' %}" class="btn" style="background: #6c757d;">Back to Calendar</a>
+{% endblock %}

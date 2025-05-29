@@ -1,0 +1,25 @@
+
+{% extends 'users/base.html' %}
+
+{% block users_title %}Edit Customer - CoralOffice{% endblock %}
+
+{% block users_content %}
+<h2>Edit Customer: {{ customer.first_name }} {{ customer.last_name }}</h2>
+<form method="post">
+    {% csrf_token %}
+    {% for field in form %}
+        <div class="form-group">
+            {{ field.label_tag }}
+            {{ field }}
+            {% if field.help_text %}
+                <small>{{ field.help_text }}</small>
+            {% endif %}
+            {% for error in field.errors %}
+                <div class="alert alert-error">{{ error }}</div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+    <button type="submit" class="btn">Update Customer</button>
+    <a href="{% url 'users:customer_list' %}" class="btn" style="background: #6c757d;">Cancel</a>
+</form>
+{% endblock %}

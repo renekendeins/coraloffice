@@ -1,0 +1,62 @@
+
+{% extends 'home/base.html' %}
+
+{% block content %}
+<section class="hero">
+    <div class="container">
+        <h1>Welcome to CoralOffice</h1>
+        <p>The complete diving center management solution. Streamline your operations, manage courses, track equipment, and ensure safe diving experiences for all your customers.</p>
+        <a href="{% url 'home:services' %}" class="cta-button">Explore Features</a>
+    </div>
+</section>
+
+<div class="container">
+    <section>
+        <h2 style="text-align: center; color: #006994; margin-bottom: 40px; font-size: 2.5rem;">Why Choose CoralOffice?</h2>
+        <div class="card-grid">
+            {% for service in featured_services %}
+            <div class="card">
+                <span class="card-icon">{{ service.icon }}</span>
+                <h3>{{ service.title }}</h3>
+                <p>{{ service.description }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </section>
+
+    <section style="margin-top: 60px;">
+        <h2 style="text-align: center; color: #006994; margin-bottom: 40px; font-size: 2rem;">Popular Dive Sites</h2>
+        <div style="overflow-x: auto;">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>🏝️ Dive Site</th>
+                        <th>🌊 Depth Range</th>
+                        <th>⭐ Difficulty Level</th>
+                        <th>🎯 Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for site in dive_sites %}
+                    <tr>
+                        <td><strong>{{ site.name }}</strong></td>
+                        <td>{{ site.depth }}</td>
+                        <td>{{ site.difficulty }}</td>
+                        <td><a href="#" style="color: #006994; text-decoration: none;">View Details</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section style="margin-top: 60px; text-align: center; background: linear-gradient(135deg, #f8f9fa, #e9ecef); padding: 60px 40px; border-radius: 20px;">
+        <h2 style="color: #006994; margin-bottom: 20px;">Ready to Dive In?</h2>
+        <p style="font-size: 1.2rem; margin-bottom: 30px; color: #666;">Join hundreds of diving centers worldwide who trust CoralOffice for their daily operations.</p>
+        <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+            <a href="{% url 'users:signup' %}" class="cta-button">Get Started</a>
+            <a href="{% url 'home:contact' %}" style="display: inline-block; background: transparent; color: #006994; padding: 15px 30px; text-decoration: none; border: 2px solid #006994; border-radius: 30px; font-weight: bold;">Contact Sales</a>
+        </div>
+    </section>
+</div>
+{% endblock %}

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CoralOffice - Diving Center Management{% endblock %}</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; }
+
+        /* Header Styles */
+        .header { background: linear-gradient(135deg, #006994, #00a8cc); color: white; padding: 1rem 0; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative; }
+        .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; }
+        .logo { font-size: 2rem; font-weight: bold; display: flex; align-items: center; z-index: 1001; }
+        .logo::before { content: '🐠'; margin-right: 10px; }
+
+        /* Desktop Menu */
+        .nav-menu { display: flex; list-style: none; gap: 30px; }
+        .nav-menu a { color: white; text-decoration: none; padding: 10px 15px; border-radius: 5px; transition: background 0.3s; }
+        .nav-menu a:hover { background: rgba(255,255,255,0.2); }
+        .user-menu { display: flex; align-items: center; gap: 15px; }
+        .user-menu a { color: white; text-decoration: none; padding: 8px 16px; border: 1px solid rgba(255,255,255,0.3); border-radius: 20px; transition: all 0.3s; }
+        .user-menu a:hover { background: rgba(255,255,255,0.2); }
+
+        /* Mobile Menu Toggle */
+        .mobile-menu-toggle { display: none; background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; z-index: 1001; position: relative; }
+        .mobile-menu-toggle span { display: block; width: 25px; height: 3px; background: white; margin: 5px 0; transition: all 0.3s ease; }
+        .mobile-menu-toggle.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+        .mobile-menu-toggle.active span:nth-child(2) { opacity: 0; }
+        .mobile-menu-toggle.active span:nth-child(3) { transform: rotate(-45deg) translate(7px, -6px); }
+
+        /* Mobile Menu Overlay */
+        .mobile-menu-overlay { 
+            display: none; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100vh; 
+            background: rgba(0, 105, 148, 0.95); 
+            z-index: 1000; 
+            opacity: 0; 
+            visibility: hidden; 
+            transition: all 0.3s ease; 
+        }
+        .mobile-menu-overlay.active { 
+            opacity: 1; 
+            visibility: visible; 
+        }
+
+        .mobile-menu { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            height: 100%; 
+            gap: 30px; 
+            transform: translateY(-20px); 
+            transition: transform 0.3s ease; 
+        }
+        .mobile-menu-overlay.active .mobile-menu { 
+            transform: translateY(0); 
+        }
+
+        .mobile-menu a { 
+            color: white; 
+            text-decoration: none; 
+            font-size: 1.3rem; 
+            padding: 15px 30px; 
+            border-radius: 10px; 
+            transition: all 0.3s ease; 
+            text-align: center; 
+            min-width: 200px; 
+        }
+        .mobile-menu a:hover { 
+            background: rgba(255,255,255,0.2); 
+            transform: scale(1.05); 
+        }
+
+        /* Main Content */
+        .main-content { min-height: calc(100vh - 140px); padding: 40px 0; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+
+        /* Hero Section */
+        .hero { background: linear-gradient(rgba(0,105,148,0.8), rgba(0,168,204,0.8)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="%23006994" width="1200" height="600"/><circle fill="%2300a8cc" cx="200" cy="100" r="50" opacity="0.3"/><circle fill="%2300a8cc" cx="800" cy="200" r="80" opacity="0.2"/><circle fill="%2300a8cc" cx="1000" cy="400" r="60" opacity="0.3"/></svg>'); 
+                 color: white; text-align: center; padding: 80px 0; margin-bottom: 40px; }
+        .hero h1 { font-size: 3.5rem; margin-bottom: 20px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        .hero p { font-size: 1.3rem; margin-bottom: 30px; max-width: 600px; margin-left: auto; margin-right: auto; }
+        .cta-button { display: inline-block; background: #ff6b35; color: white; padding: 15px 30px; text-decoration: none; border-radius: 30px; font-weight: bold; transition: transform 0.3s; }
+        .cta-button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(255,107,53,0.4); }
+
+        /* Card Styles */
+        .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 30px; margin: 40px 0; }
+        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.1); transition: transform 0.3s; }
+        .card:hover { transform: translateY(-5px); }
+        .card-icon { font-size: 3rem; margin-bottom: 20px; display: block; }
+        .card h3 { color: #006994; margin-bottom: 15px; font-size: 1.4rem; }
+        .card p { color: #666; line-height: 1.6; }
+
+        /* Table Styles */
+        .data-table { width: 100%; border-collapse: collapse; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 5px 20px rgba(0,0,0,0.1); }
+        .data-table th, .data-table td { padding: 15px; text-align: left; border-bottom: 1px solid #eee; }
+        .data-table th { background: #006994; color: white; font-weight: 600; }
+        .data-table tr:hover { background: #f8f9fa; }
+
+        /* Messages */
+        .messages { margin: 20px 0; }
+        .alert { padding: 15px; border-radius: 8px; margin: 10px 0; }
+        .alert-success { background: #d4edda; color: #155724; border-left: 4px solid #28a745; }
+        .alert-error { background: #f8d7da; color: #721c24; border-left: 4px solid #dc3545; }
+
+        /* Footer */
+        .footer { background: #1a1a1a; color: white; padding: 40px 0 20px; }
+        .footer-content { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; }
+        .footer-section h3 { color: #00a8cc; margin-bottom: 20px; }
+        .footer-section p, .footer-section a { color: #ccc; text-decoration: none; line-height: 1.8; }
+        .footer-section a:hover { color: #00a8cc; }
+        .footer-bottom { text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #333; color: #888; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-container { position: relative; }
+            .nav-menu, .user-menu { display: none; }
+            .mobile-menu-toggle { display: block; }
+            .mobile-menu-overlay { display: block; }
+            .hero h1 { font-size: 2.5rem; }
+            .hero p { font-size: 1.1rem; }
+            .card-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="nav-container">
+            <div class="logo">CoralOffice</div>
+            <ul class="nav-menu">
+                <li><a href="{% url 'home:home' %}">Home</a></li>
+                <li><a href="{% url 'home:services' %}">Services</a></li>
+                <li><a href="{% url 'home:about' %}">About</a></li>
+                <li><a href="{% url 'home:contact' %}">Contact</a></li>
+                <li><a href="{% url 'users:user_list' %}">Staff</a></li>
+            </ul>
+            <div class="user-menu">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'users:profile' %}">{{ user.username }}</a>
+                    {% if user.userprofile.is_diving_center %}
+                        <a href="{% url 'users:diving_center_dashboard' %}">Dashboard</a>
+                    {% endif %}
+                    <a href="{% url 'users:logout' %}">Logout</a>
+                {% else %}
+                    <a href="{% url 'users:login' %}">Login</a>
+                    <a href="{% url 'users:signup' %}">Sign Up</a>
+                {% endif %}
+            </div>
+            <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </nav>
+
+        <!-- Mobile Menu Overlay -->
+        <div class="mobile-menu-overlay" id="mobileMenuOverlay">
+            <div class="mobile-menu">
+                <a href="{% url 'home:home' %}">Home</a>
+                <a href="{% url 'home:services' %}">Services</a>
+                <a href="{% url 'home:about' %}">About</a>
+                <a href="{% url 'home:contact' %}">Contact</a>
+                <a href="{% url 'users:user_list' %}">Staff</a>
+                <div style="border-top: 1px solid rgba(255,255,255,0.3); margin: 20px 0; width: 200px;"></div>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'users:profile' %}">{{ user.username }}</a>
+                    {% if user.userprofile.is_diving_center %}
+                        <a href="{% url 'users:diving_center_dashboard' %}">Dashboard</a>
+                    {% endif %}
+                    <a href="{% url 'users:logout' %}">Logout</a>
+                {% else %}
+                    <a href="{% url 'users:login' %}">Login</a>
+                    <a href="{% url 'users:signup' %}">Sign Up</a>
+                {% endif %}
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        {% if messages %}
+            <div class="container">
+                <div class="messages">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>CoralOffice</h3>
+                <p>Professional diving center management software designed for dive operators, instructors, and marine tourism businesses.</p>
+                <p>Making underwater adventures safer and more organized.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <p><a href="{% url 'home:services' %}">Our Services</a></p>
+                <p><a href="{% url 'home:about' %}">About Us</a></p>
+                <p><a href="{% url 'users:user_list' %}">Staff Directory</a></p>
+                <p><a href="{% url 'home:contact' %}">Contact Support</a></p>
+            </div>
+            <div class="footer-section">
+                <h3>Services</h3>
+                <p>Course Management</p>
+                <p>Equipment Tracking</p>
+                <p>Trip Planning</p>
+                <p>Customer Database</p>
+                <p>Safety Protocols</p>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Info</h3>
+                <p>📧 info@coraloffice.com</p>
+                <p>📞 +1 (555) CORAL-00</p>
+                <p>🏢 123 Ocean Drive<br>Coral Bay, Marine Islands</p>
+                <p>🕒 24/7 Support Available</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 CoralOffice. All rights reserved. | Dive safe, manage smart.</p>
+        </div>
+    </footer>
+<script>
+        // Mobile Menu Toggle Functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
+
+            mobileMenuToggle.addEventListener('click', function() {
+                mobileMenuToggle.classList.toggle('active');
+                mobileMenuOverlay.classList.toggle('active');
+
+                // Prevent body scroll when menu is open
+                if (mobileMenuOverlay.classList.contains('active')) {
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    document.body.style.overflow = '';
+                }
+            });
+
+            // Close menu when clicking on overlay or menu links
+            mobileMenuOverlay.addEventListener('click', function(e) {
+                if (e.target === mobileMenuOverlay || e.target.tagName === 'A') {
+                    mobileMenuToggle.classList.remove('active');
+                    mobileMenuOverlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+
+            // Close menu on window resize to desktop size
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 768) {
+                    mobileMenuToggle.classList.remove('active');
+                    mobileMenuOverlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

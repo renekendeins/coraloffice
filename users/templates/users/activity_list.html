@@ -1,0 +1,31 @@
+
+{% extends 'users/base.html' %}
+
+{% block users_title %}Activity Management - CoralOffice{% endblock %}
+
+{% block users_content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+    <h2>Activity Management</h2>
+    <a href="{% url 'users:add_activity' %}" class="btn">Add New Activity</a>
+</div>
+
+{% for activity in activities %}
+<div class="user-card">
+    <h3>{{ activity.name }}</h3>
+    {% if activity.description %}
+        <p><strong>Description:</strong> {{ activity.description }}</p>
+    {% endif %}
+    <p><strong>Duration:</strong> {{ activity.duration_minutes }} minutes</p>
+    <p><strong>Price:</strong> ${{ activity.price }}</p>
+    <p><strong>Created:</strong> {{ activity.created_at|date:"F d, Y" }}</p>
+    <div style="margin-top: 15px;">
+        <a href="{% url 'users:edit_activity' activity.id %}" class="btn" style="background: #ff9800; margin-right: 10px;">Edit</a>
+        <a href="{% url 'users:delete_activity' activity.id %}" class="btn" style="background: #f44336;">Delete</a>
+    </div>
+</div>
+{% empty %}
+<p>No activities created yet. <a href="{% url 'users:add_activity' %}">Create your first activity</a>.</p>
+{% endfor %}
+
+<a href="{% url 'users:diving_center_dashboard' %}" class="btn" style="background: #6c757d;">Back to Dashboard</a>
+{% endblock %}

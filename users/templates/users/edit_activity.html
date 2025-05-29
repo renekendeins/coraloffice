@@ -1,0 +1,25 @@
+
+{% extends 'users/base.html' %}
+
+{% block users_title %}Edit Activity - CoralOffice{% endblock %}
+
+{% block users_content %}
+<h2>Edit Activity: {{ activity.name }}</h2>
+<form method="post">
+    {% csrf_token %}
+    {% for field in form %}
+        <div class="form-group">
+            {{ field.label_tag }}
+            {{ field }}
+            {% if field.help_text %}
+                <small>{{ field.help_text }}</small>
+            {% endif %}
+            {% for error in field.errors %}
+                <div class="alert alert-error">{{ error }}</div>
+            {% endfor %}
+        </div>
+    {% endfor %}
+    <button type="submit" class="btn">Update Activity</button>
+    <a href="{% url 'users:activity_list' %}" class="btn" style="background: #6c757d;">Cancel</a>
+</form>
+{% endblock %}

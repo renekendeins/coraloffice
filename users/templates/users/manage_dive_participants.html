@@ -1,0 +1,29 @@
+{% extends 'users/base.html' %}
+
+{% block users_title %}Manage Participants for {{ dive.dive_site }}{% endblock %}
+
+{% block users_content %}
+<h2>Manage Participants for {{ dive.dive_site }}</h2>
+
+<h3>Current Participants</h3>
+<ul>
+    {% for participant in participants %}
+        <li>
+            {{ participant.customer.first_name }} {{ participant.customer.last_name }}
+            <form method="post" style="display:inline;">
+                {% csrf_token %}
+                <input type="hidden" name="customer" value="{{ participant.id }}">
+                <button type="submit" name="remove_participant" class="btn" style="background-color: red;">Remove</button>
+            </form>
+        </li>
+    {% endfor %}
+</ul>
+
+<h3>Add New Participant</h3>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn">Add Participant</button>
+</form>
+
+{% endblock %}
