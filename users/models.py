@@ -66,9 +66,22 @@ class DiveSchedule(models.Model):
         return self.customerdiveactivity_set.count()
 
 class CustomerDiveActivity(models.Model):
+    TANK_SIZE_CHOICES = [
+        ('10L', '10 Liters'),
+        ('12L', '12 Liters'),
+        ('15L', '15 Liters'),
+        ('18L', '18 Liters'),
+    ]
+    
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='dive_activities')
     dive_schedule = models.ForeignKey(DiveSchedule, on_delete=models.CASCADE, related_name='customer_activities')
     activity = models.ForeignKey(DiveActivity, on_delete=models.CASCADE, related_name='customer_bookings')
+    tank_size = models.CharField(max_length=10, choices=TANK_SIZE_CHOICES, default='12L')
+    needs_wetsuit = models.BooleanField(default=False)
+    needs_bcd = models.BooleanField(default=False)
+    needs_regulator = models.BooleanField(default=False)
+    needs_guide = models.BooleanField(default=False)
+    needs_insurance = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

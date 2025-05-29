@@ -371,38 +371,44 @@ def manage_dive_participants(request, dive_id):
     participants = CustomerDiveActivity.objects.filter(dive_schedule=dive)
 
     if request.method == 'POST':
+        # Handle participant removal
+        if 'remove_participant' in request.POST:
+            participant_id = request.POST.get('customer')
+            if participant_id:
+                participant = get_object_or_404(CustomerDiveActivity, id=int(participant_id))
+                participant.delete()
+                messages.success(request, 'Participant removed from the dive!')
+                return redirect('users:manage_dive_participants', dive_id=dive.id)
         
         # Handle adding a participant
-        form = CustomerDiveActivityForm(request.user, request.POST)
-        print("mmmm" + request.POST.get('customer'))
-        if form.is_valid():
-            
-            participant = form.save(commit=False)
-            participant.dive_schedule = dive
-            participant.save()
-            messages.success(request, 'Participant added to dive!')
-            return 
-            redirect('users:manage_dive_participants', dive_id=dive.id)
-    else:
-        form = CustomerDiveActivityForm(request.user)
-
-    # Logic to handle participant removal
-    if request.method == 'POST' and 'remove_participant' in request.POST:
+        elif 'add_participant' in request.POST:
+            form = CustomerDiveActivityForm(diving_center=request.user, dive_schedule=dive, data=request.POST)
+            if form.is_valid():
+                participant = form.save(commit=False)
+                participant.dive_schedule = dive
+                participant.save()
+                messages.success(request, 'Participant added to dive!')
+                return redirect('users:manage_dive_participants', dive_id=dive.id)
         
-        participant_id = request.POST.get(
-            'customer')  # Get the participant_id from the POST data
-        if participant_id:  # Ensure it's not empty
-            participant = get_object_or_404(
-                CustomerDiveActivity,
-                id=int(participant_id))  # Convert ID to int
-            participant.delete()
-            messages.success(request, 'Participant removed from the dive!')
-            return redirect('users:manage_dive_participants', dive_id=dive.id)
+        # Handle adding new customer
+        elif 'add_new_customer' in request.POST:
+            customer_form = CustomerForm(request.POST)
+            if customer_form.is_valid():
+                customer = customer_form.save(commit=False)
+                customer.diving_center = request.user
+                customer.save()
+                messages.success(request, 'New customer added successfully!')
+                return redirect('users:manage_dive_participants', dive_id=dive.id)
+    else:
+        form = CustomerDiveActivityForm(diving_center=request.user, dive_schedule=dive)
+
+    customer_form = CustomerForm()
 
     return render(request, 'users/manage_dive_participants.html', {
         'dive': dive,
         'participants': participants,
-        'form': form
+        'form': form,
+        'customer_form': customer_form
     })
 
 

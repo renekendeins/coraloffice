@@ -91,21 +91,13 @@
                 {% if day != 0 %}
                     <div class="calendar-day">{{ day }}</div>
                     {% if day in dives_by_day %}
-                {% for dive in dives %}
-                    <div class="dive-item" title="{{ dive.dive_site }} at {{ dive.time }}">
-                        {{ dive.time|time:"H:i" }} - {{ dive.dive_site }}
-                        <small>({{ dive.get_participant_count }} participants)</small>
-                        <a href="{% url 'users:add_customer_to_dive' dive.id %}" class="btn">Add Customer</a>
-                    </div>
-                {% endfor %}
                         {% for dive in dives_by_day|lookup:day %}
                         <a href="{% url 'users:dive_detail' dive.id %}">
-                <div class="dive-item" title="{{ dive.dive_site }} at {{ dive.time }}">
-                            {{ dive.time|time:"H:i" }} - {{ dive.dive_site }}
-                            <small>({{ dive.customers.count }} participants)</small>
-                           
-                        </div>
-                            </a>
+                            <div class="dive-item" title="{{ dive.dive_site }} at {{ dive.time }}">
+                                {{ dive.time|time:"H:i" }} - {{ dive.dive_site }}
+                                <small>({{ dive.get_participant_count }} participants)</small>
+                            </div>
+                        </a>
                         {% endfor %}
                     {% endif %}
                     <a href="{% url 'users:quick_schedule_dive' %}?date={{ year }}-{{ month|stringformat:'02d' }}-{{ day|stringformat:'02d' }}" class="add-dive-link">+ Add Dive</a>

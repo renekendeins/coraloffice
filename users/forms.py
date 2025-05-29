@@ -58,10 +58,11 @@ class DiveScheduleForm(forms.ModelForm):
 class CustomerDiveActivityForm(forms.ModelForm):
     class Meta:
         model = CustomerDiveActivity
-        fields = ('customer', 'activity')
+        fields = ('customer', 'activity', 'tank_size', 'needs_wetsuit', 'needs_bcd', 'needs_regulator', 'needs_guide', 'needs_insurance')
         widgets = {
             'customer': forms.Select(attrs={'class': 'form-control'}),
             'activity': forms.Select(attrs={'class': 'form-control'}),
+            'tank_size': forms.Select(attrs={'class': 'form-control'}),
         }
 
     def __init__(self, diving_center=None, dive_schedule=None, *args, **kwargs):
@@ -69,11 +70,10 @@ class CustomerDiveActivityForm(forms.ModelForm):
         if diving_center:
             self.fields['customer'].queryset = Customer.objects.filter(diving_center=diving_center)
             self.fields['activity'].queryset = DiveActivity.objects.filter(diving_center=diving_center)
-        print("ñññ",dive_schedule)
+        
         if dive_schedule:
             # Exclude customers already participating in this dive
             already_participating = CustomerDiveActivity.objects.filter(
-                dive_schedule=dive_schedule['customer'])
+                dive_schedule=dive_schedule).values_list('customer_id', flat=True)
             self.fields['customer'].queryset = self.fields['customer'].queryset.exclude(
-                id__in=already_participating
-            )
+                id__in=already_participating)
