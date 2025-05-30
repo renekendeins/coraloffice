@@ -124,20 +124,77 @@
 </div>
 
     {% if members and available_dives %}
-    <div style="margin-top: 20px;">
+    <div style="margin-top: 40px; border-top: 2px solid #e0e0e0; padding-top: 20px;">
         <h3>Schedule Group for Dives</h3>
-        <form method="post">
+        <form method="post" style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
             {% csrf_token %}
-            <label for="selected_dives">Select Dives:</label>
-            <select name="selected_dives" id="selected_dives" multiple>
-                {% for dive in available_dives %}
-                    <option value="{{ dive.id }}">{{ dive.date }} - {{ dive.dive_site.name }}</option>
-                {% endfor %}
-            </select>
-            <button type="submit" name="schedule_group" class="btn" style="background: #28a745;">Schedule Group</button>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                <div>
+                    <label for="selected_dives"><strong>Select Dives:</strong></label>
+                    <select name="selected_dives" id="selected_dives" multiple class="form-control" style="height: 120px;" required>
+                        {% for dive in available_dives %}
+                            <option value="{{ dive.id }}">{{ dive.date }} {{ dive.time }} - {{ dive.dive_site.name }}</option>
+                        {% endfor %}
+                    </select>
+                    <small class="text-muted">Hold Ctrl/Cmd to select multiple dives</small>
+                </div>
+                
+                <div>
+                    <label for="activity_id"><strong>Activity:</strong></label>
+                    <select name="activity_id" id="activity_id" class="form-control" required>
+                        <option value="">Select an activity</option>
+                        {% for activity in group_activities %}
+                            <option value="{{ activity.id }}">{{ activity.name }} - ${{ activity.price }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                <div>
+                    <label for="tank_size"><strong>Tank Size:</strong></label>
+                    <select name="tank_size" id="tank_size" class="form-control">
+                        {% for value, label in tank_choices %}
+                            <option value="{{ value }}" {% if value == '12L' %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div>
+                    <label><strong>Equipment Needed:</strong></label>
+                    <div style="margin-top: 8px;">
+                        <label style="display: block; font-weight: normal;">
+                            <input type="checkbox" name="needs_wetsuit" style="margin-right: 5px;"> Wetsuit
+                        </label>
+                        <label style="display: block; font-weight: normal;">
+                            <input type="checkbox" name="needs_bcd" style="margin-right: 5px;"> BCD
+                        </label>
+                        <label style="display: block; font-weight: normal;">
+                            <input type="checkbox" name="needs_regulator" style="margin-right: 5px;"> Regulator
+                        </label>
+                    </div>
+                </div>
+                
+                <div>
+                    <label><strong>Additional Services:</strong></label>
+                    <div style="margin-top: 8px;">
+                        <label style="display: block; font-weight: normal;">
+                            <input type="checkbox" name="needs_guide" style="margin-right: 5px;"> Guide
+                        </label>
+                        <label style="display: block; font-weight: normal;">
+                            <input type="checkbox" name="needs_insurance" style="margin-right: 5px;"> Insurance
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <button type="submit" name="schedule_group" class="btn" style="background: #28a745; color: white; padding: 12px 24px; font-size: 16px; width: 100%;">
+                Schedule {{ group.name }} for Selected Dives
+            </button>
         </form>
     </div>
     {% elif members %}
-    <p style="margin-top: 20px;">No upcoming dives available.  <a href="{% url 'users:schedule_dive' %}">Schedule a new dive</a> to be able to assign this group.</p>
+    <p style="margin-top: 20px;">No upcoming dives available. <a href="{% url 'users:schedule_dive' %}">Schedule a new dive</a> to be able to assign this group.</p>
     {% endif %}
 {% endblock %}

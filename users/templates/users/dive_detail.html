@@ -1,177 +1,338 @@
+
 {% extends 'users/base.html' %}
 
-{% block users_title %}Dive Details - CoralOffice{% endblock %}
+{% block users_title %}Dive Details - {{ dive.dive_site.name }}{% endblock %}
 
 {% block users_content %}
 <div class="container mt-4">
-    <div class="row">
-        <div class="col-md-8">
-            <div class="card">
-                <div class="card-header">
-                    <h5>Dive Details</h5>
-                </div>
+    <!-- Header Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card" style="background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%); color: white;">
                 <div class="card-body">
-                    <dl class="row">
-                        <dt class="col-sm-3">Date:</dt>
-                        <dd class="col-sm-9">{{ dive.date }}</dd>
-
-                        <dt class="col-sm-3">Time:</dt>
-                        <dd class="col-sm-9">{{ dive.time }}</dd>
-
-                        <dt class="col-sm-3">Dive Site:</dt>
-                        <dd class="col-sm-9">{{ dive.dive_site.name }} - {{ dive.dive_site.location }}</dd>
-
-                        <dt class="col-sm-3">Depth Range:</dt>
-                        <dd class="col-sm-9">{{ dive.dive_site.depth_min }}m - {{ dive.dive_site.depth_max }}m</dd>
-
-                        <dt class="col-sm-3">Difficulty:</dt>
-                        <dd class="col-sm-9">{{ dive.dive_site.get_difficulty_level_display }}</dd>
-
-                        <dt class="col-sm-3">Max Participants:</dt>
-                        <dd class="col-sm-9">{{ dive.max_participants }}</dd>
-
-                        <dt class="col-sm-3">Current Participants:</dt>
-                        <dd class="col-sm-9">{{ participants.count }}</dd>
-
-                        {% if dive.activity %}
-                        <dt class="col-sm-3">Activity:</dt>
-                        <dd class="col-sm-9">{{ dive.activity.name }} - ${{ dive.activity.price }}</dd>
-                        {% endif %}
-
-                        {% if dive.description %}
-                        <dt class="col-sm-3">Description:</dt>
-                        <dd class="col-sm-9">{{ dive.description }}</dd>
-                        {% endif %}
-
-                        {% if dive.special_notes %}
-                        <dt class="col-sm-3">Special Notes:</dt>
-                        <dd class="col-sm-9">{{ dive.special_notes }}</dd>
-                        {% endif %}
-                    </dl>
-
-                    <div class="mt-3">
-                        <a href="{% url 'users:manage_dive_participants' dive.id %}" class="btn btn-primary">
-                            Manage Participants
-                        </a>
-                        <a href="{% url 'users:edit_dive' dive.id %}" class="btn btn-secondary">
-                            Edit Dive
-                        </a>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h2 class="mb-1">{{ dive.dive_site.name }}</h2>
+                            <h5 class="mb-0 opacity-75">{{ dive.date|date:"F d, Y" }} at {{ dive.time|time:"g:i A" }}</h5>
+                        </div>
+                        <div class="text-end">
+                            <div class="h4 mb-1">{{ participants.count }}/{{ dive.max_participants }}</div>
+                            <small>Participants</small>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-4">
-            <div class="card mb-3">
-                <div class="card-header">
-                    <h5>Equipment Summary</h5>
+    </div>
+
+    <div class="row">
+        <!-- Main Details -->
+        <div class="col-lg-8">
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-info-circle me-2"></i>Dive Information
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="info-item mb-3">
+                                <span class="label">Location:</span>
+                                <span class="value">{{ dive.dive_site.location }}</span>
+                            </div>
+                            <div class="info-item mb-3">
+                                <span class="label">Depth Range:</span>
+                                <span class="value">{{ dive.dive_site.depth_min }}m - {{ dive.dive_site.depth_max }}m</span>
+                            </div>
+                            <div class="info-item mb-3">
+                                <span class="label">Difficulty:</span>
+                                <span class="badge 
+                                    {% if dive.dive_site.difficulty_level == 'BEGINNER' %}bg-success
+                                    {% elif dive.dive_site.difficulty_level == 'INTERMEDIATE' %}bg-warning
+                                    {% elif dive.dive_site.difficulty_level == 'ADVANCED' %}bg-danger
+                                    {% else %}bg-dark{% endif %}">
+                                    {{ dive.dive_site.get_difficulty_level_display }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            {% if dive.activity %}
+                            <div class="info-item mb-3">
+                                <span class="label">Activity:</span>
+                                <span class="value">{{ dive.activity.name }}</span>
+                            </div>
+                            <div class="info-item mb-3">
+                                <span class="label">Price:</span>
+                                <span class="value text-success fw-bold">${{ dive.activity.price }}</span>
+                            </div>
+                            {% endif %}
+                            <div class="info-item mb-3">
+                                <span class="label">Duration:</span>
+                                <span class="value">
+                                    {% if dive.activity %}{{ dive.activity.duration_minutes }} minutes{% else %}Standard dive{% endif %}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if dive.description %}
+                    <div class="mt-3 pt-3 border-top">
+                        <h6>Description:</h6>
+                        <p class="text-muted">{{ dive.description }}</p>
+                    </div>
+                    {% endif %}
+
+                    {% if dive.special_notes %}
+                    <div class="alert alert-info mt-3">
+                        <h6 class="alert-heading">
+                            <i class="fas fa-exclamation-triangle me-2"></i>Special Notes:
+                        </h6>
+                        <p class="mb-0">{{ dive.special_notes }}</p>
+                    </div>
+                    {% endif %}
+
+                    <div class="mt-4 pt-3 border-top">
+                        <a href="{% url 'users:manage_dive_participants' dive.id %}" class="btn btn-primary me-2">
+                            <i class="fas fa-users me-1"></i>Manage Participants
+                        </a>
+                        <a href="{% url 'users:edit_dive' dive.id %}" class="btn btn-secondary">
+                            <i class="fas fa-edit me-1"></i>Edit Dive
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Participants List -->
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-users me-2"></i>Participants ({{ participants.count }})
+                    </h5>
                 </div>
                 <div class="card-body">
                     {% if participants %}
-                        <h6>Tanks Needed:</h6>
-                        <ul class="list-unstyled">
+                        <div class="row">
+                            {% for participant in participants %}
+                            <div class="col-md-6 mb-3">
+                                <div class="participant-card p-3 border rounded">
+                                    <div class="d-flex justify-content-between align-items-start">
+                                        <div>
+                                            <h6 class="mb-1">{{ participant.customer.first_name }} {{ participant.customer.last_name }}</h6>
+                                            <small class="text-muted">{{ participant.activity.name }}</small>
+                                            
+                                            <!-- Group badges -->
+                                            {% for membership in participant.customer.group_memberships.all %}
+                                                {% if membership.group.diving_center == dive.diving_center %}
+                                                    <span class="badge bg-info ms-1">{{ membership.group.name }}</span>
+                                                {% endif %}
+                                            {% endfor %}
+                                            
+                                            <div class="mt-2">
+                                                <span class="badge bg-primary">{{ participant.tank_size }}</span>
+                                                <span class="badge bg-{{ participant.status|lower }}">{{ participant.get_status_display }}</span>
+                                            </div>
+                                            
+                                            {% if participant.needs_wetsuit or participant.needs_bcd or participant.needs_regulator %}
+                                            <div class="mt-1">
+                                                <small class="text-muted">Equipment: 
+                                                    {% if participant.needs_wetsuit %}<span class="badge badge-sm bg-secondary">Wetsuit</span> {% endif %}
+                                                    {% if participant.needs_bcd %}<span class="badge badge-sm bg-secondary">BCD</span> {% endif %}
+                                                    {% if participant.needs_regulator %}<span class="badge badge-sm bg-secondary">Regulator</span> {% endif %}
+                                                </small>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                            <p class="text-muted">No participants yet.</p>
+                            <a href="{% url 'users:manage_dive_participants' dive.id %}" class="btn btn-primary">Add Participants</a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="col-lg-4">
+            <!-- Equipment Summary -->
+            <div class="card mb-4">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-toolbox me-2"></i>Equipment Summary
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if participants %}
+                        <!-- Tank Summary -->
+                        <div class="equipment-section mb-4">
+                            <h6 class="text-primary mb-3">
+                                <i class="fas fa-tint me-2"></i>Tanks Required
+                            </h6>
                             {% regroup participants by tank_size as tank_groups %}
                             {% for tank_group in tank_groups %}
-                                <li><strong>{{ tank_group.grouper }}:</strong> {{ tank_group.list|length }} tanks</li>
+                                <div class="d-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded">
+                                    <span class="fw-bold">{{ tank_group.grouper }}</span>
+                                    <span class="badge bg-primary rounded-pill">{{ tank_group.list|length }}</span>
+                                </div>
                             {% endfor %}
-                        </ul>
+                        </div>
 
-                        <h6 class="mt-3">Equipment Required:</h6>
-                        <ul class="list-unstyled">
-                            <li><strong>Wetsuits:</strong> {% for p in participants %}{% if p.needs_wetsuit %}{{ forloop.counter0|add:1 }}{% if not forloop.last %}, {% endif %}{% endif %}{% endfor %} needed</li>
-                            <li><strong>BCDs:</strong> 
-                                {% for p in participants %}{% if p.needs_bcd %}{{ forloop.counter0|add:1 }}{% if not forloop.last %}, {% endif %}{% endif %}{% endfor %} needed
-                            </li>
-                            <li><strong>Regulators:</strong> 
-                                {% for p in participants %}{% if p.needs_regulator %}{{ forloop.counter0|add:1 }}{% if not forloop.last %}, {% endif %}{% endif %}{% endfor %} needed
-                            </li>
-                        </ul>
+                        <!-- Equipment Summary -->
+                        <div class="equipment-section mb-4">
+                            <h6 class="text-primary mb-3">
+                                <i class="fas fa-vest me-2"></i>Equipment Needed
+                            </h6>
+                            {% with wetsuit_count=0 bcd_count=0 regulator_count=0 %}
+                                {% for p in participants %}
+                                    {% if p.needs_wetsuit %}{% with wetsuit_count=wetsuit_count|add:1 %}{% endwith %}{% endif %}
+                                    {% if p.needs_bcd %}{% with bcd_count=bcd_count|add:1 %}{% endwith %}{% endif %}
+                                    {% if p.needs_regulator %}{% with regulator_count=regulator_count|add:1 %}{% endwith %}{% endif %}
+                                {% endfor %}
+                                
+                                <div class="d-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded">
+                                    <span>Wetsuits</span>
+                                    <span class="badge bg-info rounded-pill">
+                                        {% for p in participants %}{% if p.needs_wetsuit %}{{ forloop.counter0|add:1 }}{% if not forloop.last %}, {% endif %}{% endif %}{% empty %}0{% endfor %}
+                                    </span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded">
+                                    <span>BCDs</span>
+                                    <span class="badge bg-info rounded-pill">
+                                        {% for p in participants %}{% if p.needs_bcd %}{{ forloop.counter0|add:1 }}{% if not forloop.last %}, {% endif %}{% endif %}{% empty %}0{% endfor %}
+                                    </span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded">
+                                    <span>Regulators</span>
+                                    <span class="badge bg-info rounded-pill">
+                                        {% for p in participants %}{% if p.needs_regulator %}{{ forloop.counter0|add:1 }}{% if not forloop.last %}, {% endif %}{% endif %}{% empty %}0{% endfor %}
+                                    </span>
+                                </div>
+                            {% endwith %}
+                        </div>
 
-                        <h6 class="mt-3">Material Sizes Needed:</h6>
-                        <ul class="list-unstyled">
-                            {% for participant in participants %}
-                                <li>
-                                    <strong>{{ participant.customer.first_name }} {{ participant.customer.last_name }}:</strong><br>
-                                    <small>
-                                        Wetsuit: {{ participant.customer.get_wetsuit_size }}, 
-                                        BCD: {{ participant.customer.get_bcd_size }}, 
-                                        Fins: {{ participant.customer.get_fins_size }}
-                                    </small>
-                                </li>
-                            {% endfor %}
-                        </ul>
+                        <!-- Size Requirements -->
+                        <div class="equipment-section">
+                            <h6 class="text-primary mb-3">
+                                <i class="fas fa-ruler me-2"></i>Size Requirements
+                            </h6>
+                            <div class="size-list" style="max-height: 200px; overflow-y: auto;">
+                                {% for participant in participants %}
+                                    <div class="size-item p-2 border-bottom">
+                                        <div class="fw-bold">{{ participant.customer.first_name }} {{ participant.customer.last_name }}</div>
+                                        <small class="text-muted">
+                                            Wetsuit: {{ participant.customer.get_wetsuit_size }}, 
+                                            BCD: {{ participant.customer.get_bcd_size }}, 
+                                            Fins: {{ participant.customer.get_fins_size }}
+                                        </small>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
                     {% else %}
-                        <p class="text-muted">No equipment summary available yet.</p>
+                        <div class="text-center py-4">
+                            <i class="fas fa-toolbox fa-2x text-muted mb-2"></i>
+                            <p class="text-muted mb-0">No equipment summary available</p>
+                        </div>
                     {% endif %}
                 </div>
             </div>
 
-            <div class="card mb-3">
-                <div class="card-header">
-                    <h5>Activities Summary</h5>
+            <!-- Activities Summary -->
+            <div class="card">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0">
+                        <i class="fas fa-chart-pie me-2"></i>Activities Summary
+                    </h5>
                 </div>
                 <div class="card-body">
                     {% if participants %}
                         {% regroup participants by activity.name as activity_groups %}
-                        <ul class="list-unstyled">
-                            {% for activity_group in activity_groups %}
-                                <li class="mb-2">
-                                    <strong>{{ activity_group.grouper }}:</strong> 
-                                    <span class="badge bg-info">{{ activity_group.list|length }} participants</span>
-                                    <br>
-                                    <small class="text-muted">
-                                        ${{ activity_group.list.0.activity.price }} each 
-                                        (Total: ${{ activity_group.list.0.activity.price|floatformat:2 }}×{{ activity_group.list|length }})
-                                    </small>
-                                </li>
-                            {% endfor %}
-                        </ul>
-                    {% else %}
-                        <p class="text-muted">No activities scheduled yet.</p>
-                    {% endif %}
-                </div>
-            </div>
-
-            <div class="card">
-                <div class="card-header">
-                    <h5>Participants</h5>
-                </div>
-                <div class="card-body">
-                    {% if participants %}
-                        <div class="list-group list-group-flush">
-                            {% for participant in participants %}
-                                <div class="list-group-item px-0">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <div>
-                                            <strong>{{ participant.customer.first_name }} {{ participant.customer.last_name }}</strong>
-                                            <!-- Check if participant is part of a group -->
-                                            {% for membership in participant.customer.group_memberships.all %}
-                                                {% if membership.group.diving_center == dive.diving_center %}
-                                                    <span class="badge bg-secondary ms-1">{{ membership.group.name }}</span>
-                                                {% endif %}
-                                            {% endfor %}
-                                            <br>
-                                            <small class="text-muted">{{ participant.activity.name }}</small>
-                                        </div>
-                                        <span class="badge bg-primary">{{ participant.tank_size }}</span>
-                                    </div>
-                                    {% if participant.needs_wetsuit or participant.needs_bcd or participant.needs_regulator %}
-                                        <div class="mt-1">
-                                            <small class="text-muted">Needs: 
-                                                {% if participant.needs_wetsuit %}Wetsuit {% endif %}
-                                                {% if participant.needs_bcd %}BCD {% endif %}
-                                                {% if participant.needs_regulator %}Regulator {% endif %}
-                                            </small>
-                                        </div>
-                                    {% endif %}
+                        {% for activity_group in activity_groups %}
+                            <div class="activity-item p-3 mb-3 border rounded">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <h6 class="mb-0">{{ activity_group.grouper }}</h6>
+                                    <span class="badge bg-success rounded-pill">{{ activity_group.list|length }}</span>
                                 </div>
-                            {% endfor %}
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <small class="text-muted">${{ activity_group.list.0.activity.price }} per person</small>
+                                    <strong class="text-success">
+                                        ${% widthratio activity_group.list.0.activity.price 1 activity_group.list|length %}
+                                    </strong>
+                                </div>
+                            </div>
+                        {% endfor %}
+                        
+                        <!-- Total Revenue -->
+                        <div class="border-top pt-3">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <strong>Total Revenue:</strong>
+                                <strong class="text-success h5 mb-0">
+                                    ${% for participant in participants %}{{ participant.activity.price|floatformat:0 }}{% if not forloop.last %}+{% endif %}{% endfor %}
+                                </strong>
+                            </div>
                         </div>
                     {% else %}
-                        <p class="text-muted">No participants yet.</p>
+                        <div class="text-center py-4">
+                            <i class="fas fa-chart-pie fa-2x text-muted mb-2"></i>
+                            <p class="text-muted mb-0">No activities scheduled</p>
+                        </div>
                     {% endif %}
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+.info-item {
+    display: flex;
+    align-items: center;
+}
+
+.info-item .label {
+    font-weight: 600;
+    color: #6c757d;
+    min-width: 100px;
+    margin-right: 10px;
+}
+
+.info-item .value {
+    color: #212529;
+}
+
+.participant-card {
+    transition: all 0.2s ease;
+}
+
+.participant-card:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transform: translateY(-1px);
+}
+
+.equipment-section {
+    border-bottom: 1px solid #e9ecef;
+    padding-bottom: 15px;
+}
+
+.equipment-section:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.activity-item {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: 1px solid #dee2e6;
+}
+
+.badge-sm {
+    font-size: 0.7em;
+}
+</style>
 {% endblock %}
