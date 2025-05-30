@@ -1,3 +1,4 @@
+
 {% extends 'users/base.html' %}
 
 {% block users_title %}Manage Participants for {{ dive.dive_site }}{% endblock %}
@@ -168,14 +169,14 @@ function toggleDetails(participantId) {
             <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                 <div style="flex: 1;">
                     <h4>{{ participant.customer.first_name }} {{ participant.customer.last_name }} ({{ participant.activity.name }}) | {{ participant.get_tank_size_display }} | {{ participant.customer.get_language_display }}</h4>
-
+                    
                     <button class="btn" onclick="toggleDetails({{ participant.id }})">Show Details</button>
 
                     <div id="details-{{ participant.id }}" class="participant-details" style="display:none; margin-top: 10px;">
                         <p><strong>Certification Level:</strong> {{ participant.customer.certification_level|default:"Not specified" }}</p>
                         <p><strong>Country:</strong> {{ participant.customer.country|default:"Not specified" }} </p>
-
-
+                        
+                
                         </p>
                     </div>
 
@@ -194,7 +195,7 @@ function toggleDetails(participantId) {
                             <span style="color: #666;">None</span>
                         {% endif %}
                     </div>
-
+                    
                     <!-- Quick edit form -->
                     <div class="quick-edit-form" id="edit-form-{{ participant.id }}">
                         <form method="post" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
@@ -285,7 +286,7 @@ function toggleDetails(participantId) {
             {{ form.tank_size }}
         </div>
     </div>
-
+    
     <div class="checkbox-group">
         <label><input type="checkbox" name="needs_wetsuit" {% if form.needs_wetsuit.value %}checked{% endif %}> Wetsuit</label>
         <label><input type="checkbox" name="needs_bcd" {% if form.needs_bcd.value %}checked{% endif %}> BCD</label>
@@ -293,7 +294,7 @@ function toggleDetails(participantId) {
         <label><input type="checkbox" name="needs_guide" {% if form.needs_guide.value %}checked{% endif %}> Guide</label>
         <label><input type="checkbox" name="needs_insurance" {% if form.needs_insurance.value %}checked{% endif %}> Insurance</label>
     </div>
-
+    
     <div style="margin-top: 20px;">
         <button type="submit" name="add_participant" class="btn">Add Participant/Group</button>
         <a href="{% url 'users:dive_detail' dive.id %}" class="btn" style="background: #6c757d;">Back to Dive Details</a>
@@ -317,7 +318,7 @@ function toggleDetails(participantId) {
                     {{ customer_form.last_name }}
                 </div>
             </div>
-
+            
             <div class="form-row">
                 <div class="form-group">
                     <label for="{{ customer_form.email.id_for_label }}">Email:</label>
@@ -328,7 +329,7 @@ function toggleDetails(participantId) {
                     {{ customer_form.phone_number }}
                 </div>
             </div>
-
+            
             <div class="form-row">
                 <div class="form-group">
                     <label for="{{ customer_form.country.id_for_label }}">Country:</label>
@@ -339,7 +340,7 @@ function toggleDetails(participantId) {
                     {{ customer_form.language }}
                 </div>
             </div>
-
+            
             <div class="form-row">
                 <div class="form-group">
                     <label for="{{ customer_form.birthday.id_for_label }}">Birthday:</label>
@@ -350,19 +351,19 @@ function toggleDetails(participantId) {
                     {{ customer_form.certification_level }}
                 </div>
             </div>
-
+            
             <div class="form-row">
                 <div class="form-group">
                     <label for="{{ customer_form.emergency_contact.id_for_label }}">Emergency Contact:</label>
                     {{ customer_form.emergency_contact }}
                 </div>
             </div>
-
+            
             <div class="form-group">
                 <label for="{{ customer_form.medical_conditions.id_for_label }}">Medical Conditions:</label>
                 {{ customer_form.medical_conditions }}
             </div>
-
+            
             <div style="margin-top: 20px;">
                 <button type="submit" name="add_new_customer" class="btn">Add Customer</button>
                 <button type="button" onclick="closeModal()" class="btn" style="background: #6c757d;">Cancel</button>
@@ -388,92 +389,104 @@ function hideQuickEdit(participantId) {
     document.getElementById("edit-form-" + participantId).style.display = "none";
 }
 
-// Customer and group search functionality
-        const customerSearch = document.getElementById('customer-search');
-        const customerSelect = document.getElementById('{{ form.customer.id_for_label }}');
-        const groupSelect = document.getElementById('{{ form.selected_group.id_for_label }}');
-        const suggestionsDiv = document.getElementById('search-suggestions');
+// Enhanced search functionality for customers and groups
+const customerSearch = document.getElementById('customer-search');
+const customerSelect = document.getElementById('{{ form.customer.id_for_label }}');
+const groupSelect = document.getElementById('{{ form.selected_group.id_for_label }}');
+const suggestionsDiv = document.getElementById('search-suggestions');
 
-        const availableCustomers = [
-            {% for customer in form.customer.field.queryset %}
-            {
-                id: {{ customer.id }},
-                name: "{{ customer.first_name }} {{ customer.last_name }}",
-                country: "{{ customer.get_country_display|default:'Unknown' }}",
-                certification: "{{ customer.get_certification_level_display }}"
-            },
-            {% endfor %}
-        ];
-
-        const availableGroups = [
-            {% for group in form.selected_group.field.queryset %}
-            {
-                id: {{ group.id }},
-                name: "{{ group.name }}",
-                country: "{{ group.get_country_display|default:'Unknown' }}",
-                members: {{ group.members.count }}
-            },
-            {% endfor %}
-        ];
+// Create combined data structure for customers and groups
+const searchData = {
+    customers: [
+        {% for customer in form.customer.field.queryset %}
+        {
+            id: {{ customer.id }},
+            name: "{{ customer.first_name }} {{ customer.last_name }}",
+            type: "customer",
+            country: "{{ customer.get_country_display|default:'Unknown' }}",
+            certification: "{{ customer.get_certification_level_display }}"
+        },
+        {% endfor %}
+    ],
+    groups: [
+        {% for group in form.selected_group.field.queryset %}
+        {
+            id: {{ group.id }},
+            name: "{{ group.name }}",
+            type: "group",
+            country: "{{ group.get_country_display|default:'Unknown' }}",
+            members: {{ group.members.count }}
+        },
+        {% endfor %}
+    ]
+};
 
 customerSearch.addEventListener('input', function() {
-            const query = this.value.toLowerCase();
-            if (query.length < 2) {
-                suggestionsDiv.style.display = 'none';
-                return;
-            }
-
-            const customerMatches = availableCustomers.filter(customer => 
-                customer.name.toLowerCase().includes(query)
-            );
-
-            const groupMatches = availableGroups.filter(group => 
-                group.name.toLowerCase().includes(query)
-            );
-
-            const allMatches = [...customerMatches, ...groupMatches];
-
-            if (allMatches.length > 0) {
-                suggestionsDiv.innerHTML = allMatches.map(item => {
-                    if (item.type === 'customer') {
-                        return `<div class="suggestion-item" data-type="customer" data-value="${item.id}" style="padding: 10px; cursor: pointer; border-bottom: 1px solid #eee;">
-                            <strong>👤 ${item.name}</strong><br>
-                            <small>${item.country} • ${item.certification}</small>
-                        </div>`;
-                    } else {
-                        return `<div class="suggestion-item" data-type="group" data-value="${item.id}" style="padding: 10px; cursor: pointer; border-bottom: 1px solid #eee; background-color: #f8f9fa;">
-                            <strong>👥 ${item.name} (Group)</strong><br>
-                            <small>${item.country} • ${item.members}</small>
-                        </div>`;
-                    }
-                }).join('');
-                suggestionsDiv.style.display = 'block';
+    const query = this.value.toLowerCase();
+    if (query.length < 2) {
+        suggestionsDiv.style.display = 'none';
+        return;
+    }
+    
+    // Search both customers and groups
+    const customerMatches = searchData.customers.filter(customer => 
+        customer.name.toLowerCase().includes(query)
+    );
+    
+    const groupMatches = searchData.groups.filter(group => 
+        group.name.toLowerCase().includes(query)
+    );
+    
+    const allMatches = [...customerMatches, ...groupMatches];
+    
+    if (allMatches.length > 0) {
+        suggestionsDiv.innerHTML = allMatches.map(item => {
+            if (item.type === 'customer') {
+                return `<div class="suggestion-item" data-type="customer" data-id="${item.id}">
+                    <div>
+                        <strong>${item.name}</strong><br>
+                        <small>${item.country} • ${item.certification}</small>
+                    </div>
+                    <span class="suggestion-type">Customer</span>
+                </div>`;
             } else {
-                suggestionsDiv.style.display = 'none';
+                return `<div class="suggestion-item" data-type="group" data-id="${item.id}">
+                    <div>
+                        <strong>${item.name}</strong><br>
+                        <small>${item.country} • ${item.members} members</small>
+                    </div>
+                    <span class="group-badge">Group</span>
+                </div>`;
             }
-        });
+        }).join('');
+        suggestionsDiv.style.display = 'block';
+    } else {
+        suggestionsDiv.style.display = 'none';
+    }
+});
 
+// Handle suggestion clicks
 suggestionsDiv.addEventListener('click', function(e) {
-            const suggestionItem = e.target.closest('.suggestion-item');
-            if (suggestionItem) {
-                const itemType = suggestionItem.getAttribute('data-type');
-                const itemId = suggestionItem.getAttribute('data-value');
-
-                if (itemType === 'customer') {
-                    const customer = availableCustomers.find(c => c.id == itemId);
-                    customerSelect.value = itemId;
-                    groupSelect.value = '';
-                    customerSearch.value = customer.name;
-                } else if (itemType === 'group') {
-                    const group = availableGroups.find(g => g.id == itemId);
-                    groupSelect.value = itemId;
-                    customerSelect.value = '';
-                    customerSearch.value = group.name + ' (Group)';
-                }
-
-                suggestionsDiv.style.display = 'none';
-            }
-        });
+    const suggestionItem = e.target.closest('.suggestion-item');
+    if (suggestionItem) {
+        const type = suggestionItem.getAttribute('data-type');
+        const id = suggestionItem.getAttribute('data-id');
+        
+        if (type === 'customer') {
+            const customer = searchData.customers.find(c => c.id == id);
+            customerSelect.value = id;
+            groupSelect.value = '';
+            customerSearch.value = customer.name;
+        } else if (type === 'group') {
+            const group = searchData.groups.find(g => g.id == id);
+            groupSelect.value = id;
+            customerSelect.value = '';
+            customerSearch.value = group.name + ' (Group)';
+        }
+        
+        suggestionsDiv.style.display = 'none';
+    }
+});
 
 // Hide suggestions when clicking outside
 document.addEventListener('click', function(e) {

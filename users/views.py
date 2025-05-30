@@ -516,16 +516,7 @@ def dive_detail(request, dive_id):
     dive = get_object_or_404(DiveSchedule,
                              id=dive_id,
                              diving_center=request.user)
-    participants = CustomerDiveActivity.objects.filter(dive_schedule=dive).select_related('customer', 'activity')
-
-    # Calculate equipment summaries
-    equipment_summary = {
-        'wetsuits_needed': participants.filter(needs_wetsuit=True).count(),
-        'bcds_needed': participants.filter(needs_bcd=True).count(),
-        'regulators_needed': participants.filter(needs_regulator=True).count(),
-        'guides_needed': participants.filter(needs_guide=True).count(),
-        'insurance_needed': participants.filter(needs_insurance=True).count(),
-    }
+    participants = CustomerDiveActivity.objects.filter(dive_schedule=dive)
 
     if request.method == 'POST':
         # Handle updating the dive details logic here if needed
@@ -535,8 +526,7 @@ def dive_detail(request, dive_id):
 
     return render(request, 'users/dive_detail.html', {
         'dive': dive,
-        'participants': participants,
-        'equipment_summary': equipment_summary
+        'participants': participants
     })
 
 

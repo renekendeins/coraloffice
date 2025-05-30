@@ -111,20 +111,6 @@ class CustomerDiveActivityForm(forms.ModelForm):
                 dive_schedule=dive_schedule).values_list('customer_id', flat=True)
             self.fields['customer'].queryset = self.fields['customer'].queryset.exclude(
                 id__in=already_participating)
-    
-    def clean(self):
-        cleaned_data = super().clean()
-        customer = cleaned_data.get('customer')
-        selected_group = cleaned_data.get('selected_group')
-        
-        # If a group is selected, customer is not required
-        if selected_group and not customer:
-            # This is valid - we're adding a group
-            pass
-        elif not selected_group and not customer:
-            raise forms.ValidationError("Please select either a customer or a group.")
-        
-        return cleaned_data
 
 class QuickUpdateParticipantForm(forms.ModelForm):
     class Meta:
