@@ -122,4 +122,22 @@
     {% endif %}
     </div>
 </div>
+
+    {% if members and available_dives %}
+    <div style="margin-top: 20px;">
+        <h3>Schedule Group for Dives</h3>
+        <form method="post">
+            {% csrf_token %}
+            <label for="selected_dives">Select Dives:</label>
+            <select name="selected_dives" id="selected_dives" multiple>
+                {% for dive in available_dives %}
+                    <option value="{{ dive.id }}">{{ dive.date }} - {{ dive.dive_site.name }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit" name="schedule_group" class="btn" style="background: #28a745;">Schedule Group</button>
+        </form>
+    </div>
+    {% elif members %}
+    <p style="margin-top: 20px;">No upcoming dives available.  <a href="{% url 'users:schedule_dive' %}">Schedule a new dive</a> to be able to assign this group.</p>
+    {% endif %}
 {% endblock %}

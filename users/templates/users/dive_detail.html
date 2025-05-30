@@ -1,50 +1,177 @@
-
 {% extends 'users/base.html' %}
 
 {% block users_title %}Dive Details - CoralOffice{% endblock %}
 
 {% block users_content %}
-<h2>Dive Details: {{ dive.dive_site }}</h2>
-<p><strong>Date:</strong> {{ dive.date }} | <strong>Time:</strong> {{ dive.time }}</p>
-<p><strong>Max Participants:</strong> {{ dive.max_participants }}</p>
-<p><strong>Current Participants:</strong> {{ participants.count }}</p>
-{% if dive.description %}
-    <p><strong>Description:</strong> {{ dive.description }}</p>
-{% endif %}
-{% if dive.special_notes %}
-    <div style="background-color: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 5px; margin: 15px 0;">
-        <h4 style="color: #856404; margin-top: 0;">⚠️ Important Notes</h4>
-        <p style="margin-bottom: 0; white-space: pre-line;">{{ dive.special_notes }}</p>
-    </div>
-{% endif %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Dive Details</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-3">Date:</dt>
+                        <dd class="col-sm-9">{{ dive.date }}</dd>
 
-<h3>Current Participants ({{ participants.count }}/{{ dive.max_participants }})</h3>
-{% if participants %}
-<div style="margin-bottom: 20px;">
-    {% for participant in participants %}
-    <div style="border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 5px;">
-        <h4>{{ participant.customer.first_name }} {{ participant.customer.last_name }}</h4>
-        <p><strong>Certification Level:</strong> {{ participant.customer.certification_level|default:"Not specified" }}</p>
-        <p><strong>Tank Size:</strong> {{ participant.get_tank_size_display }}</p>
-        <p><strong>Activity:</strong> {{ participant.activity.name }}</p>
-        <div style="margin-top: 10px;">
-            <strong>Equipment Needed:</strong>
-            {% if participant.needs_wetsuit %}<span style="background: #4CAF50; color: white; padding: 2px 6px; margin: 2px; border-radius: 3px; font-size: 12px;">Wetsuit</span>{% endif %}
-            {% if participant.needs_bcd %}<span style="background: #4CAF50; color: white; padding: 2px 6px; margin: 2px; border-radius: 3px; font-size: 12px;">BCD</span>{% endif %}
-            {% if participant.needs_regulator %}<span style="background: #4CAF50; color: white; padding: 2px 6px; margin: 2px; border-radius: 3px; font-size: 12px;">Regulator</span>{% endif %}
-            {% if participant.needs_guide %}<span style="background: #4CAF50; color: white; padding: 2px 6px; margin: 2px; border-radius: 3px; font-size: 12px;">Guide</span>{% endif %}
-            {% if participant.needs_insurance %}<span style="background: #4CAF50; color: white; padding: 2px 6px; margin: 2px; border-radius: 3px; font-size: 12px;">Insurance</span>{% endif %}
-            {% if not participant.needs_wetsuit and not participant.needs_bcd and not participant.needs_regulator and not participant.needs_guide and not participant.needs_insurance %}
-                <span style="color: #666;">None</span>
-            {% endif %}
+                        <dt class="col-sm-3">Time:</dt>
+                        <dd class="col-sm-9">{{ dive.time }}</dd>
+
+                        <dt class="col-sm-3">Dive Site:</dt>
+                        <dd class="col-sm-9">{{ dive.dive_site.name }} - {{ dive.dive_site.location }}</dd>
+
+                        <dt class="col-sm-3">Depth Range:</dt>
+                        <dd class="col-sm-9">{{ dive.dive_site.depth_min }}m - {{ dive.dive_site.depth_max }}m</dd>
+
+                        <dt class="col-sm-3">Difficulty:</dt>
+                        <dd class="col-sm-9">{{ dive.dive_site.get_difficulty_level_display }}</dd>
+
+                        <dt class="col-sm-3">Max Participants:</dt>
+                        <dd class="col-sm-9">{{ dive.max_participants }}</dd>
+
+                        <dt class="col-sm-3">Current Participants:</dt>
+                        <dd class="col-sm-9">{{ participants.count }}</dd>
+
+                        {% if dive.activity %}
+                        <dt class="col-sm-3">Activity:</dt>
+                        <dd class="col-sm-9">{{ dive.activity.name }} - ${{ dive.activity.price }}</dd>
+                        {% endif %}
+
+                        {% if dive.description %}
+                        <dt class="col-sm-3">Description:</dt>
+                        <dd class="col-sm-9">{{ dive.description }}</dd>
+                        {% endif %}
+
+                        {% if dive.special_notes %}
+                        <dt class="col-sm-3">Special Notes:</dt>
+                        <dd class="col-sm-9">{{ dive.special_notes }}</dd>
+                        {% endif %}
+                    </dl>
+
+                    <div class="mt-3">
+                        <a href="{% url 'users:manage_dive_participants' dive.id %}" class="btn btn-primary">
+                            Manage Participants
+                        </a>
+                        <a href="{% url 'users:edit_dive' dive.id %}" class="btn btn-secondary">
+                            Edit Dive
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5>Equipment Summary</h5>
+                </div>
+                <div class="card-body">
+                    {% if participants %}
+                        <h6>Tanks Needed:</h6>
+                        <ul class="list-unstyled">
+                            {% regroup participants by tank_size as tank_groups %}
+                            {% for tank_group in tank_groups %}
+                                <li><strong>{{ tank_group.grouper }}:</strong> {{ tank_group.list|length }} tanks</li>
+                            {% endfor %}
+                        </ul>
+
+                        <h6 class="mt-3">Equipment Required:</h6>
+                        <ul class="list-unstyled">
+                            <li><strong>Wetsuits:</strong> {% for p in participants %}{% if p.needs_wetsuit %}{{ forloop.counter0|add:1 }}{% if not forloop.last %}, {% endif %}{% endif %}{% endfor %} needed</li>
+                            <li><strong>BCDs:</strong> 
+                                {% for p in participants %}{% if p.needs_bcd %}{{ forloop.counter0|add:1 }}{% if not forloop.last %}, {% endif %}{% endif %}{% endfor %} needed
+                            </li>
+                            <li><strong>Regulators:</strong> 
+                                {% for p in participants %}{% if p.needs_regulator %}{{ forloop.counter0|add:1 }}{% if not forloop.last %}, {% endif %}{% endif %}{% endfor %} needed
+                            </li>
+                        </ul>
+
+                        <h6 class="mt-3">Material Sizes Needed:</h6>
+                        <ul class="list-unstyled">
+                            {% for participant in participants %}
+                                <li>
+                                    <strong>{{ participant.customer.first_name }} {{ participant.customer.last_name }}:</strong><br>
+                                    <small>
+                                        Wetsuit: {{ participant.customer.get_wetsuit_size }}, 
+                                        BCD: {{ participant.customer.get_bcd_size }}, 
+                                        Fins: {{ participant.customer.get_fins_size }}
+                                    </small>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted">No equipment summary available yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card mb-3">
+                <div class="card-header">
+                    <h5>Activities Summary</h5>
+                </div>
+                <div class="card-body">
+                    {% if participants %}
+                        {% regroup participants by activity.name as activity_groups %}
+                        <ul class="list-unstyled">
+                            {% for activity_group in activity_groups %}
+                                <li class="mb-2">
+                                    <strong>{{ activity_group.grouper }}:</strong> 
+                                    <span class="badge bg-info">{{ activity_group.list|length }} participants</span>
+                                    <br>
+                                    <small class="text-muted">
+                                        ${{ activity_group.list.0.activity.price }} each 
+                                        (Total: ${{ activity_group.list.0.activity.price|floatformat:2 }}×{{ activity_group.list|length }})
+                                    </small>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <p class="text-muted">No activities scheduled yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h5>Participants</h5>
+                </div>
+                <div class="card-body">
+                    {% if participants %}
+                        <div class="list-group list-group-flush">
+                            {% for participant in participants %}
+                                <div class="list-group-item px-0">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <strong>{{ participant.customer.first_name }} {{ participant.customer.last_name }}</strong>
+                                            <!-- Check if participant is part of a group -->
+                                            {% for membership in participant.customer.group_memberships.all %}
+                                                {% if membership.group.diving_center == dive.diving_center %}
+                                                    <span class="badge bg-secondary ms-1">{{ membership.group.name }}</span>
+                                                {% endif %}
+                                            {% endfor %}
+                                            <br>
+                                            <small class="text-muted">{{ participant.activity.name }}</small>
+                                        </div>
+                                        <span class="badge bg-primary">{{ participant.tank_size }}</span>
+                                    </div>
+                                    {% if participant.needs_wetsuit or participant.needs_bcd or participant.needs_regulator %}
+                                        <div class="mt-1">
+                                            <small class="text-muted">Needs: 
+                                                {% if participant.needs_wetsuit %}Wetsuit {% endif %}
+                                                {% if participant.needs_bcd %}BCD {% endif %}
+                                                {% if participant.needs_regulator %}Regulator {% endif %}
+                                            </small>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <p class="text-muted">No participants yet.</p>
+                    {% endif %}
+                </div>
+            </div>
         </div>
     </div>
-    {% endfor %}
 </div>
-{% else %}
-<p>No participants registered for this dive.</p>
-{% endif %}
-
-<a href="{% url 'users:manage_dive_participants' dive.id %}" class="btn">Manage Participants</a>
-<a href="{% url 'users:dive_calendar' %}" class="btn" style="background: #6c75:7d;">Back to Calendar</a>
 {% endblock %}

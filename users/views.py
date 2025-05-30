@@ -733,6 +733,13 @@ def manage_group_members(request, group_id):
     available_customers = Customer.objects.filter(diving_center=request.user).exclude(
         id__in=members.values_list('customer_id', flat=True)
     )
+    
+    # Get available dives for scheduling
+    from datetime import date
+    available_dives = DiveSchedule.objects.filter(
+        diving_center=request.user,
+        date__gte=date.today()
+    ).order_by('date', 'time')
 
     if request.method == 'POST':
         if 'add_member' in request.POST:
@@ -750,11 +757,60 @@ def manage_group_members(request, group_id):
                 member.delete()
                 messages.success(request, 'Member removed from group!')
                 return redirect('users:manage_group_members', group_id=group.id)
+        
+        elif 'schedule_group' in request.POST:
+            dive_ids = request.POST.getlist('selected_dives')
+            activity_id = request.POST.get('activity_id')
+            tank_size = request.POST.get('tank_size', '12L')
+            needs_wetsuit = 'needs_wetsuit' in request.POST
+            needs_bcd = 'needs_bcd' in request.POST
+            needs_regulator = 'needs_regulator' in request.POST
+            needs_guide = 'needs_guide' in request.POST
+            needs_insurance = 'needs_insurance' in request.POST
+            
+            if dive_ids and activity_id:
+                activity = get_object_or_404(DiveActivity, id=activity_id, diving_center=request.user)
+                scheduled_count = 0
+                
+                for dive_id in dive_ids:
+                    dive = get_object_or_404(DiveSchedule, id=dive_id, diving_center=request.user)
+                    
+                    # Add all group members to this dive
+                    for member in members:
+                        # Check if member not already in this dive
+                        if not CustomerDiveActivity.objects.filter(
+                            dive_schedule=dive, 
+                            customer=member.customer
+                        ).exists():
+                            CustomerDiveActivity.objects.create(
+                                customer=member.customer,
+                                dive_schedule=dive,
+                                activity=activity,
+                                tank_size=tank_size,
+                                needs_wetsuit=needs_wetsuit,
+                                needs_bcd=needs_bcd,
+                                needs_regulator=needs_regulator,
+                                needs_guide=needs_guide,
+                                needs_insurance=needs_insurance,
+                            )
+                            scheduled_count += 1
+                
+                messages.success(request, f'Successfully scheduled {group.name} for {len(dive_ids)} dive(s)! Added {scheduled_count} participant slots.')
+                return redirect('users:manage_group_members', group_id=group.id)
+            else:
+                messages.error(request, 'Please select at least one dive and an activity.')
+
+    # Get group activities and tank size choices for the form
+    group_activities = DiveActivity.objects.filter(diving_center=request.user)
+    tank_choices = CustomerDiveActivity.TANK_SIZE_CHOICES
 
     return render(request, 'users/manage_group_members.html', {
         'group': group,
         'members': members,
-        'available_customers': available_customers
+        'available_customers': available_customers,
+        'available_dives': available_dives,
+        'group_activities': group_activities,
+        'tank_choices': tank_choices,
     })
 
 
