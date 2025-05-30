@@ -206,7 +206,7 @@ class DiveSchedule(models.Model):
     description = models.TextField(blank=True)
     special_notes = models.TextField(blank=True, help_text="Special requirements or important notes for this dive")
     created_at = models.DateTimeField(auto_now_add=True)
-    activity = models.ForeignKey(DiveActivity, on_delete=models.SET_NULL, null=True, blank=True)
+    #activity = models.ForeignKey(DiveActivity, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return f"Dive at {self.dive_site} - {self.date} at {self.time}"
