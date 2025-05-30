@@ -165,13 +165,24 @@
                             <h6 class="text-primary mb-3">
                                 <i class="fas fa-tint me-2"></i>Tanks Required
                             </h6>
-                            {% regroup participants by tank_size as tank_groups %}
-                            {% for tank_group in tank_groups %}
-                                <div class="d-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded">
-                                    <span class="fw-bold">{{ tank_group.grouper }}</span>
-                                    <span class="badge bg-primary rounded-pill">{{ tank_group.list|length }}</span>
+                            {% if tank_counts %}
+                                {% for tank in tank_counts %}
+                                    <div class="d-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded">
+                                        <span class="fw-bold">{{ tank.tank_size }} Tank</span>
+                                        <span class="badge bg-primary rounded-pill">{{ tank.count }}</span>
+                                    </div>
+                                {% endfor %}
+                                
+                                <!-- Total tanks count -->
+                                <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top fw-bold">
+                                    <span class="text-dark">Total Tanks:</span>
+                                    <span class="badge bg-dark rounded-pill">{{ participants.count }}</span>
                                 </div>
-                            {% endfor %}
+                            {% else %}
+                                <div class="text-center py-3">
+                                    <small class="text-muted">No tanks required yet</small>
+                                </div>
+                            {% endif %}
                         </div>
 
                         <!-- Equipment Summary -->
@@ -179,32 +190,27 @@
                             <h6 class="text-primary mb-3">
                                 <i class="fas fa-vest me-2"></i>Equipment Needed
                             </h6>
-                            {% with wetsuit_count=0 bcd_count=0 regulator_count=0 %}
-                                {% for p in participants %}
-                                    {% if p.needs_wetsuit %}{% with wetsuit_count=wetsuit_count|add:1 %}{% endwith %}{% endif %}
-                                    {% if p.needs_bcd %}{% with bcd_count=bcd_count|add:1 %}{% endwith %}{% endif %}
-                                    {% if p.needs_regulator %}{% with regulator_count=regulator_count|add:1 %}{% endwith %}{% endif %}
-                                {% endfor %}
-                                
-                                <div class="d-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded">
-                                    <span>Wetsuits</span>
-                                    <span class="badge bg-info rounded-pill">
-                                        {% for p in participants %}{% if p.needs_wetsuit %}{{ forloop.counter0|add:1 }}{% if not forloop.last %}, {% endif %}{% endif %}{% empty %}0{% endfor %}
-                                    </span>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded">
-                                    <span>BCDs</span>
-                                    <span class="badge bg-info rounded-pill">
-                                        {% for p in participants %}{% if p.needs_bcd %}{{ forloop.counter0|add:1 }}{% if not forloop.last %}, {% endif %}{% endif %}{% empty %}0{% endfor %}
-                                    </span>
-                                </div>
-                                <div class="d-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded">
-                                    <span>Regulators</span>
-                                    <span class="badge bg-info rounded-pill">
-                                        {% for p in participants %}{% if p.needs_regulator %}{{ forloop.counter0|add:1 }}{% if not forloop.last %}, {% endif %}{% endif %}{% empty %}0{% endfor %}
-                                    </span>
-                                </div>
-                            {% endwith %}
+                            
+                            <div class="d-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded">
+                                <span>Wetsuits</span>
+                                <span class="badge bg-info rounded-pill">{{ equipment_counts.wetsuits }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded">
+                                <span>BCDs</span>
+                                <span class="badge bg-info rounded-pill">{{ equipment_counts.bcds }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded">
+                                <span>Regulators</span>
+                                <span class="badge bg-info rounded-pill">{{ equipment_counts.regulators }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded">
+                                <span>Guides</span>
+                                <span class="badge bg-info rounded-pill">{{ equipment_counts.guides }}</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded">
+                                <span>Insurance</span>
+                                <span class="badge bg-info rounded-pill">{{ equipment_counts.insurance }}</span>
+                            </div>
                         </div>
 
                         <!-- Size Requirements -->

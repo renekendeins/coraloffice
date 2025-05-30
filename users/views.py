@@ -518,6 +518,21 @@ def dive_detail(request, dive_id):
                              diving_center=request.user)
     participants = CustomerDiveActivity.objects.filter(dive_schedule=dive)
 
+    # Calculate equipment counts
+    equipment_counts = {
+        'wetsuits': participants.filter(needs_wetsuit=True).count(),
+        'bcds': participants.filter(needs_bcd=True).count(),
+        'regulators': participants.filter(needs_regulator=True).count(),
+        'guides': participants.filter(needs_guide=True).count(),
+        'insurance': participants.filter(needs_insurance=True).count(),
+    }
+
+    # Calculate tank counts by size
+    from django.db.models import Count
+    tank_counts = participants.values('tank_size').annotate(
+        count=Count('tank_size')
+    ).order_by('tank_size')
+
     if request.method == 'POST':
         # Handle updating the dive details logic here if needed
         # Example (pseudo-code to update dive details):
@@ -526,7 +541,9 @@ def dive_detail(request, dive_id):
 
     return render(request, 'users/dive_detail.html', {
         'dive': dive,
-        'participants': participants
+        'participants': participants,
+        'equipment_counts': equipment_counts,
+        'tank_counts': tank_counts,
     })
 
 
