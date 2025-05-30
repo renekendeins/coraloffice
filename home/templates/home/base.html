@@ -135,7 +135,7 @@
             <div class="logo">CoralOffice</div>
             <ul class="nav-menu">
                 {% if user.is_authenticated and user.userprofile.is_diving_center %}
-                    <li><a href="{% url 'users:diving_center_dashboard' %}">Dashboard</a></li>
+                    
                     <li><a href="{% url 'users:customer_list' %}">Customers</a></li>
                     <li><a href="{% url 'users:calendar_view' %}">Calendar</a></li>
                     <li><a href="{% url 'users:diving_sites_list' %}">Sites</a></li>

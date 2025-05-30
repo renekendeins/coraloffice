@@ -143,6 +143,16 @@
 }
 </style>
 
+<script>
+function toggleDetails(participantId) {
+    const detailsDiv = document.getElementById('details-' + participantId);
+    if (detailsDiv.style.display === 'none') {
+        detailsDiv.style.display = 'block';
+    } else {
+        detailsDiv.style.display = 'none';
+    }
+}
+</script>
 <h2>Manage Participants for {{ dive.dive_site.name }}</h2>
 <p><strong>Date:</strong> {{ dive.date }} | <strong>Time:</strong> {{ dive.time }}</p>
 <p><strong>Current Participants:</strong> {{ participants.count }}/{{ dive.max_participants }}</p>
@@ -158,11 +168,18 @@
         <div class="participant-card">
             <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                 <div style="flex: 1;">
-                    <h4>{{ participant.customer.first_name }} {{ participant.customer.last_name }}</h4>
-                    <p><strong>Certification Level:</strong> {{ participant.customer.get_certification_level_display }}</p>
-                    <p><strong>Country:</strong> {{ participant.customer.country|default:"Not specified" }} | <strong>Language:</strong> {{ participant.customer.get_language_display }}</p>
-                    <p><strong>Tank Size:</strong> {{ participant.get_tank_size_display }}</p>
-                    <p><strong>Activity:</strong> {{ participant.activity.name }}</p>
+                    <h4>{{ participant.customer.first_name }} {{ participant.customer.last_name }} ({{ participant.activity.name }}) | {{ participant.get_tank_size_display }} | {{ participant.customer.get_language_display }}</h4>
+                    
+                    <button class="btn" onclick="toggleDetails({{ participant.id }})">Show Details</button>
+
+                    <div id="details-{{ participant.id }}" class="participant-details" style="display:none; margin-top: 10px;">
+                        <p><strong>Certification Level:</strong> {{ participant.customer.certification_level|default:"Not specified" }}</p>
+                        <p><strong>Country:</strong> {{ participant.customer.country|default:"Not specified" }} </p>
+                        
+                
+                        </p>
+                    </div>
+
                     <div style="margin-bottom: 10px;">
                         <span class="status-badge status-{{ participant.status|lower }}">{{ participant.get_status_display }}</span>
                         {% if participant.is_paid %}<span style="background-color: #007bff; color: white; padding: 2px 6px; border-radius: 3px; font-size: 12px; margin-left: 5px;">💰 Paid</span>{% endif %}
@@ -218,30 +235,33 @@
                     </div>
                 </div>
                 <div style="display: flex; flex-direction: column; gap: 5px; margin-left: 15px;">
-                    <form method="post" style="margin: 0;">
-                        {% csrf_token %}
-                        <input type="hidden" name="participant_id" value="{{ participant.id }}">
-                        <button type="submit" name="on_board" class="btn" style="background-color: #28a745; padding: 5px 10px; font-size: 12px; margin-bottom: 3px; width: 100%;">On Board</button>
-                    </form>
-                    <form method="post" style="margin: 0;">
-                        {% csrf_token %}
-                        <input type="hidden" name="participant_id" value="{{ participant.id }}">
-                        <button type="submit" name="back_on_boat" class="btn" style="background-color: #17a2b8; padding: 5px 10px; font-size: 12px; margin-bottom: 3px; width: 100%;">Back on Boat</button>
-                    </form>
-                    <button onclick="showQuickEdit({{ participant.id }})" class="btn" style="background-color: #ffc107; padding: 5px 10px; font-size: 12px; margin-bottom: 3px; width: 100%;">Quick Edit</button>
-                    <form method="post" style="margin: 0;">
-                        {% csrf_token %}
-                        <input type="hidden" name="customer" value="{{ participant.id }}">
-                        <button type="submit" name="remove_participant" class="btn" style="background-color: #f44336; padding: 5px 10px; font-size: 12px; width: 100%;">Remove</button>
-                    </form>
-                </div>
+    {% if participant.status == 'PENDING' %}
+        <form method="post" style="margin: 0;">
+            {% csrf_token %}
+            <input type="hidden" name="participant_id" value="{{ participant.id }}">
+            <button type="submit" name="on_board" class="btn" style="background-color: #28a745; padding: 5px 10px; font-size: 12px; margin-bottom: 3px; width: 100%;">On Board</button>
+        </form>
+    {% elif participant.status == 'ON_BOARD' %}
+        <form method="post" style="margin: 0;">
+            {% csrf_token %}
+            <input type="hidden" name="participant_id" value="{{ participant.id }}">
+            <button type="submit" name="back_on_boat" class="btn" style="background-color: #17a2b8; padding: 5px 10px; font-size: 12px; margin-bottom: 3px; width: 100%;">Back on Boat</button>
+        </form>
+    {% endif %}
+    <button onclick="showQuickEdit({{ participant.id }})" class="btn" style="background-color: #ffc107; padding: 5px 10px; font-size: 12px; margin-bottom: 3px; width: 100%;">Quick Edit</button>
+    <form method="post" style="margin: 0;">
+        {% csrf_token %}
+        <input type="hidden" name="customer" value="{{ participant.id }}">
+        <button type="submit" name="remove_participant" class="btn" style="background-color: #f44336; padding: 5px 10px; font-size: 12px; width: 100%;">Remove</button>
+    </form>
+</div>
             </div>
         </div>
     {% endfor %}
 {% else %}
     <p>No participants registered for this dive yet.</p>
 {% endif %}
-
+<br><br><br> 
 <h3>Add Participant or Group</h3>
 <div style="margin-bottom: 20px;">
     <button onclick="openModal()" class="btn" style="background-color: #2196F3;">Add New Customer</button>
