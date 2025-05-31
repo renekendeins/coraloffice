@@ -108,15 +108,18 @@
                                 <div class="participant-card p-3 border rounded">
                                     <div class="d-flex justify-content-between align-items-start">
                                         <div style="padding: 2rem 1rem">
-                                            <h6 class="mb-1">{{ participant.customer.first_name }} {{ participant.customer.last_name }}</h6>
-                                            <small class="text-muted">{{ participant.activity.name }}</small>
-                                            
-                                            <!-- Group badges -->
-                                            {% for membership in participant.customer.group_memberships.all %}
-                                                {% if membership.group.diving_center == dive.diving_center %}
-                                                    <span class="badge bg-info ms-1">{{ membership.group.name }}</span>
-                                                {% endif %}
-                                            {% endfor %}
+                                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                                <h6 class="mb-0">{{ participant.customer.first_name }} {{ participant.customer.last_name }}</h6>
+                                                <!-- Group badges -->
+                                                <div>
+                                                    {% for membership in participant.customer.group_memberships.all %}
+                                                        {% if membership.group.diving_center == dive.diving_center %}
+                                                            <span class="badge bg-purple text-white" style="background-color: #9c27b0 !important;">{{ membership.group.name }}</span>
+                                                        {% endif %}
+                                                    {% endfor %}
+                                                </div>
+                                            </div>
+                                            <small class="text-muted d-block">{{ participant.activity.name }}</small>
                                             
                                             <div class="mt-2">
                                                 <span class="badge bg-primary">{{ participant.tank_size }}</span>
@@ -220,15 +223,22 @@
                             </h6>
                             <div class="size-list" style="max-height: 200px; overflow-y: auto;">
                                 {% for participant in participants %}
+                                    {% if participant.needs_wetsuit or participant.needs_bcd or participant.needs_regulator %}
                                     <div class="size-item p-2 border-bottom">
                                         <div class="fw-bold">{{ participant.customer.first_name }} {{ participant.customer.last_name }}</div>
                                         <small class="text-muted">
-                                            Wetsuit: {{ participant.customer.get_wetsuit_size }}, 
-                                            BCD: {{ participant.customer.get_bcd_size }}, 
-                                            Fins: {{ participant.customer.get_fins_size }}
+                                            {% if participant.needs_wetsuit %}Wetsuit: {{ participant.customer.get_wetsuit_size }}{% if participant.needs_bcd or participant.needs_regulator %}, {% endif %}{% endif %}
+                                            {% if participant.needs_bcd %}BCD: {{ participant.customer.get_bcd_size }}{% if participant.needs_regulator %}, {% endif %}{% endif %}
+                                            {% if participant.needs_regulator %}Fins: {{ participant.customer.get_fins_size }}{% endif %}
                                         </small>
                                     </div>
+                                    {% endif %}
                                 {% endfor %}
+                                {% if not participants or not participants|length %}
+                                    <div class="text-center py-3">
+                                        <small class="text-muted">No equipment sizes needed</small>
+                                    </div>
+                                {% endif %}
                             </div>
                         </div>
                     {% else %}

@@ -1,0 +1,24 @@
+
+{% extends 'users/base.html' %}
+
+{% block users_title %}Logout - CoralOffice{% endblock %}
+
+{% block users_content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h3>Confirm Logout</h3>
+                    <p>Are you sure you want to logout?</p>
+                    <form method="post">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger me-2">Yes, Logout</button>
+                        <a href="{% url 'users:profile' %}" class="btn btn-secondary">Cancel</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

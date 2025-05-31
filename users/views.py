@@ -283,25 +283,89 @@ def calendar_view(request):
     today = datetime.now()
     year = int(request.GET.get('year', today.year))
     month = int(request.GET.get('month', today.month))
+    view_type = request.GET.get('view', 'month')  # month, week, day
 
-    # Create calendar
-    cal = calendar.monthcalendar(year, month)
-    month_name = calendar.month_name[month]
+    if view_type == 'day':
+        # Day view - show specific day
+        selected_date = datetime(year, month, int(request.GET.get('day', today.day)))
+        dives = DiveSchedule.objects.filter(
+            diving_center=request.user,
+            date=selected_date.date()
+        ).order_by('time')
+        
+        # Add participant count to dive objects
+        for dive in dives:
+            dive.participant_count = dive.get_participant_count()
+            
+        context = {
+            'view_type': view_type,
+            'selected_date': selected_date,
+            'dives': dives,
+            'year': year,
+            'month': month,
+            'month_name': calendar.month_name[month],
+        }
+        
+    elif view_type == 'week':
+        # Week view - show week containing the selected day
+        selected_date = datetime(year, month, int(request.GET.get('day', today.day)))
+        week_start = selected_date - timedelta(days=selected_date.weekday())
+        week_end = week_start + timedelta(days=6)
+        
+        dives = DiveSchedule.objects.filter(
+            diving_center=request.user,
+            date__range=[week_start.date(), week_end.date()]
+        ).order_by('date', 'time')
+        
+        # Organize dives by day for the week
+        week_dives = {}
+        for i in range(7):
+            day = week_start + timedelta(days=i)
+            week_dives[day.date()] = []
+            
+        for dive in dives:
+            dive.participant_count = dive.get_participant_count()
+            week_dives[dive.date].append(dive)
+            
+        context = {
+            'view_type': view_type,
+            'week_start': week_start,
+            'week_end': week_end,
+            'week_dives': week_dives,
+            'year': year,
+            'month': month,
+            'month_name': calendar.month_name[month],
+        }
+        
+    else:  # month view (default)
+        # Create calendar
+        cal = calendar.monthcalendar(year, month)
+        month_name = calendar.month_name[month]
 
-    # Get all dives for this month
-    dives = DiveSchedule.objects.filter(diving_center=request.user,
-                                        date__year=year,
-                                        date__month=month)
+        # Get all dives for this month
+        dives = DiveSchedule.objects.filter(diving_center=request.user,
+                                            date__year=year,
+                                            date__month=month)
 
-    # Organize dives by day
-    dives_by_day = {}
-    for dive in dives:
-        day = dive.date.day
-        if day not in dives_by_day:
-            dives_by_day[day] = []
-        # Add participant count to dive object
-        dive.participant_count = dive.get_participant_count()
-        dives_by_day[day].append(dive)
+        # Organize dives by day
+        dives_by_day = {}
+        for dive in dives:
+            day = dive.date.day
+            if day not in dives_by_day:
+                dives_by_day[day] = []
+            # Add participant count to dive object
+            dive.participant_count = dive.get_participant_count()
+            dives_by_day[day].append(dive)
+            
+        context = {
+            'view_type': view_type,
+            'calendar': cal,
+            'month_name': month_name,
+            'year': year,
+            'month': month,
+            'dives_by_day': dives_by_day,
+            'today': today.day if year == today.year and month == today.month else None,
+        }
 
     # Navigation dates
     if month == 1:
@@ -314,28 +378,24 @@ def calendar_view(request):
     else:
         next_month, next_year = month + 1, year
 
-    context = {
-        'calendar':
-        cal,
-        'month_name':
-        month_name,
-        'year':
-        year,
-        'month':
-        month,
-        'dives_by_day':
-        dives_by_day,
-        'prev_month':
-        prev_month,
-        'prev_year':
-        prev_year,
-        'next_month':
-        next_month,
-        'next_year':
-        next_year,
-        'today':
-        today.day if year == today.year and month == today.month else None,
-    }
+    # Navigation dates (common for all views)
+    if month == 1:
+        prev_month, prev_year = 12, year - 1
+    else:
+        prev_month, prev_year = month - 1, year
+
+    if month == 12:
+        next_month, next_year = 1, year + 1
+    else:
+        next_month, next_year = month + 1, year
+
+    # Add navigation to context
+    context.update({
+        'prev_month': prev_month,
+        'prev_year': prev_year,
+        'next_month': next_month,
+        'next_year': next_year,
+    })
 
     return render(request, 'users/calendar_view.html', context)
 

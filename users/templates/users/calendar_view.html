@@ -6,10 +6,30 @@
 
 {% block users_content %}
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-    <h2>{{ month_name }} {{ year }}</h2>
+    <h2>
+        {% if view_type == 'day' %}
+            {{ selected_date|date:"F d, Y" }}
+        {% elif view_type == 'week' %}
+            {{ week_start|date:"M d" }} - {{ week_end|date:"M d, Y" }}
+        {% else %}
+            {{ month_name }} {{ year }}
+        {% endif %}
+    </h2>
     <div>
-        <a href="?year={{ prev_year }}&month={{ prev_month }}" class="btn" style="background: #6c757d; margin-right: 10px;">← Previous</a>
-        <a href="?year={{ next_year }}&month={{ next_month }}" class="btn" style="background: #6c757d;">Next →</a>
+        <a href="?year={{ prev_year }}&month={{ prev_month }}&view={{ view_type }}" class="btn" style="background: #6c757d; margin-right: 10px;">← Previous</a>
+        <a href="?year={{ next_year }}&month={{ next_month }}&view={{ view_type }}" class="btn" style="background: #6c757d;">Next →</a>
+    </div>
+</div>
+
+<!-- View Switching Buttons -->
+<div style="margin-bottom: 20px; text-align: center;">
+    <div class="btn-group" role="group">
+        <a href="?year={{ year }}&month={{ month }}&view=day" 
+           class="btn {% if view_type == 'day' %}btn-primary{% else %}btn-outline-primary{% endif %}">Day</a>
+        <a href="?year={{ year }}&month={{ month }}&view=week" 
+           class="btn {% if view_type == 'week' %}btn-primary{% else %}btn-outline-primary{% endif %}">Week</a>
+        <a href="?year={{ year }}&month={{ month }}&view=month" 
+           class="btn {% if view_type == 'month' or not view_type %}btn-primary{% else %}btn-outline-primary{% endif %}">Month</a>
     </div>
 </div>
 
@@ -71,6 +91,77 @@
     <a href="{% url 'users:quick_schedule_dive' %}" class="btn">Quick Schedule</a>
 </div>
 
+{% if view_type == 'day' %}
+<!-- Day View -->
+<div class="day-view">
+    <div class="day-header" style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+        <h4>{{ selected_date|date:"l, F d, Y" }}</h4>
+        <a href="{% url 'users:quick_schedule_dive' %}?date={{ selected_date|date:'Y-m-d' }}" class="btn btn-primary btn-sm">+ Schedule Dive</a>
+    </div>
+    
+    {% if dives %}
+        {% for dive in dives %}
+        <div class="dive-card" style="margin-bottom: 15px; padding: 15px; border: 1px solid #ddd; border-radius: 5px;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h5><a href="{% url 'users:dive_detail' dive.id %}">{{ dive.dive_site }}</a></h5>
+                    <p><strong>Time:</strong> {{ dive.time|time:"g:i A" }}</p>
+                    <p><strong>Participants:</strong> {{ dive.participant_count }}/{{ dive.max_participants }}</p>
+                </div>
+                <div>
+                    <a href="{% url 'users:dive_detail' dive.id %}" class="btn btn-primary btn-sm">View Details</a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div style="text-align: center; padding: 40px; color: #6c757d;">
+            <p>No dives scheduled for this day.</p>
+            <a href="{% url 'users:quick_schedule_dive' %}?date={{ selected_date|date:'Y-m-d' }}" class="btn btn-primary">Schedule First Dive</a>
+        </div>
+    {% endif %}
+</div>
+
+{% elif view_type == 'week' %}
+<!-- Week View -->
+<div class="week-view">
+    <table class="calendar" style="table-layout: fixed;">
+        <thead>
+            <tr>
+                {% for i in "0123456" %}
+                {% with day=week_start|add_days:i %}
+                <th style="width: 14.28%;">
+                    {{ day|date:"D" }}<br>
+                    <small>{{ day|date:"M d" }}</small>
+                </th>
+                {% endwith %}
+                {% endfor %}
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                {% for i in "0123456" %}
+                {% with day=week_start|add_days:i %}
+                <td style="vertical-align: top; height: 200px;">
+                    {% for dive in week_dives|lookup:day.date %}
+                    <a href="{% url 'users:dive_detail' dive.id %}">
+                        <div class="dive-item" title="{{ dive.dive_site }} at {{ dive.time }}">
+                            {{ dive.time|time:"H:i" }} - {{ dive.dive_site|truncatechars:15 }}
+                            <small>({{ dive.participant_count }})</small>
+                        </div>
+                    </a>
+                    {% endfor %}
+                    <a href="{% url 'users:quick_schedule_dive' %}?date={{ day|date:'Y-m-d' }}" class="add-dive-link">+ Add</a>
+                </td>
+                {% endwith %}
+                {% endfor %}
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+{% else %}
+<!-- Month View (default) -->
 <table class="calendar">
     <thead>
         <tr>
@@ -89,7 +180,9 @@
             {% for day in week %}
             <td {% if day == today %}class="calendar-today"{% endif %}>
                 {% if day != 0 %}
-                    <div class="calendar-day">{{ day }}</div>
+                    <div class="calendar-day">
+                        <a href="?year={{ year }}&month={{ month }}&day={{ day }}&view=day">{{ day }}</a>
+                    </div>
                     {% if day in dives_by_day %}
                         {% for dive in dives_by_day|lookup:day %}
                         <a href="{% url 'users:dive_detail' dive.id %}">
@@ -108,4 +201,5 @@
         {% endfor %}
     </tbody>
 </table>
+{% endif %}
 {% endblock %}
