@@ -4,6 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.db import transaction
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime, timedelta
 import calendar
 from .forms import SignUpForm, UserForm, UserProfileForm, CustomerForm, DiveScheduleForm, DiveActivityForm, CustomerDiveActivityForm, DivingSiteForm, InventoryItemForm, DivingGroupForm, MedicalForm
@@ -1002,3 +1004,44 @@ def medical_form(request):
         form = MedicalForm()
     
     return render(request, 'users/medical_form.html', {'form': form})
+
+
+@login_required
+def quick_edit_customer(request, customer_id):
+    """AJAX endpoint for quick editing customer details"""
+    if not request.user.userprofile.is_diving_center:
+        return JsonResponse({'success': False, 'error': 'Access denied'})
+    
+    customer = get_object_or_404(Customer, id=customer_id, diving_center=request.user)
+    
+    if request.method == 'POST':
+        try:
+            # Update customer fields
+            customer.default_tank_size = request.POST.get('default_tank_size', customer.default_tank_size)
+            
+            weight = request.POST.get('weight')
+            if weight:
+                customer.weight = float(weight)
+            
+            height = request.POST.get('height')
+            if height:
+                customer.height = float(height)
+                
+            foot_size = request.POST.get('foot_size')
+            if foot_size:
+                customer.foot_size = float(foot_size)
+            
+            customer.save()
+            
+            return JsonResponse({
+                'success': True,
+                'tank_size': customer.default_tank_size,
+                'wetsuit_size': customer.get_wetsuit_size(),
+                'bcd_size': customer.get_bcd_size(),
+                'fins_size': customer.get_fins_size()
+            })
+            
+        except (ValueError, TypeError) as e:
+            return JsonResponse({'success': False, 'error': 'Invalid data provided'})
+    
+    return JsonResponse({'success': False, 'error': 'Invalid request method'})

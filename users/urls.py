@@ -52,6 +52,7 @@ urlpatterns = [
     path('dives/<int:dive_id>/delete/', views.delete_dive, name='delete_dive'),
 
     # Medical Form (public access)
-    path('forms/medical/', views.medical_form, name='medical_form'),
+    path('medical-form/', views.medical_form, name='medical_form'),
     path('medical-forms/', views.medical_forms_list, name='medical_forms_list'),
+    path('quick-edit-customer/<int:customer_id>/', views.quick_edit_customer, name='quick_edit_customer'),
 ]

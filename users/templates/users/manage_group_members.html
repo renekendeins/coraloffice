@@ -20,9 +20,46 @@
                     <h4>{{ member.customer.first_name }} {{ member.customer.last_name }}</h4>
                     <p>{{ member.customer.email }}</p>
                     <p><strong>Certification:</strong> {{ member.customer.get_certification_level_display }}</p>
+                    <p><strong>Tank Size:</strong> <span id="tank-size-{{ member.customer.id }}">{{ member.customer.default_tank_size }}</span></p>
+                    <p><strong>Equipment Sizes:</strong> Wetsuit: <span id="wetsuit-size-{{ member.customer.id }}">{{ member.customer.get_wetsuit_size }}</span>, BCD: <span id="bcd-size-{{ member.customer.id }}">{{ member.customer.get_bcd_size }}</span>, Fins: <span id="fins-size-{{ member.customer.id }}">{{ member.customer.get_fins_size }}</span></p>
                     {% if member.is_leader %}
                         <span style="background-color: #ff9800; color: white; padding: 2px 6px; border-radius: 3px; font-size: 12px;">Group Leader</span>
                     {% endif %}
+                    <div style="margin-top: 10px;">
+                        <button type="button" onclick="showQuickEdit({{ member.customer.id }})" class="btn" style="background: #007bff; color: white; padding: 5px 10px; font-size: 12px;">Quick Edit</button>
+                    </div>
+                    
+                    <!-- Quick Edit Form (Hidden by default) -->
+                    <div id="quick-edit-{{ member.customer.id }}" style="display: none; margin-top: 15px; padding: 15px; border: 1px solid #ddd; border-radius: 5px; background: #f9f9f9;">
+                        <h5>Quick Edit - {{ member.customer.first_name }} {{ member.customer.last_name }}</h5>
+                        <form id="quick-edit-form-{{ member.customer.id }}" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div>
+                                <label><strong>Tank Size:</strong></label>
+                                <select name="default_tank_size" class="form-control">
+                                    <option value="10L" {% if member.customer.default_tank_size == '10L' %}selected{% endif %}>10 Liters</option>
+                                    <option value="12L" {% if member.customer.default_tank_size == '12L' %}selected{% endif %}>12 Liters</option>
+                                    <option value="15L" {% if member.customer.default_tank_size == '15L' %}selected{% endif %}>15 Liters</option>
+                                    <option value="18L" {% if member.customer.default_tank_size == '18L' %}selected{% endif %}>18 Liters</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label><strong>Weight (kg):</strong></label>
+                                <input type="number" name="weight" value="{{ member.customer.weight }}" step="0.1" class="form-control">
+                            </div>
+                            <div>
+                                <label><strong>Height (cm):</strong></label>
+                                <input type="number" name="height" value="{{ member.customer.height }}" step="0.1" class="form-control">
+                            </div>
+                            <div>
+                                <label><strong>Foot Size (EU):</strong></label>
+                                <input type="number" name="foot_size" value="{{ member.customer.foot_size }}" step="0.5" class="form-control">
+                            </div>
+                            <div style="grid-column: span 2;">
+                                <button type="button" onclick="saveQuickEdit({{ member.customer.id }})" class="btn" style="background: #28a745; color: white; margin-right: 10px;">Save Changes</button>
+                                <button type="button" onclick="hideQuickEdit({{ member.customer.id }})" class="btn" style="background: #6c757d; color: white;">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
                 <form method="post" style="margin: 0;">
                     {% csrf_token %}
@@ -116,6 +153,50 @@
                 memberSuggestionsDiv.style.display = 'none';
             }
         });
+
+        // Quick Edit Functions
+        function showQuickEdit(customerId) {
+            document.getElementById('quick-edit-' + customerId).style.display = 'block';
+        }
+
+        function hideQuickEdit(customerId) {
+            document.getElementById('quick-edit-' + customerId).style.display = 'none';
+        }
+
+        function saveQuickEdit(customerId) {
+            const form = document.getElementById('quick-edit-form-' + customerId);
+            const formData = new FormData(form);
+            
+            fetch(`/users/quick-edit-customer/${customerId}/`, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update the display values
+                    document.getElementById('tank-size-' + customerId).textContent = data.tank_size;
+                    document.getElementById('wetsuit-size-' + customerId).textContent = data.wetsuit_size;
+                    document.getElementById('bcd-size-' + customerId).textContent = data.bcd_size;
+                    document.getElementById('fins-size-' + customerId).textContent = data.fins_size;
+                    
+                    // Hide the edit form
+                    hideQuickEdit(customerId);
+                    
+                    // Show success message
+                    alert('Customer details updated successfully!');
+                } else {
+                    alert('Error updating customer: ' + data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error updating customer details');
+            });
+        }
         </script>
     {% else %}
         <p>All customers are already members of this group.</p>
