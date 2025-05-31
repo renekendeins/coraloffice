@@ -100,8 +100,22 @@ def customer_list(request):
         return redirect('users:profile')
 
     customers = Customer.objects.filter(diving_center=request.user)
-    return render(request, 'users/customer_list.html',
-                  {'customers': customers})
+    
+    # Handle search
+    search_query = request.GET.get('search', '').strip()
+    if search_query:
+        from django.db.models import Q
+        customers = customers.filter(
+            Q(first_name__icontains=search_query) |
+            Q(last_name__icontains=search_query) |
+            Q(email__icontains=search_query) |
+            Q(phone_number__icontains=search_query)
+        )
+    
+    return render(request, 'users/customer_list.html', {
+        'customers': customers,
+        'search_query': search_query
+    })
 
 
 @login_required
@@ -843,7 +857,6 @@ def manage_group_members(request, group_id):
         elif 'schedule_group' in request.POST:
             dive_ids = request.POST.getlist('selected_dives')
             activity_id = request.POST.get('activity_id')
-            tank_size = request.POST.get('tank_size', '12L')
             needs_wetsuit = 'needs_wetsuit' in request.POST
             needs_bcd = 'needs_bcd' in request.POST
             needs_regulator = 'needs_regulator' in request.POST
@@ -864,8 +877,8 @@ def manage_group_members(request, group_id):
                             dive_schedule=dive, 
                             customer=member.customer
                         ).exists():
-                            # Use customer's default tank size or form value
-                            member_tank_size = member.customer.default_tank_size or tank_size
+                            # Use customer's default tank size
+                            member_tank_size = member.customer.default_tank_size
                             CustomerDiveActivity.objects.create(
                                 customer=member.customer,
                                 dive_schedule=dive,

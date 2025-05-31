@@ -92,9 +92,9 @@ class CustomerDiveActivityForm(forms.ModelForm):
         model = CustomerDiveActivity
         fields = ('customer', 'activity', 'tank_size', 'needs_wetsuit', 'needs_bcd', 'needs_regulator', 'needs_guide', 'needs_insurance')
         widgets = {
-            'customer': forms.Select(attrs={'class': 'form-control', 'style': 'display: none;'}),
+            'customer': forms.Select(attrs={'class': 'form-control', 'style': 'display: none;', 'data-default-tank': 'true'}),
             'activity': forms.Select(attrs={'class': 'form-control'}),
-            'tank_size': forms.Select(attrs={'class': 'form-control'}),
+            'tank_size': forms.Select(attrs={'class': 'form-control', 'id': 'tank-size-select'}),
         }
 
     def __init__(self, diving_center=None, dive_schedule=None, *args, **kwargs):

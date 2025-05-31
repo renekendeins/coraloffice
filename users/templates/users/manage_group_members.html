@@ -151,16 +151,14 @@
                 </div>
             </div>
             
-            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-bottom: 20px;">
-                <div>
-                    <label for="tank_size"><strong>Tank Size:</strong></label>
-                    <select name="tank_size" id="tank_size" class="form-control">
-                        {% for value, label in tank_choices %}
-                            <option value="{{ value }}" {% if value == '12L' %}selected{% endif %}>{{ label }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-                
+            <div style="margin-bottom: 20px;">
+                <p class="text-info">
+                    <i class="fas fa-info-circle"></i> 
+                    Each group member will be assigned their default tank size from their profile.
+                </p>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
                 <div>
                     <label><strong>Equipment Needed:</strong></label>
                     <div style="margin-top: 8px;">

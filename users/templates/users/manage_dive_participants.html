@@ -394,6 +394,7 @@ const customerSearch = document.getElementById('customer-search');
 const customerSelect = document.getElementById('{{ form.customer.id_for_label }}');
 const groupSelect = document.getElementById('{{ form.selected_group.id_for_label }}');
 const suggestionsDiv = document.getElementById('search-suggestions');
+const tankSizeSelect = document.getElementById('tank-size-select');
 
 // Create combined data structure for customers and groups
 const searchData = {
@@ -404,7 +405,8 @@ const searchData = {
             name: "{{ customer.first_name }} {{ customer.last_name }}",
             type: "customer",
             country: "{{ customer.get_country_display|default:'Unknown' }}",
-            certification: "{{ customer.get_certification_level_display }}"
+            certification: "{{ customer.get_certification_level_display }}",
+            defaultTankSize: "{{ customer.default_tank_size }}"
         },
         {% endfor %}
     ],
@@ -477,11 +479,19 @@ suggestionsDiv.addEventListener('click', function(e) {
             customerSelect.value = id;
             groupSelect.value = '';
             customerSearch.value = customer.name;
+            // Auto-populate tank size with customer's default
+            if (customer.defaultTankSize && tankSizeSelect) {
+                tankSizeSelect.value = customer.defaultTankSize;
+            }
         } else if (type === 'group') {
             const group = searchData.groups.find(g => g.id == id);
             groupSelect.value = id;
             customerSelect.value = '';
             customerSearch.value = group.name + ' (Group)';
+            // Reset tank size for groups
+            if (tankSizeSelect) {
+                tankSizeSelect.value = '12L'; // Default
+            }
         }
         
         suggestionsDiv.style.display = 'none';
