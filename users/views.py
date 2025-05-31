@@ -653,13 +653,15 @@ def dashboard_analytics(request):
         return redirect('users:profile')
 
     from django.db.models import Count, Avg
-    from datetime import date
+    from datetime import date, datetime
     import json
+    import calendar as cal
 
     customers = Customer.objects.filter(diving_center=request.user)
     activities = CustomerDiveActivity.objects.filter(
         customer__diving_center=request.user
     )
+    schedules = DiveSchedule.objects.filter(diving_center=request.user)
 
     # Age range analysis
     age_ranges = {
@@ -691,16 +693,33 @@ def dashboard_analytics(request):
         activity_count=Count('id')
     ).aggregate(avg_activities=Avg('activity_count'))
 
-    # Activities by date
+    # Activities by date for timeline chart
     activities_by_date = activities.values(
         'dive_schedule__date'
     ).annotate(
         count=Count('id')
     ).order_by('dive_schedule__date')
 
-    # Prepare data for charts
+    # Prepare data for activities over time chart
     date_labels = [item['dive_schedule__date'].strftime('%Y-%m-%d') for item in activities_by_date]
     date_counts = [item['count'] for item in activities_by_date]
+
+    # Activities scheduled by month (current year)
+    current_year = datetime.now().year
+    monthly_activities = {}
+    year_to_date_total = 0
+    
+    for month in range(1, 13):
+        month_count = schedules.filter(
+            date__year=current_year,
+            date__month=month
+        ).count()
+        monthly_activities[cal.month_name[month]] = month_count
+        if month <= datetime.now().month:
+            year_to_date_total += month_count
+
+    # Total activities scheduled from beginning of year
+    total_activities_year = schedules.filter(date__year=current_year).count()
 
     # Country data
     countries_data = customers.values('country').annotate(
@@ -723,6 +742,10 @@ def dashboard_analytics(request):
         'languages': languages,
         'date_labels': json.dumps(date_labels),
         'date_counts': json.dumps(date_counts),
+        'monthly_activities': monthly_activities,
+        'total_activities_year': total_activities_year,
+        'year_to_date_total': year_to_date_total,
+        'current_year': current_year,
     }
 
     return render(request, 'users/dashboard_analytics.html', context)

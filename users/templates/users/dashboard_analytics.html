@@ -16,7 +16,7 @@
 
 <!-- Summary Cards -->
 <div class="row mb-4">
-    <div class="col-md-3">
+    <div class="col-md-2">
         <div class="card text-center">
             <div class="card-body">
                 <h5 class="card-title">Total Customers</h5>
@@ -24,7 +24,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-2">
         <div class="card text-center">
             <div class="card-body">
                 <h5 class="card-title">Total Activities</h5>
@@ -32,7 +32,7 @@
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-2">
         <div class="card text-center">
             <div class="card-body">
                 <h5 class="card-title">Avg Activities/Customer</h5>
@@ -40,11 +40,27 @@
             </div>
         </div>
     </div>
-    <div class="col-md-3">
+    <div class="col-md-2">
         <div class="card text-center">
             <div class="card-body">
                 <h5 class="card-title">Countries</h5>
                 <h2 style="color: #ff9800;">{{ countries|length }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">{{ current_year }} YTD Dives</h5>
+                <h2 style="color: #e91e63;">{{ year_to_date_total }}</h2>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-2">
+        <div class="card text-center">
+            <div class="card-body">
+                <h5 class="card-title">{{ current_year }} Total Dives</h5>
+                <h2 style="color: #795548;">{{ total_activities_year }}</h2>
             </div>
         </div>
     </div>
@@ -76,7 +92,7 @@
         </div>
     </div>
 
-    <!-- Activities Timeline -->
+    <!-- Activities Over Time -->
     <div class="col-md-12 mb-4">
         <div class="card">
             <div class="card-header">
@@ -84,6 +100,18 @@
             </div>
             <div class="card-body">
                 <canvas id="timelineChart" width="400" height="100"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Monthly Activities Chart -->
+    <div class="col-md-12 mb-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>Scheduled Dives by Month ({{ current_year }})</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="monthlyChart" width="400" height="100"></canvas>
             </div>
         </div>
     </div>
@@ -103,7 +131,10 @@ const countryChart = new Chart(countryCtx, {
                 '#36A2EB',
                 '#FFCE56',
                 '#4BC0C0',
-                '#9966FF'
+                '#9966FF',
+                '#FF9F40',
+                '#FF6384',
+                '#C9CBCF'
             ]
         }]
     },
@@ -122,7 +153,14 @@ const ageChart = new Chart(ageCtx, {
         datasets: [{
             label: 'Customers',
             data: {{ age_ranges.values|safe }},
-            backgroundColor: '#4CAF50'
+            backgroundColor: [
+                '#4CAF50',
+                '#2196F3',
+                '#FF9800',
+                '#9C27B0',
+                '#F44336',
+                '#607D8B'
+            ]
         }]
     },
     options: {
@@ -130,13 +168,16 @@ const ageChart = new Chart(ageCtx, {
         maintainAspectRatio: false,
         scales: {
             y: {
-                beginAtZero: true
+                beginAtZero: true,
+                ticks: {
+                    stepSize: 1
+                }
             }
         }
     }
 });
 
-// Timeline Chart
+// Activities Over Time Chart
 const timelineCtx = document.getElementById('timelineChart').getContext('2d');
 const timelineChart = new Chart(timelineCtx, {
     type: 'line',
@@ -147,7 +188,8 @@ const timelineChart = new Chart(timelineCtx, {
             data: {{ date_counts|safe }},
             borderColor: '#2196F3',
             backgroundColor: 'rgba(33, 150, 243, 0.1)',
-            tension: 0.1
+            tension: 0.1,
+            fill: true
         }]
     },
     options: {
@@ -155,7 +197,70 @@ const timelineChart = new Chart(timelineCtx, {
         maintainAspectRatio: false,
         scales: {
             y: {
-                beginAtZero: true
+                beginAtZero: true,
+                ticks: {
+                    stepSize: 1
+                }
+            }
+        },
+        plugins: {
+            legend: {
+                display: true
+            },
+            tooltip: {
+                mode: 'index',
+                intersect: false
+            }
+        }
+    }
+});
+
+// Monthly Activities Chart
+const monthlyCtx = document.getElementById('monthlyChart').getContext('2d');
+const monthlyChart = new Chart(monthlyCtx, {
+    type: 'bar',
+    data: {
+        labels: [
+            'January', 'February', 'March', 'April', 'May', 'June',
+            'July', 'August', 'September', 'October', 'November', 'December'
+        ],
+        datasets: [{
+            label: 'Scheduled Dives',
+            data: [
+                {% for month, count in monthly_activities.items %}
+                    {{ count }}{% if not forloop.last %},{% endif %}
+                {% endfor %}
+            ],
+            backgroundColor: [
+                '#e3f2fd', '#bbdefb', '#90caf9', '#64b5f6',
+                '#42a5f5', '#2196f3', '#1e88e5', '#1976d2',
+                '#1565c0', '#0d47a1', '#82b1ff', '#448aff'
+            ],
+            borderColor: '#1976d2',
+            borderWidth: 1
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    stepSize: 1
+                }
+            }
+        },
+        plugins: {
+            legend: {
+                display: true
+            },
+            tooltip: {
+                callbacks: {
+                    title: function(context) {
+                        return context[0].label + ' {{ current_year }}';
+                    }
+                }
             }
         }
     }
