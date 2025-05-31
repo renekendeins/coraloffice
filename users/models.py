@@ -95,6 +95,12 @@ class Customer(models.Model):
     weight = models.FloatField(null=True, blank=True, help_text="Weight in kg")
     height = models.FloatField(null=True, blank=True, help_text="Height in cm")
     foot_size = models.FloatField(null=True, blank=True, help_text="Foot size (EU)")
+    default_tank_size = models.CharField(max_length=10, choices=[
+        ('10L', '10 Liters'),
+        ('12L', '12 Liters'),
+        ('15L', '15 Liters'),
+        ('18L', '18 Liters'),
+    ], default='12L', help_text="Default tank size for this customer")
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

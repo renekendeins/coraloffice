@@ -1,4 +1,3 @@
-
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
@@ -32,7 +31,7 @@ class UserProfileForm(forms.ModelForm):
 class CustomerForm(forms.ModelForm):
     class Meta:
         model = Customer
-        fields = ('first_name', 'last_name', 'email', 'phone_number', 'country', 'language', 'birthday', 'certification_level', 'emergency_contact', 'medical_conditions', 'weight', 'height', 'foot_size')
+        fields = ('first_name', 'last_name', 'email', 'phone_number', 'country', 'language', 'birthday', 'certification_level', 'emergency_contact', 'medical_conditions', 'weight', 'height', 'foot_size', 'default_tank_size')
         widgets = {
             'medical_conditions': forms.Textarea(attrs={'rows': 3}),
             'birthday': forms.DateInput(attrs={'type': 'date'}),
@@ -55,7 +54,7 @@ class DiveScheduleForm(forms.ModelForm):
         empty_label="Select a diving site",
         widget=forms.Select(attrs={'class': 'form-control'})
     )
-    
+
     class Meta:
         model = DiveSchedule
         fields = ('date', 'time', 'dive_site', 'max_participants', 'description', 'special_notes')
@@ -81,14 +80,14 @@ class CustomerDiveActivityForm(forms.ModelForm):
         }),
         label='Search Customer or Group'
     )
-    
+
     selected_group = forms.ModelChoiceField(
         queryset=DivingGroup.objects.none(),
         required=False,
         widget=forms.HiddenInput(),
         label='Selected Group'
     )
-    
+
     class Meta:
         model = CustomerDiveActivity
         fields = ('customer', 'activity', 'tank_size', 'needs_wetsuit', 'needs_bcd', 'needs_regulator', 'needs_guide', 'needs_insurance')
@@ -104,7 +103,7 @@ class CustomerDiveActivityForm(forms.ModelForm):
             self.fields['customer'].queryset = Customer.objects.filter(diving_center=diving_center)
             self.fields['activity'].queryset = DiveActivity.objects.filter(diving_center=diving_center)
             self.fields['selected_group'].queryset = DivingGroup.objects.filter(diving_center=diving_center)
-        
+
         if dive_schedule:
             # Exclude customers already participating in this dive
             already_participating = CustomerDiveActivity.objects.filter(
@@ -172,10 +171,10 @@ class MedicalForm(forms.ModelForm):
         label="Swimming ability",
         required=True
     )
-    
+
     class Meta:
         model = Customer
-        fields = ('first_name', 'last_name', 'email', 'phone_number', 'country', 'language', 'birthday', 'certification_level', 'emergency_contact', 'medical_conditions', 'weight', 'height', 'foot_size')
+        fields = ('first_name', 'last_name', 'email', 'phone_number', 'country', 'language', 'birthday', 'certification_level', 'emergency_contact', 'medical_conditions', 'weight', 'height', 'foot_size', 'default_tank_size')
         widgets = {
             'medical_conditions': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Please provide additional medical information or details about any conditions mentioned above...'}),
             'birthday': forms.DateInput(attrs={'type': 'date'}),

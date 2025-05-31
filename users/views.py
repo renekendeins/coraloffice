@@ -498,11 +498,13 @@ def manage_dive_participants(request, dive_id):
                     for member in group_members:
                         # Check if member not already participating
                         if not CustomerDiveActivity.objects.filter(dive_schedule=dive, customer=member.customer).exists():
+                            # Use customer's default tank size or form value
+                            tank_size = member.customer.default_tank_size or form.cleaned_data['tank_size']
                             CustomerDiveActivity.objects.create(
                                 customer=member.customer,
                                 dive_schedule=dive,
                                 activity=form.cleaned_data['activity'],
-                                tank_size=form.cleaned_data['tank_size'],
+                                tank_size=tank_size,
                                 needs_wetsuit=form.cleaned_data['needs_wetsuit'],
                                 needs_bcd=form.cleaned_data['needs_bcd'],
                                 needs_regulator=form.cleaned_data['needs_regulator'],
@@ -515,6 +517,9 @@ def manage_dive_participants(request, dive_id):
                     # Add single participant
                     participant = form.save(commit=False)
                     participant.dive_schedule = dive
+                    # Use customer's default tank size if not specified
+                    if not participant.tank_size and participant.customer.default_tank_size:
+                        participant.tank_size = participant.customer.default_tank_size
                     participant.save()
                     messages.success(request, 'Participant added to dive!')
                 return redirect('users:manage_dive_participants', dive_id=dive.id)
@@ -859,11 +864,13 @@ def manage_group_members(request, group_id):
                             dive_schedule=dive, 
                             customer=member.customer
                         ).exists():
+                            # Use customer's default tank size or form value
+                            member_tank_size = member.customer.default_tank_size or tank_size
                             CustomerDiveActivity.objects.create(
                                 customer=member.customer,
                                 dive_schedule=dive,
                                 activity=activity,
-                                tank_size=tank_size,
+                                tank_size=member_tank_size,
                                 needs_wetsuit=needs_wetsuit,
                                 needs_bcd=needs_bcd,
                                 needs_regulator=needs_regulator,
