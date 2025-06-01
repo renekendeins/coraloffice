@@ -5,6 +5,7 @@ hidden = [".pythonlibs"]
 
 [nix]
 channel = "stable-24_05"
+packages = ["freetype", "lcms2", "libimagequant", "libjpeg", "libtiff", "libwebp", "libxcrypt", "openjpeg", "tcl", "tk", "zlib"]
 
 [unitTest]
 language = "python3"
@@ -16,3 +17,15 @@ deploymentTarget = "gce"
 [[ports]]
 localPort = 3000
 externalPort = 80
+
+[workflows]
+runButton = "Django Development Server"
+
+[[workflows.workflow]]
+name = "Django Development Server"
+author = 43358367
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python manage.py runserver 0.0.0.0:3000"

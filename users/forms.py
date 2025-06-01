@@ -204,3 +204,163 @@ class MedicalForm(forms.ModelForm):
                 ('NL', 'Nederlands'),
             ])
         }
+from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+from .models import UserProfile, Customer, DiveSchedule, DiveActivity, CustomerDiveActivity, DivingSite, InventoryItem, DivingGroup
+
+class SignUpForm(UserCreationForm):
+    email = forms.EmailField(required=True)
+    first_name = forms.CharField(max_length=30, required=True)
+    last_name = forms.CharField(max_length=30, required=True)
+    is_diving_center = forms.BooleanField(required=False, label='Register as Diving Center')
+    business_name = forms.CharField(max_length=100, required=False, label='Business Name')
+    business_license = forms.CharField(max_length=50, required=False, label='Business License')
+
+    class Meta:
+        model = User
+        fields = ('username', 'first_name', 'last_name', 'email', 'password1', 'password2')
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.email = self.cleaned_data['email']
+        user.first_name = self.cleaned_data['first_name']
+        user.last_name = self.cleaned_data['last_name']
+        if commit:
+            user.save()
+        return user
+
+class UserForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name', 'email')
+
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ('bio', 'location', 'birth_date', 'avatar', 'phone_number', 'business_name', 'business_license')
+        widgets = {
+            'birth_date': forms.DateInput(attrs={'type': 'date'}),
+            'bio': forms.Textarea(attrs={'rows': 4}),
+        }
+
+class CustomerForm(forms.ModelForm):
+    class Meta:
+        model = Customer
+        fields = [
+            'first_name', 'last_name', 'email', 'phone_number', 'country', 
+            'language', 'birthday', 'certification_level', 'emergency_contact',
+            'medical_conditions', 'weight', 'height', 'foot_size', 'default_tank_size',
+            'profile_picture', 'diving_licence', 'diving_insurance', 'medical_check'
+        ]
+        widgets = {
+            'birthday': forms.DateInput(attrs={'type': 'date'}),
+            'medical_conditions': forms.Textarea(attrs={'rows': 3}),
+        }
+
+class QuickCustomerForm(forms.ModelForm):
+    class Meta:
+        model = Customer
+        fields = ['first_name', 'last_name', 'email', 'phone_number', 'country', 'certification_level']
+
+class DiveScheduleForm(forms.ModelForm):
+    def __init__(self, diving_center=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if diving_center:
+            self.fields['dive_site'].queryset = DivingSite.objects.filter(diving_center=diving_center)
+
+    class Meta:
+        model = DiveSchedule
+        fields = ['date', 'time', 'dive_site', 'max_participants', 'description', 'special_notes']
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date'}),
+            'time': forms.TimeInput(attrs={'type': 'time'}),
+            'description': forms.Textarea(attrs={'rows': 3}),
+            'special_notes': forms.Textarea(attrs={'rows': 2}),
+        }
+
+class DiveActivityForm(forms.ModelForm):
+    class Meta:
+        model = DiveActivity
+        fields = ['name', 'description', 'duration_minutes', 'price']
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 3}),
+        }
+
+class CustomerDiveActivityForm(forms.ModelForm):
+    selected_group = forms.ModelChoiceField(
+        queryset=DivingGroup.objects.none(),
+        required=False,
+        empty_label="-- Select Group (optional) --",
+        help_text="Select a group to add all members to this dive"
+    )
+
+    def __init__(self, diving_center=None, dive_schedule=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if diving_center:
+            self.fields['customer'].queryset = Customer.objects.filter(diving_center=diving_center)
+            self.fields['activity'].queryset = DiveActivity.objects.filter(diving_center=diving_center)
+            self.fields['selected_group'].queryset = DivingGroup.objects.filter(diving_center=diving_center)
+        
+        if dive_schedule:
+            # Exclude customers already in this dive
+            existing_customers = CustomerDiveActivity.objects.filter(
+                dive_schedule=dive_schedule
+            ).values_list('customer_id', flat=True)
+            self.fields['customer'].queryset = self.fields['customer'].queryset.exclude(
+                id__in=existing_customers
+            )
+
+    class Meta:
+        model = CustomerDiveActivity
+        fields = [
+            'customer', 'activity', 'tank_size', 'needs_wetsuit', 'needs_bcd',
+            'needs_regulator', 'needs_guide', 'needs_insurance', 'selected_group'
+        ]
+
+class DivingSiteForm(forms.ModelForm):
+    class Meta:
+        model = DivingSite
+        fields = ['name', 'location', 'depth_min', 'depth_max', 'difficulty_level', 'description', 'special_requirements']
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 3}),
+            'special_requirements': forms.Textarea(attrs={'rows': 2}),
+        }
+
+class InventoryItemForm(forms.ModelForm):
+    class Meta:
+        model = InventoryItem
+        fields = [
+            'name', 'category', 'size', 'quantity_total', 'quantity_available',
+            'condition', 'purchase_date', 'last_maintenance', 'notes'
+        ]
+        widgets = {
+            'purchase_date': forms.DateInput(attrs={'type': 'date'}),
+            'last_maintenance': forms.DateInput(attrs={'type': 'date'}),
+            'notes': forms.Textarea(attrs={'rows': 3}),
+        }
+
+class DivingGroupForm(forms.ModelForm):
+    class Meta:
+        model = DivingGroup
+        fields = [
+            'name', 'country', 'contact_person', 'email', 'phone',
+            'description', 'arrival_date', 'departure_date'
+        ]
+        widgets = {
+            'arrival_date': forms.DateInput(attrs={'type': 'date'}),
+            'departure_date': forms.DateInput(attrs={'type': 'date'}),
+            'description': forms.Textarea(attrs={'rows': 3}),
+        }
+
+class MedicalForm(forms.ModelForm):
+    class Meta:
+        model = Customer
+        fields = [
+            'first_name', 'last_name', 'email', 'phone_number', 'country',
+            'birthday', 'emergency_contact', 'medical_conditions', 'weight', 'height'
+        ]
+        widgets = {
+            'birthday': forms.DateInput(attrs={'type': 'date'}),
+            'medical_conditions': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Please describe any medical conditions, allergies, or medications'}),
+        }
