@@ -31,7 +31,7 @@
 {% endif %}
 
 {% for customer in customers %}
-            <div class="customer-card">
+            <div class="customer-card" style="border-bottom: 1px solid #e3e3e3; padding: 2rem 1rem;">
                 <div style="display: flex; align-items: start; gap: 15px;">
                     <div style="flex-shrink: 0;">
                         {% if customer.profile_picture %}
@@ -48,7 +48,7 @@
                         <p><strong>Phone:</strong> {{ customer.phone_number }}</p>
                         <p><strong>Country:</strong> {{ customer.get_country_display }}</p>
                         <p><strong>Certification:</strong> {{ customer.get_certification_level_display }}</p>
-                        <p><strong>Tank Size:</strong> {{ customer.default_tank_size }}</p>
+                        <p style="margin-bottom: .75rem;"><strong>Tank Size:</strong> {{ customer.default_tank_size }}</p>
                         <div class="customer-actions">
                             <a href="{% url 'users:edit_customer' customer.id %}" class="btn btn-edit">Edit</a>
                             <a href="{% url 'users:customer_activity_history' customer.id %}" class="btn btn-history">Activity History</a>
@@ -57,6 +57,7 @@
                     </div>
                 </div>
             </div>
+
             {% endfor %}
 
 <a href="{% url 'users:diving_center_dashboard' %}" class="btn" style="background: #6c757d;">Back to Dashboard</a>

@@ -3,6 +3,17 @@
 {% block users_title %}Manage Group Members - {{ group.name }}{% endblock %}
 
 {% block users_content %}
+<style>
+    input, select{
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+
+    form > div{
+        width: 100%;
+    }
+</style>
 <h2>Manage Members - {{ group.name }}</h2>
 
 <div style="margin-bottom: 20px;">
@@ -44,11 +55,15 @@
                             <button type="submit" name="set_leader" class="btn" style="background: #ff9800; color: white; padding: 5px 10px; font-size: 12px;">Set as Leader</button>
                         </form>
                         {% endif %}
+                        <form method="post" style="margin: 0; display: inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="member_id" value="{{ member.id }}">
+                            <button type="submit" name="remove_member" class="btn" style="background: #f44336; padding: 5px 10px; font-size: 12px;">Remove</button>
+                        </form>
                     </div>
                     
                     <!-- Quick Edit Form (Hidden by default) -->
                     <div id="quick-edit-{{ member.customer.id }}" style="display: none; margin-top: 15px; padding: 15px; border: 1px solid #ddd; border-radius: 5px; background: #f9f9f9;">
-                        <h5>Quick Edit - {{ member.customer.first_name }} {{ member.customer.last_name }}</h5>
                         <form id="quick-edit-form-{{ member.customer.id }}" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                             <div>
                                 <label><strong>Tank Size:</strong></label>
@@ -80,11 +95,7 @@
                     </div>
                     </div>
                 </div>
-                <form method="post" style="margin: 0;">
-                    {% csrf_token %}
-                    <input type="hidden" name="member_id" value="{{ member.id }}">
-                    <button type="submit" name="remove_member" class="btn" style="background: #f44336; padding: 5px 10px; font-size: 12px;">Remove</button>
-                </form>
+                
             </div>
             {% endfor %}
         {% else %}
@@ -95,175 +106,169 @@
     <!-- Add Members -->
     <div>
         <h3>Add Members</h3>
+        <br>
+        <!-- Add Existing Customer -->
+            {% if available_customers %}
+            <div style="background: #fff; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
+                <h4>Add Existing Customer</h4>
+                <form method="post" style="margin-bottom: 5px;">
+                    {% csrf_token %}
+                    <div style="display: flex; gap: 10px; align-items: end;">
+                        <div style="flex: 1; position: relative;">
+                            <input type="text" id="member-search" placeholder="Start typing customer name..." autocomplete="off" class="form-control">
+                            <div id="member-suggestions" class="search-suggestions" style="border: 1px solid #ddd; max-height: 200px; overflow-y: auto; position: absolute; background: white; width: 100%; z-index: 100; display: none;"></div>
+                            <select name="customer_id" id="customer-select" class="form-control" style="display: none;">
+                                <option value="">Select a customer</option>
+                                {% for customer in available_customers %}
+                                    <option value="{{ customer.id }}">{{ customer.first_name }} {{ customer.last_name }} ({{ customer.get_country_display }})</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <button type="submit" name="add_member" class="btn">Add Member</button>
+                    </div>
+                </form>
+            </div>
+<br>
+            <script>
+            // Customer search functionality for group members
+            const memberSearch = document.getElementById('member-search');
+            const customerSelectDropdown = document.getElementById('customer-select');
+            const memberSuggestionsDiv = document.getElementById('member-suggestions');
+
+            const availableCustomers = [
+                {% for customer in available_customers %}
+                {
+                    id: {{ customer.id }},
+                    name: "{{ customer.first_name }} {{ customer.last_name }}",
+                    country: "{{ customer.get_country_display }}",
+                    certification: "{{ customer.get_certification_level_display }}"
+                },
+                {% endfor %}
+            ];
+
+            memberSearch.addEventListener('input', function() {
+                const query = this.value.toLowerCase();
+                if (query.length < 2) {
+                    memberSuggestionsDiv.style.display = 'none';
+                    return;
+                }
+
+                const matches = availableCustomers.filter(customer => 
+                    customer.name.toLowerCase().includes(query)
+                );
+
+                if (matches.length > 0) {
+                    memberSuggestionsDiv.innerHTML = matches.map(customer => 
+                        `<div class="suggestion-item" data-value="${customer.id}" style="padding: 10px; cursor: pointer; border-bottom: 1px solid #eee;">
+                            <strong>${customer.name}</strong><br>
+                            <small>${customer.country} • ${customer.certification}</small>
+                        </div>`
+                    ).join('');
+                    memberSuggestionsDiv.style.display = 'block';
+                } else {
+                    memberSuggestionsDiv.style.display = 'none';
+                }
+            });
+
+            memberSuggestionsDiv.addEventListener('click', function(e) {
+                const suggestionItem = e.target.closest('.suggestion-item');
+                if (suggestionItem) {
+                    const customerId = suggestionItem.getAttribute('data-value');
+                    const customer = availableCustomers.find(c => c.id == customerId);
+
+                    customerSelectDropdown.value = customerId;
+                    memberSearch.value = customer.name;
+                    memberSuggestionsDiv.style.display = 'none';
+                }
+            });
+
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('form')) {
+                    memberSuggestionsDiv.style.display = 'none';
+                }
+            });
+
+            // Quick Edit Functions
+            function showQuickEdit(customerId) {
+                document.getElementById('quick-edit-' + customerId).style.display = 'block';
+            }
+
+            function hideQuickEdit(customerId) {
+                document.getElementById('quick-edit-' + customerId).style.display = 'none';
+            }
+
+            function saveQuickEdit(customerId) {
+                const form = document.getElementById('quick-edit-form-' + customerId);
+                const formData = new FormData(form);
+
+                fetch(`/users/quick-edit-customer/${customerId}/`, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update the display values
+                        document.getElementById('tank-size-' + customerId).textContent = data.tank_size;
+                        document.getElementById('wetsuit-size-' + customerId).textContent = data.wetsuit_size;
+                        document.getElementById('bcd-size-' + customerId).textContent = data.bcd_size;
+                        document.getElementById('fins-size-' + customerId).textContent = data.fins_size;
+
+                        // Hide the edit form
+                        hideQuickEdit(customerId);
+
+                        // Show success message
+                        alert('Customer details updated successfully!');
+                    } else {
+                        alert('Error updating customer: ' + data.error);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('Error updating customer details');
+                });
+            }
+            </script>
+        {% else %}
+            <p>All customers are already members of this group.</p>
+        {% endif %}
         
         <!-- Quick Create New Customer -->
-        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+        <div style="background: #f8f9fa; border: 1px solid #ddd; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
             <h4>Create New Customer</h4>
-            <form method="post" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <form method="post" style="display: flex;flex-direction: column;">
                 {% csrf_token %}
-                <div>
                     <label><strong>First Name:</strong></label>
                     {{ quick_customer_form.first_name }}
-                </div>
-                <div>
+                    <br>
                     <label><strong>Last Name:</strong></label>
                     {{ quick_customer_form.last_name }}
-                </div>
-                <div>
+                    <br>
                     <label><strong>Email:</strong></label>
                     {{ quick_customer_form.email }}
-                </div>
-                <div>
+                    <br>
                     <label><strong>Phone:</strong></label>
                     {{ quick_customer_form.phone_number }}
-                </div>
-                <div>
+                    <br>
                     <label><strong>Country:</strong></label>
                     {{ quick_customer_form.country }}
-                </div>
-                <div>
+                    <br>
                     <label><strong>Certification:</strong></label>
                     {{ quick_customer_form.certification_level }}
-                </div>
-                <div style="grid-column: span 2;">
+                    <br>
                     <label><strong>Default Tank Size:</strong></label>
                     {{ quick_customer_form.default_tank_size }}
-                </div>
+                    <br>
                 <div style="grid-column: span 2;">
                     <button type="submit" name="add_new_customer_to_group" class="btn" style="background: #28a745; color: white; padding: 10px 20px;">Create & Add to Group</button>
                 </div>
             </form>
         </div>
         
-        <!-- Add Existing Customer -->
-        {% if available_customers %}
-        <div style="background: #fff; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
-            <h4>Add Existing Customer</h4>
-            <form method="post" style="margin-bottom: 20px;">
-                {% csrf_token %}
-                <div style="display: flex; gap: 10px; align-items: end;">
-                    <div style="flex: 1; position: relative;">
-                        <label>Search Customer:</label>
-                        <input type="text" id="member-search" placeholder="Start typing customer name..." autocomplete="off" class="form-control">
-                        <div id="member-suggestions" class="search-suggestions" style="border: 1px solid #ddd; max-height: 200px; overflow-y: auto; position: absolute; background: white; width: 100%; z-index: 100; display: none;"></div>
-                        <select name="customer_id" id="customer-select" class="form-control" style="display: none;">
-                            <option value="">Select a customer</option>
-                            {% for customer in available_customers %}
-                                <option value="{{ customer.id }}">{{ customer.first_name }} {{ customer.last_name }} ({{ customer.get_country_display }})</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <button type="submit" name="add_member" class="btn">Add Member</button>
-                </div>
-            </form>
-        </div>
-
-        <script>
-        // Customer search functionality for group members
-        const memberSearch = document.getElementById('member-search');
-        const customerSelectDropdown = document.getElementById('customer-select');
-        const memberSuggestionsDiv = document.getElementById('member-suggestions');
-
-        const availableCustomers = [
-            {% for customer in available_customers %}
-            {
-                id: {{ customer.id }},
-                name: "{{ customer.first_name }} {{ customer.last_name }}",
-                country: "{{ customer.get_country_display }}",
-                certification: "{{ customer.get_certification_level_display }}"
-            },
-            {% endfor %}
-        ];
-
-        memberSearch.addEventListener('input', function() {
-            const query = this.value.toLowerCase();
-            if (query.length < 2) {
-                memberSuggestionsDiv.style.display = 'none';
-                return;
-            }
-
-            const matches = availableCustomers.filter(customer => 
-                customer.name.toLowerCase().includes(query)
-            );
-
-            if (matches.length > 0) {
-                memberSuggestionsDiv.innerHTML = matches.map(customer => 
-                    `<div class="suggestion-item" data-value="${customer.id}" style="padding: 10px; cursor: pointer; border-bottom: 1px solid #eee;">
-                        <strong>${customer.name}</strong><br>
-                        <small>${customer.country} • ${customer.certification}</small>
-                    </div>`
-                ).join('');
-                memberSuggestionsDiv.style.display = 'block';
-            } else {
-                memberSuggestionsDiv.style.display = 'none';
-            }
-        });
-
-        memberSuggestionsDiv.addEventListener('click', function(e) {
-            const suggestionItem = e.target.closest('.suggestion-item');
-            if (suggestionItem) {
-                const customerId = suggestionItem.getAttribute('data-value');
-                const customer = availableCustomers.find(c => c.id == customerId);
-
-                customerSelectDropdown.value = customerId;
-                memberSearch.value = customer.name;
-                memberSuggestionsDiv.style.display = 'none';
-            }
-        });
-
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('form')) {
-                memberSuggestionsDiv.style.display = 'none';
-            }
-        });
-
-        // Quick Edit Functions
-        function showQuickEdit(customerId) {
-            document.getElementById('quick-edit-' + customerId).style.display = 'block';
-        }
-
-        function hideQuickEdit(customerId) {
-            document.getElementById('quick-edit-' + customerId).style.display = 'none';
-        }
-
-        function saveQuickEdit(customerId) {
-            const form = document.getElementById('quick-edit-form-' + customerId);
-            const formData = new FormData(form);
-            
-            fetch(`/users/quick-edit-customer/${customerId}/`, {
-                method: 'POST',
-                body: formData,
-                headers: {
-                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Update the display values
-                    document.getElementById('tank-size-' + customerId).textContent = data.tank_size;
-                    document.getElementById('wetsuit-size-' + customerId).textContent = data.wetsuit_size;
-                    document.getElementById('bcd-size-' + customerId).textContent = data.bcd_size;
-                    document.getElementById('fins-size-' + customerId).textContent = data.fins_size;
-                    
-                    // Hide the edit form
-                    hideQuickEdit(customerId);
-                    
-                    // Show success message
-                    alert('Customer details updated successfully!');
-                } else {
-                    alert('Error updating customer: ' + data.error);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('Error updating customer details');
-            });
-        }
-        </script>
-    {% else %}
-        <p>All customers are already members of this group.</p>
-    {% endif %}
+      
     </div>
 </div>
 
@@ -300,37 +305,7 @@
                     <i class="fas fa-info-circle"></i> 
                     Each group member will be assigned their default tank size from their profile.
                 </p>
-            </div>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
-                <div>
-                    <label><strong>Equipment Needed:</strong></label>
-                    <div style="margin-top: 8px;">
-                        <label style="display: block; font-weight: normal;">
-                            <input type="checkbox" name="needs_wetsuit" style="margin-right: 5px;"> Wetsuit
-                        </label>
-                        <label style="display: block; font-weight: normal;">
-                            <input type="checkbox" name="needs_bcd" style="margin-right: 5px;"> BCD
-                        </label>
-                        <label style="display: block; font-weight: normal;">
-                            <input type="checkbox" name="needs_regulator" style="margin-right: 5px;"> Regulator
-                        </label>
-                    </div>
-                </div>
-                
-                <div>
-                    <label><strong>Additional Services:</strong></label>
-                    <div style="margin-top: 8px;">
-                        <label style="display: block; font-weight: normal;">
-                            <input type="checkbox" name="needs_guide" style="margin-right: 5px;"> Guide
-                        </label>
-                        <label style="display: block; font-weight: normal;">
-                            <input type="checkbox" name="needs_insurance" style="margin-right: 5px;"> Insurance
-                        </label>
-                    </div>
-                </div>
-            </div>
-            
+            </div>            
             <button type="submit" name="schedule_group" class="btn" style="background: #28a745; color: white; padding: 12px 24px; font-size: 16px; width: 100%;">
                 Schedule {{ group.name }} for Selected Dives
             </button>
