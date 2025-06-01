@@ -38,8 +38,9 @@
                                 <select name="default_tank_size" class="form-control">
                                     <option value="10L" {% if member.customer.default_tank_size == '10L' %}selected{% endif %}>10 Liters</option>
                                     <option value="12L" {% if member.customer.default_tank_size == '12L' %}selected{% endif %}>12 Liters</option>
+                                    <option value="EAN12L" {% if member.customer.default_tank_size == 'EAN12L' %}selected{% endif %}>Nitrox 12 Liters</option>
                                     <option value="15L" {% if member.customer.default_tank_size == '15L' %}selected{% endif %}>15 Liters</option>
-                                    <option value="18L" {% if member.customer.default_tank_size == '18L' %}selected{% endif %}>18 Liters</option>
+                                    <option value="EAN15L" {% if member.customer.default_tank_size == 'EAN15L' %}selected{% endif %}>Nitrox 15 Liters</option>
                                 </select>
                             </div>
                             <div>

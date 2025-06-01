@@ -234,7 +234,8 @@ class CustomerDiveActivity(models.Model):
         ('10L', '10 Liters'),
         ('12L', '12 Liters'),
         ('15L', '15 Liters'),
-        ('18L', '18 Liters'),
+        ('EAN12L', 'NITROX 12 Liters'),
+        ('EAN15L', 'NITROX 15 Liters'),
     ]
     
     STATUS_CHOICES = [
