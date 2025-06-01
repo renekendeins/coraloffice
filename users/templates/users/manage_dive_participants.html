@@ -202,6 +202,14 @@ function toggleDetails(participantId) {
                             {% csrf_token %}
                             <input type="hidden" name="participant_id" value="{{ participant.id }}">
                             <div>
+                                <label>Activity:</label>
+                                <select name="activity" class="form-control">
+                                    {% for activity in form.activity.field.queryset %}
+                                        <option value="{{ activity.id }}" {% if participant.activity.id == activity.id %}selected{% endif %}>{{ activity.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div>
                                 <label>Tank Size:</label>
                                 <select name="tank_size" class="form-control">
                                     {% for value, label in tank_size_choices %}

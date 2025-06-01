@@ -114,9 +114,16 @@ def customer_list(request):
             Q(phone_number__icontains=search_query)
         )
     
+    # Add pagination
+    from django.core.paginator import Paginator
+    paginator = Paginator(customers, 10)  # Show 10 customers per page
+    page_number = request.GET.get('page')
+    customers_page = paginator.get_page(page_number)
+    
     return render(request, 'users/customer_list.html', {
-        'customers': customers,
-        'search_query': search_query
+        'customers': customers_page,
+        'search_query': search_query,
+        'total_customers': customers.count()
     })
 
 
@@ -490,6 +497,13 @@ def manage_dive_participants(request, dive_id):
             participant_id = request.POST.get('participant_id')
             if participant_id:
                 participant = get_object_or_404(CustomerDiveActivity, id=int(participant_id))
+                
+                # Update activity if provided
+                activity_id = request.POST.get('activity')
+                if activity_id:
+                    activity = get_object_or_404(DiveActivity, id=int(activity_id), diving_center=request.user)
+                    participant.activity = activity
+                
                 participant.tank_size = request.POST.get('tank_size', participant.tank_size)
                 participant.status = request.POST.get('status', participant.status)
                 participant.needs_wetsuit = 'needs_wetsuit' in request.POST
@@ -1030,6 +1044,64 @@ def medical_form(request):
         form = MedicalForm()
     
     return render(request, 'users/medical_form.html', {'form': form})
+
+
+@login_required
+def print_participants(request, dive_id):
+    if not request.user.userprofile.is_diving_center:
+        messages.error(request, 'Access denied.')
+        return redirect('users:profile')
+
+    dive = get_object_or_404(DiveSchedule, id=dive_id, diving_center=request.user)
+    participants = CustomerDiveActivity.objects.filter(dive_schedule=dive).order_by('customer__last_name', 'customer__first_name')
+
+    # Calculate equipment summary
+    equipment_summary = {
+        'total_participants': participants.count(),
+        'tanks_by_size': {},
+        'wetsuits_by_size': {},
+        'bcds_by_size': {},
+        'fins_by_size': {},
+        'regulators_needed': participants.filter(needs_regulator=True).count(),
+        'guides_needed': participants.filter(needs_guide=True).count(),
+        'insurance_needed': participants.filter(needs_insurance=True).count(),
+    }
+
+    # Count tanks by size
+    for participant in participants:
+        tank_size = participant.tank_size
+        if tank_size not in equipment_summary['tanks_by_size']:
+            equipment_summary['tanks_by_size'][tank_size] = 0
+        equipment_summary['tanks_by_size'][tank_size] += 1
+
+    # Count equipment by size for participants who need them
+    for participant in participants:
+        if participant.needs_wetsuit:
+            wetsuit_size = participant.customer.get_wetsuit_size()
+            if wetsuit_size not in equipment_summary['wetsuits_by_size']:
+                equipment_summary['wetsuits_by_size'][wetsuit_size] = 0
+            equipment_summary['wetsuits_by_size'][wetsuit_size] += 1
+        
+        if participant.needs_bcd:
+            bcd_size = participant.customer.get_bcd_size()
+            if bcd_size not in equipment_summary['bcds_by_size']:
+                equipment_summary['bcds_by_size'][bcd_size] = 0
+            equipment_summary['bcds_by_size'][bcd_size] += 1
+        
+        if participant.needs_regulator:  # For fins, we count when regulators are needed (as proxy)
+            fins_size = participant.customer.get_fins_size()
+            if fins_size not in equipment_summary['fins_by_size']:
+                equipment_summary['fins_by_size'][fins_size] = 0
+            equipment_summary['fins_by_size'][fins_size] += 1
+
+    context = {
+        'dive': dive,
+        'participants': participants,
+        'equipment_summary': equipment_summary,
+        'print_mode': True,
+    }
+
+    return render(request, 'users/print_participants.html', context)
 
 
 @login_required

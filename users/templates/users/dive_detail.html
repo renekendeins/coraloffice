@@ -85,8 +85,11 @@
                         <a href="{% url 'users:manage_dive_participants' dive.id %}" class="btn btn-primary me-2">
                             <i class="fas fa-users me-1"></i>Manage Participants
                         </a>
-                        <a href="{% url 'users:edit_dive' dive.id %}" class="btn btn-secondary">
+                        <a href="{% url 'users:edit_dive' dive.id %}" class="btn btn-secondary me-2">
                             <i class="fas fa-edit me-1"></i>Edit Dive
+                        </a>
+                        <a href="{% url 'users:print_participants' dive.id %}" class="btn btn-success" target="_blank">
+                            <i class="fas fa-print me-1"></i>Print Participants
                         </a>
                     </div>
                 </div>
