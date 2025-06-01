@@ -1,7 +1,15 @@
-
+import os
+import django
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
 from users.models import DiveActivity
+
+
+
+# Inicializar Django
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'django_project.settings')  # Cambia 'tu_proyecto'
+django.setup()
+
 
 class Command(BaseCommand):
     help = 'Creates default dive activities for all diving centers'

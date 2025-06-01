@@ -220,7 +220,7 @@ class Command(BaseCommand):
                         '', 'Bring underwater camera', 'Check weather conditions',
                         'Early arrival required', 'Equipment check mandatory'
                     ]),
-                    activity=random.choice(center_activities) if random.choice([True, False]) else None
+                    
                 )
                 schedules.append(schedule)
         
