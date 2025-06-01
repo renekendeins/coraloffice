@@ -127,7 +127,7 @@ def add_customer(request):
         return redirect('users:profile')
 
     if request.method == 'POST':
-        form = CustomerForm(request.POST)
+        form = CustomerForm(request.POST, request.FILES)
         if form.is_valid():
             customer = form.save(commit=False)
             customer.diving_center = request.user
@@ -180,7 +180,7 @@ def edit_customer(request, customer_id):
                                  diving_center=request.user)
 
     if request.method == 'POST':
-        form = CustomerForm(request.POST, instance=customer)
+        form = CustomerForm(request.POST, request.FILES, instance=customer)
         if form.is_valid():
             form.save()
             messages.success(request, 'Customer updated successfully!')
