@@ -8,7 +8,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime, timedelta
 import calendar
-from .forms import SignUpForm, UserForm, UserProfileForm, CustomerForm, DiveScheduleForm, DiveActivityForm, CustomerDiveActivityForm, DivingSiteForm, InventoryItemForm, DivingGroupForm, MedicalForm
+from .forms import SignUpForm, UserForm, UserProfileForm, CustomerForm, DiveScheduleForm, DiveActivityForm, CustomerDiveActivityForm, DivingSiteForm, InventoryItemForm, DivingGroupForm, MedicalForm, QuickCustomerForm
 from .models import UserProfile, Customer, DiveSchedule, DiveActivity, CustomerDiveActivity, DivingSite, InventoryItem, DivingGroup, DivingGroupMember
 
 
@@ -879,6 +879,30 @@ def manage_group_members(request, group_id):
                 messages.success(request, 'Member removed from group!')
                 return redirect('users:manage_group_members', group_id=group.id)
         
+        elif 'set_leader' in request.POST:
+            member_id = request.POST.get('member_id')
+            if member_id:
+                # Remove current leader status from all members
+                DivingGroupMember.objects.filter(group=group).update(is_leader=False)
+                # Set new leader
+                member = get_object_or_404(DivingGroupMember, id=member_id, group=group)
+                member.is_leader = True
+                member.save()
+                messages.success(request, f'{member.customer} is now the group leader!')
+                return redirect('users:manage_group_members', group_id=group.id)
+        
+        elif 'add_new_customer_to_group' in request.POST:
+            quick_customer_form = QuickCustomerForm(request.POST)
+            if quick_customer_form.is_valid():
+                customer = quick_customer_form.save(commit=False)
+                customer.diving_center = request.user
+                customer.save()
+                DivingGroupMember.objects.create(group=group, customer=customer)
+                messages.success(request, f'New customer {customer} created and added to group!')
+                return redirect('users:manage_group_members', group_id=group.id)
+            else:
+                messages.error(request, 'Please correct the form errors.')
+        
         elif 'schedule_group' in request.POST:
             dive_ids = request.POST.getlist('selected_dives')
             activity_id = request.POST.get('activity_id')
@@ -925,6 +949,7 @@ def manage_group_members(request, group_id):
     # Get group activities and tank size choices for the form
     group_activities = DiveActivity.objects.filter(diving_center=request.user)
     tank_choices = CustomerDiveActivity.TANK_SIZE_CHOICES
+    quick_customer_form = QuickCustomerForm()
 
     return render(request, 'users/manage_group_members.html', {
         'group': group,
@@ -933,6 +958,7 @@ def manage_group_members(request, group_id):
         'available_dives': available_dives,
         'group_activities': group_activities,
         'tank_choices': tank_choices,
+        'quick_customer_form': quick_customer_form,
     })
 
 

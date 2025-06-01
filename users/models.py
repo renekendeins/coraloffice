@@ -101,6 +101,13 @@ class Customer(models.Model):
         ('15L', '15 Liters'),
         ('18L', '18 Liters'),
     ], default='12L', help_text="Default tank size for this customer")
+    
+    # File uploads
+    profile_picture = models.ImageField(upload_to='customer_profiles/', null=True, blank=True)
+    diving_licence = models.FileField(upload_to='customer_documents/licences/', null=True, blank=True)
+    diving_insurance = models.FileField(upload_to='customer_documents/insurance/', null=True, blank=True)
+    medical_check = models.FileField(upload_to='customer_documents/medical/', null=True, blank=True)
+    
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

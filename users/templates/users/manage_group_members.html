@@ -16,8 +16,18 @@
         {% if members %}
             {% for member in members %}
             <div class="participant-card" style="display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                    <h4>{{ member.customer.first_name }} {{ member.customer.last_name }}</h4>
+                <div style="display: flex; align-items: start; gap: 15px;">
+                    <div style="flex-shrink: 0;">
+                        {% if member.customer.profile_picture %}
+                            <img src="{{ member.customer.profile_picture.url }}" alt="{{ member.customer.first_name }}" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+                        {% else %}
+                            <div style="width: 50px; height: 50px; border-radius: 50%; background: #ddd; display: flex; align-items: center; justify-content: center; color: #666;">
+                                {{ member.customer.first_name.0 }}{{ member.customer.last_name.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div>
+                        <h4>{{ member.customer.first_name }} {{ member.customer.last_name }}</h4>
                     <p>{{ member.customer.email }}</p>
                     <p><strong>Certification:</strong> {{ member.customer.get_certification_level_display }}</p>
                     <p><strong>Tank Size:</strong> <span id="tank-size-{{ member.customer.id }}">{{ member.customer.default_tank_size }}</span></p>
@@ -26,7 +36,14 @@
                         <span style="background-color: #ff9800; color: white; padding: 2px 6px; border-radius: 3px; font-size: 12px;">Group Leader</span>
                     {% endif %}
                     <div style="margin-top: 10px;">
-                        <button type="button" onclick="showQuickEdit({{ member.customer.id }})" class="btn" style="background: #007bff; color: white; padding: 5px 10px; font-size: 12px;">Quick Edit</button>
+                        <button type="button" onclick="showQuickEdit({{ member.customer.id }})" class="btn" style="background: #007bff; color: white; padding: 5px 10px; font-size: 12px; margin-right: 5px;">Quick Edit</button>
+                        {% if not member.is_leader %}
+                        <form method="post" style="display: inline;">
+                            {% csrf_token %}
+                            <input type="hidden" name="member_id" value="{{ member.id }}">
+                            <button type="submit" name="set_leader" class="btn" style="background: #ff9800; color: white; padding: 5px 10px; font-size: 12px;">Set as Leader</button>
+                        </form>
+                        {% endif %}
                     </div>
                     
                     <!-- Quick Edit Form (Hidden by default) -->
@@ -61,6 +78,7 @@
                             </div>
                         </form>
                     </div>
+                    </div>
                 </div>
                 <form method="post" style="margin: 0;">
                     {% csrf_token %}
@@ -77,24 +95,68 @@
     <!-- Add Members -->
     <div>
         <h3>Add Members</h3>
-        {% if available_customers %}
-        <form method="post" style="margin-bottom: 20px;">
-            {% csrf_token %}
-            <div style="display: flex; gap: 10px; align-items: end;">
-                <div style="flex: 1; position: relative;">
-                    <label>Search Customer:</label>
-                    <input type="text" id="member-search" placeholder="Start typing customer name..." autocomplete="off" class="form-control">
-                    <div id="member-suggestions" class="search-suggestions" style="border: 1px solid #ddd; max-height: 200px; overflow-y: auto; position: absolute; background: white; width: 100%; z-index: 100; display: none;"></div>
-                    <select name="customer_id" id="customer-select" class="form-control" style="display: none;">
-                        <option value="">Select a customer</option>
-                        {% for customer in available_customers %}
-                            <option value="{{ customer.id }}">{{ customer.first_name }} {{ customer.last_name }} ({{ customer.get_country_display }})</option>
-                        {% endfor %}
-                    </select>
+        
+        <!-- Quick Create New Customer -->
+        <div style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+            <h4>Create New Customer</h4>
+            <form method="post" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                {% csrf_token %}
+                <div>
+                    <label><strong>First Name:</strong></label>
+                    {{ quick_customer_form.first_name }}
                 </div>
-                <button type="submit" name="add_member" class="btn">Add Member</button>
-            </div>
-        </form>
+                <div>
+                    <label><strong>Last Name:</strong></label>
+                    {{ quick_customer_form.last_name }}
+                </div>
+                <div>
+                    <label><strong>Email:</strong></label>
+                    {{ quick_customer_form.email }}
+                </div>
+                <div>
+                    <label><strong>Phone:</strong></label>
+                    {{ quick_customer_form.phone_number }}
+                </div>
+                <div>
+                    <label><strong>Country:</strong></label>
+                    {{ quick_customer_form.country }}
+                </div>
+                <div>
+                    <label><strong>Certification:</strong></label>
+                    {{ quick_customer_form.certification_level }}
+                </div>
+                <div style="grid-column: span 2;">
+                    <label><strong>Default Tank Size:</strong></label>
+                    {{ quick_customer_form.default_tank_size }}
+                </div>
+                <div style="grid-column: span 2;">
+                    <button type="submit" name="add_new_customer_to_group" class="btn" style="background: #28a745; color: white; padding: 10px 20px;">Create & Add to Group</button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Add Existing Customer -->
+        {% if available_customers %}
+        <div style="background: #fff; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
+            <h4>Add Existing Customer</h4>
+            <form method="post" style="margin-bottom: 20px;">
+                {% csrf_token %}
+                <div style="display: flex; gap: 10px; align-items: end;">
+                    <div style="flex: 1; position: relative;">
+                        <label>Search Customer:</label>
+                        <input type="text" id="member-search" placeholder="Start typing customer name..." autocomplete="off" class="form-control">
+                        <div id="member-suggestions" class="search-suggestions" style="border: 1px solid #ddd; max-height: 200px; overflow-y: auto; position: absolute; background: white; width: 100%; z-index: 100; display: none;"></div>
+                        <select name="customer_id" id="customer-select" class="form-control" style="display: none;">
+                            <option value="">Select a customer</option>
+                            {% for customer in available_customers %}
+                                <option value="{{ customer.id }}">{{ customer.first_name }} {{ customer.last_name }} ({{ customer.get_country_display }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" name="add_member" class="btn">Add Member</button>
+                </div>
+            </form>
+        </div>
 
         <script>
         // Customer search functionality for group members

@@ -31,41 +31,33 @@
 {% endif %}
 
 {% for customer in customers %}
-<div class="user-card">
-    <h3>{{ customer.first_name }} {{ customer.last_name }}</h3>
-    <p><strong>Email:</strong> {{ customer.email }}</p>
-    <p><strong>Phone:</strong> {{ customer.phone_number }}</p>
-    <p><strong>Country:</strong> {{ customer.get_country_display }}</p>
-    {% if customer.certification_level %}
-        <p><strong>Certification:</strong> {{ customer.get_certification_level_display }}</p>
-    {% endif %}
-    {% if customer.weight or customer.height or customer.foot_size %}
-        <div style="background-color: #f8f9fa; padding: 10px; border-radius: 5px; margin: 10px 0;">
-            <strong>Physical Info & Equipment Sizes:</strong><br>
-            {% if customer.weight %}<small>Weight: {{ customer.weight }}kg</small><br>{% endif %}
-            {% if customer.height %}<small>Height: {{ customer.height }}cm</small><br>{% endif %}
-            {% if customer.foot_size %}<small>Foot Size: EU {{ customer.foot_size }}</small><br>{% endif %}
-            <small><strong>Recommended:</strong> 
-                Wetsuit: {{ customer.get_wetsuit_size }}, 
-                BCD: {{ customer.get_bcd_size }}, 
-                Fins: {{ customer.get_fins_size }}, 
-                Boots: {{ customer.get_boots_size }}
-            </small>
-        </div>
-    {% endif %}
-    {% if customer.emergency_contact %}
-        <p><strong>Emergency Contact:</strong> {{ customer.emergency_contact }}</p>
-    {% endif %}
-    <p><strong>Added:</strong> {{ customer.created_at|date:"F d, Y" }}</p>
-    <div style="margin-top: 15px;">
-        <a href="{% url 'users:customer_activity_history' customer.id %}" class="btn" style="background: #4CAF50;">Activity History</a>
-        <a href="{% url 'users:edit_customer' customer.id %}" class="btn" style="background: #ff9800; margin-right: 10px;">Edit</a>
-        <a href="{% url 'users:delete_customer' customer.id %}" class="btn" style="background: #f44336;">Delete</a>
-    </div>
-</div>
-{% empty %}
-<p>No customers added yet. <a href="{% url 'users:add_customer' %}">Add your first customer</a>.</p>
-{% endfor %}
+            <div class="customer-card">
+                <div style="display: flex; align-items: start; gap: 15px;">
+                    <div style="flex-shrink: 0;">
+                        {% if customer.profile_picture %}
+                            <img src="{{ customer.profile_picture.url }}" alt="{{ customer.first_name }}" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover;">
+                        {% else %}
+                            <div style="width: 60px; height: 60px; border-radius: 50%; background: #ddd; display: flex; align-items: center; justify-content: center; color: #666;">
+                                {{ customer.first_name.0 }}{{ customer.last_name.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div style="flex: 1;">
+                        <h3><a href="{% url 'users:edit_customer' customer.id %}">{{ customer.first_name }} {{ customer.last_name }}</a></h3>
+                        <p><strong>Email:</strong> {{ customer.email }}</p>
+                        <p><strong>Phone:</strong> {{ customer.phone_number }}</p>
+                        <p><strong>Country:</strong> {{ customer.get_country_display }}</p>
+                        <p><strong>Certification:</strong> {{ customer.get_certification_level_display }}</p>
+                        <p><strong>Tank Size:</strong> {{ customer.default_tank_size }}</p>
+                        <div class="customer-actions">
+                            <a href="{% url 'users:edit_customer' customer.id %}" class="btn btn-edit">Edit</a>
+                            <a href="{% url 'users:customer_activity_history' customer.id %}" class="btn btn-history">Activity History</a>
+                            <a href="{% url 'users:delete_customer' customer.id %}" class="btn btn-delete">Delete</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
 
 <a href="{% url 'users:diving_center_dashboard' %}" class="btn" style="background: #6c757d;">Back to Dashboard</a>
 {% endblock %}

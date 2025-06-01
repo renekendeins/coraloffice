@@ -1,4 +1,3 @@
-
 {% extends 'users/base.html' %}
 
 {% block users_title %}Dive Details - {{ dive.dive_site.name }}{% endblock %}
@@ -108,8 +107,17 @@
                                 <div class="participant-card p-3 border rounded">
                                     <div class="d-flex justify-content-between align-items-start">
                                         <div class="border border-bottom" style="padding: 2rem 1rem; border-bottom: 1px solid #999;">
-                                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                                <span class="mb-0" style="font-weight: bold; ">{{ participant.customer.first_name }} {{ participant.customer.last_name }}</span>
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div class="d-flex align-items-center gap-2">
+                                    {% if participant.customer.profile_picture %}
+                                        <img src="{{ participant.customer.profile_picture.url }}" alt="{{ participant.customer.first_name }}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">
+                                    {% else %}
+                                        <div style="width: 40px; height: 40px; border-radius: 50%; background: #ddd; display: flex; align-items: center; justify-content: center; color: #666; font-size: 14px;">
+                                            {{ participant.customer.first_name.0 }}{{ participant.customer.last_name.0 }}
+                                        </div>
+                                    {% endif %}
+                                    <span class="mb-0" style="font-weight: bold;">{{ participant.customer.first_name }} {{ participant.customer.last_name }}</span>
+                                </div>
                                                 <!-- Group badges -->
                                                 <div>
                                                     {% for membership in participant.customer.group_memberships.all %}
@@ -120,12 +128,12 @@
                                                 </div>
                                             </div>
                                             <small class="text-muted d-block">{{ participant.activity.name }}</small>
-                                            
+
                                             <div class="mt-2">
                                                 <span class="badge bg-primary">{{ participant.tank_size }}</span>
                                                 <span class="badge bg-{{ participant.status|lower }}">{{ participant.get_status_display }}</span>
                                             </div>
-                                            
+
                                             {% if participant.needs_wetsuit or participant.needs_bcd or participant.needs_regulator %}
                                             <div class="mt-1">
                                                 <small class="text-muted">Equipment: 
@@ -134,7 +142,6 @@
                                                     {% if participant.needs_regulator %}<span class="badge badge-sm bg-secondary">Regulator</span> {% endif %}
                                                 </small>
                                             </div>
-                                            {% endif %}
                                         </div>
                                     </div>
                                 </div>
@@ -175,7 +182,7 @@
                                         <span class="badge bg-primary rounded-pill">{{ tank.count }}</span>
                                     </div>
                                 {% endfor %}
-                                
+
                                 <!-- Total tanks count -->
                                 <div class="d-flex justify-content-between align-items-center mt-3 pt-2 border-top fw-bold">
                                     <span class="text-dark">Total Tanks:</span>
@@ -193,7 +200,7 @@
                             <h6 class="text-primary mb-3">
                                 <i class="fas fa-vest me-2"></i>Equipment Needed
                             </h6>
-                            
+
                             <div class="d-flex justify-content-between align-items-center mb-2 p-2 bg-light rounded">
                                 <span>Wetsuits</span>
                                 <span class="badge bg-info rounded-pill">{{ equipment_counts.wetsuits }}</span>
@@ -274,7 +281,7 @@
                                 </div>
                             </div>
                         {% endfor %}
-                        
+
                         <!-- Total Revenue -->
                         <div class="border-top pt-3">
                             <div class="d-flex justify-content-between align-items-center">

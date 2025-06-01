@@ -31,13 +31,17 @@ class UserProfileForm(forms.ModelForm):
 class CustomerForm(forms.ModelForm):
     class Meta:
         model = Customer
-        fields = ('first_name', 'last_name', 'email', 'phone_number', 'country', 'language', 'birthday', 'certification_level', 'emergency_contact', 'medical_conditions', 'weight', 'height', 'foot_size', 'default_tank_size')
+        fields = ('first_name', 'last_name', 'email', 'phone_number', 'country', 'language', 'birthday', 'certification_level', 'emergency_contact', 'medical_conditions', 'weight', 'height', 'foot_size', 'default_tank_size', 'profile_picture', 'diving_licence', 'diving_insurance', 'medical_check')
         widgets = {
             'medical_conditions': forms.Textarea(attrs={'rows': 3}),
             'birthday': forms.DateInput(attrs={'type': 'date'}),
             'weight': forms.NumberInput(attrs={'step': '0.1', 'placeholder': 'kg'}),
             'height': forms.NumberInput(attrs={'step': '0.1', 'placeholder': 'cm'}),
             'foot_size': forms.NumberInput(attrs={'step': '0.5', 'placeholder': 'EU size'}),
+            'profile_picture': forms.FileInput(attrs={'accept': 'image/*'}),
+            'diving_licence': forms.FileInput(attrs={'accept': '.pdf,.jpg,.jpeg,.png'}),
+            'diving_insurance': forms.FileInput(attrs={'accept': '.pdf,.jpg,.jpeg,.png'}),
+            'medical_check': forms.FileInput(attrs={'accept': '.pdf,.jpg,.jpeg,.png'}),
         }
 
 class DiveActivityForm(forms.ModelForm):
@@ -146,6 +150,17 @@ class DivingGroupForm(forms.ModelForm):
             'description': forms.Textarea(attrs={'rows': 3}),
             'arrival_date': forms.DateInput(attrs={'type': 'date'}),
             'departure_date': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+class QuickCustomerForm(forms.ModelForm):
+    """Simplified form for quickly adding customers in group management"""
+    class Meta:
+        model = Customer
+        fields = ('first_name', 'last_name', 'email', 'phone_number', 'country', 'certification_level', 'default_tank_size')
+        widgets = {
+            'country': forms.Select(attrs={'class': 'form-control'}),
+            'certification_level': forms.Select(attrs={'class': 'form-control'}),
+            'default_tank_size': forms.Select(attrs={'class': 'form-control'}),
         }
 
 class MedicalForm(forms.ModelForm):
