@@ -19,7 +19,7 @@ class Command(BaseCommand):
         try:
             # Get divecenter1 user
             try:
-                diving_center = User.objects.get(username='divecenter1')
+                diving_center = User.objects.get(username='divingcenter1')
                 if not diving_center.userprofile.is_diving_center:
                     self.stdout.write(
                         self.style.ERROR('divecenter1 user is not configured as a diving center')
