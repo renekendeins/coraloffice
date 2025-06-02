@@ -5,110 +5,9 @@
 {% block users_content %}
 <h2>{{ user.userprofile.business_name }} Dashboard</h2>
 
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 40px;">
-    <div class="card" style="background: #e3f2fd; border-left: 5px solid #2196f3;">
-        <h3>Total Customers</h3>
-        <p style="font-size: 2rem; font-weight: bold; color: #2196f3;">{{ customers.count }}</p>
-        <a href="{% url 'users:customer_list' %}" style="color: #2196f3;">Manage Customers →</a>
-    </div>
-
-    <div class="card" style="background: #e8f5e8; border-left: 5px solid #4caf50;">
-        <h3>Upcoming Dives</h3>
-        <p style="font-size: 2rem; font-weight: bold; color: #4caf50;">{{ upcoming_dives.count }}</p>
-        <a href="{% url 'users:dive_calendar' %}" style="color: #4caf50;">View Calendar →</a>
-    </div>
-</div>
-
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 40px;">
-    <!-- Customer Management -->
-    <section class="card">
-        <h3 style="color: #2196f3; border-bottom: 2px solid #2196f3; padding-bottom: 10px;">👥 Customer Management</h3>
-        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
-            <a href="{% url 'users:add_customer' %}" class="btn" style="background: #2196f3;">Add New Customer</a>
-            <a href="{% url 'users:customer_list' %}" class="btn" style="background: #64b5f6;">View All Customers</a>
-        </div>
-    </section>
-
-    <!-- Activity Management -->
-    <section class="card">
-        <h3 style="color: #ff9800; border-bottom: 2px solid #ff9800; padding-bottom: 10px;">🏊 Activity Management</h3>
-        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
-            <a href="{% url 'users:add_activity' %}" class="btn" style="background: #ff9800;">Add New Activity</a>
-            <a href="{% url 'users:activity_list' %}" class="btn" style="background: #ffb74d;">Manage Activities</a>
-        </div>
-    </section>
-
-    <!-- Calendar & Scheduling -->
-    <section class="card">
-        <h3 style="color: #4caf50; border-bottom: 2px solid #4caf50; padding-bottom: 10px;">📅 Calendar & Scheduling</h3>
-        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
-            <a href="{% url 'users:schedule_dive' %}" class="btn" style="background: #4caf50;">Schedule New Dive</a>
-            <a href="{% url 'users:dive_calendar' %}" class="btn" style="background: #81c784;">View Dive Calendar</a>
-            <a href="{% url 'users:calendar_view' %}" class="btn" style="background: #a5d6a7;">Calendar View</a>
-        </div>
-    </section>
-</div>
-
-<!-- New Management Sections -->
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 40px;">
-    <!-- Diving Sites Management -->
-    <section class="card">
-        <h3 style="color: #9c27b0; border-bottom: 2px solid #9c27b0; padding-bottom: 10px;">🏝️ Diving Sites</h3>
-        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
-            <a href="{% url 'users:add_diving_site' %}" class="btn" style="background: #9c27b0;">Add New Site</a>
-            <a href="{% url 'users:diving_sites_list' %}" class="btn" style="background: #ba68c8;">Manage Sites</a>
-        </div>
-    </section>
-
-    <!-- Inventory Management -->
-    <section class="card">
-        <h3 style="color: #607d8b; border-bottom: 2px solid #607d8b; padding-bottom: 10px;">📦 Inventory</h3>
-        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
-            <a href="{% url 'users:add_inventory_item' %}" class="btn" style="background: #607d8b;">Add Equipment</a>
-            <a href="{% url 'users:inventory_list' %}" class="btn" style="background: #78909c;">View Inventory</a>
-        </div>
-    </section>
-
-    <!-- Diving Groups Management -->
-    <section class="card">
-        <h3 style="color: #795548; border-bottom: 2px solid #795548; padding-bottom: 10px;">👥 Diving Groups</h3>
-        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
-            <a href="{% url 'users:add_diving_group' %}" class="btn" style="background: #795548;">Add New Group</a>
-            <a href="{% url 'users:diving_groups_list' %}" class="btn" style="background: #8d6e63;">Manage Groups</a>
-        </div>
-    </section>
-
-    <!-- Staff Management -->
-    <section class="card">
-        <h3 style="color: #3f51b5; border-bottom: 2px solid #3f51b5; padding-bottom: 10px;">👨‍🏫 Staff Management</h3>
-        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
-            <a href="{% url 'users:add_staff' %}" class="btn" style="background: #3f51b5;">Add New Staff</a>
-            <a href="{% url 'users:staff_list' %}" class="btn" style="background: #5c6bc0;">Manage Staff</a>
-            <a href="{% url 'users:staff_planning' %}" class="btn" style="background: #7986cb;">Tomorrow's Planning</a>
-        </div>
-    </section>
-
-    <!-- Medical Forms Management -->
-    <section class="card">
-        <h3 style="color: #e91e63; border-bottom: 2px solid #e91e63; padding-bottom: 10px;">📋 Medical Forms</h3>
-        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
-            <a href="{% url 'users:medical_forms_list' %}" class="btn" style="background: #e91e63;">View Submitted Forms</a>
-            <a href="{% url 'users:medical_form' %}" class="btn" style="background: #f06292;" target="_blank">Medical Form Link</a>
-        </div>
-    </section>
-
-    <!-- Medical Forms Management -->
-    <section class="card">
-        <h3 style="color: #e91e63; border-bottom: 2px solid #e91e63; padding-bottom: 10px;">📈 Analytics</h3>
-        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
-            <a href="{% url 'users:dashboard_analytics' %}" class="btn" style="background: #f06292;" target="_blank">Analytics</a>
-        </div>
-    </section>
-</div>
-
 <!-- Upcoming Dives Section -->
-<section style="margin-top: 40px;">
-    <h3 style="color: #333; border-bottom: 2px solid #ddd; padding-bottom: 10px;">🏊‍♂️ Today & Tomorrow's Dives</h3>
+<section style="margin-top: 40px; margin-bottom: 50px;">
+    <h3 style="color: #333; border-bottom: 2px solid #ddd; padding-bottom: 10px;">🏊‍♂️ Salidas de Hoy y Mañana</h3>
     {% if upcoming_dives %}
         <div style="margin-top: 20px;">
             {% for dive in upcoming_dives %}
@@ -138,4 +37,109 @@
         <p style="color: #666; margin-top: 20px;">No dives scheduled for today or tomorrow.</p>
     {% endif %}
 </section>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 40px;">
+    <!-- Calendar & Scheduling -->
+    <section class="card">
+        <h3 style="color: #4caf50; border-bottom: 2px solid #4caf50; padding-bottom: 10px;">📅 Calendario</h3>
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+            <a href="{% url 'users:calendar_view' %}" class="btn" style="background: #4caf50;">Calendario</a>
+            <a href="{% url 'users:schedule_dive' %}" class="btn" style="background: #a5d6a7;">Crear nueva salida</a>
+            <!-- <a href="{% url 'users:dive_calendar' %}" class="btn" style="background: #81c784;">Listado de salidas</a> -->
+            <a href="{% url 'users:staff_planning' %}" class="btn" style="background: #7986cb;">Planning de mañana</a>
+            
+        </div>
+    </section>
+    
+    <!-- Customer Management -->
+    <section class="card">
+        <h3 style="color: #2196f3; border-bottom: 2px solid #2196f3; padding-bottom: 10px;">👥 Clientes</h3>
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+            <a href="{% url 'users:add_customer' %}" class="btn" style="background: #2196f3;">Crear nuevo cliente</a>
+            <a href="{% url 'users:customer_list' %}" class="btn" style="background: #64b5f6;">Ver todos los clientes</a>
+        </div>
+    </section>
+
+    <!-- Diving Groups Management -->
+    <section class="card">
+        <h3 style="color: #795548; border-bottom: 2px solid #795548; padding-bottom: 10px;">👥 Grupos de buceo</h3>
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+            <a href="{% url 'users:add_diving_group' %}" class="btn" style="background: #795548;">Crear nuevo grupo</a>
+            <a href="{% url 'users:diving_groups_list' %}" class="btn" style="background: #8d6e63;">Gestionar grupos</a>
+        </div>
+    </section>
+
+    <!-- Activity Management -->
+    <section class="card">
+        <h3 style="color: #ff9800; border-bottom: 2px solid #ff9800; padding-bottom: 10px;">🏊 Gestor de actividades</h3>
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+            <a href="{% url 'users:add_activity' %}" class="btn" style="background: #ff9800;">Crear nueva actividad</a>
+            <a href="{% url 'users:activity_list' %}" class="btn" style="background: #ffb74d;">Gestionar actividades</a>
+        </div>
+    </section>
+
+</div>
+
+<!-- New Management Sections -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 40px;">
+    <!-- Diving Sites Management -->
+    <section class="card">
+        <h3 style="color: #9c27b0; border-bottom: 2px solid #9c27b0; padding-bottom: 10px;">🏝️ Lugares de buceo</h3>
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+            <a href="{% url 'users:add_diving_site' %}" class="btn" style="background: #9c27b0;">Crear nuevo lugar</a>
+            <a href="{% url 'users:diving_sites_list' %}" class="btn" style="background: #ba68c8;">Gestionar lugares</a>
+        </div>
+    </section>
+
+    <!-- Inventory Management -->
+    <section class="card">
+        <h3 style="color: #607d8b; border-bottom: 2px solid #607d8b; padding-bottom: 10px;">📦 Inventario</h3>
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+            <a href="{% url 'users:add_inventory_item' %}" class="btn" style="background: #607d8b;">Añadir equipo</a>
+            <a href="{% url 'users:inventory_list' %}" class="btn" style="background: #78909c;">Ver inventario</a>
+        </div>
+    </section>
+
+
+    <!-- Staff Management -->
+    <section class="card">
+        <h3 style="color: #3f51b5; border-bottom: 2px solid #3f51b5; padding-bottom: 10px;">👨‍🏫 Staff Management</h3>
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+            <a href="{% url 'users:add_staff' %}" class="btn" style="background: #3f51b5;">Add New Staff</a>
+            <a href="{% url 'users:staff_list' %}" class="btn" style="background: #5c6bc0;">Manage Staff</a>
+            
+        </div>
+    </section>
+
+    <!-- Medical Forms Management -->
+    <section class="card">
+        <h3 style="color: #e91e63; border-bottom: 2px solid #e91e63; padding-bottom: 10px;">📋 Medical Forms</h3>
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+            <a href="{% url 'users:medical_forms_list' %}" class="btn" style="background: #e91e63;">View Submitted Forms</a>
+            <a href="{% url 'users:medical_form' %}" class="btn" style="background: #f06292;" target="_blank">Medical Form Link</a>
+        </div>
+    </section>
+
+    <!-- Medical Forms Management -->
+    <section class="card">
+        <h3 style="color: #e91e63; border-bottom: 2px solid #e91e63; padding-bottom: 10px;">📈 Analytics</h3>
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+            <a href="{% url 'users:dashboard_analytics' %}" class="btn" style="background: #f06292;" target="_blank">Analytics</a>
+        </div>
+    </section>
+</div>
+
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 40px;">
+    <div class="card" style="background: #e3f2fd; border-left: 5px solid #2196f3;">
+        <h3>Total Customers</h3>
+        <p style="font-size: 2rem; font-weight: bold; color: #2196f3;">{{ customers.count }}</p>
+        <a href="{% url 'users:customer_list' %}" style="color: #2196f3;">Manage Customers →</a>
+    </div>
+
+    <div class="card" style="background: #e8f5e8; border-left: 5px solid #4caf50;">
+        <h3>Upcoming Dives</h3>
+        <p style="font-size: 2rem; font-weight: bold; color: #4caf50;">{{ upcoming_dives.count }}</p>
+        <a href="{% url 'users:dive_calendar' %}" style="color: #4caf50;">View Calendar →</a>
+    </div>
+</div>
 {% endblock %}

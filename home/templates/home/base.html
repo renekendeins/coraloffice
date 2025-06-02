@@ -11,7 +11,7 @@
         /* Header Styles */
         .header { background: linear-gradient(135deg, #006994, #00a8cc); color: white; padding: 1rem 0; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative; }
         .nav-container { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0 20px; }
-        .logo { font-size: 2rem; font-weight: bold; display: flex; align-items: center; z-index: 1001; }
+        .logo { font-size: 1rem; font-weight: bold; display: flex; align-items: center; z-index: 1001; }
         .logo::before { content: '🐠'; margin-right: 10px; }
 
         /* Desktop Menu */
@@ -145,7 +145,6 @@
                     <li><a href="{% url 'home:services' %}">Services</a></li>
                     <li><a href="{% url 'home:about' %}">About</a></li>
                     <li><a href="{% url 'home:contact' %}">Contact</a></li>
-                    <li><a href="{% url 'users:user_list' %}">Staff</a></li>
                 {% endif %}
             </ul>
             <div class="user-menu">
@@ -157,7 +156,6 @@
                     <a href="{% url 'users:logout' %}">Logout</a>
                 {% else %}
                     <a href="{% url 'users:login' %}">Login</a>
-                    <a href="{% url 'users:signup' %}">Sign Up</a>
                 {% endif %}
             </div>
             <button class="mobile-menu-toggle" id="mobileMenuToggle">
@@ -181,7 +179,6 @@
                     <a href="{% url 'home:services' %}">Services</a>
                     <a href="{% url 'home:about' %}">About</a>
                     <a href="{% url 'home:contact' %}">Contact</a>
-                    <a href="{% url 'users:user_list' %}">Staff</a>
                 {% endif %}
                 <div style="border-top: 1px solid rgba(255,255,255,0.3); margin: 20px 0; width: 200px;"></div>
                 {% if user.is_authenticated %}
@@ -224,7 +221,6 @@
                 <h3>Quick Links</h3>
                 <p><a href="{% url 'home:services' %}">Our Services</a></p>
                 <p><a href="{% url 'home:about' %}">About Us</a></p>
-                <p><a href="{% url 'users:user_list' %}">Staff Directory</a></p>
                 <p><a href="{% url 'home:contact' %}">Contact Support</a></p>
                 <p><a href="{% url 'users:medical_form' %}">Medical Form</a></p>
             </div>

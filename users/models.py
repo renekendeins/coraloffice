@@ -158,6 +158,9 @@ class Customer(models.Model):
         # Direct EU size mapping for boots
         return f"EU {int(self.foot_size)}"
 
+    def get_full_name(self):
+        return f"{self.first_name} {self.last_name}"
+
 class DiveActivity(models.Model):
     diving_center = models.ForeignKey(User, on_delete=models.CASCADE, related_name='dive_activities')
     name = models.CharField(max_length=100)
