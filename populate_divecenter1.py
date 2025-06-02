@@ -1,7 +1,12 @@
-
+import os
 import random
 import string
 from datetime import date, time, datetime, timedelta
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'django_project.settings')  # Cambia 'tu_proyecto'
+import django
+django.setup()
+
 from django.core.management.base import BaseCommand
 from django.contrib.auth.models import User
 from django.db import transaction
@@ -10,6 +15,7 @@ from users.models import (
     CustomerDiveActivity, InventoryItem, DivingGroup, DivingGroupMember
 )
 
+print('ok')
 class Command(BaseCommand):
     help = 'Populate database with sample data for divecenter1 user'
 
@@ -19,7 +25,7 @@ class Command(BaseCommand):
         try:
             # Get divecenter1 user
             try:
-                diving_center = User.objects.get(username='divingcenter1')
+                diving_center = User.objects.get(username='divecenter1')
                 if not diving_center.userprofile.is_diving_center:
                     self.stdout.write(
                         self.style.ERROR('divecenter1 user is not configured as a diving center')
@@ -32,14 +38,16 @@ class Command(BaseCommand):
                 return
 
             with transaction.atomic():
+                
                 # Create customers
                 customers = self.create_customers(diving_center)
+
                 
                 # Create diving activities
                 activities = self.create_activities(diving_center)
                 
                 # Create diving sites
-                sites = self.create_diving_sites(diving_center)
+                # sites = self.create_diving_sites(diving_center)
                 
                 # Create dive schedules
                 schedules = self.create_dive_schedules(diving_center, sites, activities)
@@ -48,13 +56,13 @@ class Command(BaseCommand):
                 self.create_customer_dive_activities(customers, schedules, activities)
                 
                 # Create inventory items
-                self.create_inventory_items(diving_center)
+                # self.create_inventory_items(diving_center)
                 
                 # Create diving groups
                 groups = self.create_diving_groups(diving_center)
                 
                 # Create group members
-                self.create_group_members(groups, customers)
+                # self.create_group_members(groups, customers)
                 
                 self.stdout.write(
                     self.style.SUCCESS('Successfully populated database for divecenter1!')
@@ -69,6 +77,7 @@ class Command(BaseCommand):
         return ''.join(random.choices(string.ascii_lowercase + string.digits, k=length))
 
     def create_customers(self, diving_center):
+        
         customers = []
         first_names = [
             'John', 'Jane', 'Michael', 'Sarah', 'David', 'Emma', 'Chris', 'Lisa', 
@@ -90,14 +99,12 @@ class Command(BaseCommand):
         languages = [choice[0] for choice in Customer.LANGUAGE_CHOICES]
         cert_levels = [choice[0] for choice in Customer.DIVING_LEVEL_CHOICES]
         tank_sizes = [choice[0] for choice in Customer._meta.get_field('default_tank_size').choices]
-        
         for i in range(25):  # Create 25 customers for divecenter1
             first_name = random.choice(first_names)
             last_name = random.choice(last_names)
             unique_id = self.generate_random_string(4)
-            
             customer = Customer.objects.create(
-                diving_center=diving_center,
+                diving_center=User.objects.filter(id=1).first(),
                 first_name=first_name,
                 last_name=last_name,
                 email=f'{first_name.lower()}.{last_name.lower()}.{unique_id}@email.com',
@@ -120,10 +127,12 @@ class Command(BaseCommand):
                 height=round(random.uniform(150, 195), 1),
                 foot_size=round(random.uniform(35, 46), 1),
                 default_tank_size=random.choice(tank_sizes),
-                diving_insurance=random.choice([True, False]),
-                diving_licence=random.choice([True, False]),
-                medical_check=random.choice([True, False])
+                # diving_insurance=random.choice([True, False]),
+                # diving_licence=random.choice([True, False]),
+                # medical_check=random.choice([True, False])
             )
+            customer.save()
+            print(customer)
             customers.append(customer)
         
         self.stdout.write(f'Created {len(customers)} customers for divecenter1')
@@ -199,8 +208,10 @@ class Command(BaseCommand):
                     ])
                 }
             )
+            
             if created:
                 sites.append(site)
+            print(site)
         
         self.stdout.write(f'Created {len(sites)} diving sites for divecenter1')
         return sites
@@ -208,16 +219,18 @@ class Command(BaseCommand):
     def create_dive_schedules(self, diving_center, sites, activities):
         schedules = []
         start_date = date.today()
+
+        if not sites:
+            sites = DivingSite.objects.all()
         
         for i in range(20):  # Create 20 dive schedules
-            dive_date = start_date + timedelta(days=random.randint(-15, 45))
+            dive_date = start_date + timedelta(days=random.randint(1, 30))
             dive_time = time(
                 random.choice([7, 8, 9, 10, 11, 14, 15, 16, 17]),
                 random.choice([0, 30])
             )
             
             unique_id = self.generate_random_string(4)
-            
             schedule = DiveSchedule.objects.create(
                 diving_center=diving_center,
                 date=dive_date,
@@ -232,6 +245,7 @@ class Command(BaseCommand):
                     'Perfect for beginners', 'Advanced divers only'
                 ])
             )
+            
             schedules.append(schedule)
         
         self.stdout.write(f'Created {len(schedules)} dive schedules for divecenter1')
@@ -241,7 +255,9 @@ class Command(BaseCommand):
         participations = []
         tank_sizes = [choice[0] for choice in CustomerDiveActivity.TANK_SIZE_CHOICES]
         statuses = [choice[0] for choice in CustomerDiveActivity.STATUS_CHOICES]
-        
+        if not activities:
+            activities = DiveActivity.objects.all()
+        print(f'{len(customers)} - {len(schedules)} - {len(activities)}')
         for schedule in schedules:
             # Add 3-8 participants per dive
             num_participants = random.randint(3, min(8, schedule.max_participants))
@@ -384,3 +400,6 @@ class Command(BaseCommand):
         
         self.stdout.write(f'Created {len(memberships)} group memberships for divecenter1')
         return memberships
+
+if __name__ == '__main__':
+    Command().handle()
