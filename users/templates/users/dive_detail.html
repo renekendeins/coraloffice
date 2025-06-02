@@ -262,18 +262,7 @@ body {
                     <span>{{ activity_group.grouper }}</span>
                     <span><strong>{{ activity_group.list|length }}</strong></span>
                 </div>
-                <div style="padding-left: 20px; font-size: 12px; color: #666;">
-                    ${{ activity_group.list.0.activity.price }} × {{ activity_group.list|length }} = 
-                    ${% widthratio activity_group.list.0.activity.price 1 activity_group.list|length %}
-                </div>
                 {% endfor %}
-
-                <div class="equipment-item" style="border-top: 2px solid #333; margin-top: 10px; padding-top: 10px; font-weight: bold; color: #28a745;">
-                    <span>Total Revenue</span>
-                    <span>
-                        ${% for participant in participants %}{{ participant.activity.price|floatformat:0 }}{% if not forloop.last %}+{% endif %}{% endfor %}
-                    </span>
-                </div>
             {% else %}
                 <p>No activities scheduled</p>
             {% endif %}

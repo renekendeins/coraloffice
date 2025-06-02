@@ -134,11 +134,13 @@
             <tr>
                 <th>Name</th>
                 <th>Activity</th>
+                <th>S1</th>
+                <th>S2</th>
                 <th>Tank</th>
                 <th>Wetsuit</th>
                 <th>BCD</th>
                 <th>Regulator</th>
-                <th>Status</th>
+                <th>Fins</th>
                 <th>Notes</th>
             </tr>
         </thead>
@@ -150,7 +152,11 @@
                     <small>{{ participant.customer.get_country_display }} | {{ participant.customer.get_certification_level_display }}</small>
                 </td>
                 <td>{{ participant.activity.name }}</td>
+                <td></td>               
+                <td></td>
                 <td>{{ participant.tank_size }}</td>
+                
+
                 <td>
                     {% if participant.needs_wetsuit %}
                         <span class="badge">{{ participant.customer.get_wetsuit_size }}</span>
@@ -168,16 +174,21 @@
                 <td>
                     {% if participant.needs_regulator %}
                         <span class="badge">Yes</span><br>
+                    {% else %}
+                        <span style="color: #999;">Own</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if participant.needs_fins %}
                         <small>Fins: {{ participant.customer.get_fins_size }}</small>
                     {% else %}
                         <span style="color: #999;">Own</span>
                     {% endif %}
                 </td>
-                <td>{{ participant.get_status_display }}</td>
                 <td>
                     {% if participant.needs_guide %}<span class="badge">Guide</span>{% endif %}
+                    <br>
                     {% if participant.needs_insurance %}<span class="badge">Insurance</span>{% endif %}
-                    {% if participant.is_paid %}<span class="badge" style="background: #28a745;">Paid</span>{% endif %}
                 </td>
             </tr>
             {% endfor %}
