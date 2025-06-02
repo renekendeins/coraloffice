@@ -166,6 +166,7 @@ body {
                 <th>Tank Size</th>
                 <th>Equipment Needed</th>
                 <th>Status</th>
+                <th>Assigned Staff</th>
                 <th>Group</th>
                 <th>Certification</th>
             </tr>
@@ -191,6 +192,23 @@ body {
                     <span class="badge {% if participant.status == 'PAID' %}bg-success{% elif participant.status == 'PENDING' %}bg-warning{% else %}bg-danger{% endif %}">
                         {{ participant.get_status_display }}
                     </span>
+                </td>
+                <td>
+                    {% if participant.assigned_staff %}
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            {% if participant.assigned_staff.profile_picture %}
+                                <img src="{{ participant.assigned_staff.profile_picture.url }}" alt="{{ participant.assigned_staff.get_full_name }}" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover;">
+                            {% else %}
+                                <div style="width: 24px; height: 24px; border-radius: 50%; background: #f0f0f0; display: flex; align-items: center; justify-content: center; font-size: 12px;">👨‍🏫</div>
+                            {% endif %}
+                            <div>
+                                <strong style="font-size: 12px;">{{ participant.assigned_staff.get_full_name }}</strong><br>
+                                <small style="color: #666; font-size: 10px;">{{ participant.assigned_staff.get_certification_level_display }}</small>
+                            </div>
+                        </div>
+                    {% else %}
+                        <span style="color: #999; font-style: italic; font-size: 12px;">Not assigned</span>
+                    {% endif %}
                 </td>
                 <td>
                     {% for membership in participant.customer.group_memberships.all %}
@@ -265,6 +283,28 @@ body {
                 {% endfor %}
             {% else %}
                 <p>No activities scheduled</p>
+            {% endif %}
+        </div>
+
+        <!-- Staff Summary -->
+        <div class="equipment-card">
+            <h4>👨‍🏫 Staff Assignments</h4>
+            {% if participants %}
+                {% regroup participants by assigned_staff as staff_groups %}
+                {% for staff_group in staff_groups %}
+                <div class="equipment-item">
+                    <span>
+                        {% if staff_group.grouper %}
+                            {{ staff_group.grouper.get_full_name }}
+                        {% else %}
+                            <em>Unassigned</em>
+                        {% endif %}
+                    </span>
+                    <span><strong>{{ staff_group.list|length }}</strong></span>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p>No staff assignments</p>
             {% endif %}
         </div>
 

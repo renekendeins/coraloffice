@@ -1213,6 +1213,26 @@ def staff_planning(request):
     from datetime import date, timedelta
     tomorrow = date.today() + timedelta(days=1)
     
+    # Handle staff assignment
+    if request.method == 'POST' and 'assign_staff_to_activity' in request.POST:
+        activity_id = request.POST.get('activity_id')
+        staff_id = request.POST.get('staff_id')
+        
+        if activity_id and staff_id:
+            try:
+                activity = CustomerDiveActivity.objects.get(
+                    id=activity_id,
+                    dive_schedule__diving_center=request.user
+                )
+                staff = Staff.objects.get(id=staff_id, diving_center=request.user)
+                activity.assigned_staff = staff
+                activity.save()
+                messages.success(request, f'Successfully assigned {staff.get_full_name()} to {activity.customer.get_full_name()}\'s activity!')
+            except (CustomerDiveActivity.DoesNotExist, Staff.DoesNotExist):
+                messages.error(request, 'Invalid assignment. Please try again.')
+        
+        return redirect('users:staff_planning')
+    
     # Get all dive schedules for tomorrow
     tomorrow_dives = DiveSchedule.objects.filter(
         diving_center=request.user,

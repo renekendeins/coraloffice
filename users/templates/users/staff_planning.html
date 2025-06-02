@@ -61,6 +61,11 @@
                             {% if activity.needs_bcd %}BCD | {% endif %}
                             {% if activity.needs_regulator %}Regulator{% endif %}
                         </p>
+                        {% if activity.assigned_staff %}
+                            <p style="margin: 5px 0; font-size: 12px; color: #2e7d32;">
+                                <strong>Assigned to:</strong> {{ activity.assigned_staff.get_full_name }}
+                            </p>
+                        {% endif %}
                     </div>
                     <span style="padding: 4px 8px; background: 
                         {% if activity.status == 'PENDING' %}#fff3e0; color: #f57f17;
@@ -94,7 +99,21 @@
                         <p style="margin: 5px 0; color: #d84315;"><strong>⚠️ Guide service requested</strong></p>
                     {% endif %}
                 </div>
-                <a href="{% url 'users:manage_dive_participants' activity.dive_schedule.id %}" class="btn" style="background: #ff9800; font-size: 12px;">Assign Staff</a>
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <form method="post" style="display: flex; gap: 8px; align-items: center;">
+                        {% csrf_token %}
+                        <input type="hidden" name="assign_staff_to_activity" value="1">
+                        <input type="hidden" name="activity_id" value="{{ activity.id }}">
+                        <select name="staff_id" style="padding: 4px 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;">
+                            <option value="">Select Staff</option>
+                            {% for staff in all_staff %}
+                                <option value="{{ staff.id }}">{{ staff.get_full_name }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit" class="btn" style="background: #28a745; font-size: 12px; padding: 4px 8px;">Assign</button>
+                    </form>
+                    <a href="{% url 'users:manage_dive_participants' activity.dive_schedule.id %}" class="btn" style="background: #ff9800; font-size: 12px;">Manage</a>
+                </div>
             </div>
         </div>
         {% endfor %}
