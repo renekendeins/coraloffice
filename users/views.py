@@ -1421,6 +1421,37 @@ def enroll_customer(request, customer_id=None):
         'customer': customer
     })
 
+
+@login_required
+def course_lesson_calendar(request):
+    """View to show all scheduled course lessons in a calendar format"""
+    if not request.user.userprofile.is_diving_center:
+        messages.error(request, 'Access denied.')
+        return redirect('users:profile')
+    
+    from datetime import date, timedelta
+    today = date.today()
+    start_date = today - timedelta(days=7)
+    end_date = today + timedelta(days=30)
+    
+    # Get all scheduled course sessions
+    scheduled_sessions = CourseSession.objects.filter(
+        enrollment__course__diving_center=request.user,
+        status__in=['SCHEDULED', 'IN_PROGRESS'],
+        dive_schedule__date__range=[start_date, end_date]
+    ).select_related(
+        'enrollment__customer', 
+        'enrollment__course', 
+        'instructor', 
+        'dive_schedule__dive_site'
+    ).order_by('dive_schedule__date', 'dive_schedule__time')
+    
+    return render(request, 'users/course_lesson_calendar.html', {
+        'scheduled_sessions': scheduled_sessions,
+        'start_date': start_date,
+        'end_date': end_date
+    })
+
 @login_required
 def enrollment_detail(request, enrollment_id):
     if not request.user.userprofile.is_diving_center:
@@ -1456,11 +1487,21 @@ def schedule_course_session(request, session_id):
         form = CourseSessionScheduleForm(diving_center=request.user, session=session, data=request.POST)
         if form.is_valid():
             dive_schedule = form.cleaned_data['dive_schedule']
+            instructor = form.cleaned_data['instructor']
+            assistant_instructors = form.cleaned_data['assistant_instructors']
+            instructor_notes = form.cleaned_data['instructor_notes']
+            
+            # Update session details
             session.dive_schedule = dive_schedule
             session.scheduled_date = dive_schedule.date
             session.scheduled_time = dive_schedule.time
+            session.instructor = instructor
+            session.instructor_notes = instructor_notes
             session.status = 'SCHEDULED'
             session.save()
+            
+            # Set assistant instructors
+            session.assistant_instructors.set(assistant_instructors)
             
             # Create or update CustomerDiveActivity
             activity = DiveActivity.objects.filter(
@@ -1471,8 +1512,8 @@ def schedule_course_session(request, session_id):
             if not activity:
                 activity = DiveActivity.objects.create(
                     diving_center=request.user,
-                    name='Course Session',
-                    description='Course training session',
+                    name='Course Lesson',
+                    description='Course training lesson',
                     duration_minutes=90,
                     price=0.00
                 )
@@ -1484,25 +1525,107 @@ def schedule_course_session(request, session_id):
                 defaults={
                     'activity': activity,
                     'course_session': session,
-                    'assigned_staff': session.instructor,
+                    'assigned_staff': instructor,
                     'tank_size': session.enrollment.customer.default_tank_size,
                 }
             )
             
             if not created:
                 customer_dive_activity.course_session = session
-                customer_dive_activity.assigned_staff = session.instructor
+                customer_dive_activity.assigned_staff = instructor
                 customer_dive_activity.save()
             
-            messages.success(request, f'Session {session.session_number} scheduled successfully!')
+            # Update enrollment status if needed
+            session.enrollment.auto_update_status()
+            
+            messages.success(request, f'Lesson {session.session_number} scheduled successfully!')
             return redirect('users:enrollment_detail', enrollment_id=session.enrollment.id)
     else:
-        form = CourseSessionScheduleForm(diving_center=request.user, session=session)
+        # Pre-populate form with existing data
+        initial_data = {}
+        if session.instructor:
+            initial_data['instructor'] = session.instructor
+        if session.instructor_notes:
+            initial_data['instructor_notes'] = session.instructor_notes
+        if session.dive_schedule:
+            initial_data['dive_schedule'] = session.dive_schedule
+            
+        form = CourseSessionScheduleForm(
+            diving_center=request.user, 
+            session=session, 
+            initial=initial_data
+        )
+        
+        # Set assistant instructors if they exist
+        if session.assistant_instructors.exists():
+            form.fields['assistant_instructors'].initial = session.assistant_instructors.all()
     
     return render(request, 'users/schedule_course_session.html', {
         'form': form,
         'session': session
     })
+
+@login_required
+def complete_course_session(request, session_id):
+    if not request.user.userprofile.is_diving_center:
+        messages.error(request, 'Access denied.')
+        return redirect('users:profile')
+
+    session = get_object_or_404(
+        CourseSession,
+        id=session_id,
+        enrollment__course__diving_center=request.user
+    )
+    
+    if not session.can_be_completed():
+        messages.error(request, 'This lesson cannot be completed at this time.')
+        return redirect('users:enrollment_detail', enrollment_id=session.enrollment.id)
+
+    if request.method == 'POST':
+        form = LessonCompletionForm(request.POST)
+        if form.is_valid():
+            session.grade = form.cleaned_data['grade']
+            session.instructor_notes = form.cleaned_data['instructor_notes']
+            session.student_feedback = form.cleaned_data['student_feedback']
+            session.completion_date = form.cleaned_data['completion_date']
+            
+            if not session.completion_date:
+                from datetime import datetime
+                session.completion_date = datetime.now()
+            
+            session.status = 'COMPLETED'
+            session.save()
+            
+            # Update the customer dive activity if it exists
+            try:
+                customer_dive_activity = CustomerDiveActivity.objects.get(
+                    customer=session.enrollment.customer,
+                    dive_schedule=session.dive_schedule,
+                    course_session=session
+                )
+                customer_dive_activity.status = 'FINISHED'
+                customer_dive_activity.save()
+            except CustomerDiveActivity.DoesNotExist:
+                pass
+            
+            # Update enrollment status
+            session.enrollment.auto_update_status()
+            
+            messages.success(request, f'Lesson {session.session_number} marked as completed!')
+            return redirect('users:enrollment_detail', enrollment_id=session.enrollment.id)
+    else:
+        initial_data = {
+            'instructor_notes': session.instructor_notes,
+            'student_feedback': session.student_feedback,
+            'grade': session.grade
+        }
+        form = LessonCompletionForm(initial=initial_data)
+    
+    return render(request, 'users/complete_course_session.html', {
+        'form': form,
+        'session': session
+    })
+
 
 @login_required
 def customer_courses(request, customer_id):
@@ -1514,11 +1637,11 @@ def customer_courses(request, customer_id):
     
     active_enrollments = customer.course_enrollments.filter(
         status__in=['ENROLLED', 'IN_PROGRESS']
-    ).select_related('course', 'instructor')
+    ).select_related('course', 'primary_instructor')
     
     completed_enrollments = customer.course_enrollments.filter(
         status='COMPLETED'
-    ).select_related('course', 'instructor')
+    ).select_related('course', 'primary_instructor')
     
     return render(request, 'users/customer_courses.html', {
         'customer': customer,

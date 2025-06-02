@@ -1,11 +1,89 @@
-
-
 {% extends 'users/base.html' %}
 
-{% block users_title %}Enroll Customer - CoralOffice{% endblock %}
+{% block users_title %}Enroll Customer in Course - CoralOffice{% endblock %}
 
 {% block users_content %}
+<h2>Enroll Customer in Course</h2>
+
+{% if customer %}
+    <h3>Enrolling: {{ customer.get_full_name }}</h3>
+{% endif %}
+
+<form method="post" class="enrollment-form">
+    {% csrf_token %}
+
+    <div class="form-group" style="position: relative;">
+        <label for="customer-search">Search Customer:</label>
+        <input type="text" id="customer-search" placeholder="Start typing customer name..." autocomplete="off" class="form-control">
+        <div id="search-suggestions" class="search-suggestions"></div>
+        {{ form.customer }}
+    </div>
+
+    <div class="form-group">
+        <label for="{{ form.course.id_for_label }}">Course:</label>
+        {{ form.course }}
+    </div>
+
+    <div class="form-group">
+        <label for="{{ form.instructor.id_for_label }}">Primary Instructor:</label>
+        {{ form.instructor }}
+        <small class="help-text">Main instructor responsible for this course</small>
+    </div>
+
+    <div class="form-group">
+        <label for="{{ form.price_paid.id_for_label }}">Price Paid:</label>
+        {{ form.price_paid }}
+    </div>
+
+    <div class="form-group">
+        <label>
+            {{ form.is_paid }} Payment Complete
+        </label>
+    </div>
+
+    <div class="form-group">
+        <label for="{{ form.notes.id_for_label }}">Notes:</label>
+        {{ form.notes }}
+    </div>
+
+    <div class="form-actions">
+        <button type="submit" class="btn" style="background-color: #28a745;">Enroll Customer</button>
+        <a href="{% url 'users:course_enrollments' %}" class="btn" style="background: #6c757d;">Cancel</a>
+    </div>
+</form>
+
 <style>
+.enrollment-form .form-group {
+    margin-bottom: 20px;
+}
+
+.enrollment-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.enrollment-form input,
+.enrollment-form select,
+.enrollment-form textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.enrollment-form input[type="checkbox"] {
+    width: auto;
+    margin-right: 5px;
+}
+
+.help-text {
+    color: #666;
+    font-size: 12px;
+    margin-top: 5px;
+    display: block;
+}
+
 .search-suggestions {
     border: 1px solid #ddd;
     max-height: 200px;
@@ -38,80 +116,36 @@
     font-size: 11px;
 }
 
-.form-group {
-    margin-bottom: 15px;
+.form-actions {
+    margin-top: 30px;
 }
 
-.form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
+.form-actions .btn {
+    display: inline-block;
+    padding: 10px 20px;
+    margin-right: 10px;
+    color: white;
+    text-decoration: none;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
 }
 </style>
 
-<h2>Enroll Customer in Course</h2>
-
-{% if customer %}
-    <p><strong>Enrolling:</strong> {{ customer.get_full_name }}</p>
-{% endif %}
-
-<form method="post">
-    {% csrf_token %}
-    <div class="form-group" style="position: relative;">
-        <label for="customer-search">Search Customer:</label>
-        <input type="text" id="customer-search" placeholder="Start typing customer name..." autocomplete="off" class="form-control">
-        <div id="search-suggestions" class="search-suggestions"></div>
-        {{ form.customer }}
-    </div>
-    
-    <div class="form-group">
-        <label for="{{ form.course.id_for_label }}">Course:</label>
-        {{ form.course }}
-    </div>
-    
-    <div class="form-group">
-        <label for="{{ form.instructor.id_for_label }}">Instructor:</label>
-        {{ form.instructor }}
-    </div>
-    
-    <div class="form-group">
-        <label for="{{ form.start_date.id_for_label }}">Start Date:</label>
-        {{ form.start_date }}
-    </div>
-    
-    <div class="form-group">
-        <label for="{{ form.price_paid.id_for_label }}">Price Paid (€):</label>
-        {{ form.price_paid }}
-    </div>
-    
-    <div class="form-group">
-        <label>
-            {{ form.is_paid }} Fully Paid
-        </label>
-    </div>
-    
-    <div class="form-group">
-        <label for="{{ form.notes.id_for_label }}">Notes:</label>
-        {{ form.notes }}
-    </div>
-    
-    <button type="submit" class="btn">Enroll Customer</button>
-    <a href="{% url 'users:course_enrollments' %}" class="btn" style="background: #6c757d;">Cancel</a>
-</form>
-
 <script>
-// Customer search functionality
+// Customer search functionality similar to manage_dive_participants
 const customerSearch = document.getElementById('customer-search');
 const customerSelect = document.getElementById('{{ form.customer.id_for_label }}');
 const suggestionsDiv = document.getElementById('search-suggestions');
 
-// Create customer data structure
+// Create customer data for search
 const searchData = {
     customers: [
         {% for customer in form.customer.field.queryset %}
         {
             id: {{ customer.id }},
             name: "{{ customer.first_name }} {{ customer.last_name }}",
+            email: "{{ customer.email }}",
             country: "{{ customer.get_country_display|default:'Unknown' }}",
             certification: "{{ customer.get_certification_level_display }}"
         },
@@ -125,18 +159,18 @@ customerSearch.addEventListener('input', function() {
         suggestionsDiv.style.display = 'none';
         return;
     }
-    
-    // Search customers
+
     const customerMatches = searchData.customers.filter(customer => 
-        customer.name.toLowerCase().includes(query)
+        customer.name.toLowerCase().includes(query) || 
+        customer.email.toLowerCase().includes(query)
     );
-    
+
     if (customerMatches.length > 0) {
         suggestionsDiv.innerHTML = customerMatches.map(customer => {
-            return `<div class="suggestion-item" data-type="customer" data-id="${customer.id}">
+            return `<div class="suggestion-item" data-id="${customer.id}">
                 <div>
                     <strong>${customer.name}</strong><br>
-                    <small>${customer.country} • ${customer.certification}</small>
+                    <small>${customer.email} • ${customer.country} • ${customer.certification}</small>
                 </div>
                 <span class="suggestion-type">Customer</span>
             </div>`;
@@ -153,7 +187,7 @@ suggestionsDiv.addEventListener('click', function(e) {
     if (suggestionItem) {
         const id = suggestionItem.getAttribute('data-id');
         const customer = searchData.customers.find(c => c.id == id);
-        
+
         customerSelect.value = id;
         customerSearch.value = customer.name;
         suggestionsDiv.style.display = 'none';
@@ -166,6 +200,10 @@ document.addEventListener('click', function(e) {
         suggestionsDiv.style.display = 'none';
     }
 });
+
+// Pre-populate search if customer is already selected
+{% if customer %}
+customerSearch.value = "{{ customer.get_full_name }}";
+{% endif %}
 </script>
 {% endblock %}
-

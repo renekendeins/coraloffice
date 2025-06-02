@@ -243,7 +243,7 @@ class CourseEnrollmentForm(forms.ModelForm):
             'notes': forms.Textarea(attrs={'rows': 3}),
             'price_paid': forms.NumberInput(attrs={'step': '0.01'}),
         }
-    
+
     def __init__(self, diving_center=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if diving_center:
@@ -262,7 +262,7 @@ class CourseSessionForm(forms.ModelForm):
             'scheduled_date': forms.DateInput(attrs={'type': 'date'}),
             'scheduled_time': forms.TimeInput(attrs={'type': 'time'}),
         }
-    
+
     def __init__(self, diving_center=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if diving_center:
@@ -270,17 +270,84 @@ class CourseSessionForm(forms.ModelForm):
             self.fields['instructor'].empty_label = "Select instructor (optional)"
 
 class CourseSessionScheduleForm(forms.Form):
-    dive_schedule = forms.ModelChoiceField(
-        queryset=DiveSchedule.objects.none(),
-        empty_label="Select a dive schedule",
-        help_text="Choose an existing dive schedule for this session"
-    )
-    
-    def __init__(self, diving_center=None, session=None, *args, **kwargs):
+    def __init__(self, diving_center, session, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if diving_center:
-            from datetime import date
-            self.fields['dive_schedule'].queryset = DiveSchedule.objects.filter(
-                diving_center=diving_center,
-                date__gte=date.today()
-            ).order_by('date', 'time')
+
+        # Get available dive schedules for this diving center
+        from datetime import date
+        available_dives = DiveSchedule.objects.filter(
+            diving_center=diving_center,
+            date__gte=date.today()
+        ).order_by('date', 'time')
+
+        self.fields['dive_schedule'] = forms.ModelChoiceField(
+            queryset=available_dives,
+            empty_label="Select a dive slot",
+            widget=forms.Select(attrs={'class': 'form-control'}),
+            help_text="Choose an available dive slot for this lesson"
+        )
+
+        # Add primary instructor field
+        instructors = Staff.objects.filter(
+            diving_center=diving_center,
+            status='ACTIVE'
+        )
+
+        self.fields['instructor'] = forms.ModelChoiceField(
+            queryset=instructors,
+            required=False,
+            empty_label="Select primary instructor",
+            widget=forms.Select(attrs={'class': 'form-control'}),
+            initial=session.enrollment.instructor,
+            help_text="Primary instructor responsible for this lesson"
+        )
+
+        # Add assistant instructors field
+        self.fields['assistant_instructors'] = forms.ModelMultipleChoiceField(
+            queryset=instructors,
+            required=False,
+            widget=forms.CheckboxSelectMultiple(),
+            help_text="Additional staff members to assist with this lesson"
+        )
+
+        # Add session notes field
+        self.fields['instructor_notes'] = forms.CharField(
+            widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+            required=False,
+            help_text="Notes about this lesson or special requirements"
+        )
+
+
+class LessonCompletionForm(forms.Form):
+    GRADE_CHOICES = [
+        ('PASS', 'Pass'),
+        ('FAIL', 'Fail'),
+        ('EXCELLENT', 'Excellent'),
+        ('GOOD', 'Good'),
+        ('SATISFACTORY', 'Satisfactory'),
+        ('NEEDS_IMPROVEMENT', 'Needs Improvement'),
+    ]
+
+    grade = forms.ChoiceField(
+        choices=GRADE_CHOICES,
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        required=False
+    )
+
+    instructor_notes = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
+        required=False,
+        help_text="Instructor's observations and feedback"
+    )
+
+    student_feedback = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        required=False,
+        help_text="Student's feedback about the lesson"
+    )
+
+    completion_date = forms.DateTimeField(
+        widget=forms.DateTimeInput(attrs={'class': 'form-control', 'type': 'datetime-local'}),
+        required=False,
+        help_text="Leave blank to use current date/time"
+    )

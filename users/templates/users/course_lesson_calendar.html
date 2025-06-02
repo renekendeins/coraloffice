@@ -1,0 +1,160 @@
+
+{% extends 'users/base.html' %}
+
+{% block users_title %}Course Lesson Calendar - CoralOffice{% endblock %}
+
+{% block users_content %}
+<h2>Course Lesson Calendar</h2>
+<p>Scheduled course lessons from {{ start_date|date:"M d" }} to {{ end_date|date:"M d, Y" }}</p>
+
+<div style="margin-bottom: 20px;">
+    <a href="{% url 'users:course_enrollments' %}" class="btn">All Enrollments</a>
+    <a href="{% url 'users:calendar_view' %}" class="btn" style="background: #17a2b8;">Dive Calendar</a>
+</div>
+
+{% if scheduled_sessions %}
+    <div class="lessons-timeline">
+        {% regroup scheduled_sessions by dive_schedule.date as sessions_by_date %}
+        
+        {% for day in sessions_by_date %}
+            <div class="day-section">
+                <h3 class="date-header">{{ day.grouper|date:"l, F d, Y" }}</h3>
+                
+                {% for session in day.list %}
+                    <div class="lesson-card">
+                        <div class="lesson-header">
+                            <h4>{{ session.enrollment.course.name }} - Lesson {{ session.session_number }}</h4>
+                            <span class="time-badge">{{ session.dive_schedule.time|time:"H:i" }}</span>
+                        </div>
+                        
+                        <div class="lesson-details">
+                            <p><strong>Student:</strong> {{ session.enrollment.customer.get_full_name }}</p>
+                            <p><strong>Lesson:</strong> {{ session.title }}</p>
+                            <p><strong>Location:</strong> {{ session.get_location_name }}</p>
+                            <p><strong>Instructor:</strong> {{ session.instructor.get_full_name|default:"Not assigned" }}</p>
+                            {% if session.assistant_instructors.exists %}
+                                <p><strong>Assistants:</strong> 
+                                    {% for assistant in session.assistant_instructors.all %}
+                                        {{ assistant.get_full_name }}{% if not forloop.last %}, {% endif %}
+                                    {% endfor %}
+                                </p>
+                            {% endif %}
+                            
+                            <div class="lesson-status">
+                                <span class="status-badge status-{{ session.status|lower }}">{{ session.get_status_display }}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="lesson-actions">
+                            <a href="{% url 'users:enrollment_detail' session.enrollment.id %}" class="btn-small">View Course</a>
+                            {% if session.status == 'SCHEDULED' or session.status == 'IN_PROGRESS' %}
+                                <a href="{% url 'users:complete_course_session' session.id %}" class="btn-small" style="background: #28a745;">Complete</a>
+                            {% endif %}
+                            <a href="{% url 'users:schedule_course_session' session.id %}" class="btn-small" style="background: #ffc107;">Reschedule</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="no-lessons">
+        <p>No course lessons scheduled for this period.</p>
+        <a href="{% url 'users:course_enrollments' %}" class="btn">View All Enrollments</a>
+    </div>
+{% endif %}
+
+<style>
+.lessons-timeline {
+    margin-top: 20px;
+}
+
+.day-section {
+    margin-bottom: 30px;
+}
+
+.date-header {
+    background-color: #f8f9fa;
+    padding: 10px 15px;
+    margin-bottom: 15px;
+    border-left: 4px solid #007bff;
+    color: #333;
+}
+
+.lesson-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 15px;
+    margin-bottom: 15px;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.lesson-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.lesson-header h4 {
+    margin: 0;
+    color: #333;
+}
+
+.time-badge {
+    background-color: #007bff;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.lesson-details p {
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+.lesson-status {
+    margin: 10px 0;
+}
+
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.status-scheduled { background-color: #17a2b8; color: #fff; }
+.status-in_progress { background-color: #ffc107; color: #000; }
+.status-completed { background-color: #28a745; color: #fff; }
+
+.lesson-actions {
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px solid #eee;
+}
+
+.btn-small {
+    display: inline-block;
+    padding: 5px 10px;
+    background: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 12px;
+    margin-right: 5px;
+}
+
+.no-lessons {
+    text-align: center;
+    padding: 40px;
+    background-color: #f8f9fa;
+    border-radius: 8px;
+}
+</style>
+{% endblock %}

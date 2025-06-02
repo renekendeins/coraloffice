@@ -442,10 +442,10 @@ class CourseEnrollment(models.Model):
     
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='course_enrollments')
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='enrollments')
-    instructor = models.ForeignKey(Staff, on_delete=models.SET_NULL, null=True, blank=True, related_name='course_enrollments')
+    primary_instructor = models.ForeignKey(Staff, on_delete=models.SET_NULL, null=True, blank=True, related_name='primary_course_enrollments', help_text="Main instructor responsible for this course")
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='ENROLLED')
     enrollment_date = models.DateField(auto_now_add=True)
-    start_date = models.DateField(null=True, blank=True)
+    start_date = models.DateField(null=True, blank=True, help_text="Date of first lesson")
     completion_date = models.DateField(null=True, blank=True)
     certificate_number = models.CharField(max_length=100, blank=True)
     notes = models.TextField(blank=True)
@@ -468,13 +468,60 @@ class CourseEnrollment(models.Model):
             return 0
         return round((completed_sessions / total_sessions) * 100)
     
-    def get_completed_dives(self):
-        """Get number of completed dives"""
+    def get_completed_lessons(self):
+        """Get number of completed lessons"""
         return self.course_sessions.filter(status='COMPLETED').count()
+    
+    def get_scheduled_lessons(self):
+        """Get number of scheduled lessons"""
+        return self.course_sessions.filter(status__in=['SCHEDULED', 'IN_PROGRESS']).count()
+    
+    def get_unscheduled_lessons(self):
+        """Get number of unscheduled lessons"""
+        return self.course_sessions.filter(status='NOT_SCHEDULED').count()
     
     def is_active(self):
         """Check if enrollment is active (enrolled or in progress)"""
         return self.status in ['ENROLLED', 'IN_PROGRESS']
+    
+    def get_next_lesson(self):
+        """Get the next lesson to be completed"""
+        return self.course_sessions.filter(
+            status__in=['NOT_SCHEDULED', 'SCHEDULED']
+        ).order_by('session_number').first()
+    
+    def get_all_instructors(self):
+        """Get all instructors involved in this course"""
+        instructors = set()
+        if self.primary_instructor:
+            instructors.add(self.primary_instructor)
+        
+        for session in self.course_sessions.all():
+            if session.instructor:
+                instructors.add(session.instructor)
+            instructors.update(session.assistant_instructors.all())
+        
+        return list(instructors)
+    
+    def auto_update_status(self):
+        """Automatically update enrollment status based on lesson progress"""
+        total_lessons = self.course_sessions.count()
+        completed_lessons = self.get_completed_lessons()
+        scheduled_lessons = self.get_scheduled_lessons()
+        
+        if completed_lessons == total_lessons and total_lessons > 0:
+            self.status = 'COMPLETED'
+            if not self.completion_date:
+                from datetime import date
+                self.completion_date = date.today()
+        elif scheduled_lessons > 0 or completed_lessons > 0:
+            if self.status == 'ENROLLED':
+                self.status = 'IN_PROGRESS'
+                if not self.start_date:
+                    from datetime import date
+                    self.start_date = date.today()
+        
+        self.save()
 
 
 class CourseSession(models.Model):
@@ -487,6 +534,7 @@ class CourseSession(models.Model):
     ]
     
     STATUS_CHOICES = [
+        ('NOT_SCHEDULED', 'Not Scheduled'),
         ('SCHEDULED', 'Scheduled'),
         ('IN_PROGRESS', 'In Progress'),
         ('COMPLETED', 'Completed'),
@@ -495,19 +543,21 @@ class CourseSession(models.Model):
     ]
     
     enrollment = models.ForeignKey(CourseEnrollment, on_delete=models.CASCADE, related_name='course_sessions')
-    dive_schedule = models.ForeignKey(DiveSchedule, on_delete=models.CASCADE, null=True, blank=True, related_name='course_sessions')
-    session_number = models.IntegerField(help_text="Session number in the course (1, 2, 3, etc.)")
+    dive_schedule = models.ForeignKey(DiveSchedule, on_delete=models.SET_NULL, null=True, blank=True, related_name='course_sessions', help_text="Dive slot this lesson is scheduled in")
+    session_number = models.IntegerField(help_text="Lesson number in the course (1, 2, 3, etc.)")
     session_type = models.CharField(max_length=20, choices=SESSION_TYPE_CHOICES, default='OPEN_WATER')
-    title = models.CharField(max_length=100, help_text="Session title (e.g., 'Pool Skills', 'Navigation Dive')")
+    title = models.CharField(max_length=100, help_text="Lesson title (e.g., 'Pool Skills', 'Navigation Dive')")
     description = models.TextField(blank=True)
-    skills_covered = models.TextField(blank=True, help_text="Skills to be practiced in this session")
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='SCHEDULED')
-    instructor = models.ForeignKey(Staff, on_delete=models.SET_NULL, null=True, blank=True, related_name='course_sessions')
+    skills_covered = models.TextField(blank=True, help_text="Skills to be practiced in this lesson")
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='NOT_SCHEDULED')
+    instructor = models.ForeignKey(Staff, on_delete=models.SET_NULL, null=True, blank=True, related_name='course_sessions', help_text="Primary instructor for this specific lesson")
+    assistant_instructors = models.ManyToManyField(Staff, blank=True, related_name='assisting_sessions', help_text="Additional staff members assisting this lesson")
     scheduled_date = models.DateField(null=True, blank=True)
     scheduled_time = models.TimeField(null=True, blank=True)
     completion_date = models.DateTimeField(null=True, blank=True)
     grade = models.CharField(max_length=10, blank=True, help_text="Grade or pass/fail result")
     instructor_notes = models.TextField(blank=True)
+    student_feedback = models.TextField(blank=True, help_text="Student feedback for this lesson")
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -515,7 +565,7 @@ class CourseSession(models.Model):
         unique_together = ['enrollment', 'session_number']
 
     def __str__(self):
-        return f"{self.enrollment.course.name} - Session {self.session_number}: {self.title}"
+        return f"{self.enrollment.course.name} - Lesson {self.session_number}: {self.title}"
     
     def is_dive_session(self):
         """Check if this session involves diving"""
@@ -529,7 +579,23 @@ class CourseSession(models.Model):
             return 'Pool'
         elif self.session_type == 'THEORY':
             return 'Classroom'
-        return 'TBD'
+        return 'Not Scheduled'
+    
+    def is_scheduled(self):
+        """Check if this lesson is scheduled"""
+        return self.dive_schedule is not None and self.status != 'NOT_SCHEDULED'
+    
+    def get_all_staff(self):
+        """Get all staff members involved in this lesson"""
+        staff_list = []
+        if self.instructor:
+            staff_list.append(self.instructor)
+        staff_list.extend(self.assistant_instructors.all())
+        return staff_list
+    
+    def can_be_completed(self):
+        """Check if this lesson can be marked as completed"""
+        return self.status in ['SCHEDULED', 'IN_PROGRESS'] and self.dive_schedule is not None
 
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):

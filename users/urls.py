@@ -77,5 +77,7 @@ urlpatterns = [
     path('enroll/', views.enroll_customer, name='enroll_customer_general'),
     path('enrollments/<int:enrollment_id>/', views.enrollment_detail, name='enrollment_detail'),
     path('course-sessions/<int:session_id>/schedule/', views.schedule_course_session, name='schedule_course_session'),
+    path('course-sessions/<int:session_id>/complete/', views.complete_course_session, name='complete_course_session'),
+    path('course-lesson-calendar/', views.course_lesson_calendar, name='course_lesson_calendar'),
     path('customers/<int:customer_id>/courses/', views.customer_courses, name='customer_courses'),
 ]

@@ -1,4 +1,3 @@
-
 {% extends 'users/base.html' %}
 
 {% block users_title %}{{ enrollment.course.name }} - {{ enrollment.customer.get_full_name }} - CoralOffice{% endblock %}
@@ -26,48 +25,77 @@
     </div>
 </div>
 
-<h4>Course Sessions</h4>
+<h4>Course Lessons</h4>
 <div class="sessions-list">
     {% for session in sessions %}
         <div class="session-card">
             <div class="session-header">
-                <h5>Session {{ session.session_number }}: {{ session.title }}</h5>
-                <span class="session-status status-{{ session.status|lower }}">
+                <h5>Lesson {{ session.session_number }}: {{ session.title }}</h5>
+                <span class="session-type">{{ session.get_session_type_display }}</span>
+                <span class="status-badge status-{{ session.status|lower }}">
                     {{ session.get_status_display }}
                 </span>
             </div>
-            
+
             <div class="session-details">
-                <p><strong>Type:</strong> {{ session.get_session_type_display }}</p>
+                {% if session.dive_schedule %}
+                    <p><strong>Scheduled:</strong> {{ session.dive_schedule.date|date:"M d, Y" }} at {{ session.dive_schedule.time|time:"H:i" }}</p>
+                    <p><strong>Location:</strong> {{ session.get_location_name }}</p>
+                {% else %}
+                    <p><em>Not scheduled yet</em></p>
+                {% endif %}
+
+                {% if session.instructor %}
+                    <p><strong>Primary Instructor:</strong> {{ session.instructor.get_full_name }}</p>
+                {% endif %}
+
+                {% if session.assistant_instructors.exists %}
+                    <p><strong>Assistant Instructors:</strong>
+                        {% for assistant in session.assistant_instructors.all %}
+                            {{ assistant.get_full_name }}{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    </p>
+                {% endif %}
+
                 {% if session.description %}
                     <p><strong>Description:</strong> {{ session.description }}</p>
                 {% endif %}
+
                 {% if session.skills_covered %}
-                    <p><strong>Skills Covered:</strong> {{ session.skills_covered }}</p>
+                    <p><strong>Skills to Cover:</strong> {{ session.skills_covered }}</p>
                 {% endif %}
-                
-                {% if session.dive_schedule %}
-                    <p><strong>Scheduled:</strong> {{ session.dive_schedule.date|date:"M d, Y" }} at {{ session.dive_schedule.time|time:"H:i" }}</p>
-                    <p><strong>Location:</strong> {{ session.dive_schedule.dive_site.name }}</p>
-                    <a href="{% url 'users:dive_detail' session.dive_schedule.id %}" class="btn-small">View Dive Details</a>
-                {% else %}
-                    <p><em>Not yet scheduled</em></p>
-                    <a href="{% url 'users:schedule_course_session' session.id %}" class="btn-small">Schedule Session</a>
+
+                {% if session.grade %}
+                    <p><strong>Grade:</strong> {{ session.grade }}</p>
                 {% endif %}
-                
-                {% if session.instructor %}
-                    <p><strong>Instructor:</strong> {{ session.instructor.get_full_name }}</p>
-                {% endif %}
-                
+
                 {% if session.completion_date %}
                     <p><strong>Completed:</strong> {{ session.completion_date|date:"M d, Y H:i" }}</p>
-                    {% if session.grade %}
-                        <p><strong>Grade:</strong> {{ session.grade }}</p>
-                    {% endif %}
                 {% endif %}
-                
+
                 {% if session.instructor_notes %}
-                    <p><strong>Instructor Notes:</strong> {{ session.instructor_notes }}</p>
+                    <div class="instructor-notes">
+                        <strong>Instructor Notes:</strong>
+                        <p>{{ session.instructor_notes }}</p>
+                    </div>
+                {% endif %}
+
+                {% if session.student_feedback %}
+                    <div class="student-feedback">
+                        <strong>Student Feedback:</strong>
+                        <p>{{ session.student_feedback }}</p>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="session-actions">
+                {% if session.status == 'NOT_SCHEDULED' %}
+                    <a href="{% url 'users:schedule_course_session' session.id %}" class="btn-small" style="background: #007bff;">Schedule Lesson</a>
+                {% elif session.status == 'SCHEDULED' or session.status == 'IN_PROGRESS' %}
+                    <a href="{% url 'users:schedule_course_session' session.id %}" class="btn-small" style="background: #ffc107;">Reschedule</a>
+                    <a href="{% url 'users:complete_course_session' session.id %}" class="btn-small" style="background: #28a745;">Complete</a>
+                {% elif session.status == 'COMPLETED' %}
+                    <a href="{% url 'users:complete_course_session' session.id %}" class="btn-small" style="background: #17a2b8;">View/Edit</a>
                 {% endif %}
             </div>
         </div>

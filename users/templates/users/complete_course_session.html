@@ -1,0 +1,102 @@
+
+{% extends 'users/base.html' %}
+
+{% block users_title %}Complete Lesson - {{ session.title }} - CoralOffice{% endblock %}
+
+{% block users_content %}
+<h2>Complete Lesson: {{ session.title }}</h2>
+<h3>Student: {{ session.enrollment.customer.get_full_name }}</h3>
+<h4>Course: {{ session.enrollment.course.name }}</h4>
+
+<div class="lesson-info">
+    <p><strong>Lesson Number:</strong> {{ session.session_number }}</p>
+    <p><strong>Type:</strong> {{ session.get_session_type_display }}</p>
+    <p><strong>Location:</strong> {{ session.get_location_name }}</p>
+    <p><strong>Date:</strong> {{ session.dive_schedule.date|date:"F d, Y" }}</p>
+    <p><strong>Time:</strong> {{ session.dive_schedule.time|time:"H:i" }}</p>
+    <p><strong>Primary Instructor:</strong> {{ session.instructor.get_full_name|default:"Not assigned" }}</p>
+    {% if session.assistant_instructors.exists %}
+        <p><strong>Assistant Instructors:</strong> 
+            {% for assistant in session.assistant_instructors.all %}
+                {{ assistant.get_full_name }}{% if not forloop.last %}, {% endif %}
+            {% endfor %}
+        </p>
+    {% endif %}
+</div>
+
+<form method="post" class="lesson-completion-form">
+    {% csrf_token %}
+    
+    <div class="form-group">
+        <label for="{{ form.grade.id_for_label }}">Grade/Result:</label>
+        {{ form.grade }}
+        {{ form.grade.help_text }}
+    </div>
+    
+    <div class="form-group">
+        <label for="{{ form.instructor_notes.id_for_label }}">Instructor Notes:</label>
+        {{ form.instructor_notes }}
+        {{ form.instructor_notes.help_text }}
+    </div>
+    
+    <div class="form-group">
+        <label for="{{ form.student_feedback.id_for_label }}">Student Feedback:</label>
+        {{ form.student_feedback }}
+        {{ form.student_feedback.help_text }}
+    </div>
+    
+    <div class="form-group">
+        <label for="{{ form.completion_date.id_for_label }}">Completion Date/Time:</label>
+        {{ form.completion_date }}
+        {{ form.completion_date.help_text }}
+    </div>
+    
+    <div class="form-actions">
+        <button type="submit" class="btn" style="background-color: #28a745;">Complete Lesson</button>
+        <a href="{% url 'users:enrollment_detail' session.enrollment.id %}" class="btn" style="background: #6c757d;">Cancel</a>
+    </div>
+</form>
+
+<style>
+.lesson-info {
+    background-color: #f8f9fa;
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.lesson-completion-form .form-group {
+    margin-bottom: 20px;
+}
+
+.lesson-completion-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.lesson-completion-form input,
+.lesson-completion-form select,
+.lesson-completion-form textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.form-actions {
+    margin-top: 30px;
+}
+
+.form-actions .btn {
+    display: inline-block;
+    padding: 10px 20px;
+    margin-right: 10px;
+    color: white;
+    text-decoration: none;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+</style>
+{% endblock %}
