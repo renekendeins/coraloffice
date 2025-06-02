@@ -8,7 +8,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime, timedelta
 import calendar
-from .forms import SignUpForm, UserForm, UserProfileForm, CustomerForm, DiveScheduleForm, DiveActivityForm, CustomerDiveActivityForm, DivingSiteForm, InventoryItemForm, DivingGroupForm, MedicalForm, QuickCustomerForm, StaffForm, CourseForm, CourseEnrollmentForm, CourseSessionScheduleForm
+from .forms import SignUpForm, UserForm, UserProfileForm, CustomerForm, DiveScheduleForm, DiveActivityForm, CustomerDiveActivityForm, DivingSiteForm, InventoryItemForm, DivingGroupForm, MedicalForm, QuickCustomerForm, StaffForm, CourseForm, CourseEnrollmentForm, CourseSessionScheduleForm, LessonCompletionForm
 from .models import UserProfile, Customer, DiveSchedule, DiveActivity, CustomerDiveActivity, DivingSite, InventoryItem, DivingGroup, DivingGroupMember, Staff, Course, CourseEnrollment, CourseSession
 
 
@@ -79,11 +79,11 @@ def diving_center_dashboard(request):
         return redirect('users:profile')
 
     from datetime import date, timedelta
-    
+
     customers = Customer.objects.filter(diving_center=request.user)
     today = date.today()
     tomorrow = today + timedelta(days=1)
-    
+
     upcoming_dives = DiveSchedule.objects.filter(
         diving_center=request.user,
         date__in=[today, tomorrow]
@@ -102,7 +102,7 @@ def customer_list(request):
         return redirect('users:profile')
 
     customers = Customer.objects.filter(diving_center=request.user)
-    
+
     # Handle search
     search_query = request.GET.get('search', '').strip()
     if search_query:
@@ -113,13 +113,13 @@ def customer_list(request):
             Q(email__icontains=search_query) |
             Q(phone_number__icontains=search_query)
         )
-    
+
     # Add pagination
     from django.core.paginator import Paginator
     paginator = Paginator(customers, 10)  # Show 10 customers per page
     page_number = request.GET.get('page')
     customers_page = paginator.get_page(page_number)
-    
+
     return render(request, 'users/customer_list.html', {
         'customers': customers_page,
         'search_query': search_query,
@@ -315,11 +315,11 @@ def calendar_view(request):
             diving_center=request.user,
             date=selected_date.date()
         ).order_by('time')
-        
+
         # Add participant count to dive objects
         for dive in dives:
             dive.participant_count = dive.get_participant_count()
-            
+
         context = {
             'view_type': view_type,
             'selected_date': selected_date,
@@ -328,28 +328,28 @@ def calendar_view(request):
             'month': month,
             'month_name': calendar.month_name[month],
         }
-        
+
     elif view_type == 'week':
         # Week view - show week containing the selected day
         selected_date = datetime(year, month, int(request.GET.get('day', today.day)))
         week_start = selected_date - timedelta(days=selected_date.weekday())
         week_end = week_start + timedelta(days=6)
-        
+
         dives = DiveSchedule.objects.filter(
             diving_center=request.user,
             date__range=[week_start.date(), week_end.date()]
         ).order_by('date', 'time')
-        
+
         # Organize dives by day for the week
         week_dives = {}
         for i in range(7):
             day = week_start + timedelta(days=i)
             week_dives[day.date()] = []
-            
+
         for dive in dives:
             dive.participant_count = dive.get_participant_count()
             week_dives[dive.date].append(dive)
-            
+
         context = {
             'view_type': view_type,
             'week_start': week_start,
@@ -359,7 +359,7 @@ def calendar_view(request):
             'month': month,
             'month_name': calendar.month_name[month],
         }
-        
+
     else:  # month view (default)
         # Create calendar
         cal = calendar.monthcalendar(year, month)
@@ -379,7 +379,7 @@ def calendar_view(request):
             # Add participant count to dive object
             dive.participant_count = dive.get_participant_count()
             dives_by_day[day].append(dive)
-            
+
         context = {
             'view_type': view_type,
             'calendar': cal,
@@ -471,7 +471,7 @@ def manage_dive_participants(request, dive_id):
                 participant.delete()
                 messages.success(request, 'Participant removed from the dive!')
                 return redirect('users:manage_dive_participants', dive_id=dive.id)
-        
+
         # Handle on board action
         elif 'on_board' in request.POST:
             participant_id = request.POST.get('participant_id')
@@ -481,7 +481,7 @@ def manage_dive_participants(request, dive_id):
                 participant.save()
                 messages.success(request, f'{participant.customer} is now on board!')
                 return redirect('users:manage_dive_participants', dive_id=dive.id)
-        
+
         # Handle back on boat action
         elif 'back_on_boat' in request.POST:
             participant_id = request.POST.get('participant_id')
@@ -491,19 +491,19 @@ def manage_dive_participants(request, dive_id):
                 participant.save()
                 messages.success(request, f'{participant.customer} is back on boat!')
                 return redirect('users:manage_dive_participants', dive_id=dive.id)
-        
+
         # Handle quick update participant
         elif 'quick_update_participant' in request.POST:
             participant_id = request.POST.get('participant_id')
             if participant_id:
                 participant = get_object_or_404(CustomerDiveActivity, id=int(participant_id))
-                
+
                 # Update activity if provided
                 activity_id = request.POST.get('activity')
                 if activity_id:
                     activity = get_object_or_404(DiveActivity, id=int(activity_id), diving_center=request.user)
                     participant.activity = activity
-                
+
                 participant.tank_size = request.POST.get('tank_size', participant.tank_size)
                 participant.status = request.POST.get('status', participant.status)
                 participant.needs_wetsuit = 'needs_wetsuit' in request.POST
@@ -515,7 +515,7 @@ def manage_dive_participants(request, dive_id):
                 participant.save()
                 messages.success(request, 'Participant updated successfully!')
                 return redirect('users:manage_dive_participants', dive_id=dive.id)
-        
+
         # Handle adding a participant or group
         elif 'add_participant' in request.POST:
             form = CustomerDiveActivityForm(diving_center=request.user, dive_schedule=dive, data=request.POST)
@@ -555,7 +555,7 @@ def manage_dive_participants(request, dive_id):
                 return redirect('users:manage_dive_participants', dive_id=dive.id)
             else:
                 messages.error(request, 'Please correct the form errors.')
-        
+
         # Handle adding new customer
         elif 'add_new_customer' in request.POST:
             customer_form = CustomerForm(request.POST)
@@ -651,7 +651,7 @@ def customer_activity_history(request, customer_id):
     customer = get_object_or_404(Customer,
                                  id=customer_id,
                                  diving_center=request.user)
-    
+
     activities = CustomerDiveActivity.objects.filter(
         customer=customer
     ).order_by('-dive_schedule__date', '-dive_schedule__time')
@@ -688,7 +688,7 @@ def dashboard_analytics(request):
         '55+': 0,
         'Unknown': 0
     }
-    
+
     for customer in customers:
         age = customer.get_age()
         if age is None:
@@ -724,7 +724,7 @@ def dashboard_analytics(request):
     current_year = datetime.now().year
     monthly_activities = {}
     year_to_date_total = 0
-    
+
     for month in range(1, 13):
         month_count = schedules.filter(
             date__year=current_year,
@@ -773,7 +773,7 @@ def diving_sites_list(request):
     if not request.user.userprofile.is_diving_center:
         messages.error(request, 'Access denied.')
         return redirect('users:profile')
-    
+
     sites = DivingSite.objects.filter(diving_center=request.user)
     return render(request, 'users/diving_sites_list.html', {'sites': sites})
 
@@ -803,7 +803,7 @@ def inventory_list(request):
     if not request.user.userprofile.is_diving_center:
         messages.error(request, 'Access denied.')
         return redirect('users:profile')
-    
+
     items = InventoryItem.objects.filter(diving_center=request.user)
     return render(request, 'users/inventory_list.html', {'items': items})
 
@@ -833,9 +833,10 @@ def diving_groups_list(request):
     if not request.user.userprofile.is_diving_center:
         messages.error(request, 'Access denied.')
         return redirect('users:profile')
-    
+
     groups = DivingGroup.objects.filter(diving_center=request.user)
-    return render(request, 'users/diving_groups_list.html', {'groups': groups})
+    return```python
+ render(request, 'users/diving_groups_list.html', {'groups': groups})
 
 
 @login_required
@@ -868,7 +869,7 @@ def manage_group_members(request, group_id):
     available_customers = Customer.objects.filter(diving_center=request.user).exclude(
         id__in=members.values_list('customer_id', flat=True)
     )
-    
+
     # Get available dives for scheduling
     from datetime import date
     available_dives = DiveSchedule.objects.filter(
@@ -884,7 +885,7 @@ def manage_group_members(request, group_id):
                 DivingGroupMember.objects.create(group=group, customer=customer)
                 messages.success(request, f'{customer} added to group!')
                 return redirect('users:manage_group_members', group_id=group.id)
-        
+
         elif 'remove_member' in request.POST:
             member_id = request.POST.get('member_id')
             if member_id:
@@ -892,7 +893,7 @@ def manage_group_members(request, group_id):
                 member.delete()
                 messages.success(request, 'Member removed from group!')
                 return redirect('users:manage_group_members', group_id=group.id)
-        
+
         elif 'set_leader' in request.POST:
             member_id = request.POST.get('member_id')
             if member_id:
@@ -904,7 +905,7 @@ def manage_group_members(request, group_id):
                 member.save()
                 messages.success(request, f'{member.customer} is now the group leader!')
                 return redirect('users:manage_group_members', group_id=group.id)
-        
+
         elif 'add_new_customer_to_group' in request.POST:
             quick_customer_form = QuickCustomerForm(request.POST)
             if quick_customer_form.is_valid():
@@ -916,7 +917,7 @@ def manage_group_members(request, group_id):
                 return redirect('users:manage_group_members', group_id=group.id)
             else:
                 messages.error(request, 'Please correct the form errors.')
-        
+
         elif 'schedule_group' in request.POST:
             dive_ids = request.POST.getlist('selected_dives')
             activity_id = request.POST.get('activity_id')
@@ -925,14 +926,14 @@ def manage_group_members(request, group_id):
             needs_regulator = 'needs_regulator' in request.POST
             needs_guide = 'needs_guide' in request.POST
             needs_insurance = 'needs_insurance' in request.POST
-            
+
             if dive_ids and activity_id:
                 activity = get_object_or_404(DiveActivity, id=activity_id, diving_center=request.user)
                 scheduled_count = 0
-                
+
                 for dive_id in dive_ids:
                     dive = get_object_or_404(DiveSchedule, id=dive_id, diving_center=request.user)
-                    
+
                     # Add all group members to this dive
                     for member in members:
                         # Check if member not already in this dive
@@ -954,7 +955,7 @@ def manage_group_members(request, group_id):
                                 needs_insurance=needs_insurance,
                             )
                             scheduled_count += 1
-                
+
                 messages.success(request, f'Successfully scheduled {group.name} for {len(dive_ids)} dive(s)! Added {scheduled_count} participant slots.')
                 return redirect('users:manage_group_members', group_id=group.id)
             else:
@@ -993,7 +994,7 @@ def edit_dive(request, dive_id):
             return redirect('users:dive_detail', dive_id=dive.id)
     else:
         form = DiveScheduleForm(instance=dive)
-    
+
     return render(request, 'users/edit_dive.html', {'form': form, 'dive': dive})
 
 
@@ -1019,7 +1020,7 @@ def medical_forms_list(request):
     if not request.user.userprofile.is_diving_center:
         messages.error(request, 'Access denied.')
         return redirect('users:profile')
-    
+
     medical_forms = Customer.objects.filter(diving_center=request.user).order_by('-created_at')
     return render(request, 'users/medical_forms_list.html', {'medical_forms': medical_forms})
 
@@ -1042,7 +1043,7 @@ def medical_form(request):
                 messages.error(request, 'No diving center available. Please contact us directly.')
     else:
         form = MedicalForm()
-    
+
     return render(request, 'users/medical_form.html', {'form': form})
 
 
@@ -1081,13 +1082,13 @@ def print_participants(request, dive_id):
             if wetsuit_size not in equipment_summary['wetsuits_by_size']:
                 equipment_summary['wetsuits_by_size'][wetsuit_size] = 0
             equipment_summary['wetsuits_by_size'][wetsuit_size] += 1
-        
+
         if participant.needs_bcd:
             bcd_size = participant.customer.get_bcd_size()
             if bcd_size not in equipment_summary['bcds_by_size']:
                 equipment_summary['bcds_by_size'][bcd_size] = 0
             equipment_summary['bcds_by_size'][bcd_size] += 1
-        
+
         if participant.needs_regulator:  # For fins, we count when regulators are needed (as proxy)
             fins_size = participant.customer.get_fins_size()
             if fins_size not in equipment_summary['fins_by_size']:
@@ -1110,7 +1111,7 @@ def staff_list(request):
     if not request.user.userprofile.is_diving_center:
         messages.error(request, 'Access denied.')
         return redirect('users:profile')
-    
+
     staff_members = Staff.objects.filter(diving_center=request.user).order_by('first_name', 'last_name')
     return render(request, 'users/staff_list.html', {'staff_members': staff_members})
 
@@ -1160,23 +1161,23 @@ def staff_detail(request, staff_id):
         return redirect('users:profile')
 
     staff_member = get_object_or_404(Staff, id=staff_id, diving_center=request.user)
-    
+
     # Get all activities for this staff member
     activities = CustomerDiveActivity.objects.filter(
         assigned_staff=staff_member
     ).order_by('-dive_schedule__date', '-dive_schedule__time').select_related(
         'customer', 'dive_schedule', 'activity', 'dive_schedule__dive_site'
     )
-    
+
     # Get upcoming activities
     from datetime import date
     upcoming_activities = activities.filter(dive_schedule__date__gte=date.today())
     past_activities = activities.filter(dive_schedule__date__lt=date.today())
-    
+
     # Statistics
     total_activities = activities.count()
     upcoming_count = upcoming_activities.count()
-    
+
     return render(request, 'users/staff_detail.html', {
         'staff_member': staff_member,
         'upcoming_activities': upcoming_activities,
@@ -1209,15 +1210,15 @@ def staff_planning(request):
     if not request.user.userprofile.is_diving_center:
         messages.error(request, 'Access denied.')
         return redirect('users:profile')
-    
+
     from datetime import date, timedelta
     tomorrow = date.today() + timedelta(days=1)
-    
+
     # Handle staff assignment
     if request.method == 'POST' and 'assign_staff_to_activity' in request.POST:
         activity_id = request.POST.get('activity_id')
         staff_id = request.POST.get('staff_id')
-        
+
         if activity_id and staff_id:
             try:
                 activity = CustomerDiveActivity.objects.get(
@@ -1230,15 +1231,15 @@ def staff_planning(request):
                 messages.success(request, f'Successfully assigned {staff.get_full_name()} to {activity.customer.get_full_name()}\'s activity!')
             except (CustomerDiveActivity.DoesNotExist, Staff.DoesNotExist):
                 messages.error(request, 'Invalid assignment. Please try again.')
-        
+
         return redirect('users:staff_planning')
-    
+
     # Get all dive schedules for tomorrow
     tomorrow_dives = DiveSchedule.objects.filter(
         diving_center=request.user,
         date=tomorrow
     ).order_by('time')
-    
+
     # Get all customer activities for tomorrow with assigned staff
     tomorrow_activities = CustomerDiveActivity.objects.filter(
         dive_schedule__diving_center=request.user,
@@ -1246,11 +1247,11 @@ def staff_planning(request):
     ).select_related(
         'customer', 'assigned_staff', 'activity', 'dive_schedule', 'dive_schedule__dive_site'
     ).order_by('dive_schedule__time', 'assigned_staff__first_name')
-    
+
     # Group activities by staff member
     staff_assignments = {}
     unassigned_activities = []
-    
+
     for activity in tomorrow_activities:
         if activity.assigned_staff:
             staff_id = activity.assigned_staff.id
@@ -1262,10 +1263,10 @@ def staff_planning(request):
             staff_assignments[staff_id]['activities'].append(activity)
         else:
             unassigned_activities.append(activity)
-    
+
     # Get all active staff members
     all_staff = Staff.objects.filter(diving_center=request.user, status='ACTIVE')
-    
+
     return render(request, 'users/staff_planning.html', {
         'tomorrow': tomorrow,
         'tomorrow_dives': tomorrow_dives,
@@ -1280,28 +1281,28 @@ def quick_edit_customer(request, customer_id):
     """AJAX endpoint for quick editing customer details"""
     if not request.user.userprofile.is_diving_center:
         return JsonResponse({'success': False, 'error': 'Access denied'})
-    
+
     customer = get_object_or_404(Customer, id=customer_id, diving_center=request.user)
-    
+
     if request.method == 'POST':
         try:
             # Update customer fields
             customer.default_tank_size = request.POST.get('default_tank_size', customer.default_tank_size)
-            
+
             weight = request.POST.get('weight')
             if weight:
                 customer.weight = float(weight)
-            
+
             height = request.POST.get('height')
             if height:
                 customer.height = float(height)
-                
+
             foot_size = request.POST.get('foot_size')
             if foot_size:
                 customer.foot_size = float(foot_size)
-            
+
             customer.save()
-            
+
             return JsonResponse({
                 'success': True,
                 'tank_size': customer.default_tank_size,
@@ -1309,10 +1310,10 @@ def quick_edit_customer(request, customer_id):
                 'bcd_size': customer.get_bcd_size(),
                 'fins_size': customer.get_fins_size()
             })
-            
+
         except (ValueError, TypeError) as e:
             return JsonResponse({'success': False, 'error': 'Invalid data provided'})
-    
+
     return JsonResponse({'success': False, 'error': 'Invalid request method'})
 
 
@@ -1323,7 +1324,7 @@ def courses_list(request):
     if not request.user.userprofile.is_diving_center:
         messages.error(request, 'Access denied.')
         return redirect('users:profile')
-    
+
     courses = Course.objects.filter(diving_center=request.user).order_by('name')
     return render(request, 'users/courses_list.html', {'courses': courses})
 
@@ -1368,16 +1369,16 @@ def course_enrollments(request):
     if not request.user.userprofile.is_diving_center:
         messages.error(request, 'Access denied.')
         return redirect('users:profile')
-    
+
     enrollments = CourseEnrollment.objects.filter(
         course__diving_center=request.user
-    ).select_related('customer', 'course', 'instructor').order_by('-enrollment_date')
-    
+    ).select_related('customer', 'course', 'primary_instructor').order_by('-enrollment_date')
+
     # Filter by status if requested
     status_filter = request.GET.get('status')
     if status_filter:
         enrollments = enrollments.filter(status=status_filter)
-    
+
     return render(request, 'users/course_enrollments.html', {
         'enrollments': enrollments,
         'status_filter': status_filter,
@@ -1415,7 +1416,7 @@ def enroll_customer(request, customer_id=None):
         if customer:
             initial_data['customer'] = customer
         form = CourseEnrollmentForm(diving_center=request.user, initial=initial_data)
-    
+
     return render(request, 'users/enroll_customer.html', {
         'form': form,
         'customer': customer
@@ -1428,12 +1429,12 @@ def course_lesson_calendar(request):
     if not request.user.userprofile.is_diving_center:
         messages.error(request, 'Access denied.')
         return redirect('users:profile')
-    
+
     from datetime import date, timedelta
     today = date.today()
     start_date = today - timedelta(days=7)
     end_date = today + timedelta(days=30)
-    
+
     # Get all scheduled course sessions
     scheduled_sessions = CourseSession.objects.filter(
         enrollment__course__diving_center=request.user,
@@ -1445,7 +1446,7 @@ def course_lesson_calendar(request):
         'instructor', 
         'dive_schedule__dive_site'
     ).order_by('dive_schedule__date', 'dive_schedule__time')
-    
+
     return render(request, 'users/course_lesson_calendar.html', {
         'scheduled_sessions': scheduled_sessions,
         'start_date': start_date,
@@ -1463,9 +1464,9 @@ def enrollment_detail(request, enrollment_id):
         id=enrollment_id,
         course__diving_center=request.user
     )
-    
+
     sessions = enrollment.course_sessions.all().order_by('session_number')
-    
+
     return render(request, 'users/enrollment_detail.html', {
         'enrollment': enrollment,
         'sessions': sessions
@@ -1490,7 +1491,7 @@ def schedule_course_session(request, session_id):
             instructor = form.cleaned_data['instructor']
             assistant_instructors = form.cleaned_data['assistant_instructors']
             instructor_notes = form.cleaned_data['instructor_notes']
-            
+
             # Update session details
             session.dive_schedule = dive_schedule
             session.scheduled_date = dive_schedule.date
@@ -1499,16 +1500,16 @@ def schedule_course_session(request, session_id):
             session.instructor_notes = instructor_notes
             session.status = 'SCHEDULED'
             session.save()
-            
+
             # Set assistant instructors
             session.assistant_instructors.set(assistant_instructors)
-            
+
             # Create or update CustomerDiveActivity
             activity = DiveActivity.objects.filter(
                 diving_center=request.user,
                 name__icontains='course'
             ).first()
-            
+
             if not activity:
                 activity = DiveActivity.objects.create(
                     diving_center=request.user,
@@ -1517,7 +1518,7 @@ def schedule_course_session(request, session_id):
                     duration_minutes=90,
                     price=0.00
                 )
-            
+
             # Create CustomerDiveActivity for this course session
             customer_dive_activity, created = CustomerDiveActivity.objects.get_or_create(
                 customer=session.enrollment.customer,
@@ -1529,15 +1530,15 @@ def schedule_course_session(request, session_id):
                     'tank_size': session.enrollment.customer.default_tank_size,
                 }
             )
-            
+
             if not created:
                 customer_dive_activity.course_session = session
                 customer_dive_activity.assigned_staff = instructor
                 customer_dive_activity.save()
-            
+
             # Update enrollment status if needed
             session.enrollment.auto_update_status()
-            
+
             messages.success(request, f'Lesson {session.session_number} scheduled successfully!')
             return redirect('users:enrollment_detail', enrollment_id=session.enrollment.id)
     else:
@@ -1549,17 +1550,17 @@ def schedule_course_session(request, session_id):
             initial_data['instructor_notes'] = session.instructor_notes
         if session.dive_schedule:
             initial_data['dive_schedule'] = session.dive_schedule
-            
+
         form = CourseSessionScheduleForm(
             diving_center=request.user, 
             session=session, 
             initial=initial_data
         )
-        
+
         # Set assistant instructors if they exist
         if session.assistant_instructors.exists():
             form.fields['assistant_instructors'].initial = session.assistant_instructors.all()
-    
+
     return render(request, 'users/schedule_course_session.html', {
         'form': form,
         'session': session
@@ -1576,7 +1577,7 @@ def complete_course_session(request, session_id):
         id=session_id,
         enrollment__course__diving_center=request.user
     )
-    
+
     if not session.can_be_completed():
         messages.error(request, 'This lesson cannot be completed at this time.')
         return redirect('users:enrollment_detail', enrollment_id=session.enrollment.id)
@@ -1588,14 +1589,14 @@ def complete_course_session(request, session_id):
             session.instructor_notes = form.cleaned_data['instructor_notes']
             session.student_feedback = form.cleaned_data['student_feedback']
             session.completion_date = form.cleaned_data['completion_date']
-            
+
             if not session.completion_date:
                 from datetime import datetime
                 session.completion_date = datetime.now()
-            
+
             session.status = 'COMPLETED'
             session.save()
-            
+
             # Update the customer dive activity if it exists
             try:
                 customer_dive_activity = CustomerDiveActivity.objects.get(
@@ -1607,10 +1608,10 @@ def complete_course_session(request, session_id):
                 customer_dive_activity.save()
             except CustomerDiveActivity.DoesNotExist:
                 pass
-            
+
             # Update enrollment status
             session.enrollment.auto_update_status()
-            
+
             messages.success(request, f'Lesson {session.session_number} marked as completed!')
             return redirect('users:enrollment_detail', enrollment_id=session.enrollment.id)
     else:
@@ -1620,7 +1621,7 @@ def complete_course_session(request, session_id):
             'grade': session.grade
         }
         form = LessonCompletionForm(initial=initial_data)
-    
+
     return render(request, 'users/complete_course_session.html', {
         'form': form,
         'session': session
@@ -1634,15 +1635,125 @@ def customer_courses(request, customer_id):
         return redirect('users:profile')
 
     customer = get_object_or_404(Customer, id=customer_id, diving_center=request.user)
-    
+
     active_enrollments = customer.course_enrollments.filter(
         status__in=['ENROLLED', 'IN_PROGRESS']
     ).select_related('course', 'primary_instructor')
-    
+
     completed_enrollments = customer.course_enrollments.filter(
         status='COMPLETED'
     ).select_related('course', 'primary_instructor')
-    
+
+    return render(request, 'users/customer_courses.html', {
+        'customer': customer,
+        'active_enrollments': active_enrollments,
+        'completed_enrollments': completed_enrollments
+    })
+```python
+
+
+        # Pre-populate form with existing data
+        initial_data = {}
+        if session.instructor:
+            initial_data['instructor'] = session.instructor
+        if session.instructor_notes:
+            initial_data['instructor_notes'] = session.instructor_notes
+        if session.dive_schedule:
+            initial_data['dive_schedule'] = session.dive_schedule
+
+        form = CourseSessionScheduleForm(
+            diving_center=request.user, 
+            session=session, 
+            initial=initial_data
+        )
+
+        # Set assistant instructors if they exist
+        if session.assistant_instructors.exists():
+            form.fields['assistant_instructors'].initial = session.assistant_instructors.all()
+
+    return render(request, 'users/schedule_course_session.html', {
+        'form': form,
+        'session': session
+    })
+
+@login_required
+def complete_course_session(request, session_id):
+    if not request.user.userprofile.is_diving_center:
+        messages.error(request, 'Access denied.')
+        return redirect('users:profile')
+
+    session = get_object_or_404(
+        CourseSession,
+        id=session_id,
+        enrollment__course__diving_center=request.user
+    )
+
+    if not session.can_be_completed():
+        messages.error(request, 'This lesson cannot be completed at this time.')
+        return redirect('users:enrollment_detail', enrollment_id=session.enrollment.id)
+
+    if request.method == 'POST':
+        form = LessonCompletionForm(request.POST)
+        if form.is_valid():
+            session.grade = form.cleaned_data['grade']
+            session.instructor_notes = form.cleaned_data['instructor_notes']
+            session.student_feedback = form.cleaned_data['student_feedback']
+            session.completion_date = form.cleaned_data['completion_date']
+
+            if not session.completion_date:
+                from datetime import datetime
+                session.completion_date = datetime.now()
+
+            session.status = 'COMPLETED'
+            session.save()
+
+            # Update the customer dive activity if it exists
+            try:
+                customer_dive_activity = CustomerDiveActivity.objects.get(
+                    customer=session.enrollment.customer,
+                    dive_schedule=session.dive_schedule,
+                    course_session=session
+                )
+                customer_dive_activity.status = 'FINISHED'
+                customer_dive_activity.save()
+            except CustomerDiveActivity.DoesNotExist:
+                pass
+
+            # Update enrollment status
+            session.enrollment.auto_update_status()
+
+            messages.success(request, f'Lesson {session.session_number} marked as completed!')
+            return redirect('users:enrollment_detail', enrollment_id=session.enrollment.id)
+    else:
+        initial_data = {
+            'instructor_notes': session.instructor_notes,
+            'student_feedback': session.student_feedback,
+            'grade': session.grade
+        }
+        form = LessonCompletionForm(initial=initial_data)
+
+    return render(request, 'users/complete_course_session.html', {
+        'form': form,
+        'session': session
+    })
+
+
+@login_required
+def customer_courses(request, customer_id):
+    if not request.user.userprofile.is_diving_center:
+        messages.error(request, 'Access denied.')
+        return redirect('users:profile')
+
+    customer = get_object_or_404(Customer, id=customer_id, diving_center=request.user)
+
+    active_enrollments = customer.course_enrollments.filter(
+        status__in=['ENROLLED', 'IN_PROGRESS']
+    ).select_related('course', 'primary_instructor')
+
+    completed_enrollments = customer.course_enrollments.filter(
+        status='COMPLETED'
+    ).select_related('course', 'primary_instructor')
+
     return render(request, 'users/customer_courses.html', {
         'customer': customer,
         'active_enrollments': active_enrollments,

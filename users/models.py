@@ -472,6 +472,10 @@ class CourseEnrollment(models.Model):
         """Get number of completed lessons"""
         return self.course_sessions.filter(status='COMPLETED').count()
     
+    def get_completed_dives(self):
+        """Get number of completed dives (alias for get_completed_lessons)"""
+        return self.get_completed_lessons()
+    
     def get_scheduled_lessons(self):
         """Get number of scheduled lessons"""
         return self.course_sessions.filter(status__in=['SCHEDULED', 'IN_PROGRESS']).count()

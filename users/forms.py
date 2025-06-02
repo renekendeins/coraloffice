@@ -237,7 +237,7 @@ class CourseForm(forms.ModelForm):
 class CourseEnrollmentForm(forms.ModelForm):
     class Meta:
         model = CourseEnrollment
-        fields = ['customer', 'course', 'instructor', 'start_date', 'notes', 'price_paid', 'is_paid']
+        fields = ['customer', 'course', 'primary_instructor', 'start_date', 'notes', 'price_paid', 'is_paid']
         widgets = {
             'start_date': forms.DateInput(attrs={'type': 'date'}),
             'notes': forms.Textarea(attrs={'rows': 3}),
@@ -249,8 +249,8 @@ class CourseEnrollmentForm(forms.ModelForm):
         if diving_center:
             self.fields['customer'].queryset = Customer.objects.filter(diving_center=diving_center)
             self.fields['course'].queryset = Course.objects.filter(diving_center=diving_center, is_active=True)
-            self.fields['instructor'].queryset = Staff.objects.filter(diving_center=diving_center, status='ACTIVE')
-            self.fields['instructor'].empty_label = "Select instructor (optional)"
+            self.fields['primary_instructor'].queryset = Staff.objects.filter(diving_center=diving_center, status='ACTIVE')
+            self.fields['primary_instructor'].empty_label = "Select instructor (optional)"
 
 class CourseSessionForm(forms.ModelForm):
     class Meta:

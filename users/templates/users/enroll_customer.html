@@ -132,20 +132,51 @@
 }
 </style>
 
+<style>
+.search-suggestions {
+    border: 1px solid #ddd;
+    max-height: 200px;
+    overflow-y: auto;
+    position: absolute;
+    background: white;
+    width: 100%;
+    z-index: 100;
+    display: none;
+}
+
+.suggestion-item {
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.suggestion-item:hover {
+    background-color: #f5f5f5;
+}
+
+.form-control {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 10px;
+}
+</style>
+
 <script>
-// Customer search functionality similar to manage_dive_participants
+// Enhanced search functionality for customers
 const customerSearch = document.getElementById('customer-search');
 const customerSelect = document.getElementById('{{ form.customer.id_for_label }}');
 const suggestionsDiv = document.getElementById('search-suggestions');
 
-// Create customer data for search
+// Create customer data structure
 const searchData = {
     customers: [
         {% for customer in form.customer.field.queryset %}
         {
             id: {{ customer.id }},
             name: "{{ customer.first_name }} {{ customer.last_name }}",
-            email: "{{ customer.email }}",
             country: "{{ customer.get_country_display|default:'Unknown' }}",
             certification: "{{ customer.get_certification_level_display }}"
         },
@@ -161,8 +192,7 @@ customerSearch.addEventListener('input', function() {
     }
 
     const customerMatches = searchData.customers.filter(customer => 
-        customer.name.toLowerCase().includes(query) || 
-        customer.email.toLowerCase().includes(query)
+        customer.name.toLowerCase().includes(query)
     );
 
     if (customerMatches.length > 0) {
@@ -170,9 +200,8 @@ customerSearch.addEventListener('input', function() {
             return `<div class="suggestion-item" data-id="${customer.id}">
                 <div>
                     <strong>${customer.name}</strong><br>
-                    <small>${customer.email} • ${customer.country} • ${customer.certification}</small>
+                    <small>${customer.country} • ${customer.certification}</small>
                 </div>
-                <span class="suggestion-type">Customer</span>
             </div>`;
         }).join('');
         suggestionsDiv.style.display = 'block';
@@ -187,7 +216,6 @@ suggestionsDiv.addEventListener('click', function(e) {
     if (suggestionItem) {
         const id = suggestionItem.getAttribute('data-id');
         const customer = searchData.customers.find(c => c.id == id);
-
         customerSelect.value = id;
         customerSearch.value = customer.name;
         suggestionsDiv.style.display = 'none';
@@ -201,9 +229,8 @@ document.addEventListener('click', function(e) {
     }
 });
 
-// Pre-populate search if customer is already selected
-{% if customer %}
-customerSearch.value = "{{ customer.get_full_name }}";
-{% endif %}
+// Hide the original select field
+customerSelect.style.display = 'none';
 </script>
+
 {% endblock %}
