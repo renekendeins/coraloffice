@@ -835,8 +835,7 @@ def diving_groups_list(request):
         return redirect('users:profile')
 
     groups = DivingGroup.objects.filter(diving_center=request.user)
-    return```python
- render(request, 'users/diving_groups_list.html', {'groups': groups})
+    return render(request, 'users/diving_groups_list.html', {'groups': groups})
 
 
 @login_required
@@ -1649,6 +1648,8 @@ def customer_courses(request, customer_id):
         'active_enrollments': active_enrollments,
         'completed_enrollments': completed_enrollments
     })
+
+
 ```python
 
 
