@@ -6,7 +6,7 @@
 <h2>{{ user.userprofile.business_name }} Dashboard</h2>
 
 <!-- Upcoming Dives Section -->
-<section style="margin-top: 40px; margin-bottom: 50px;">
+<section style="margin-top: 40px; margin-bottom: 30px; padding: 2rem; background-color: #ffffff; border-radius: 15px;box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);">
     <h3 style="color: #333; border-bottom: 2px solid #ddd; padding-bottom: 10px;">🏊‍♂️ Salidas de Hoy y Mañana</h3>
     {% if upcoming_dives %}
         <div style="margin-top: 20px;">
@@ -37,7 +37,7 @@
         <p style="color: #666; margin-top: 20px;">No dives scheduled for today or tomorrow.</p>
     {% endif %}
 </section>
-
+<h2  style="padding: 2rem;">Gestión diaria</h2>
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 40px;">
     <!-- Calendar & Scheduling -->
     <section class="card">
@@ -46,7 +46,7 @@
             <a href="{% url 'users:calendar_view' %}" class="btn" style="background: #4caf50;">Calendario</a>
             <a href="{% url 'users:schedule_dive' %}" class="btn" style="background: #a5d6a7;">Crear nueva salida</a>
             <!-- <a href="{% url 'users:dive_calendar' %}" class="btn" style="background: #81c784;">Listado de salidas</a> -->
-            <a href="{% url 'users:staff_planning' %}" class="btn" style="background: #7986cb;">Planning de mañana</a>
+            
             
         </div>
     </section>
@@ -69,17 +69,18 @@
         </div>
     </section>
 
-    <!-- Activity Management -->
+    <!-- Diving Groups Management -->
     <section class="card">
-        <h3 style="color: #ff9800; border-bottom: 2px solid #ff9800; padding-bottom: 10px;">🏊 Gestor de actividades</h3>
+        <h3 style="color: ##7986cb; border-bottom: 2px solid #7986cb; padding-bottom: 10px;">📋 Planning</h3>
         <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
-            <a href="{% url 'users:add_activity' %}" class="btn" style="background: #ff9800;">Crear nueva actividad</a>
-            <a href="{% url 'users:activity_list' %}" class="btn" style="background: #ffb74d;">Gestionar actividades</a>
+            <a href="{% url 'users:staff_planning' %}" class="btn" style="background: #7986cb;">Planning de mañana</a>
         </div>
     </section>
 
+
 </div>
 
+<h2 style="padding: 2rem;">Gestión del centro</h2>
 <!-- New Management Sections -->
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 40px;">
     <!-- Diving Sites Management -->
@@ -91,6 +92,14 @@
         </div>
     </section>
 
+    <!-- Activity Management -->
+    <section class="card">
+        <h3 style="color: #ff9800; border-bottom: 2px solid #ff9800; padding-bottom: 10px;">🏊 Gestor de actividades</h3>
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+            <a href="{% url 'users:add_activity' %}" class="btn" style="background: #ff9800;">Crear nueva actividad</a>
+            <a href="{% url 'users:activity_list' %}" class="btn" style="background: #ffb74d;">Gestionar actividades</a>
+        </div>
+    </section>
     <!-- Inventory Management -->
     <section class="card">
         <h3 style="color: #607d8b; border-bottom: 2px solid #607d8b; padding-bottom: 10px;">📦 Inventario</h3>
