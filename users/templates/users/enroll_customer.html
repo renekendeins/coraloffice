@@ -1,9 +1,54 @@
 
+
 {% extends 'users/base.html' %}
 
 {% block users_title %}Enroll Customer - CoralOffice{% endblock %}
 
 {% block users_content %}
+<style>
+.search-suggestions {
+    border: 1px solid #ddd;
+    max-height: 200px;
+    overflow-y: auto;
+    position: absolute;
+    background: white;
+    width: 100%;
+    z-index: 100;
+    display: none;
+}
+
+.suggestion-item {
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.suggestion-item:hover {
+    background-color: #f5f5f5;
+}
+
+.suggestion-type {
+    background: #007bff;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 3px;
+    font-size: 11px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+</style>
+
 <h2>Enroll Customer in Course</h2>
 
 {% if customer %}
@@ -12,8 +57,10 @@
 
 <form method="post">
     {% csrf_token %}
-    <div class="form-group">
-        <label for="{{ form.customer.id_for_label }}">Customer:</label>
+    <div class="form-group" style="position: relative;">
+        <label for="customer-search">Search Customer:</label>
+        <input type="text" id="customer-search" placeholder="Start typing customer name..." autocomplete="off" class="form-control">
+        <div id="search-suggestions" class="search-suggestions"></div>
         {{ form.customer }}
     </div>
     
@@ -51,4 +98,74 @@
     <button type="submit" class="btn">Enroll Customer</button>
     <a href="{% url 'users:course_enrollments' %}" class="btn" style="background: #6c757d;">Cancel</a>
 </form>
+
+<script>
+// Customer search functionality
+const customerSearch = document.getElementById('customer-search');
+const customerSelect = document.getElementById('{{ form.customer.id_for_label }}');
+const suggestionsDiv = document.getElementById('search-suggestions');
+
+// Create customer data structure
+const searchData = {
+    customers: [
+        {% for customer in form.customer.field.queryset %}
+        {
+            id: {{ customer.id }},
+            name: "{{ customer.first_name }} {{ customer.last_name }}",
+            country: "{{ customer.get_country_display|default:'Unknown' }}",
+            certification: "{{ customer.get_certification_level_display }}"
+        },
+        {% endfor %}
+    ]
+};
+
+customerSearch.addEventListener('input', function() {
+    const query = this.value.toLowerCase();
+    if (query.length < 2) {
+        suggestionsDiv.style.display = 'none';
+        return;
+    }
+    
+    // Search customers
+    const customerMatches = searchData.customers.filter(customer => 
+        customer.name.toLowerCase().includes(query)
+    );
+    
+    if (customerMatches.length > 0) {
+        suggestionsDiv.innerHTML = customerMatches.map(customer => {
+            return `<div class="suggestion-item" data-type="customer" data-id="${customer.id}">
+                <div>
+                    <strong>${customer.name}</strong><br>
+                    <small>${customer.country} • ${customer.certification}</small>
+                </div>
+                <span class="suggestion-type">Customer</span>
+            </div>`;
+        }).join('');
+        suggestionsDiv.style.display = 'block';
+    } else {
+        suggestionsDiv.style.display = 'none';
+    }
+});
+
+// Handle suggestion clicks
+suggestionsDiv.addEventListener('click', function(e) {
+    const suggestionItem = e.target.closest('.suggestion-item');
+    if (suggestionItem) {
+        const id = suggestionItem.getAttribute('data-id');
+        const customer = searchData.customers.find(c => c.id == id);
+        
+        customerSelect.value = id;
+        customerSearch.value = customer.name;
+        suggestionsDiv.style.display = 'none';
+    }
+});
+
+// Hide suggestions when clicking outside
+document.addEventListener('click', function(e) {
+    if (!e.target.closest('.form-group')) {
+        suggestionsDiv.style.display = 'none';
+    }
+});
+</script>
 {% endblock %}
+

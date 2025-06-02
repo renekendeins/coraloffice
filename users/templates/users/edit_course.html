@@ -1,0 +1,81 @@
+
+{% extends 'users/base.html' %}
+
+{% block users_title %}Edit Course - {{ course.name }}{% endblock %}
+
+{% block users_content %}
+<h2>Edit Course - {{ course.name }}</h2>
+
+<form method="post">
+    {% csrf_token %}
+    <div class="form-row">
+        <div class="form-group">
+            <label for="{{ form.name.id_for_label }}">Course Name:</label>
+            {{ form.name }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.certification_level.id_for_label }}">Certification Level:</label>
+            {{ form.certification_level }}
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label for="{{ form.description.id_for_label }}">Description:</label>
+        {{ form.description }}
+    </div>
+    
+    <div class="form-row">
+        <div class="form-group">
+            <label for="{{ form.total_dives.id_for_label }}">Total Dives:</label>
+            {{ form.total_dives }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.duration_days.id_for_label }}">Duration (Days):</label>
+            {{ form.duration_days }}
+        </div>
+    </div>
+    
+    <div class="form-row">
+        <div class="form-group">
+            <label for="{{ form.price.id_for_label }}">Price (€):</label>
+            {{ form.price }}
+        </div>
+        <div class="form-group">
+            <label for="{{ form.max_students.id_for_label }}">Max Students:</label>
+            {{ form.max_students }}
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label for="{{ form.prerequisites.id_for_label }}">Prerequisites:</label>
+        {{ form.prerequisites }}
+    </div>
+    
+    <div class="checkbox-group">
+        <label>
+            {{ form.is_active }} Active Course
+        </label>
+    </div>
+    
+    <div style="margin-top: 20px;">
+        <button type="submit" class="btn">Update Course</button>
+        <a href="{% url 'users:courses_list' %}" class="btn" style="background: #6c757d;">Cancel</a>
+    </div>
+</form>
+
+<style>
+.form-row {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.form-group {
+    flex: 1;
+}
+
+.checkbox-group {
+    margin: 15px 0;
+}
+</style>
+{% endblock %}

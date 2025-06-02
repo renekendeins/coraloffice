@@ -1,0 +1,62 @@
+
+{% extends 'users/base.html' %}
+
+{% block users_title %}Schedule Course Session{% endblock %}
+
+{% block users_content %}
+<h2>Schedule Course Session</h2>
+
+<div style="background-color: #f0f8ff; border: 1px solid #b8daff; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+    <h4>Session Details</h4>
+    <p><strong>Course:</strong> {{ session.enrollment.course.name }}</p>
+    <p><strong>Student:</strong> {{ session.enrollment.customer.get_full_name }}</p>
+    <p><strong>Session:</strong> {{ session.session_number }} - {{ session.title }}</p>
+    <p><strong>Type:</strong> {{ session.get_session_type_display }}</p>
+    {% if session.description %}
+        <p><strong>Description:</strong> {{ session.description }}</p>
+    {% endif %}
+</div>
+
+<form method="post">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="{{ form.dive_schedule.id_for_label }}">Select Dive Schedule:</label>
+        {{ form.dive_schedule }}
+        <small>Choose an available dive slot for this course session</small>
+    </div>
+    
+    <div class="form-group">
+        <label for="{{ form.instructor.id_for_label }}">Instructor:</label>
+        {{ form.instructor }}
+    </div>
+    
+    <div class="form-group">
+        <label for="{{ form.notes.id_for_label }}">Session Notes:</label>
+        {{ form.notes }}
+    </div>
+    
+    <div style="margin-top: 20px;">
+        <button type="submit" class="btn">Schedule Session</button>
+        <a href="{% url 'users:enrollment_detail' session.enrollment.id %}" class="btn" style="background: #6c757d;">Cancel</a>
+    </div>
+</form>
+
+<style>
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group small {
+    display: block;
+    color: #666;
+    font-size: 12px;
+    margin-top: 5px;
+}
+</style>
+{% endblock %}
