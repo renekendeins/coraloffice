@@ -219,19 +219,19 @@ class DiveSchedule(models.Model):
 
 class CustomerDiveActivity(models.Model):
     TANK_SIZE_CHOICES = [
-        ('10L', '10 Liters'),
-        ('12L', '12 Liters'),
-        ('15L', '15 Liters'),
-        ('EAN12L', 'NITROX 12 Liters'),
-        ('EAN15L', 'NITROX 15 Liters'),
+        ('10L', '10L'),
+        ('12L', '12L'),
+        ('15L', '15L'),
+        ('EAN12L', 'NITROX 12L'),
+        ('EAN15L', 'NITROX 15L'),
     ]
     
     STATUS_CHOICES = [
-        ('PENDING', 'Pending'),
+        ('PENDING', 'Pendiente de llegar'),
         ('ON_BOARD', 'On Board'),
         ('BACK_ON_BOAT', 'Back on Boat'),
-        ('DEPARTED', 'Departed'),
-        ('FINISHED', 'Finished'),
+        ('DEPARTED', 'En curso'),
+        ('FINISHED', 'Finalizado'),
     ]
     
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='dive_activities')

@@ -298,7 +298,7 @@ class CourseSessionScheduleForm(forms.Form):
             required=False,
             empty_label="Select primary instructor",
             widget=forms.Select(attrs={'class': 'form-control'}),
-            initial=session.enrollment.instructor,
+            initial=session.enrollment.primary_instructor,
             help_text="Primary instructor responsible for this lesson"
         )
 
