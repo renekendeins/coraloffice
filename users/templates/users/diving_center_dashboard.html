@@ -60,6 +60,15 @@
         </div>
     </section>
 
+    <!-- Courses Management -->
+    <section class="card">
+        <h3 style="color: #8fbc8f; border-bottom: 2px solid #8fbc8f; padding-bottom: 10px;">🏊 Cursos</h3>
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+            <a href="{% url 'users:course_enrollments' %}" class="btn" style="background: #86b386;">Inscripciones</a>
+            <a href="{% url 'users:enroll_customer_general' %}" class="btn" style="background: #2d892d;">Nueva inscripción</a>
+        </div>
+    </section>
+
     <!-- Diving Groups Management -->
     <section class="card">
         <h3 style="color: #795548; border-bottom: 2px solid #795548; padding-bottom: 10px;">👥 Grupos de buceo</h3>
@@ -98,6 +107,16 @@
         <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
             <a href="{% url 'users:add_activity' %}" class="btn" style="background: #ff9800;">Crear nueva actividad</a>
             <a href="{% url 'users:activity_list' %}" class="btn" style="background: #ffb74d;">Gestionar actividades</a>
+        </div>
+    </section>
+    <!-- Courses Management -->
+    <section class="card">
+        <h3 style="color: #8fbc8f; border-bottom: 2px solid #8fbc8f; padding-bottom: 10px;">🏊 Gestor de cursos</h3>
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+            <a href="{% url 'users:course_enrollments' %}" class="btn" style="background: #86b386;">Inscripciones</a>
+            <a href="{% url 'users:enroll_customer_general' %}" class="btn" style="background: #2d892d;">Nueva inscripción</a>
+            <a href="{% url 'users:courses_list' %}" class="btn" style="background: #498049;">Lista de cursos</a>
+            <a href="{% url 'users:add_course' %}" class="btn" style="background: #144f14;">Crear nuevo curso</a>
         </div>
     </section>
     <!-- Inventory Management -->

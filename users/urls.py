@@ -66,10 +66,13 @@ urlpatterns = [
     path('staff/planning/', views.staff_planning, name='staff_planning'),
 
     # Course Management
+    # Pagina para listar los cursos
     path('courses/', views.courses_list, name='courses_list'),
+    # Pagina para agregar un nuevo curso
     path('courses/add/', views.add_course, name='add_course'),
     path('courses/<int:course_id>/edit/', views.edit_course, name='edit_course'),
     path('course-enrollments/', views.course_enrollments, name='course_enrollments'),
+    # Vista que controla el formulario
     path('customers/<int:customer_id>/enroll/', views.enroll_customer, name='enroll_customer'),
     path('enroll/', views.enroll_customer, name='enroll_customer_general'),
     path('enrollments/<int:enrollment_id>/', views.enrollment_detail, name='enrollment_detail'),

@@ -156,53 +156,72 @@ body {
     </div>
 
     <!-- Participants Table -->
-    <h3>Participants ({{ participants.count }})</h3>
     {% if participants %}
-        <table>
-            <thead>
-                <tr>
-                    <th>Customer</th>
-                    <th>Activity</th>
-                    <th>Course Info</th>
-                    <th>Status</th>
-                    <th>Tank Size</th>
-                    <th>Equipment Needed</th>
-                    <th>Guide</th>
-                    <th>Insurance</th>
-                    <th>Paid</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for participant in participants %}
-                    <tr>
-                        <td>{{ participant.customer.get_full_name }}</td>
-                        <td>{{ participant.activity.name }}</td>
-                        <td>
-                            {% if participant.is_course_dive %}
-                                {% with course_info=participant.get_course_info %}
-                                    <div class="course-info">
-                                        <strong>{{ course_info.course_name }}</strong><br>
-                                        <small>Session {{ course_info.session_number }}/{{ course_info.total_sessions }}: {{ course_info.session_title }}</small>
-                                    </div>
-                                {% endwith %}
+    <h3>Participants List</h3>
+    <table class="participants-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Activity</th>
+                <th>Tank Size</th>
+                <th>Equipment Needed</th>
+                <th>Status</th>
+                <th>Assigned Staff</th>
+                <th>Group</th>
+                <th>Certification</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for participant in participants %}
+            <tr>
+                <td>
+                    <strong>{{ participant.customer.first_name }} {{ participant.customer.last_name }}</strong><br>
+                    <small>{{ participant.customer.country|default:"" }}</small>
+                </td>
+                <td>{{ participant.activity.name }}</td>
+                <td>{{ participant.get_tank_size_display }}</td>
+                <td>
+                    {% if participant.needs_wetsuit %}<span class="badge bg-secondary">Wetsuit</span> {% endif %}
+                    {% if participant.needs_bcd %}<span class="badge bg-secondary">BCD</span> {% endif %}
+                    {% if participant.needs_regulator %}<span class="badge bg-secondary">Regulator</span> {% endif %}
+                    {% if participant.needs_guide %}<span class="badge bg-info">Guide</span> {% endif %}
+                    {% if participant.needs_insurance %}<span class="badge bg-warning">Insurance</span> {% endif %}
+                    {% if not participant.needs_wetsuit and not participant.needs_bcd and not participant.needs_regulator and not participant.needs_guide and not participant.needs_insurance %}-{% endif %}
+                </td>
+                <td>
+                    <span class="badge {% if participant.status == 'PAID' %}bg-success{% elif participant.status == 'PENDING' %}bg-warning{% else %}bg-danger{% endif %}">
+                        {{ participant.get_status_display }}
+                    </span>
+                </td>
+                <td>
+                    {% if participant.assigned_staff %}
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            {% if participant.assigned_staff.profile_picture %}
+                                <img src="{{ participant.assigned_staff.profile_picture.url }}" alt="{{ participant.assigned_staff.get_full_name }}" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover;">
                             {% else %}
-                                <span class="no-course">Recreational Dive</span>
+                                <div style="width: 24px; height: 24px; border-radius: 50%; background: #f0f0f0; display: flex; align-items: center; justify-content: center; font-size: 12px;">👨‍🏫</div>
                             {% endif %}
-                        </td>
-                        <td>{{ participant.get_status_display }}</td>
-                        <td>{{ participant.tank_size }}</td>
-                        <td>
-                            {% if participant.needs_wetsuit %}Wetsuit {% endif %}
-                            {% if participant.needs_bcd %}BCD {% endif %}
-                            {% if participant.needs_regulator %}Regulator {% endif %}
-                        </td>
-                        <td>{% if participant.needs_guide %}Yes{% else %}No{% endif %}</td>
-                        <td>{% if participant.needs_insurance %}Yes{% else %}No{% endif %}</td>
-                        <td>{% if participant.is_paid %}✓{% else %}✗{% endif %}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+                            <div>
+                                <strong style="font-size: 12px;">{{ participant.assigned_staff.get_full_name }}</strong><br>
+                                <small style="color: #666; font-size: 10px;">{{ participant.assigned_staff.get_certification_level_display }}</small>
+                            </div>
+                        </div>
+                    {% else %}
+                        <span style="color: #999; font-style: italic; font-size: 12px;">Not assigned</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% for membership in participant.customer.group_memberships.all %}
+                        {% if membership.group.diving_center == dive.diving_center %}
+                            <span class="badge" style="background-color: #9c27b0;">{{ membership.group.name }}</span>
+                        {% endif %}
+                    {% endfor %}
+                </td>
+                <td>{{ participant.customer.get_certification_level_display|default:"-" }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
     {% endif %}
 
     <!-- Equipment Summary -->
