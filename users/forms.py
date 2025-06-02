@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from .models import UserProfile, Customer, DiveSchedule, DiveActivity, CustomerDiveActivity, DivingSite, InventoryItem, DivingGroup
+from .models import UserProfile, Customer, DiveSchedule, DiveActivity, CustomerDiveActivity, DivingSite, InventoryItem, DivingGroup, Staff
 
 class SignUpForm(UserCreationForm):
     first_name = forms.CharField(max_length=30, required=False, help_text='Optional.')
@@ -94,10 +94,11 @@ class CustomerDiveActivityForm(forms.ModelForm):
 
     class Meta:
         model = CustomerDiveActivity
-        fields = ('customer', 'activity', 'tank_size', 'needs_wetsuit', 'needs_bcd', 'needs_regulator', 'needs_guide', 'needs_insurance')
+        fields = ('customer', 'activity', 'assigned_staff', 'tank_size', 'needs_wetsuit', 'needs_bcd', 'needs_regulator', 'needs_guide', 'needs_insurance')
         widgets = {
             'customer': forms.Select(attrs={'class': 'form-control', 'style': 'display: none;', 'data-default-tank': 'true'}),
             'activity': forms.Select(attrs={'class': 'form-control'}),
+            'assigned_staff': forms.Select(attrs={'class': 'form-control'}),
             'tank_size': forms.Select(attrs={'class': 'form-control', 'id': 'tank-size-select'}),
         }
 
@@ -107,6 +108,8 @@ class CustomerDiveActivityForm(forms.ModelForm):
             self.fields['customer'].queryset = Customer.objects.filter(diving_center=diving_center)
             self.fields['activity'].queryset = DiveActivity.objects.filter(diving_center=diving_center)
             self.fields['selected_group'].queryset = DivingGroup.objects.filter(diving_center=diving_center)
+            self.fields['assigned_staff'].queryset = Staff.objects.filter(diving_center=diving_center, status='ACTIVE')
+            self.fields['assigned_staff'].empty_label = "Select instructor (optional)"
 
         if dive_schedule:
             # Exclude customers already participating in this dive
@@ -161,6 +164,19 @@ class QuickCustomerForm(forms.ModelForm):
             'country': forms.Select(attrs={'class': 'form-control'}),
             'certification_level': forms.Select(attrs={'class': 'form-control'}),
             'default_tank_size': forms.Select(attrs={'class': 'form-control'}),
+        }
+
+class StaffForm(forms.ModelForm):
+    class Meta:
+        model = Staff
+        fields = ('first_name', 'last_name', 'email', 'phone_number', 'certification_level', 'certification_number', 'languages', 'experience_years', 'specialties', 'hire_date', 'status', 'hourly_rate', 'profile_picture', 'notes')
+        widgets = {
+            'hire_date': forms.DateInput(attrs={'type': 'date'}),
+            'specialties': forms.Textarea(attrs={'rows': 3}),
+            'notes': forms.Textarea(attrs={'rows': 3}),
+            'languages': forms.TextInput(attrs={'placeholder': 'e.g., English, Spanish, French'}),
+            'hourly_rate': forms.NumberInput(attrs={'step': '0.01', 'placeholder': '0.00'}),
+            'profile_picture': forms.FileInput(attrs={'accept': 'image/*'}),
         }
 
 class MedicalForm(forms.ModelForm):

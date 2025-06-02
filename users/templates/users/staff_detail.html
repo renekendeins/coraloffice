@@ -1,0 +1,113 @@
+
+{% extends 'users/base.html' %}
+
+{% block users_title %}{{ staff_member.get_full_name }} - CoralOffice{% endblock %}
+
+{% block users_content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+    <h2>{{ staff_member.get_full_name }}</h2>
+    <div style="display: flex; gap: 10px;">
+        <a href="{% url 'users:edit_staff' staff_member.id %}" class="btn" style="background: #ff9800;">Edit</a>
+        <a href="{% url 'users:staff_list' %}" class="btn" style="background: #6c757d;">Back to Staff List</a>
+    </div>
+</div>
+
+<!-- Staff Information -->
+<div class="user-card">
+    <div style="display: flex; align-items: start; gap: 20px; margin-bottom: 20px;">
+        {% if staff_member.profile_picture %}
+            <img src="{{ staff_member.profile_picture.url }}" alt="{{ staff_member.get_full_name }}" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;">
+        {% else %}
+            <div style="width: 100px; height: 100px; border-radius: 50%; background: #f0f0f0; display: flex; align-items: center; justify-content: center; font-size: 40px;">👨‍🏫</div>
+        {% endif %}
+        <div style="flex: 1;">
+            <h3 style="margin: 0 0 10px 0;">{{ staff_member.get_full_name }}</h3>
+            <p><strong>Certification Level:</strong> {{ staff_member.get_certification_level_display }}</p>
+            {% if staff_member.certification_number %}
+                <p><strong>Certification Number:</strong> {{ staff_member.certification_number }}</p>
+            {% endif %}
+            <p><strong>Email:</strong> {{ staff_member.email }}</p>
+            <p><strong>Phone:</strong> {{ staff_member.phone_number }}</p>
+            <p><strong>Languages:</strong> {{ staff_member.languages }}</p>
+            <p><strong>Experience:</strong> {{ staff_member.experience_years }} years</p>
+            <p><strong>Status:</strong> <span style="color: {% if staff_member.status == 'ACTIVE' %}#4caf50{% else %}#f44336{% endif %};">{{ staff_member.get_status_display }}</span></p>
+            <p><strong>Hourly Rate:</strong> ${{ staff_member.hourly_rate }}</p>
+            <p><strong>Hire Date:</strong> {{ staff_member.hire_date|date:"F d, Y" }}</p>
+        </div>
+    </div>
+    
+    {% if staff_member.specialties %}
+        <div style="margin-bottom: 15px;">
+            <strong>Specialties:</strong>
+            <p style="margin: 5px 0 0 0;">{{ staff_member.specialties }}</p>
+        </div>
+    {% endif %}
+    
+    {% if staff_member.notes %}
+        <div>
+            <strong>Notes:</strong>
+            <p style="margin: 5px 0 0 0;">{{ staff_member.notes }}</p>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Statistics -->
+<div class="user-card">
+    <h3>Activity Statistics</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-top: 15px;">
+        <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+            <div style="font-size: 24px; font-weight: bold; color: #2196f3;">{{ total_activities }}</div>
+            <div style="color: #666;">Total Activities</div>
+        </div>
+        <div style="text-align: center; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+            <div style="font-size: 24px; font-weight: bold; color: #4caf50;">{{ upcoming_count }}</div>
+            <div style="color: #666;">Upcoming Activities</div>
+        </div>
+    </div>
+</div>
+
+<!-- Upcoming Activities -->
+{% if upcoming_activities %}
+<div class="user-card">
+    <h3>Upcoming Activities</h3>
+    <div style="margin-top: 15px;">
+        {% for activity in upcoming_activities %}
+        <div style="padding: 15px; border: 1px solid #e0e0e0; border-radius: 8px; margin-bottom: 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 10px;">
+                <div>
+                    <h4 style="margin: 0; color: #2196f3;">{{ activity.activity.name }}</h4>
+                    <p style="margin: 5px 0; color: #666;">{{ activity.dive_schedule.dive_site.name }} - {{ activity.dive_schedule.date|date:"F d, Y" }} at {{ activity.dive_schedule.time|time:"g:i A" }}</p>
+                </div>
+                <span style="padding: 4px 12px; background: #e3f2fd; color: #1976d2; border-radius: 20px; font-size: 12px;">{{ activity.get_status_display }}</span>
+            </div>
+            <p><strong>Customer:</strong> {{ activity.customer.get_full_name }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Past Activities -->
+{% if past_activities %}
+<div class="user-card">
+    <h3>Recent Past Activities</h3>
+    <div style="margin-top: 15px;">
+        {% for activity in past_activities|slice:":10" %}
+        <div style="padding: 10px; border-bottom: 1px solid #e0e0e0;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <strong>{{ activity.activity.name }}</strong> - {{ activity.customer.get_full_name }}
+                    <br>
+                    <small style="color: #666;">{{ activity.dive_schedule.dive_site.name }} - {{ activity.dive_schedule.date|date:"F d, Y" }}</small>
+                </div>
+                <span style="padding: 2px 8px; background: #f5f5f5; color: #666; border-radius: 12px; font-size: 11px;">{{ activity.get_status_display }}</span>
+            </div>
+        </div>
+        {% endfor %}
+        {% if past_activities.count > 10 %}
+        <p style="text-align: center; margin-top: 15px; color: #666;">Showing 10 of {{ past_activities.count }} past activities</p>
+        {% endif %}
+    </div>
+</div>
+{% endif %}
+{% endblock %}

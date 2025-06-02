@@ -1,0 +1,141 @@
+
+{% extends 'users/base.html' %}
+
+{% block users_title %}Add Staff Member - CoralOffice{% endblock %}
+
+{% block users_content %}
+<h2>Add New Staff Member</h2>
+
+<form method="post" enctype="multipart/form-data" class="form-container">
+    {% csrf_token %}
+    
+    <div class="form-row">
+        <div class="form-group">
+            <label for="{{ form.first_name.id_for_label }}">First Name:</label>
+            {{ form.first_name }}
+            {% if form.first_name.errors %}
+                <div class="error">{{ form.first_name.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.last_name.id_for_label }}">Last Name:</label>
+            {{ form.last_name }}
+            {% if form.last_name.errors %}
+                <div class="error">{{ form.last_name.errors }}</div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="form-row">
+        <div class="form-group">
+            <label for="{{ form.email.id_for_label }}">Email:</label>
+            {{ form.email }}
+            {% if form.email.errors %}
+                <div class="error">{{ form.email.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.phone_number.id_for_label }}">Phone Number:</label>
+            {{ form.phone_number }}
+            {% if form.phone_number.errors %}
+                <div class="error">{{ form.phone_number.errors }}</div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="form-row">
+        <div class="form-group">
+            <label for="{{ form.certification_level.id_for_label }}">Certification Level:</label>
+            {{ form.certification_level }}
+            {% if form.certification_level.errors %}
+                <div class="error">{{ form.certification_level.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.certification_number.id_for_label }}">Certification Number:</label>
+            {{ form.certification_number }}
+            {% if form.certification_number.errors %}
+                <div class="error">{{ form.certification_number.errors }}</div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="form-row">
+        <div class="form-group">
+            <label for="{{ form.languages.id_for_label }}">Languages:</label>
+            {{ form.languages }}
+            {% if form.languages.errors %}
+                <div class="error">{{ form.languages.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.experience_years.id_for_label }}">Years of Experience:</label>
+            {{ form.experience_years }}
+            {% if form.experience_years.errors %}
+                <div class="error">{{ form.experience_years.errors }}</div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label for="{{ form.specialties.id_for_label }}">Specialties:</label>
+        {{ form.specialties }}
+        {% if form.specialties.errors %}
+            <div class="error">{{ form.specialties.errors }}</div>
+        {% endif %}
+    </div>
+    
+    <div class="form-row">
+        <div class="form-group">
+            <label for="{{ form.hire_date.id_for_label }}">Hire Date:</label>
+            {{ form.hire_date }}
+            {% if form.hire_date.errors %}
+                <div class="error">{{ form.hire_date.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.status.id_for_label }}">Status:</label>
+            {{ form.status }}
+            {% if form.status.errors %}
+                <div class="error">{{ form.status.errors }}</div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="form-row">
+        <div class="form-group">
+            <label for="{{ form.hourly_rate.id_for_label }}">Hourly Rate:</label>
+            {{ form.hourly_rate }}
+            {% if form.hourly_rate.errors %}
+                <div class="error">{{ form.hourly_rate.errors }}</div>
+            {% endif %}
+        </div>
+        
+        <div class="form-group">
+            <label for="{{ form.profile_picture.id_for_label }}">Profile Picture:</label>
+            {{ form.profile_picture }}
+            {% if form.profile_picture.errors %}
+                <div class="error">{{ form.profile_picture.errors }}</div>
+            {% endif %}
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label for="{{ form.notes.id_for_label }}">Notes:</label>
+        {{ form.notes }}
+        {% if form.notes.errors %}
+            <div class="error">{{ form.notes.errors }}</div>
+        {% endif %}
+    </div>
+    
+    <div class="form-actions">
+        <button type="submit" class="btn">Add Staff Member</button>
+        <a href="{% url 'users:staff_list' %}" class="btn" style="background: #6c757d;">Cancel</a>
+    </div>
+</form>
+{% endblock %}

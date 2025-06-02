@@ -8,8 +8,8 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime, timedelta
 import calendar
-from .forms import SignUpForm, UserForm, UserProfileForm, CustomerForm, DiveScheduleForm, DiveActivityForm, CustomerDiveActivityForm, DivingSiteForm, InventoryItemForm, DivingGroupForm, MedicalForm, QuickCustomerForm
-from .models import UserProfile, Customer, DiveSchedule, DiveActivity, CustomerDiveActivity, DivingSite, InventoryItem, DivingGroup, DivingGroupMember
+from .forms import SignUpForm, UserForm, UserProfileForm, CustomerForm, DiveScheduleForm, DiveActivityForm, CustomerDiveActivityForm, DivingSiteForm, InventoryItemForm, DivingGroupForm, MedicalForm, QuickCustomerForm, StaffForm
+from .models import UserProfile, Customer, DiveSchedule, DiveActivity, CustomerDiveActivity, DivingSite, InventoryItem, DivingGroup, DivingGroupMember, Staff
 
 
 def signup(request):
@@ -1102,6 +1102,157 @@ def print_participants(request, dive_id):
     }
 
     return render(request, 'users/print_participants.html', context)
+
+
+# Staff Management Views
+@login_required
+def staff_list(request):
+    if not request.user.userprofile.is_diving_center:
+        messages.error(request, 'Access denied.')
+        return redirect('users:profile')
+    
+    staff_members = Staff.objects.filter(diving_center=request.user).order_by('first_name', 'last_name')
+    return render(request, 'users/staff_list.html', {'staff_members': staff_members})
+
+
+@login_required
+def add_staff(request):
+    if not request.user.userprofile.is_diving_center:
+        messages.error(request, 'Access denied.')
+        return redirect('users:profile')
+
+    if request.method == 'POST':
+        form = StaffForm(request.POST, request.FILES)
+        if form.is_valid():
+            staff_member = form.save(commit=False)
+            staff_member.diving_center = request.user
+            staff_member.save()
+            messages.success(request, 'Staff member added successfully!')
+            return redirect('users:staff_list')
+    else:
+        form = StaffForm()
+    return render(request, 'users/add_staff.html', {'form': form})
+
+
+@login_required
+def edit_staff(request, staff_id):
+    if not request.user.userprofile.is_diving_center:
+        messages.error(request, 'Access denied.')
+        return redirect('users:profile')
+
+    staff_member = get_object_or_404(Staff, id=staff_id, diving_center=request.user)
+
+    if request.method == 'POST':
+        form = StaffForm(request.POST, request.FILES, instance=staff_member)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Staff member updated successfully!')
+            return redirect('users:staff_list')
+    else:
+        form = StaffForm(instance=staff_member)
+    return render(request, 'users/edit_staff.html', {'form': form, 'staff_member': staff_member})
+
+
+@login_required
+def staff_detail(request, staff_id):
+    if not request.user.userprofile.is_diving_center:
+        messages.error(request, 'Access denied.')
+        return redirect('users:profile')
+
+    staff_member = get_object_or_404(Staff, id=staff_id, diving_center=request.user)
+    
+    # Get all activities for this staff member
+    activities = CustomerDiveActivity.objects.filter(
+        assigned_staff=staff_member
+    ).order_by('-dive_schedule__date', '-dive_schedule__time').select_related(
+        'customer', 'dive_schedule', 'activity', 'dive_schedule__dive_site'
+    )
+    
+    # Get upcoming activities
+    from datetime import date
+    upcoming_activities = activities.filter(dive_schedule__date__gte=date.today())
+    past_activities = activities.filter(dive_schedule__date__lt=date.today())
+    
+    # Statistics
+    total_activities = activities.count()
+    upcoming_count = upcoming_activities.count()
+    
+    return render(request, 'users/staff_detail.html', {
+        'staff_member': staff_member,
+        'upcoming_activities': upcoming_activities,
+        'past_activities': past_activities,
+        'total_activities': total_activities,
+        'upcoming_count': upcoming_count,
+    })
+
+
+@login_required
+def delete_staff(request, staff_id):
+    if not request.user.userprofile.is_diving_center:
+        messages.error(request, 'Access denied.')
+        return redirect('users:profile')
+
+    staff_member = get_object_or_404(Staff, id=staff_id, diving_center=request.user)
+
+    if request.method == 'POST':
+        staff_name = staff_member.get_full_name()
+        staff_member.delete()
+        messages.success(request, f'Staff member {staff_name} deleted successfully!')
+        return redirect('users:staff_list')
+
+    return render(request, 'users/delete_staff.html', {'staff_member': staff_member})
+
+
+@login_required
+def staff_planning(request):
+    """Show planning for tomorrow's activities"""
+    if not request.user.userprofile.is_diving_center:
+        messages.error(request, 'Access denied.')
+        return redirect('users:profile')
+    
+    from datetime import date, timedelta
+    tomorrow = date.today() + timedelta(days=1)
+    
+    # Get all dive schedules for tomorrow
+    tomorrow_dives = DiveSchedule.objects.filter(
+        diving_center=request.user,
+        date=tomorrow
+    ).order_by('time')
+    
+    # Get all customer activities for tomorrow with assigned staff
+    tomorrow_activities = CustomerDiveActivity.objects.filter(
+        dive_schedule__diving_center=request.user,
+        dive_schedule__date=tomorrow
+    ).select_related(
+        'customer', 'assigned_staff', 'activity', 'dive_schedule', 'dive_schedule__dive_site'
+    ).order_by('dive_schedule__time', 'assigned_staff__first_name')
+    
+    # Group activities by staff member
+    staff_assignments = {}
+    unassigned_activities = []
+    
+    for activity in tomorrow_activities:
+        if activity.assigned_staff:
+            staff_id = activity.assigned_staff.id
+            if staff_id not in staff_assignments:
+                staff_assignments[staff_id] = {
+                    'staff': activity.assigned_staff,
+                    'activities': []
+                }
+            staff_assignments[staff_id]['activities'].append(activity)
+        else:
+            unassigned_activities.append(activity)
+    
+    # Get all active staff members
+    all_staff = Staff.objects.filter(diving_center=request.user, status='ACTIVE')
+    
+    return render(request, 'users/staff_planning.html', {
+        'tomorrow': tomorrow,
+        'tomorrow_dives': tomorrow_dives,
+        'staff_assignments': staff_assignments.values(),
+        'unassigned_activities': unassigned_activities,
+        'all_staff': all_staff,
+    })
 
 
 @login_required

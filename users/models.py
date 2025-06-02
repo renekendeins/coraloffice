@@ -234,6 +234,7 @@ class CustomerDiveActivity(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='dive_activities')
     dive_schedule = models.ForeignKey(DiveSchedule, on_delete=models.CASCADE, related_name='customer_activities')
     activity = models.ForeignKey(DiveActivity, on_delete=models.CASCADE, related_name='customer_bookings')
+    assigned_staff = models.ForeignKey('Staff', on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_activities', help_text="Instructor/guide assigned to this activity")
     tank_size = models.CharField(max_length=10, choices=TANK_SIZE_CHOICES, default='12L')
     needs_wetsuit = models.BooleanField(default=False)
     needs_bcd = models.BooleanField(default=False)
@@ -328,6 +329,53 @@ class DivingGroupMember(models.Model):
 
     def __str__(self):
         return f"{self.customer} in {self.group}"
+
+class Staff(models.Model):
+    CERTIFICATION_LEVEL_CHOICES = [
+        ('DIVEMASTER', 'Divemaster'),
+        ('INSTRUCTOR', 'Instructor'),
+        ('SENIOR_INSTRUCTOR', 'Senior Instructor'),
+        ('MASTER_INSTRUCTOR', 'Master Instructor'),
+        ('COURSE_DIRECTOR', 'Course Director'),
+    ]
+    
+    STATUS_CHOICES = [
+        ('ACTIVE', 'Active'),
+        ('INACTIVE', 'Inactive'),
+        ('ON_LEAVE', 'On Leave'),
+    ]
+    
+    diving_center = models.ForeignKey(User, on_delete=models.CASCADE, related_name='staff_members')
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
+    email = models.EmailField()
+    phone_number = models.CharField(max_length=20)
+    certification_level = models.CharField(max_length=50, choices=CERTIFICATION_LEVEL_CHOICES, default='DIVEMASTER')
+    certification_number = models.CharField(max_length=100, blank=True)
+    languages = models.CharField(max_length=200, help_text="Languages spoken (comma separated)")
+    experience_years = models.IntegerField(default=0, help_text="Years of diving experience")
+    specialties = models.TextField(blank=True, help_text="Specialties and additional certifications")
+    hire_date = models.DateField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='ACTIVE')
+    hourly_rate = models.DecimalField(max_digits=8, decimal_places=2, default=0.00, help_text="Hourly rate in local currency")
+    profile_picture = models.ImageField(upload_to='staff_profiles/', null=True, blank=True)
+    notes = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.first_name} {self.last_name} ({self.certification_level})"
+    
+    def get_full_name(self):
+        return f"{self.first_name} {self.last_name}"
+    
+    def get_activities_count(self):
+        """Get total number of activities this staff member has been assigned to"""
+        return self.assigned_activities.count()
+    
+    def get_upcoming_activities(self):
+        """Get upcoming activities for this staff member"""
+        from datetime import date
+        return self.assigned_activities.filter(dive_schedule__date__gte=date.today()).order_by('dive_schedule__date', 'dive_schedule__time')
 
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):

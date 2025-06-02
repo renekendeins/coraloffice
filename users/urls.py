@@ -56,4 +56,12 @@ urlpatterns = [
     path('medical-forms/', views.medical_forms_list, name='medical_forms_list'),
     path('quick-edit-customer/<int:customer_id>/', views.quick_edit_customer, name='quick_edit_customer'),
     path('dive/<int:dive_id>/print/', views.print_participants, name='print_participants'),
+
+    # Staff Management
+    path('staff/', views.staff_list, name='staff_list'),
+    path('staff/add/', views.add_staff, name='add_staff'),
+    path('staff/<int:staff_id>/', views.staff_detail, name='staff_detail'),
+    path('staff/<int:staff_id>/edit/', views.edit_staff, name='edit_staff'),
+    path('staff/<int:staff_id>/delete/', views.delete_staff, name='delete_staff'),
+    path('staff/planning/', views.staff_planning, name='staff_planning'),
 ]

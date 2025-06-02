@@ -78,6 +78,16 @@
         </div>
     </section>
 
+    <!-- Staff Management -->
+    <section class="card">
+        <h3 style="color: #3f51b5; border-bottom: 2px solid #3f51b5; padding-bottom: 10px;">👨‍🏫 Staff Management</h3>
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+            <a href="{% url 'users:add_staff' %}" class="btn" style="background: #3f51b5;">Add New Staff</a>
+            <a href="{% url 'users:staff_list' %}" class="btn" style="background: #5c6bc0;">Manage Staff</a>
+            <a href="{% url 'users:staff_planning' %}" class="btn" style="background: #7986cb;">Tomorrow's Planning</a>
+        </div>
+    </section>
+
     <!-- Medical Forms Management -->
     <section class="card">
         <h3 style="color: #e91e63; border-bottom: 2px solid #e91e63; padding-bottom: 10px;">📋 Medical Forms</h3>
