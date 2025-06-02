@@ -64,4 +64,15 @@ urlpatterns = [
     path('staff/<int:staff_id>/edit/', views.edit_staff, name='edit_staff'),
     path('staff/<int:staff_id>/delete/', views.delete_staff, name='delete_staff'),
     path('staff/planning/', views.staff_planning, name='staff_planning'),
+
+    # Course Management
+    path('courses/', views.courses_list, name='courses_list'),
+    path('courses/add/', views.add_course, name='add_course'),
+    path('courses/<int:course_id>/edit/', views.edit_course, name='edit_course'),
+    path('course-enrollments/', views.course_enrollments, name='course_enrollments'),
+    path('customers/<int:customer_id>/enroll/', views.enroll_customer, name='enroll_customer'),
+    path('enroll/', views.enroll_customer, name='enroll_customer_general'),
+    path('enrollments/<int:enrollment_id>/', views.enrollment_detail, name='enrollment_detail'),
+    path('course-sessions/<int:session_id>/schedule/', views.schedule_course_session, name='schedule_course_session'),
+    path('customers/<int:customer_id>/courses/', views.customer_courses, name='customer_courses'),
 ]

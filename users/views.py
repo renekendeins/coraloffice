@@ -1314,3 +1314,214 @@ def quick_edit_customer(request, customer_id):
             return JsonResponse({'success': False, 'error': 'Invalid data provided'})
     
     return JsonResponse({'success': False, 'error': 'Invalid request method'})
+
+
+
+# Course Management Views
+@login_required
+def courses_list(request):
+    if not request.user.userprofile.is_diving_center:
+        messages.error(request, 'Access denied.')
+        return redirect('users:profile')
+    
+    courses = Course.objects.filter(diving_center=request.user).order_by('name')
+    return render(request, 'users/courses_list.html', {'courses': courses})
+
+@login_required
+def add_course(request):
+    if not request.user.userprofile.is_diving_center:
+        messages.error(request, 'Access denied.')
+        return redirect('users:profile')
+
+    if request.method == 'POST':
+        form = CourseForm(request.POST)
+        if form.is_valid():
+            course = form.save(commit=False)
+            course.diving_center = request.user
+            course.save()
+            messages.success(request, 'Course added successfully!')
+            return redirect('users:courses_list')
+    else:
+        form = CourseForm()
+    return render(request, 'users/add_course.html', {'form': form})
+
+@login_required
+def edit_course(request, course_id):
+    if not request.user.userprofile.is_diving_center:
+        messages.error(request, 'Access denied.')
+        return redirect('users:profile')
+
+    course = get_object_or_404(Course, id=course_id, diving_center=request.user)
+
+    if request.method == 'POST':
+        form = CourseForm(request.POST, instance=course)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Course updated successfully!')
+            return redirect('users:courses_list')
+    else:
+        form = CourseForm(instance=course)
+    return render(request, 'users/edit_course.html', {'form': form, 'course': course})
+
+@login_required
+def course_enrollments(request):
+    if not request.user.userprofile.is_diving_center:
+        messages.error(request, 'Access denied.')
+        return redirect('users:profile')
+    
+    enrollments = CourseEnrollment.objects.filter(
+        course__diving_center=request.user
+    ).select_related('customer', 'course', 'instructor').order_by('-enrollment_date')
+    
+    # Filter by status if requested
+    status_filter = request.GET.get('status')
+    if status_filter:
+        enrollments = enrollments.filter(status=status_filter)
+    
+    return render(request, 'users/course_enrollments.html', {
+        'enrollments': enrollments,
+        'status_filter': status_filter,
+        'status_choices': CourseEnrollment.STATUS_CHOICES
+    })
+
+@login_required
+def enroll_customer(request, customer_id=None):
+    if not request.user.userprofile.is_diving_center:
+        messages.error(request, 'Access denied.')
+        return redirect('users:profile')
+
+    customer = None
+    if customer_id:
+        customer = get_object_or_404(Customer, id=customer_id, diving_center=request.user)
+
+    if request.method == 'POST':
+        form = CourseEnrollmentForm(diving_center=request.user, data=request.POST)
+        if form.is_valid():
+            enrollment = form.save()
+            # Create course sessions based on the course
+            course = enrollment.course
+            for i in range(1, course.total_dives + 1):
+                CourseSession.objects.create(
+                    enrollment=enrollment,
+                    session_number=i,
+                    session_type='OPEN_WATER',
+                    title=f'Dive {i}',
+                    description=f'Dive session {i} of {course.name}'
+                )
+            messages.success(request, f'{enrollment.customer} has been enrolled in {course.name}!')
+            return redirect('users:course_enrollments')
+    else:
+        initial_data = {}
+        if customer:
+            initial_data['customer'] = customer
+        form = CourseEnrollmentForm(diving_center=request.user, initial=initial_data)
+    
+    return render(request, 'users/enroll_customer.html', {
+        'form': form,
+        'customer': customer
+    })
+
+@login_required
+def enrollment_detail(request, enrollment_id):
+    if not request.user.userprofile.is_diving_center:
+        messages.error(request, 'Access denied.')
+        return redirect('users:profile')
+
+    enrollment = get_object_or_404(
+        CourseEnrollment,
+        id=enrollment_id,
+        course__diving_center=request.user
+    )
+    
+    sessions = enrollment.course_sessions.all().order_by('session_number')
+    
+    return render(request, 'users/enrollment_detail.html', {
+        'enrollment': enrollment,
+        'sessions': sessions
+    })
+
+@login_required
+def schedule_course_session(request, session_id):
+    if not request.user.userprofile.is_diving_center:
+        messages.error(request, 'Access denied.')
+        return redirect('users:profile')
+
+    session = get_object_or_404(
+        CourseSession,
+        id=session_id,
+        enrollment__course__diving_center=request.user
+    )
+
+    if request.method == 'POST':
+        form = CourseSessionScheduleForm(diving_center=request.user, session=session, data=request.POST)
+        if form.is_valid():
+            dive_schedule = form.cleaned_data['dive_schedule']
+            session.dive_schedule = dive_schedule
+            session.scheduled_date = dive_schedule.date
+            session.scheduled_time = dive_schedule.time
+            session.status = 'SCHEDULED'
+            session.save()
+            
+            # Create or update CustomerDiveActivity
+            activity = DiveActivity.objects.filter(
+                diving_center=request.user,
+                name__icontains='course'
+            ).first()
+            
+            if not activity:
+                activity = DiveActivity.objects.create(
+                    diving_center=request.user,
+                    name='Course Session',
+                    description='Course training session',
+                    duration_minutes=90,
+                    price=0.00
+                )
+            
+            # Create CustomerDiveActivity for this course session
+            customer_dive_activity, created = CustomerDiveActivity.objects.get_or_create(
+                customer=session.enrollment.customer,
+                dive_schedule=dive_schedule,
+                defaults={
+                    'activity': activity,
+                    'course_session': session,
+                    'assigned_staff': session.instructor,
+                    'tank_size': session.enrollment.customer.default_tank_size,
+                }
+            )
+            
+            if not created:
+                customer_dive_activity.course_session = session
+                customer_dive_activity.assigned_staff = session.instructor
+                customer_dive_activity.save()
+            
+            messages.success(request, f'Session {session.session_number} scheduled successfully!')
+            return redirect('users:enrollment_detail', enrollment_id=session.enrollment.id)
+    else:
+        form = CourseSessionScheduleForm(diving_center=request.user, session=session)
+    
+    return render(request, 'users/schedule_course_session.html', {
+        'form': form,
+        'session': session
+    })
+
+@login_required
+def customer_courses(request, customer_id):
+    if not request.user.userprofile.is_diving_center:
+        messages.error(request, 'Access denied.')
+        return redirect('users:profile')
+
+    customer = get_object_or_404(Customer, id=customer_id, diving_center=request.user)
+    
+    active_enrollments = customer.course_enrollments.filter(
+        status__in=['ENROLLED', 'IN_PROGRESS']
+    ).select_related('course', 'instructor')
+    
+    completed_enrollments = customer.course_enrollments.filter(
+        status='COMPLETED'
+    ).select_related('course', 'instructor')
+    
+    return render(request, 'users/customer_courses.html', {
+        'customer': customer,
+        'active_enrollments': active_enrollments,
+        'completed_enrollments': completed_enrollments
+    })

@@ -238,6 +238,7 @@ class CustomerDiveActivity(models.Model):
     dive_schedule = models.ForeignKey(DiveSchedule, on_delete=models.CASCADE, related_name='customer_activities')
     activity = models.ForeignKey(DiveActivity, on_delete=models.CASCADE, related_name='customer_bookings')
     assigned_staff = models.ForeignKey('Staff', on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_activities', help_text="Instructor/guide assigned to this activity")
+    course_session = models.ForeignKey('CourseSession', on_delete=models.SET_NULL, null=True, blank=True, related_name='dive_activities', help_text="Course session if this dive is part of a course")
     tank_size = models.CharField(max_length=10, choices=TANK_SIZE_CHOICES, default='12L')
     needs_wetsuit = models.BooleanField(default=False)
     needs_bcd = models.BooleanField(default=False)
@@ -254,6 +255,21 @@ class CustomerDiveActivity(models.Model):
 
     def __str__(self):
         return f"{self.customer} - {self.activity.name}"
+    
+    def is_course_dive(self):
+        """Check if this dive is part of a course"""
+        return self.course_session is not None
+    
+    def get_course_info(self):
+        """Get course information if this is a course dive"""
+        if self.course_session:
+            return {
+                'course_name': self.course_session.enrollment.course.name,
+                'session_number': self.course_session.session_number,
+                'total_sessions': self.course_session.enrollment.course.total_dives,
+                'session_title': self.course_session.title
+            }
+        return None
 
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
@@ -379,6 +395,141 @@ class Staff(models.Model):
         """Get upcoming activities for this staff member"""
         from datetime import date
         return self.assigned_activities.filter(dive_schedule__date__gte=date.today()).order_by('dive_schedule__date', 'dive_schedule__time')
+
+
+class Course(models.Model):
+    COURSE_TYPE_CHOICES = [
+        ('OPEN_WATER', 'Open Water Diver'),
+        ('ADVANCED_OPEN_WATER', 'Advanced Open Water'),
+        ('RESCUE_DIVER', 'Rescue Diver'),
+        ('DIVEMASTER', 'Divemaster'),
+        ('INSTRUCTOR', 'Instructor Development Course'),
+        ('NITROX', 'Nitrox Specialty'),
+        ('DEEP', 'Deep Diver Specialty'),
+        ('WRECK', 'Wreck Diver Specialty'),
+        ('NIGHT', 'Night Diver Specialty'),
+        ('NAVIGATION', 'Underwater Navigation'),
+        ('PHOTOGRAPHY', 'Underwater Photography'),
+        ('CUSTOM', 'Custom Course'),
+    ]
+    
+    diving_center = models.ForeignKey(User, on_delete=models.CASCADE, related_name='courses')
+    name = models.CharField(max_length=100)
+    course_type = models.CharField(max_length=30, choices=COURSE_TYPE_CHOICES, default='CUSTOM')
+    description = models.TextField(blank=True)
+    total_dives = models.IntegerField(default=1, help_text="Total number of dives in this course")
+    duration_days = models.IntegerField(default=1, help_text="Estimated duration in days")
+    price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    prerequisites = models.TextField(blank=True, help_text="Required certifications or prerequisites")
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.name} ({self.total_dives} dives)"
+    
+    class Meta:
+        ordering = ['name']
+
+
+class CourseEnrollment(models.Model):
+    STATUS_CHOICES = [
+        ('ENROLLED', 'Enrolled'),
+        ('IN_PROGRESS', 'In Progress'),
+        ('COMPLETED', 'Completed'),
+        ('CANCELLED', 'Cancelled'),
+        ('ON_HOLD', 'On Hold'),
+    ]
+    
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='course_enrollments')
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='enrollments')
+    instructor = models.ForeignKey(Staff, on_delete=models.SET_NULL, null=True, blank=True, related_name='course_enrollments')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='ENROLLED')
+    enrollment_date = models.DateField(auto_now_add=True)
+    start_date = models.DateField(null=True, blank=True)
+    completion_date = models.DateField(null=True, blank=True)
+    certificate_number = models.CharField(max_length=100, blank=True)
+    notes = models.TextField(blank=True)
+    price_paid = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    is_paid = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ['customer', 'course']
+        ordering = ['-enrollment_date']
+
+    def __str__(self):
+        return f"{self.customer} - {self.course.name} ({self.status})"
+    
+    def get_progress_percentage(self):
+        """Calculate completion percentage based on completed course sessions"""
+        total_sessions = self.course_sessions.count()
+        completed_sessions = self.course_sessions.filter(status='COMPLETED').count()
+        if total_sessions == 0:
+            return 0
+        return round((completed_sessions / total_sessions) * 100)
+    
+    def get_completed_dives(self):
+        """Get number of completed dives"""
+        return self.course_sessions.filter(status='COMPLETED').count()
+    
+    def is_active(self):
+        """Check if enrollment is active (enrolled or in progress)"""
+        return self.status in ['ENROLLED', 'IN_PROGRESS']
+
+
+class CourseSession(models.Model):
+    SESSION_TYPE_CHOICES = [
+        ('THEORY', 'Theory Session'),
+        ('POOL', 'Pool Dive'),
+        ('OPEN_WATER', 'Open Water Dive'),
+        ('EXAM', 'Exam'),
+        ('PRACTICAL', 'Practical Skills'),
+    ]
+    
+    STATUS_CHOICES = [
+        ('SCHEDULED', 'Scheduled'),
+        ('IN_PROGRESS', 'In Progress'),
+        ('COMPLETED', 'Completed'),
+        ('CANCELLED', 'Cancelled'),
+        ('RESCHEDULED', 'Rescheduled'),
+    ]
+    
+    enrollment = models.ForeignKey(CourseEnrollment, on_delete=models.CASCADE, related_name='course_sessions')
+    dive_schedule = models.ForeignKey(DiveSchedule, on_delete=models.CASCADE, null=True, blank=True, related_name='course_sessions')
+    session_number = models.IntegerField(help_text="Session number in the course (1, 2, 3, etc.)")
+    session_type = models.CharField(max_length=20, choices=SESSION_TYPE_CHOICES, default='OPEN_WATER')
+    title = models.CharField(max_length=100, help_text="Session title (e.g., 'Pool Skills', 'Navigation Dive')")
+    description = models.TextField(blank=True)
+    skills_covered = models.TextField(blank=True, help_text="Skills to be practiced in this session")
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='SCHEDULED')
+    instructor = models.ForeignKey(Staff, on_delete=models.SET_NULL, null=True, blank=True, related_name='course_sessions')
+    scheduled_date = models.DateField(null=True, blank=True)
+    scheduled_time = models.TimeField(null=True, blank=True)
+    completion_date = models.DateTimeField(null=True, blank=True)
+    grade = models.CharField(max_length=10, blank=True, help_text="Grade or pass/fail result")
+    instructor_notes = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['enrollment', 'session_number']
+        unique_together = ['enrollment', 'session_number']
+
+    def __str__(self):
+        return f"{self.enrollment.course.name} - Session {self.session_number}: {self.title}"
+    
+    def is_dive_session(self):
+        """Check if this session involves diving"""
+        return self.session_type in ['POOL', 'OPEN_WATER']
+    
+    def get_location_name(self):
+        """Get the location name for this session"""
+        if self.dive_schedule and self.dive_schedule.dive_site:
+            return self.dive_schedule.dive_site.name
+        elif self.session_type == 'POOL':
+            return 'Pool'
+        elif self.session_type == 'THEORY':
+            return 'Classroom'
+        return 'TBD'
 
 @receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):

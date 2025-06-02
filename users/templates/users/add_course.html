@@ -1,0 +1,55 @@
+
+{% extends 'users/base.html' %}
+
+{% block users_title %}Add Course - CoralOffice{% endblock %}
+
+{% block users_content %}
+<h2>Add New Course</h2>
+
+<form method="post">
+    {% csrf_token %}
+    <div class="form-group">
+        <label for="{{ form.name.id_for_label }}">Course Name:</label>
+        {{ form.name }}
+    </div>
+    
+    <div class="form-group">
+        <label for="{{ form.course_type.id_for_label }}">Course Type:</label>
+        {{ form.course_type }}
+    </div>
+    
+    <div class="form-group">
+        <label for="{{ form.total_dives.id_for_label }}">Total Dives:</label>
+        {{ form.total_dives }}
+    </div>
+    
+    <div class="form-group">
+        <label for="{{ form.duration_days.id_for_label }}">Duration (days):</label>
+        {{ form.duration_days }}
+    </div>
+    
+    <div class="form-group">
+        <label for="{{ form.price.id_for_label }}">Price (€):</label>
+        {{ form.price }}
+    </div>
+    
+    <div class="form-group">
+        <label for="{{ form.description.id_for_label }}">Description:</label>
+        {{ form.description }}
+    </div>
+    
+    <div class="form-group">
+        <label for="{{ form.prerequisites.id_for_label }}">Prerequisites:</label>
+        {{ form.prerequisites }}
+    </div>
+    
+    <div class="form-group">
+        <label>
+            {{ form.is_active }} Active Course
+        </label>
+    </div>
+    
+    <button type="submit" class="btn">Add Course</button>
+    <a href="{% url 'users:courses_list' %}" class="btn" style="background: #6c757d;">Cancel</a>
+</form>
+{% endblock %}

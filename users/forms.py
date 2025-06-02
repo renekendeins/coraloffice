@@ -221,3 +221,66 @@ class MedicalForm(forms.ModelForm):
             ])
         }
 
+
+
+
+class CourseForm(forms.ModelForm):
+    class Meta:
+        model = Course
+        fields = ['name', 'course_type', 'description', 'total_dives', 'duration_days', 'price', 'prerequisites', 'is_active']
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 3}),
+            'prerequisites': forms.Textarea(attrs={'rows': 2}),
+            'price': forms.NumberInput(attrs={'step': '0.01'}),
+        }
+
+class CourseEnrollmentForm(forms.ModelForm):
+    class Meta:
+        model = CourseEnrollment
+        fields = ['customer', 'course', 'instructor', 'start_date', 'notes', 'price_paid', 'is_paid']
+        widgets = {
+            'start_date': forms.DateInput(attrs={'type': 'date'}),
+            'notes': forms.Textarea(attrs={'rows': 3}),
+            'price_paid': forms.NumberInput(attrs={'step': '0.01'}),
+        }
+    
+    def __init__(self, diving_center=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if diving_center:
+            self.fields['customer'].queryset = Customer.objects.filter(diving_center=diving_center)
+            self.fields['course'].queryset = Course.objects.filter(diving_center=diving_center, is_active=True)
+            self.fields['instructor'].queryset = Staff.objects.filter(diving_center=diving_center, status='ACTIVE')
+            self.fields['instructor'].empty_label = "Select instructor (optional)"
+
+class CourseSessionForm(forms.ModelForm):
+    class Meta:
+        model = CourseSession
+        fields = ['session_number', 'session_type', 'title', 'description', 'skills_covered', 'instructor', 'scheduled_date', 'scheduled_time']
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 2}),
+            'skills_covered': forms.Textarea(attrs={'rows': 2}),
+            'scheduled_date': forms.DateInput(attrs={'type': 'date'}),
+            'scheduled_time': forms.TimeInput(attrs={'type': 'time'}),
+        }
+    
+    def __init__(self, diving_center=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if diving_center:
+            self.fields['instructor'].queryset = Staff.objects.filter(diving_center=diving_center, status='ACTIVE')
+            self.fields['instructor'].empty_label = "Select instructor (optional)"
+
+class CourseSessionScheduleForm(forms.Form):
+    dive_schedule = forms.ModelChoiceField(
+        queryset=DiveSchedule.objects.none(),
+        empty_label="Select a dive schedule",
+        help_text="Choose an existing dive schedule for this session"
+    )
+    
+    def __init__(self, diving_center=None, session=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if diving_center:
+            from datetime import date
+            self.fields['dive_schedule'].queryset = DiveSchedule.objects.filter(
+                diving_center=diving_center,
+                date__gte=date.today()
+            ).order_by('date', 'time')

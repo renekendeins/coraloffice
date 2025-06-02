@@ -1,0 +1,93 @@
+
+{% extends 'users/base.html' %}
+
+{% block users_title %}Courses - CoralOffice{% endblock %}
+
+{% block users_content %}
+<h2>Course Management</h2>
+
+<div style="margin-bottom: 20px;">
+    <a href="{% url 'users:add_course' %}" class="btn">Add New Course</a>
+    <a href="{% url 'users:course_enrollments' %}" class="btn" style="background: #28a745;">View Enrollments</a>
+</div>
+
+{% if courses %}
+    <div class="courses-grid">
+        {% for course in courses %}
+            <div class="course-card">
+                <h3>{{ course.name }}</h3>
+                <p><strong>Type:</strong> {{ course.get_course_type_display }}</p>
+                <p><strong>Total Dives:</strong> {{ course.total_dives }}</p>
+                <p><strong>Duration:</strong> {{ course.duration_days }} days</p>
+                <p><strong>Price:</strong> €{{ course.price }}</p>
+                
+                {% if course.description %}
+                    <p class="course-description">{{ course.description|truncatewords:20 }}</p>
+                {% endif %}
+                
+                <div class="course-actions">
+                    <a href="{% url 'users:edit_course' course.id %}" class="btn-small">Edit</a>
+                    <a href="{% url 'users:enroll_customer_general' %}?course={{ course.id }}" class="btn-small" style="background: #28a745;">Enroll Customer</a>
+                </div>
+                
+                <div class="course-stats">
+                    <small>
+                        Active Enrollments: {{ course.enrollments.count }}
+                        {% if not course.is_active %}<span style="color: red;">(Inactive)</span>{% endif %}
+                    </small>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <p>No courses created yet. <a href="{% url 'users:add_course' %}">Add your first course</a>.</p>
+{% endif %}
+
+<style>
+.courses-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.course-card {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.course-card h3 {
+    margin-top: 0;
+    color: #333;
+}
+
+.course-description {
+    color: #666;
+    font-style: italic;
+}
+
+.course-actions {
+    margin: 15px 0;
+}
+
+.course-actions .btn-small {
+    display: inline-block;
+    padding: 5px 10px;
+    background: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 12px;
+    margin-right: 5px;
+}
+
+.course-stats {
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+    margin-top: 15px;
+}
+</style>
+{% endblock %}
