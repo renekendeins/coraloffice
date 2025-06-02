@@ -19,7 +19,7 @@
             <p><strong>Instructor:</strong> {{ enrollment.primary_instructor.get_full_name|default:"Not assigned" }}</p>
             <p><strong>Start Date:</strong> {{ enrollment.start_date }}</p>
             <p><strong>Price:</strong> €{{ enrollment.price_paid }}</p>
-            {% if enrollment.is_paid %}<span style="background-color: #007bff; color: white; padding: 2px 6px; border-radius: 3px; font-size: 12px;">💰 Paid</span>{% endif %}
+            {% if enrollment.is_paid %}<span style="background-color: #007bff; color: white; padding: 2px 6px; border-radius: 3px; font-size: 12px;">💰 Paid</span>{% endif %}if %}
             <div style="margin-top: 10px;">
                 <a href="{% url 'users:enrollment_detail' enrollment.id %}" class="btn" style="background-color: #28a745;">View Details</a>
             </div>
@@ -42,6 +42,29 @@
     {% endfor %}
 {% endif %}
 
+<div style="margin-top: 10px;">
+                <a href="{% url 'users:enrollment_detail' enrollment.id %}" class="btn" style="background-color: #28a745;">View Details</a>
+            </div>
+        </div>
+    {% endfor %}
+{% endif %}
+
+{% if completed_enrollments %}
+    <h3>Completed Courses</h3>
+    {% for enrollment in completed_enrollments %}
+        <div style="border: 1px solid #ddd; border-radius: 5px; padding: 15px; margin-bottom: 10px; background-color: #f9f9f9;">
+            <h4>{{ enrollment.course.name }}</h4>
+            <p><strong>Status:</strong> <span class="status-badge status-{{ enrollment.status|lower }}">{{ enrollment.get_status_display }}</span></p>
+            <p><strong>Instructor:</strong> {{ enrollment.primary_instructor.get_full_name|default:"Not assigned" }}</p>
+            <p><strong>Completion Date:</strong> {{ enrollment.completion_date|date:"F d, Y" }}</p>
+            <p><strong>Certificate Number:</strong> {{ enrollment.certificate_number|default:"Not issued" }}</p>
+            <div style="margin-top: 10px;">
+                <a href="{% url 'users:enrollment_detail' enrollment.id %}" class="btn" style="background-color: #17a2b8;">View Certificate</a>
+            </div>
+        </div>
+    {% endfor %}
+{% endif %}
+
 {% if not active_enrollments and not completed_enrollments %}
     <p>No course enrollments found for this customer.</p>
 {% endif %}
@@ -57,5 +80,6 @@
 .status-in_progress { background-color: #17a2b8; color: #fff; }
 .status-completed { background-color: #28a745; color: #fff; }
 .status-cancelled { background-color: #dc3545; color: #fff; }
+.status-on_hold { background-color: #6c757d; color: #fff; }
 </style>
-{% endblock %}
+{% endblock %}ck %}

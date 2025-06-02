@@ -1540,3 +1540,93 @@ def schedule_course_session(request, session_id):
 
             messages.success(request, f'Lesson {session.session_number} scheduled successfully!')
             return redirect('users:enrollment_detail', enrollment_id=session.enrollment.id)
+    else:
+        form = CourseSessionScheduleForm(diving_center=request.user, session=session)
+
+    return render(request, 'users/schedule_course_session.html', {
+        'form': form,
+        'session': session
+    })
+
+@login_required
+def complete_course_session(request, session_id):
+    if not request.user.userprofile.is_diving_center:
+        messages.error(request, 'Access denied.')
+        return redirect('users:profile')
+
+    session = get_object_or_404(
+        CourseSession,
+        id=session_id,
+        enrollment__course__diving_center=request.user
+    )
+
+    if request.method == 'POST':
+        form = LessonCompletionForm(request.POST)
+        if form.is_valid():
+            # Update session details
+            session.grade = form.cleaned_data.get('grade', '')
+            session.instructor_notes = form.cleaned_data.get('instructor_notes', '')
+            session.student_feedback = form.cleaned_data.get('student_feedback', '')
+            
+            # Set completion date
+            completion_date = form.cleaned_data.get('completion_date')
+            if completion_date:
+                session.completion_date = completion_date
+            else:
+                from django.utils import timezone
+                session.completion_date = timezone.now()
+            
+            session.status = 'COMPLETED'
+            session.save()
+
+            # Update any related CustomerDiveActivity status
+            if hasattr(session, 'dive_activities') and session.dive_activities.exists():
+                for activity in session.dive_activities.all():
+                    activity.status = 'FINISHED'
+                    activity.save()
+
+            # Update enrollment status
+            session.enrollment.auto_update_status()
+
+            messages.success(request, f'Lesson {session.session_number} completed successfully!')
+            return redirect('users:enrollment_detail', enrollment_id=session.enrollment.id)
+    else:
+        # Pre-populate form with existing data
+        initial_data = {
+            'grade': session.grade,
+            'instructor_notes': session.instructor_notes,
+            'student_feedback': session.student_feedback,
+        }
+        if session.completion_date:
+            initial_data['completion_date'] = session.completion_date
+        
+        form = LessonCompletionForm(initial=initial_data)
+
+    return render(request, 'users/complete_course_session.html', {
+        'form': form,
+        'session': session
+    })
+
+@login_required
+def customer_courses(request, customer_id):
+    if not request.user.userprofile.is_diving_center:
+        messages.error(request, 'Access denied.')
+        return redirect('users:profile')
+
+    customer = get_object_or_404(Customer, id=customer_id, diving_center=request.user)
+
+    # Get all enrollments for this customer
+    all_enrollments = CourseEnrollment.objects.filter(
+        customer=customer
+    ).select_related('course', 'primary_instructor').order_by('-enrollment_date')
+
+    # Separate active and completed enrollments
+    active_enrollments = all_enrollments.filter(status__in=['ENROLLED', 'IN_PROGRESS'])
+    completed_enrollments = all_enrollments.filter(status='COMPLETED')
+
+    return render(request, 'users/customer_courses.html', {
+        'customer': customer,
+        'active_enrollments': active_enrollments,
+        'completed_enrollments': completed_enrollments,
+        'all_enrollments': all_enrollments
+    })
