@@ -47,7 +47,7 @@ class Command(BaseCommand):
                 activities = self.create_activities(diving_center)
                 
                 # Create diving sites
-                # sites = self.create_diving_sites(diving_center)
+                sites = self.create_diving_sites(diving_center)
                 
                 # Create dive schedules
                 schedules = self.create_dive_schedules(diving_center, sites, activities)
@@ -56,13 +56,13 @@ class Command(BaseCommand):
                 self.create_customer_dive_activities(customers, schedules, activities)
                 
                 # Create inventory items
-                # self.create_inventory_items(diving_center)
+                self.create_inventory_items(diving_center)
                 
                 # Create diving groups
                 groups = self.create_diving_groups(diving_center)
                 
                 # Create group members
-                # self.create_group_members(groups, customers)
+                self.create_group_members(groups, customers)
                 
                 self.stdout.write(
                     self.style.SUCCESS('Successfully populated database for divecenter1!')
