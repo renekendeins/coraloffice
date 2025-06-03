@@ -987,13 +987,13 @@ def edit_dive(request, dive_id):
     dive = get_object_or_404(DiveSchedule, id=dive_id, diving_center=request.user)
 
     if request.method == 'POST':
-        form = DiveScheduleForm(request.POST, instance=dive)
+        form = DiveScheduleForm(diving_center=request.user, data=request.POST, instance=dive)
         if form.is_valid():
             form.save()
             messages.success(request, 'Dive updated successfully!')
             return redirect('users:dive_detail', dive_id=dive.id)
     else:
-        form = DiveScheduleForm(instance=dive)
+        form = DiveScheduleForm(diving_center=request.user, instance=dive)
 
     return render(request, 'users/edit_dive.html', {'form': form, 'dive': dive})
 

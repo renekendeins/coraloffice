@@ -56,23 +56,25 @@ class DiveScheduleForm(forms.ModelForm):
     dive_site = forms.ModelChoiceField(
         queryset=DivingSite.objects.none(),
         empty_label="Select a diving site",
-        widget=forms.Select(attrs={'class': 'form-control'})
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        help_text="Choose a dive site for this dive"
     )
 
     class Meta:
         model = DiveSchedule
         fields = ('date', 'time', 'dive_site', 'max_participants', 'description', 'special_notes')
         widgets = {
-            'date': forms.DateInput(attrs={'type': 'date'}),
-            'time': forms.TimeInput(attrs={'type': 'time'}),
-            'description': forms.Textarea(attrs={'rows': 3}),
-            'special_notes': forms.Textarea(attrs={'rows': 2}),
+            'date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'time': forms.TimeInput(attrs={'type': 'time', 'class': 'form-control'}),
+            'max_participants': forms.NumberInput(attrs={'class': 'form-control', 'min': '1'}),
+            'description': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+            'special_notes': forms.Textarea(attrs={'rows': 2, 'class': 'form-control'}),
         }
 
     def __init__(self, diving_center=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if diving_center:
-            self.fields['dive_site'].queryset = DivingSite.objects.filter(diving_center=diving_center)
+            self.fields['dive_site'].queryset = DivingSite.objects.filter(diving_center=diving_center).order_by('name')
 
 class CustomerDiveActivityForm(forms.ModelForm):
     customer_search = forms.CharField(
