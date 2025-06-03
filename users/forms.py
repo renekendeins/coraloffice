@@ -232,7 +232,7 @@ class MedicalForm(forms.ModelForm):
 class CourseForm(forms.ModelForm):
     class Meta:
         model = Course
-        fields = ['name', 'course_type', 'description', 'total_dives', 'duration_days', 'price', 'prerequisites', 'is_active', 'just_one_dive']
+        fields = ['name', 'course_type', 'description', 'total_dives', 'duration_days', 'price', 'prerequisites', 'is_active', 'just_one_dive', 'includes_material', 'includes_instructor', 'includes_insurance']
         widgets = {
             'description': forms.Textarea(attrs={'rows': 3}),
             'prerequisites': forms.Textarea(attrs={'rows': 2}),

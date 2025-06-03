@@ -53,6 +53,33 @@
         </label>
     </div>
     
+    <div class="checkbox-group">
+        <label>
+            {{ form.just_one_dive }} Just One Dive
+        </label>
+    </div>
+    
+    <h3 style="margin-top: 30px; margin-bottom: 15px;">Course Inclusions</h3>
+    <p style="color: #666; margin-bottom: 20px;">Select what is included in the course price by default:</p>
+    
+    <div class="checkbox-group">
+        <label>
+            {{ form.includes_material }} Material Included
+        </label>
+    </div>
+    
+    <div class="checkbox-group">
+        <label>
+            {{ form.includes_instructor }} Instructor Included
+        </label>
+    </div>
+    
+    <div class="checkbox-group">
+        <label>
+            {{ form.includes_insurance }} Insurance Included
+        </label>
+    </div>
+    
     <div style="margin-top: 20px;">
         <button type="submit" class="btn">Update Course</button>
         <a href="{% url 'users:courses_list' %}" class="btn" style="background: #6c757d;">Cancel</a>

@@ -453,6 +453,9 @@ class Course(models.Model):
     prerequisites = models.TextField(blank=True, help_text="Required certifications or prerequisites")
     is_active = models.BooleanField(default=True)
     just_one_dive = models.BooleanField(default=False, help_text="Check if this course/activity is for a single dive only")
+    includes_material = models.BooleanField(default=True, help_text="Material is included in the course price")
+    includes_instructor = models.BooleanField(default=True, help_text="Instructor is included in the course price")
+    includes_insurance = models.BooleanField(default=True, help_text="Insurance is included in the course price")
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

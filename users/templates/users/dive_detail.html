@@ -183,6 +183,17 @@ body {
                     {% if participant.course.just_one_dive %}
                         <span class="badge bg-info">Just One Dive</span>
                     {% endif %}
+                    <div style="margin-top: 5px;">
+                        {% if participant.course.includes_material %}
+                            <span class="badge bg-success" style="margin-right: 3px; font-size: 10px;">Material</span>
+                        {% endif %}
+                        {% if participant.course.includes_instructor %}
+                            <span class="badge bg-success" style="margin-right: 3px; font-size: 10px;">Instructor</span>
+                        {% endif %}
+                        {% if participant.course.includes_insurance %}
+                            <span class="badge bg-success" style="margin-right: 3px; font-size: 10px;">Insurance</span>
+                        {% endif %}
+                    </div>
                 </td>
                 <td>{{ participant.get_tank_size_display }}</td>
                 <td>

@@ -153,6 +153,9 @@ class CourseAdmin(admin.ModelAdmin):
         ('Requirements', {
             'fields': ('prerequisites', 'is_active', 'just_one_dive')
         }),
+        ('Inclusions', {
+            'fields': ('includes_material', 'includes_instructor', 'includes_insurance')
+        }),
         ('Metadata', {
             'fields': ('created_at',)
         })
