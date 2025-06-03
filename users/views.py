@@ -1546,29 +1546,12 @@ def schedule_course_session(request, session_id):
             # Set assistant instructors
             session.assistant_instructors.set(assistant_instructors)
 
-            print(request.POST)
-            print(session)
-            # Create or update CustomerDiveActivity
-            course = Course.objects.filter(
-                diving_center=request.user,
-                name__icontains='course'
-            ).first()
-
-            if not course:
-                course = Course.objects.create(
-                    diving_center=request.user,
-                    name='Course Lesson',
-                    description='Course training lesson',
-                    total_dives=1,
-                    price=0.00
-                )
-
-            # Create CustomerDiveActivity for this course session
+            # Create CustomerDiveActivity for this course session using the enrollment's actual course
             customer_dive_activity, created = CustomerDiveActivity.objects.get_or_create(
                 customer=session.enrollment.customer,
                 dive_schedule=dive_schedule,
                 defaults={
-                    'course': course,
+                    'course': session.enrollment.course,  # Use the actual course from enrollment
                     'course_session': session,
                     'assigned_staff': instructor,
                     'tank_size': session.enrollment.customer.default_tank_size,
@@ -1576,6 +1559,7 @@ def schedule_course_session(request, session_id):
             )
 
             if not created:
+                customer_dive_activity.course = session.enrollment.course  # Update to use enrollment course
                 customer_dive_activity.course_session = session
                 customer_dive_activity.assigned_staff = instructor
                 customer_dive_activity.save()
