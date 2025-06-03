@@ -102,6 +102,118 @@
     {% endfor %}
 </div>
 
+<div class="enrollment-actions">
+    <a href="{% url 'users:course_enrollments' %}" class="btn" style="background: #6c757d;">← Back to Enrollments</a>
+    {% if enrollment.status == 'ENROLLED' or enrollment.status == 'IN_PROGRESS' %}
+        <a href="{% url 'users:course_lesson_calendar' %}" class="btn">View Calendar</a>
+        <button type="button" onclick="showAddExtraSessionModal()" class="btn" style="background: #28a745;">Add Extra Session</button>
+    {% endif %}
+</div>
+
+<!-- Add Extra Session Modal -->
+<div id="extraSessionModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeExtraSessionModal()">&times;</span>
+        <h3>Add Extra Session</h3>
+        <p>Add an additional session for {{ enrollment.customer.get_full_name }} in {{ enrollment.course.name }}</p>
+        <form id="extra-session-form">
+            {% csrf_token %}
+            <input type="hidden" name="enrollment_id" value="{{ enrollment.id }}">
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="extra_session_number">Session Number:</label>
+                    <input type="number" id="extra_session_number" name="session_number" min="1" required class="form-control">
+                </div>
+                <div class="form-group">
+                    <label for="extra_session_type">Session Type:</label>
+                    <select id="extra_session_type" name="session_type" required class="form-control">
+                        <option value="THEORY">Theory Session</option>
+                        <option value="POOL">Pool Dive</option>
+                        <option value="OPEN_WATER">Open Water Dive</option>
+                        <option value="EXAM">Exam</option>
+                        <option value="PRACTICAL">Practical Skills</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="extra_title">Session Title:</label>
+                <input type="text" id="extra_title" name="title" required class="form-control">
+            </div>
+
+            <div class="form-group">
+                <label for="extra_description">Description:</label>
+                <textarea id="extra_description" name="description" rows="3" class="form-control"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="extra_skills_covered">Skills Covered:</label>
+                <textarea id="extra_skills_covered" name="skills_covered" rows="2" class="form-control"></textarea>
+            </div>
+
+            <div class="modal-actions">
+                <button type="submit" class="btn">Add Session</button>
+                <button type="button" onclick="closeExtraSessionModal()" class="btn" style="background: #6c757d;">Cancel</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function showAddExtraSessionModal() {
+    // Set next session number
+    const sessionCards = document.querySelectorAll('.session-card');
+    const maxSessionNumber = sessionCards.length > 0 ? 
+        Math.max(...Array.from(sessionCards).map(card => {
+            const numberText = card.querySelector('.session-number').textContent;
+            return parseInt(numberText.replace('Session ', ''));
+        })) : 0;
+    document.getElementById('extra_session_number').value = maxSessionNumber + 1;
+
+    document.getElementById('extraSessionModal').style.display = 'block';
+}
+
+function closeExtraSessionModal() {
+    document.getElementById('extraSessionModal').style.display = 'none';
+}
+
+// Handle extra session form submission
+document.getElementById('extra-session-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+
+    fetch(`/users/enrollments/{{ enrollment.id }}/sessions/add/`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest'
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            location.reload();
+        } else {
+            alert('Error adding session: ' + (data.error || 'Unknown error'));
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('Error adding session');
+    });
+});
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('extraSessionModal');
+    if (event.target == modal) {
+        closeExtraSessionModal();
+    }
+}
+</script>
+
 <div style="margin-top: 30px;">
     <a href="{% url 'users:course_enrollments' %}" class="btn">Back to Enrollments</a>
     <a href="{% url 'users:customer_courses' enrollment.customer.id %}" class="btn" style="background: #28a745;">Customer Profile</a>
@@ -174,6 +286,73 @@
     border-radius: 4px;
     font-size: 12px;
     margin-right: 5px;
+}
+
+/* Modal styles */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+    border-radius: 8px;
+}
+
+/* The Close Button */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+/* Form styles within the modal */
+.form-row {
+    display: flex;
+    gap: 10px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-control {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    box-sizing: border-box; /* Make sure padding doesn't affect width */
+}
+
+.modal-actions {
+    margin-top: 20px;
+    text-align: right;
 }
 </style>
 {% endblock %}

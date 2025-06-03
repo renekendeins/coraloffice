@@ -79,5 +79,12 @@ urlpatterns = [
     path('course-sessions/<int:session_id>/schedule/', views.schedule_course_session, name='schedule_course_session'),
     path('course-sessions/<int:session_id>/complete/', views.complete_course_session, name='complete_course_session'),
     path('course-lesson-calendar/', views.course_lesson_calendar, name='course_lesson_calendar'),
+
+    path('courses/<int:course_id>/sessions/add/', views.add_course_session_template, name='add_course_session_template'),
+    path('courses/<int:course_id>/sessions/<int:session_id>/', views.get_course_session_template, name='get_course_session_template'),
+    path('courses/<int:course_id>/sessions/<int:session_id>/update/', views.update_course_session_template, name='update_course_session_template'),
+    path('courses/<int:course_id>/sessions/<int:session_id>/delete/', views.delete_course_session_template, name='delete_course_session_template'),
+    path('enrollments/<int:enrollment_id>/sessions/add/', views.add_enrollment_session, name='add_enrollment_session'),
+
     path('customers/<int:customer_id>/courses/', views.customer_courses, name='customer_courses'),
 ]

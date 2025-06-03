@@ -1361,7 +1361,22 @@ def edit_course(request, course_id):
             return redirect('users:courses_list')
     else:
         form = CourseForm(instance=course)
-    return render(request, 'users/edit_course.html', {'form': form, 'course': course})
+
+    # Get template sessions for this course (sessions not tied to any enrollment)
+    template_sessions = CourseSession.objects.filter(
+        enrollment__isnull=True,
+        template_course=course
+    ).order_by('session_number')
+
+    # Get current enrollments for this course
+    enrollments = CourseEnrollment.objects.filter(course=course).select_related('customer')
+
+    return render(request, 'users/edit_course.html', {
+        'form': form, 
+        'course': course,
+        'template_sessions': template_sessions,
+        'enrollments': enrollments
+    })
 
 @login_required
 def course_enrollments(request):
@@ -1398,16 +1413,31 @@ def enroll_customer(request, customer_id=None):
         form = CourseEnrollmentForm(diving_center=request.user, data=request.POST)
         if form.is_valid():
             enrollment = form.save()
-            # Create course sessions based on the course
+            # Create course sessions based on template sessions or fallback to default
             course = enrollment.course
-            for i in range(1, course.total_dives + 1):
-                CourseSession.objects.create(
-                    enrollment=enrollment,
-                    session_number=i,
-                    session_type='OPEN_WATER',
-                    title=f'Dive {i}',
-                    description=f'Dive session {i} of {course.name}'
-                )
+            template_sessions = CourseSession.objects.filter(template_course=course).order_by('session_number')
+            
+            if template_sessions.exists():
+                # Use template sessions
+                for template in template_sessions:
+                    CourseSession.objects.create(
+                        enrollment=enrollment,
+                        session_number=template.session_number,
+                        session_type=template.session_type,
+                        title=template.title,
+                        description=template.description,
+                        skills_covered=template.skills_covered
+                    )
+            else:
+                # Fallback to default sessions if no templates exist
+                for i in range(1, course.total_dives + 1):
+                    CourseSession.objects.create(
+                        enrollment=enrollment,
+                        session_number=i,
+                        session_type='OPEN_WATER',
+                        title=f'Dive {i}',
+                        description=f'Dive session {i} of {course.name}'
+                    )
             messages.success(request, f'{enrollment.customer} has been enrolled in {course.name}!')
             return redirect('users:course_enrollments')
     else:
@@ -1582,6 +1612,153 @@ def complete_course_session(request, session_id):
             # Update any related CustomerDiveActivity status
             if hasattr(session, 'dive_activities') and session.dive_activities.exists():
                 for activity in session.dive_activities.all():
+
+
+@login_required
+def add_course_session_template(request, course_id):
+    if not request.user.userprofile.is_diving_center:
+        return JsonResponse({'success': False, 'error': 'Access denied'})
+
+    course = get_object_or_404(Course, id=course_id, diving_center=request.user)
+
+    if request.method == 'POST':
+        try:
+            session_number = int(request.POST.get('session_number'))
+            session_type = request.POST.get('session_type')
+            title = request.POST.get('title')
+            description = request.POST.get('description', '')
+            skills_covered = request.POST.get('skills_covered', '')
+
+            # Check if session number already exists for this course template
+            if CourseSession.objects.filter(template_course=course, session_number=session_number).exists():
+                return JsonResponse({'success': False, 'error': 'Session number already exists'})
+
+            session = CourseSession.objects.create(
+                template_course=course,
+                session_number=session_number,
+                session_type=session_type,
+                title=title,
+                description=description,
+                skills_covered=skills_covered
+            )
+
+            return JsonResponse({'success': True, 'session_id': session.id})
+
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+
+    return JsonResponse({'success': False, 'error': 'Invalid request'})
+
+@login_required
+def get_course_session_template(request, course_id, session_id):
+    if not request.user.userprofile.is_diving_center:
+        return JsonResponse({'success': False, 'error': 'Access denied'})
+
+    course = get_object_or_404(Course, id=course_id, diving_center=request.user)
+    session = get_object_or_404(CourseSession, id=session_id, template_course=course)
+
+    data = {
+        'session_number': session.session_number,
+        'session_type': session.session_type,
+        'title': session.title,
+        'description': session.description,
+        'skills_covered': session.skills_covered
+    }
+
+    return JsonResponse(data)
+
+@login_required
+def update_course_session_template(request, course_id, session_id):
+    if not request.user.userprofile.is_diving_center:
+        return JsonResponse({'success': False, 'error': 'Access denied'})
+
+    course = get_object_or_404(Course, id=course_id, diving_center=request.user)
+    session = get_object_or_404(CourseSession, id=session_id, template_course=course)
+
+    if request.method == 'POST':
+        try:
+            session_number = int(request.POST.get('session_number'))
+            
+            # Check if session number already exists (excluding current session)
+            existing = CourseSession.objects.filter(
+                template_course=course, 
+                session_number=session_number
+            ).exclude(id=session_id)
+            
+            if existing.exists():
+                return JsonResponse({'success': False, 'error': 'Session number already exists'})
+
+            session.session_number = session_number
+            session.session_type = request.POST.get('session_type')
+            session.title = request.POST.get('title')
+            session.description = request.POST.get('description', '')
+            session.skills_covered = request.POST.get('skills_covered', '')
+            session.save()
+
+            return JsonResponse({'success': True})
+
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+
+    return JsonResponse({'success': False, 'error': 'Invalid request'})
+
+@login_required
+def delete_course_session_template(request, course_id, session_id):
+    if not request.user.userprofile.is_diving_center:
+        return JsonResponse({'success': False, 'error': 'Access denied'})
+
+    course = get_object_or_404(Course, id=course_id, diving_center=request.user)
+    session = get_object_or_404(CourseSession, id=session_id, template_course=course)
+
+    if request.method == 'POST':
+        try:
+            session.delete()
+            return JsonResponse({'success': True})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+
+    return JsonResponse({'success': False, 'error': 'Invalid request'})
+
+@login_required
+def add_enrollment_session(request, enrollment_id):
+    """Add an extra session to an existing enrollment"""
+    if not request.user.userprofile.is_diving_center:
+        return JsonResponse({'success': False, 'error': 'Access denied'})
+
+    enrollment = get_object_or_404(
+        CourseEnrollment, 
+        id=enrollment_id, 
+        course__diving_center=request.user
+    )
+
+    if request.method == 'POST':
+        try:
+            session_number = int(request.POST.get('session_number'))
+            session_type = request.POST.get('session_type')
+            title = request.POST.get('title')
+            description = request.POST.get('description', '')
+            skills_covered = request.POST.get('skills_covered', '')
+
+            # Check if session number already exists for this enrollment
+            if enrollment.course_sessions.filter(session_number=session_number).exists():
+                return JsonResponse({'success': False, 'error': 'Session number already exists'})
+
+            session = CourseSession.objects.create(
+                enrollment=enrollment,
+                session_number=session_number,
+                session_type=session_type,
+                title=title,
+                description=description,
+                skills_covered=skills_covered
+            )
+
+            return JsonResponse({'success': True, 'session_id': session.id})
+
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+
+    return JsonResponse({'success': False, 'error': 'Invalid request'})
+
                     activity.status = 'FINISHED'
                     activity.save()
 

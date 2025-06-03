@@ -546,7 +546,8 @@ class CourseSession(models.Model):
         ('RESCHEDULED', 'Rescheduled'),
     ]
     
-    enrollment = models.ForeignKey(CourseEnrollment, on_delete=models.CASCADE, related_name='course_sessions')
+    enrollment = models.ForeignKey(CourseEnrollment, on_delete=models.CASCADE, related_name='course_sessions', null=True, blank=True)
+    template_course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='template_sessions', null=True, blank=True, help_text="Course this session template belongs to")
     dive_schedule = models.ForeignKey(DiveSchedule, on_delete=models.SET_NULL, null=True, blank=True, related_name='course_sessions', help_text="Dive slot this lesson is scheduled in")
     session_number = models.IntegerField(help_text="Lesson number in the course (1, 2, 3, etc.)")
     session_type = models.CharField(max_length=20, choices=SESSION_TYPE_CHOICES, default='OPEN_WATER')
