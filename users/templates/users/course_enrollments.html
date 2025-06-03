@@ -27,48 +27,64 @@
     </div>
 
     {% if enrollments %}
-        <div class="enrollments-table">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Customer</th>
-                        <th>Course</th>
-                        <th>Instructor</th>
-                        <th>Status</th>
-                        <th>Progress</th>
-                        <th>Enrollment Date</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for enrollment in enrollments %}
-                        <tr>
-                            <td>
-                                <a href="{% url 'users:customer_courses' enrollment.customer.id %}">
-                                    {{ enrollment.customer.get_full_name }}
-                                </a>
-                            </td>
-                            <td>{{ enrollment.course.name }}</td>
-                            <td>{{ enrollment.instructor.get_full_name|default:"Not assigned" }}</td>
-                            <td>
-                                <span class="status-badge status-{{ enrollment.status|lower }}">
-                                    {{ enrollment.get_status_display }}
-                                </span>
-                            </td>
-                            <td>
-                                <div class="progress-bar">
-                                    <div class="progress-fill" style="width: {{ enrollment.get_progress_percentage }}%"></div>
-                                    <span class="progress-text">{{ enrollment.get_completed_dives }}/{{ enrollment.course.total_dives }}</span>
-                                </div>
-                            </td>
-                            <td>{{ enrollment.enrollment_date|date:"M d, Y" }}</td>
-                            <td>
-                                <a href="{% url 'users:enrollment_detail' enrollment.id %}" class="btn-small">View Details</a>
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        <!-- Desktop Header (hidden on mobile) -->
+        <div class="enrollments-header">
+            <div class="header-item">Customer</div>
+            <div class="header-item">Course</div>
+            <div class="header-item">Instructor</div>
+            <div class="header-item">Status</div>
+            <div class="header-item">Progress</div>
+            <div class="header-item">Enrollment Date</div>
+            <div class="header-item">Actions</div>
+        </div>
+
+        <!-- Enrollments List -->
+        <div class="enrollments-container">
+            {% for enrollment in enrollments %}
+                <div class="enrollment-card">
+                    <div class="enrollment-item customer">
+                        <span class="mobile-label">Customer:</span>
+                        <a href="{% url 'users:customer_courses' enrollment.customer.id %}">
+                            {{ enrollment.customer.get_full_name }}
+                        </a>
+                    </div>
+                    
+                    <div class="enrollment-item course">
+                        <span class="mobile-label">Course:</span>
+                        {{ enrollment.course.name }}
+                    </div>
+                    
+                    <div class="enrollment-item instructor">
+                        <span class="mobile-label">Instructor:</span>
+                        {{ enrollment.instructor.get_full_name|default:"Not assigned" }}
+                    </div>
+                    
+                    <div class="enrollment-item status">
+                        <span class="mobile-label">Status:</span>
+                        <span class="status-badge status-{{ enrollment.status|lower }}">
+                            {{ enrollment.get_status_display }}
+                        </span>
+                    </div>
+                    
+                    <div class="enrollment-item progress">
+                        <span class="mobile-label">Progress:</span>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: {{ enrollment.get_progress_percentage }}%"></div>
+                            <span class="progress-text">{{ enrollment.get_completed_dives }}/{{ enrollment.course.total_dives }}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="enrollment-item date">
+                        <span class="mobile-label">Enrollment Date:</span>
+                        {{ enrollment.enrollment_date|date:"M d, Y" }}
+                    </div>
+                    
+                    <div class="enrollment-item actions">
+                        <span class="mobile-label">Actions:</span>
+                        <a href="{% url 'users:enrollment_detail' enrollment.id %}" class="btn-small">View Details</a>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
     {% else %}
         <p>No enrollments found. <a href="{% url 'users:enroll_customer_general' %}">Enroll a customer</a> to get started.</p>
@@ -82,22 +98,45 @@
         border-radius: 4px;
     }
 
-    .enrollments-table table {
-        width: 100%;
-        border-collapse: collapse;
-        background: white;
-    }
-
-    .enrollments-table th,
-    .enrollments-table td {
-        padding: 12px;
-        text-align: left;
-        border-bottom: 1px solid #ddd;
-    }
-
-    .enrollments-table th {
+    .enrollments-header {
+        display: none;
+        grid-template-columns: 2fr 2fr 1.5fr 1fr 1.5fr 1.2fr 1fr;
+        gap: 15px;
+        padding: 15px;
         background: #f8f9fa;
         font-weight: bold;
+        border-radius: 4px;
+        margin-bottom: 10px;
+    }
+
+    .enrollments-container {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .enrollment-card {
+        background: white;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .enrollment-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .mobile-label {
+        font-weight: bold;
+        color: #666;
+        min-width: 120px;
+        display: inline-block;
     }
 
     .status-badge {
@@ -116,7 +155,7 @@
 
     .progress-bar {
         position: relative;
-        width: 100px;
+        width: 120px;
         height: 20px;
         background: #f0f0f0;
         border-radius: 10px;
@@ -142,12 +181,59 @@
 
     .btn-small {
         display: inline-block;
-        padding: 5px 10px;
+        padding: 6px 12px;
         background: #007bff;
         color: white;
         text-decoration: none;
         border-radius: 4px;
-        font-size: 12px;
+        font-size: 13px;
+        white-space: nowrap;
+    }
+
+    .btn-small:hover {
+        background: #0056b3;
+        color: white;
+        text-decoration: none;
+    }
+
+    /* Tablet and Desktop Styles */
+    @media (min-width: 768px) {
+        .enrollments-header {
+            display: grid;
+        }
+
+        .enrollment-card {
+            display: grid;
+            grid-template-columns: 2fr 2fr 1.5fr 1fr 1.5fr 1.2fr 1fr;
+            gap: 15px;
+            align-items: center;
+            padding: 15px;
+        }
+
+        .enrollment-item {
+            flex-direction: row;
+            gap: 0;
+        }
+
+        .mobile-label {
+            display: none;
+        }
+
+        .progress-bar {
+            width: 100px;
+        }
+    }
+
+    /* Large Desktop Adjustments */
+    @media (min-width: 1200px) {
+        .progress-bar {
+            width: 120px;
+        }
+        
+        .enrollments-header,
+        .enrollment-card {
+            grid-template-columns: 2.5fr 2.5fr 2fr 1.2fr 1.5fr 1.5fr 1.2fr;
+        }
     }
     </style>
 </div>
