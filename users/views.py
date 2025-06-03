@@ -1612,6 +1612,23 @@ def complete_course_session(request, session_id):
             # Update any related CustomerDiveActivity status
             if hasattr(session, 'dive_activities') and session.dive_activities.exists():
                 for activity in session.dive_activities.all():
+                    activity.status = 'FINISHED'
+                    activity.save()
+
+            # Update enrollment status automatically
+            session.enrollment.auto_update_status()
+
+            messages.success(request, f'Lesson {session.session_number} marked as completed!')
+            return redirect('users:enrollment_detail', enrollment_id=session.enrollment.id)
+        else:
+            messages.error(request, 'Please correct the form errors.')
+    else:
+        form = LessonCompletionForm()
+
+    return render(request, 'users/complete_course_session.html', {
+        'form': form,
+        'session': session
+    })
 
 
 @login_required
