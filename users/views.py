@@ -1759,30 +1759,7 @@ def add_enrollment_session(request, enrollment_id):
 
     return JsonResponse({'success': False, 'error': 'Invalid request'})
 
-                    activity.status = 'FINISHED'
-                    activity.save()
 
-            # Update enrollment status
-            session.enrollment.auto_update_status()
-
-            messages.success(request, f'Lesson {session.session_number} completed successfully!')
-            return redirect('users:enrollment_detail', enrollment_id=session.enrollment.id)
-    else:
-        # Pre-populate form with existing data
-        initial_data = {
-            'grade': session.grade,
-            'instructor_notes': session.instructor_notes,
-            'student_feedback': session.student_feedback,
-        }
-        if session.completion_date:
-            initial_data['completion_date'] = session.completion_date
-        
-        form = LessonCompletionForm(initial=initial_data)
-
-    return render(request, 'users/complete_course_session.html', {
-        'form': form,
-        'session': session
-    })
 
 @login_required
 def customer_courses(request, customer_id):
