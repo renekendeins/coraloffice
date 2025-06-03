@@ -3,54 +3,56 @@
 {% block users_title %}Enroll Customer in Course - CoralOffice{% endblock %}
 
 {% block users_content %}
-<h2>Enroll Customer in Course</h2>
+<div class="p-3">
+    <h2>Enroll Customer in Course</h2>
 
-{% if customer %}
-    <h3>Enrolling: {{ customer.get_full_name }}</h3>
-{% endif %}
+    {% if customer %}
+        <h3>Enrolling: {{ customer.get_full_name }}</h3>
+    {% endif %}
 
-<form method="post" class="enrollment-form">
-    {% csrf_token %}
+    <form method="post" class="enrollment-form">
+        {% csrf_token %}
 
-    <div class="form-group" style="position: relative;">
-        <label for="customer-search">Search Customer:</label>
-        <input type="text" id="customer-search" placeholder="Start typing customer name..." autocomplete="off" class="form-control">
-        <div id="search-suggestions" class="search-suggestions"></div>
-        {{ form.customer }}
-    </div>
+        <div class="form-group" style="position: relative;">
+            <label for="customer-search">Search Customer:</label>
+            <input type="text" id="customer-search" placeholder="Start typing customer name..." autocomplete="off" class="form-control">
+            <div id="search-suggestions" class="search-suggestions"></div>
+            {{ form.customer }}
+        </div>
 
-    <div class="form-group">
-        <label for="{{ form.course.id_for_label }}">Course:</label>
-        {{ form.course }}
-    </div>
+        <div class="form-group">
+            <label for="{{ form.course.id_for_label }}">Course:</label>
+            {{ form.course }}
+        </div>
 
-    <div class="form-group">
-        <label for="{{ form.instructor.id_for_label }}">Primary Instructor:</label>
-        {{ form.instructor }}
-        <small class="help-text">Main instructor responsible for this course</small>
-    </div>
+        <div class="form-group">
+            <label for="{{ form.instructor.id_for_label }}">Primary Instructor:</label>
+            {{ form.instructor }}
+            <small class="help-text">Main instructor responsible for this course</small>
+        </div>
 
-    <div class="form-group">
-        <label for="{{ form.price_paid.id_for_label }}">Price Paid:</label>
-        {{ form.price_paid }}
-    </div>
+        <div class="form-group">
+            <label for="{{ form.price_paid.id_for_label }}">Price Paid:</label>
+            {{ form.price_paid }}
+        </div>
 
-    <div class="form-group">
-        <label>
-            {{ form.is_paid }} Payment Complete
-        </label>
-    </div>
+        <div class="form-group">
+            <label>
+                {{ form.is_paid }} Payment Complete
+            </label>
+        </div>
 
-    <div class="form-group">
-        <label for="{{ form.notes.id_for_label }}">Notes:</label>
-        {{ form.notes }}
-    </div>
+        <div class="form-group">
+            <label for="{{ form.notes.id_for_label }}">Notes:</label>
+            {{ form.notes }}
+        </div>
 
-    <div class="form-actions">
-        <button type="submit" class="btn" style="background-color: #28a745;">Enroll Customer</button>
-        <a href="{% url 'users:course_enrollments' %}" class="btn" style="background: #6c757d;">Cancel</a>
-    </div>
-</form>
+        <div class="form-actions">
+            <button type="submit" class="btn" style="background-color: #28a745;">Enroll Customer</button>
+            <a href="{% url 'users:course_enrollments' %}" class="btn" style="background: #6c757d;">Cancel</a>
+        </div>
+    </form>
+</div>
 
 <style>
 .enrollment-form .form-group {
