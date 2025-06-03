@@ -7,11 +7,12 @@
 <div class="p-3">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
         <h2>Diving Groups Management</h2>
-        <a href="{% url 'users:add_diving_group' %}" class="btn">Add New Group</a>
+        
     </div>
 
-    <div style="margin-bottom: 20px;">
+    <div class="mb-3 d-flex flex-column flex-md-row justify-content-md-between align-items-md-center">
         <a href="{% url 'users:diving_center_dashboard' %}" class="btn" style="background: #6c757d;">Back to Dashboard</a>
+        <a href="{% url 'users:add_diving_group' %}" class="btn btn-success">Add New Group</a>
     </div>
 
     <!-- Filter and Sort Controls -->
