@@ -155,89 +155,183 @@ body {
         </a>
     </div>
 
-    <!-- Participants Table -->
+    <!-- Participants List -->
     {% if participants %}
     <h3>Participants List</h3>
-    <table class="participants-table">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Activity</th>
-                <th>Tank Size</th>
-                <th>Equipment Needed</th>
-                <th>Status</th>
-                <th>Assigned Staff</th>
-                <th>Group</th>
-                <th>Certification</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for participant in participants %}
-            <tr>
-                <td>
-                    <strong>{{ participant.customer.first_name }} {{ participant.customer.last_name }}</strong><br>
-                    <small>{{ participant.customer.country|default:"" }}</small>
-                </td>
-                <td>
-                    {{ participant.course.name }}
-                    {% if participant.course.just_one_dive %}
-                        <span class="badge bg-info">Just One Dive</span>
+    
+    <!-- Table Header (visible only on medium+ screens) -->
+    <div class="d-none d-md-block">
+        <div class="row fw-bold border-bottom border-2 border-dark pb-2 mb-3" style="background-color: #f8f9fa;">
+            <div class="col-md-2">Name</div>
+            <div class="col-md-2">Activity</div>
+            <div class="col-md-1">Tank Size</div>
+            <div class="col-md-2">Equipment Needed</div>
+            <div class="col-md-1">Status</div>
+            <div class="col-md-2">Assigned Staff</div>
+            <div class="col-md-1">Group</div>
+            <div class="col-md-1">Certification</div>
+        </div>
+    </div>
+
+    <!-- Participants -->
+    {% for participant in participants %}
+    <!-- Desktop/Tablet View (table-like layout) -->
+    <div class="d-none d-md-block border-bottom py-3">
+        <div class="row align-items-center">
+            <div class="col-md-2">
+                <strong>{{ participant.customer.first_name }} {{ participant.customer.last_name }}</strong><br>
+                <small class="text-muted">{{ participant.customer.country|default:"" }}</small>
+            </div>
+            <div class="col-md-2">
+                <div>{{ participant.course.name }}</div>
+                {% if participant.course.just_one_dive %}
+                    <span class="badge bg-info mt-1">Just One Dive</span>
+                {% endif %}
+                <div class="mt-1">
+                    {% if participant.course.includes_material %}
+                        <span class="badge bg-success me-1" style="font-size: 10px;">Material</span>
                     {% endif %}
-                    <div style="margin-top: 5px;">
+                    {% if participant.course.includes_instructor %}
+                        <span class="badge bg-success me-1" style="font-size: 10px;">Instructor</span>
+                    {% endif %}
+                    {% if participant.course.includes_insurance %}
+                        <span class="badge bg-success me-1" style="font-size: 10px;">Insurance</span>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="col-md-1">
+                {{ participant.get_tank_size_display }}
+            </div>
+            <div class="col-md-2">
+                {% if participant.needs_wetsuit %}<span class="badge bg-secondary me-1 mb-1">Wetsuit ({{ participant.customer.get_wetsuit_size }})</span>{% endif %}
+                {% if participant.needs_bcd %}<span class="badge bg-secondary me-1 mb-1">BCD ({{ participant.customer.get_bcd_size }})</span>{% endif %}
+                {% if participant.needs_regulator %}<span class="badge bg-secondary me-1 mb-1">Regulator + Fins ({{ participant.customer.get_fins_size }})</span>{% endif %}
+                {% if participant.needs_guide %}<span class="badge bg-info me-1 mb-1">Guide</span>{% endif %}
+                {% if participant.needs_insurance %}<span class="badge bg-warning me-1 mb-1">Insurance</span>{% endif %}
+                {% if not participant.needs_wetsuit and not participant.needs_bcd and not participant.needs_regulator and not participant.needs_guide and not participant.needs_insurance %}-{% endif %}
+            </div>
+            <div class="col-md-1">
+                <span class="badge {% if participant.status == 'PAID' %}bg-success{% elif participant.status == 'PENDING' %}bg-warning{% else %}bg-danger{% endif %}">
+                    {{ participant.get_status_display }}
+                </span>
+            </div>
+            <div class="col-md-2">
+                {% if participant.assigned_staff %}
+                    <div class="d-flex align-items-center">
+                        {% if participant.assigned_staff.profile_picture %}
+                            <img src="{{ participant.assigned_staff.profile_picture.url }}" alt="{{ participant.assigned_staff.get_full_name }}" class="rounded-circle me-2" style="width: 24px; height: 24px; object-fit: cover;">
+                        {% else %}
+                            <div class="rounded-circle bg-light d-flex align-items-center justify-content-center me-2" style="width: 24px; height: 24px; font-size: 12px;">👨‍🏫</div>
+                        {% endif %}
+                        <div>
+                            <strong style="font-size: 12px;">{{ participant.assigned_staff.get_full_name }}</strong><br>
+                            <small class="text-muted" style="font-size: 10px;">{{ participant.assigned_staff.get_certification_level_display }}</small>
+                        </div>
+                    </div>
+                {% else %}
+                    <span class="text-muted fst-italic" style="font-size: 12px;">Not assigned</span>
+                {% endif %}
+            </div>
+            <div class="col-md-1">
+                {% for membership in participant.customer.group_memberships.all %}
+                    {% if membership.group.diving_center == dive.diving_center %}
+                        <span class="badge" style="background-color: #9c27b0;">{{ membership.group.name }}</span>
+                    {% endif %}
+                {% endfor %}
+            </div>
+            <div class="col-md-1">
+                {{ participant.customer.get_certification_level_display|default:"-" }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile View (card layout) -->
+    <div class="d-md-none card mb-3">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start mb-2">
+                <h6 class="card-title mb-0">
+                    <strong>{{ participant.customer.first_name }} {{ participant.customer.last_name }}</strong>
+                </h6>
+                <span class="badge {% if participant.status == 'PAID' %}bg-success{% elif participant.status == 'PENDING' %}bg-warning{% else %}bg-danger{% endif %}">
+                    {{ participant.get_status_display }}
+                </span>
+            </div>
+            
+            {% if participant.customer.country %}
+            <p class="text-muted small mb-2">{{ participant.customer.country }}</p>
+            {% endif %}
+
+            <div class="row g-2">
+                <div class="col-6">
+                    <strong class="small">Activity:</strong><br>
+                    <span class="small">{{ participant.course.name }}</span>
+                    {% if participant.course.just_one_dive %}
+                        <br><span class="badge bg-info mt-1">Just One Dive</span>
+                    {% endif %}
+                    <div class="mt-1">
                         {% if participant.course.includes_material %}
-                            <span class="badge bg-success" style="margin-right: 3px; font-size: 10px;">Material</span>
+                            <span class="badge bg-success me-1" style="font-size: 9px;">Material</span>
                         {% endif %}
                         {% if participant.course.includes_instructor %}
-                            <span class="badge bg-success" style="margin-right: 3px; font-size: 10px;">Instructor</span>
+                            <span class="badge bg-success me-1" style="font-size: 9px;">Instructor</span>
                         {% endif %}
                         {% if participant.course.includes_insurance %}
-                            <span class="badge bg-success" style="margin-right: 3px; font-size: 10px;">Insurance</span>
+                            <span class="badge bg-success me-1" style="font-size: 9px;">Insurance</span>
                         {% endif %}
                     </div>
-                </td>
-                <td>{{ participant.get_tank_size_display }}</td>
-                <td>
-                    {% if participant.needs_wetsuit %}<span class="badge bg-secondary">Wetsuit ({{ participant.customer.get_wetsuit_size }})</span> {% endif %}
-                    {% if participant.needs_bcd %}<span class="badge bg-secondary">BCD ({{ participant.customer.get_bcd_size }})</span> {% endif %}
-                    {% if participant.needs_regulator %}<span class="badge bg-secondary">Regulator + Fins ({{ participant.customer.get_fins_size }})</span> {% endif %}
-                    {% if participant.needs_guide %}<span class="badge bg-info">Guide</span> {% endif %}
-                    {% if participant.needs_insurance %}<span class="badge bg-warning">Insurance</span> {% endif %}
-                    {% if not participant.needs_wetsuit and not participant.needs_bcd and not participant.needs_regulator and not participant.needs_guide and not participant.needs_insurance %}-{% endif %}
-                </td>
-                <td>
-                    <span class="badge {% if participant.status == 'PAID' %}bg-success{% elif participant.status == 'PENDING' %}bg-warning{% else %}bg-danger{% endif %}">
-                        {{ participant.get_status_display }}
-                    </span>
-                </td>
-                <td>
-                    {% if participant.assigned_staff %}
-                        <div style="display: flex; align-items: center; gap: 8px;">
-                            {% if participant.assigned_staff.profile_picture %}
-                                <img src="{{ participant.assigned_staff.profile_picture.url }}" alt="{{ participant.assigned_staff.get_full_name }}" style="width: 24px; height: 24px; border-radius: 50%; object-fit: cover;">
-                            {% else %}
-                                <div style="width: 24px; height: 24px; border-radius: 50%; background: #f0f0f0; display: flex; align-items: center; justify-content: center; font-size: 12px;">👨‍🏫</div>
-                            {% endif %}
-                            <div>
-                                <strong style="font-size: 12px;">{{ participant.assigned_staff.get_full_name }}</strong><br>
-                                <small style="color: #666; font-size: 10px;">{{ participant.assigned_staff.get_certification_level_display }}</small>
-                            </div>
-                        </div>
+                </div>
+                <div class="col-6">
+                    <strong class="small">Tank Size:</strong><br>
+                    <span class="small">{{ participant.get_tank_size_display }}</span>
+                </div>
+            </div>
+
+            <div class="mt-2">
+                <strong class="small">Equipment Needed:</strong><br>
+                <div class="mt-1">
+                    {% if participant.needs_wetsuit %}<span class="badge bg-secondary me-1 mb-1" style="font-size: 10px;">Wetsuit ({{ participant.customer.get_wetsuit_size }})</span>{% endif %}
+                    {% if participant.needs_bcd %}<span class="badge bg-secondary me-1 mb-1" style="font-size: 10px;">BCD ({{ participant.customer.get_bcd_size }})</span>{% endif %}
+                    {% if participant.needs_regulator %}<span class="badge bg-secondary me-1 mb-1" style="font-size: 10px;">Regulator + Fins ({{ participant.customer.get_fins_size }})</span>{% endif %}
+                    {% if participant.needs_guide %}<span class="badge bg-info me-1 mb-1" style="font-size: 10px;">Guide</span>{% endif %}
+                    {% if participant.needs_insurance %}<span class="badge bg-warning me-1 mb-1" style="font-size: 10px;">Insurance</span>{% endif %}
+                    {% if not participant.needs_wetsuit and not participant.needs_bcd and not participant.needs_regulator and not participant.needs_guide and not participant.needs_insurance %}<span class="text-muted">None</span>{% endif %}
+                </div>
+            </div>
+
+            {% if participant.assigned_staff %}
+            <div class="mt-2">
+                <strong class="small">Assigned Staff:</strong><br>
+                <div class="d-flex align-items-center mt-1">
+                    {% if participant.assigned_staff.profile_picture %}
+                        <img src="{{ participant.assigned_staff.profile_picture.url }}" alt="{{ participant.assigned_staff.get_full_name }}" class="rounded-circle me-2" style="width: 20px; height: 20px; object-fit: cover;">
                     {% else %}
-                        <span style="color: #999; font-style: italic; font-size: 12px;">Not assigned</span>
+                        <div class="rounded-circle bg-light d-flex align-items-center justify-content-center me-2" style="width: 20px; height: 20px; font-size: 10px;">👨‍🏫</div>
                     {% endif %}
-                </td>
-                <td>
-                    {% for membership in participant.customer.group_memberships.all %}
-                        {% if membership.group.diving_center == dive.diving_center %}
-                            <span class="badge" style="background-color: #9c27b0;">{{ membership.group.name }}</span>
-                        {% endif %}
-                    {% endfor %}
-                </td>
-                <td>{{ participant.customer.get_certification_level_display|default:"-" }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+                    <div>
+                        <span class="small">{{ participant.assigned_staff.get_full_name }}</span><br>
+                        <small class="text-muted" style="font-size: 9px;">{{ participant.assigned_staff.get_certification_level_display }}</small>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="row g-2 mt-2">
+                {% for membership in participant.customer.group_memberships.all %}
+                    {% if membership.group.diving_center == dive.diving_center %}
+                    <div class="col-6">
+                        <strong class="small">Group:</strong><br>
+                        <span class="badge" style="background-color: #9c27b0; font-size: 10px;">{{ membership.group.name }}</span>
+                    </div>
+                    {% endif %}
+                {% endfor %}
+                <div class="col-6">
+                    <strong class="small">Certification:</strong><br>
+                    <span class="small">{{ participant.customer.get_certification_level_display|default:"-" }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
     {% endif %}
 
     <!-- Equipment Summary -->
