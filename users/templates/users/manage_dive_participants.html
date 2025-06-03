@@ -179,8 +179,8 @@ function toggleDetails(participantId) {
             {{ form.selected_group }}
         </div>
         <div class="form-group">
-            <label for="{{ form.activity.id_for_label }}">Actividad:</label>
-            {{ form.activity }}
+            <label for="{{ form.course.id_for_label }}">Curso:</label>
+            {{ form.course }}
         </div>
         <div class="form-group">
             <label for="{{ form.tank_size.id_for_label }}">Botella:</label>
@@ -207,7 +207,7 @@ function toggleDetails(participantId) {
         <div class="participant-card">
             <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                 <div style="flex: 1;">
-                    <h4>{{ participant.customer.first_name }} {{ participant.customer.last_name }} ({{ participant.activity.name }}) | {{ participant.get_tank_size_display }} | {{ participant.customer.get_language_display }}</h4>
+                    <h4>{{ participant.customer.first_name }} {{ participant.customer.last_name }} ({{ participant.course.name }}) | {{ participant.get_tank_size_display }} | {{ participant.customer.get_language_display }}</h4>
                     
                     <button class="btn" onclick="toggleDetails({{ participant.id }})">Mostrar detalles</button>
 
@@ -240,10 +240,10 @@ function toggleDetails(participantId) {
                             {% csrf_token %}
                             <input type="hidden" name="participant_id" value="{{ participant.id }}">
                             <div>
-                                <label>Activity:</label>
-                                <select name="activity" class="form-control">
-                                    {% for activity in form.activity.field.queryset %}
-                                        <option value="{{ activity.id }}" {% if participant.activity.id == activity.id %}selected{% endif %}>{{ activity.name }}</option>
+                                <label>Course:</label>
+                                <select name="course" class="form-control">
+                                    {% for course in form.course.field.queryset %}
+                                        <option value="{{ course.id }}" {% if participant.course.id == course.id %}selected{% endif %}>{{ course.name }}</option>
                                     {% endfor %}
                                 </select>
                             </div>

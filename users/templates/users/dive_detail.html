@@ -178,7 +178,7 @@ body {
                     <strong>{{ participant.customer.first_name }} {{ participant.customer.last_name }}</strong><br>
                     <small>{{ participant.customer.country|default:"" }}</small>
                 </td>
-                <td>{{ participant.course }}</td>
+                <td>{{ participant.course.name }}</td>
                 <td>{{ participant.get_tank_size_display }}</td>
                 <td>
                     {% if participant.needs_wetsuit %}<span class="badge bg-secondary">Wetsuit</span> {% endif %}
@@ -270,19 +270,19 @@ body {
             </div>
         </div>
 
-        <!-- Activities Summary -->
+        <!-- Courses Summary -->
         <div class="equipment-card">
-            <h4>📊 Activities Summary</h4>
+            <h4>📊 Courses Summary</h4>
             {% if participants %}
-                {% regroup participants by activity.name as activity_groups %}
-                {% for activity_group in activity_groups %}
+                {% regroup participants by course.name as course_groups %}
+                {% for course_group in course_groups %}
                 <div class="equipment-item">
-                    <span>{{ activity_group.grouper }}</span>
-                    <span><strong>{{ activity_group.list|length }}</strong></span>
+                    <span>{{ course_group.grouper }}</span>
+                    <span><strong>{{ course_group.list|length }}</strong></span>
                 </div>
                 {% endfor %}
             {% else %}
-                <p>No activities scheduled</p>
+                <p>No courses scheduled</p>
             {% endif %}
         </div>
 

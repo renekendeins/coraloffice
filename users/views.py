@@ -498,11 +498,11 @@ def manage_dive_participants(request, dive_id):
             if participant_id:
                 participant = get_object_or_404(CustomerDiveActivity, id=int(participant_id))
 
-                # Update activity if provided
-                activity_id = request.POST.get('activity')
-                if activity_id:
-                    activity = get_object_or_404(DiveActivity, id=int(activity_id), diving_center=request.user)
-                    participant.activity = activity
+                # Update course if provided
+                course_id = request.POST.get('course')
+                if course_id:
+                    course = get_object_or_404(Course, id=int(course_id), diving_center=request.user)
+                    participant.course = course
 
                 participant.tank_size = request.POST.get('tank_size', participant.tank_size)
                 participant.status = request.POST.get('status', participant.status)
