@@ -165,7 +165,7 @@ class InventoryItemForm(forms.ModelForm):
 
 class DivingGroupForm(forms.ModelForm):
     name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
-    country = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+    country = forms.ChoiceField(choices=Customer.COUNTRY_CHOICES, widget=forms.Select(attrs={'class': 'form-control'}))
     contact_person = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
     email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control'}))
     phone = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
