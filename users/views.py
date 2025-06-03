@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models User
+from django.contrib.auth.models import User
 from django.contrib import messages
 from django.db import transaction
 from django.http import JsonResponse
@@ -612,6 +612,7 @@ def dive_detail(request, dive_id):
                              id=dive_id,
                              diving_center=request.user)
     participants = CustomerDiveActivity.objects.filter(dive_schedule=dive)
+    print(participants)
 
     # Calculate equipment counts
     equipment_counts = {
@@ -835,8 +836,7 @@ def diving_groups_list(request):
         return redirect('users:profile')
 
     groups = DivingGroup.objects.filter(diving_center=request.user)
-    return render(```python
-request, 'users/diving_groups_list.html', {'groups': groups})
+    return render(request, 'users/diving_groups_list.html', {'groups': groups})
 
 
 @login_required
@@ -1405,22 +1405,31 @@ def enroll_customer(request, customer_id=None):
     if not request.user.userprofile.is_diving_center:
         messages.error(request, 'Access denied.')
         return redirect('users:profile')
-
+    print('POST', request.POST)
     customer = None
     if customer_id:
-        customer = get_object_or_404(Customer, id=customer_id, diving_center=request.user)
-
+        customer = get_object_or_404(Customer, id=request.POST.get('customer'), diving_center=request.user)
+        print(f'customer: {customer}')
+    print(f'customer: {customer} / customer_id: {customer_id} / request.POST.get(customer): {request.POST.get("customer")}')
+    
     if request.method == 'POST':
         form = CourseEnrollmentForm(diving_center=request.user, data=request.POST)
+        
         if form.is_valid():
+            print('form valid')
+            print('form', form)
             enrollment = form.save()
             # Create course sessions based on template sessions or fallback to default
             course = enrollment.course
+            print('course', enrollment)
+            
             template_sessions = CourseSession.objects.filter(template_course=course).order_by('session_number')
-
+            print('template_sessions[0]', template_sessions.all())
             if template_sessions.exists():
+                print('template_sessions exists', template_sessions.all())
                 # Use template sessions
                 for template in template_sessions:
+                    print(template.title)
                     CourseSession.objects.create(
                         enrollment=enrollment,
                         session_number=template.session_number,
@@ -1430,6 +1439,7 @@ def enroll_customer(request, customer_id=None):
                         skills_covered=template.skills_covered
                     )
             else:
+                print('template_sessions does not exist')
                 # Fallback to default sessions if no templates exist
                 for i in range(1, course.total_dives + 1):
                     CourseSession.objects.create(
@@ -1441,6 +1451,8 @@ def enroll_customer(request, customer_id=None):
                     )
             messages.success(request, f'{enrollment.customer} has been enrolled in {course.name}!')
             return redirect('users:course_enrollments')
+        else:
+            print('form invalid', form.errors)
     else:
         initial_data = {}
         if customer:
@@ -1534,6 +1546,8 @@ def schedule_course_session(request, session_id):
             # Set assistant instructors
             session.assistant_instructors.set(assistant_instructors)
 
+            print(request.POST)
+            print(session)
             # Create or update CustomerDiveActivity
             course = Course.objects.filter(
                 diving_center=request.user,
@@ -1648,8 +1662,7 @@ def add_course_session_template(request, course_id):
             skills_covered = request.POST.get('skills_covered', '')
 
             # Check if session number already exists for this course template
-            if CourseSession.objects.filter(template```python
-_course=course, session_number=session_number).exists():
+            if CourseSession.objects.filter(template_course=course, session_number=session_number).exists():
                 return JsonResponse({'success': False, 'error': 'Session number already exists'})
 
             session = CourseSession.objects.create(

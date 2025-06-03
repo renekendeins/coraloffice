@@ -170,7 +170,7 @@ class EnrollmentAdmin(admin.ModelAdmin):
             'fields': ('customer', 'course', 'primary_instructor')
         }),
         ('Progress', {
-            'fields': ('status', 'completion_date', 'certification_number')
+            'fields': ('status', 'completion_date')
         }),
         ('Additional Information', {
             'fields': ('notes',)
@@ -184,26 +184,26 @@ class EnrollmentAdmin(admin.ModelAdmin):
 @admin.register(CourseSession)
 class CourseSessionAdmin(admin.ModelAdmin):
     list_display = ('enrollment', 'session_number', 'title', 'scheduled_date', 'status')
-    list_filter = ('status', 'session_type', 'scheduled_date')
-    search_fields = ('enrollment__customer__first_name', 'enrollment__customer__last_name', 'title')
-    readonly_fields = ('created_at',)
-    fieldsets = (
-        ('Basic Information', {
-            'fields': ('enrollment', 'session_number', 'title', 'session_type')
-        }),
-        ('Scheduling', {
-            'fields': ('dive_slot', 'scheduled_date', 'assigned_instructor')
-        }),
-        ('Progress', {
-            'fields': ('is_completed', 'completion_date', 'instructor_notes')
-        }),
-        ('Content', {
-            'fields': ('description', 'objectives', 'requirements')
-        }),
-        ('Metadata', {
-            'fields': ('created_at',)
-        })
-    )
+    # list_filter = ('status', 'session_type', 'scheduled_date')
+    # search_fields = ('enrollment__customer__first_name', 'enrollment__customer__last_name', 'title')
+    # readonly_fields = ('created_at',)
+    # fieldsets = (
+    #     ('Basic Information', {
+    #         'fields': ('enrollment', 'session_number', 'title', 'session_type')
+    #     }),
+    #     ('Scheduling', {
+    #         'fields': ('dive_slot', 'scheduled_date', 'assigned_instructor')
+    #     }),
+    #     ('Progress', {
+    #         'fields': ('is_completed', 'completion_date', 'instructor_notes')
+    #     }),
+    #     ('Content', {
+    #         'fields': ('description', 'objectives', 'requirements')
+    #     }),
+    #     ('Metadata', {
+    #         'fields': ('created_at',)
+    #     })
+    # )
 
 # Inventory Item Admin
 @admin.register(InventoryItem)
