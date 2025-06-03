@@ -856,8 +856,76 @@ def diving_groups_list(request):
         messages.error(request, 'Access denied.')
         return redirect('users:profile')
 
+    from datetime import date, timedelta
+    from django.db.models import Q
+    
     groups = DivingGroup.objects.filter(diving_center=request.user)
-    return render(request, 'users/diving_groups_list.html', {'groups': groups})
+    
+    # Search functionality
+    search_query = request.GET.get('search', '').strip()
+    if search_query:
+        groups = groups.filter(
+            Q(name__icontains=search_query) |
+            Q(contact_person__icontains=search_query) |
+            Q(email__icontains=search_query) |
+            Q(description__icontains=search_query)
+        )
+    
+    # Country filter
+    country_filter = request.GET.get('country', '').strip()
+    if country_filter:
+        groups = groups.filter(country=country_filter)
+    
+    # Date filters
+    date_filter = request.GET.get('date_filter', '').strip()
+    today = date.today()
+    
+    if date_filter == 'arriving_soon':
+        # Groups arriving in the next 7 days
+        next_week = today + timedelta(days=7)
+        groups = groups.filter(
+            arrival_date__gte=today,
+            arrival_date__lte=next_week
+        )
+    elif date_filter == 'currently_here':
+        # Groups currently staying (arrival date passed, departure date not yet reached)
+        groups = groups.filter(
+            arrival_date__lte=today,
+            departure_date__gte=today
+        )
+    elif date_filter == 'departing_soon':
+        # Groups departing in the next 7 days
+        next_week = today + timedelta(days=7)
+        groups = groups.filter(
+            departure_date__gte=today,
+            departure_date__lte=next_week
+        )
+    elif date_filter == 'past_groups':
+        # Groups that have already departed
+        groups = groups.filter(departure_date__lt=today)
+    
+    # Sorting
+    sort_by = request.GET.get('sort_by', '-created_at')
+    valid_sort_fields = [
+        'name', '-name', 'created_at', '-created_at', 
+        'arrival_date', '-arrival_date', 'country', '-country'
+    ]
+    
+    if sort_by in valid_sort_fields:
+        groups = groups.order_by(sort_by)
+    else:
+        groups = groups.order_by('-created_at')
+    
+    # Get country choices for the filter dropdown
+    country_choices = Customer.COUNTRY_CHOICES
+    
+    context = {
+        'groups': groups,
+        'country_choices': country_choices,
+        'search_query': search_query,
+    }
+    
+    return render(request, 'users/diving_groups_list.html', context)
 
 
 @login_required

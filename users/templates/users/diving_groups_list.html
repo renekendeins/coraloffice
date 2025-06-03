@@ -14,6 +14,95 @@
         <a href="{% url 'users:diving_center_dashboard' %}" class="btn" style="background: #6c757d;">Back to Dashboard</a>
     </div>
 
+    <!-- Filter and Sort Controls -->
+    <div class="filter-controls" style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
+        <form method="get" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; align-items: end;">
+            <div>
+                <label for="search" style="display: block; margin-bottom: 5px; font-weight: bold;">Search:</label>
+                <input type="text" id="search" name="search" value="{{ request.GET.search }}" 
+                       placeholder="Group name, contact person..." 
+                       style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+            </div>
+            
+            <div>
+                <label for="country" style="display: block; margin-bottom: 5px; font-weight: bold;">Country:</label>
+                <select name="country" id="country" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    <option value="">All Countries</option>
+                    {% for code, name in country_choices %}
+                        <option value="{{ code }}" {% if request.GET.country == code %}selected{% endif %}>
+                            {{ name }}
+                        </option>
+                    {% endfor %}
+                </select>
+            </div>
+            
+            <div>
+                <label for="date_filter" style="display: block; margin-bottom: 5px; font-weight: bold;">Date Filter:</label>
+                <select name="date_filter" id="date_filter" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    <option value="">All Groups</option>
+                    <option value="arriving_soon" {% if request.GET.date_filter == 'arriving_soon' %}selected{% endif %}>
+                        Arriving Soon (Next 7 days)
+                    </option>
+                    <option value="currently_here" {% if request.GET.date_filter == 'currently_here' %}selected{% endif %}>
+                        Currently Here
+                    </option>
+                    <option value="departing_soon" {% if request.GET.date_filter == 'departing_soon' %}selected{% endif %}>
+                        Departing Soon (Next 7 days)
+                    </option>
+                    <option value="past_groups" {% if request.GET.date_filter == 'past_groups' %}selected{% endif %}>
+                        Past Groups
+                    </option>
+                </select>
+            </div>
+            
+            <div>
+                <label for="sort_by" style="display: block; margin-bottom: 5px; font-weight: bold;">Sort By:</label>
+                <select name="sort_by" id="sort_by" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    <option value="-created_at" {% if request.GET.sort_by == '-created_at' %}selected{% endif %}>
+                        Newest First
+                    </option>
+                    <option value="created_at" {% if request.GET.sort_by == 'created_at' %}selected{% endif %}>
+                        Oldest First
+                    </option>
+                    <option value="name" {% if request.GET.sort_by == 'name' %}selected{% endif %}>
+                        Name A-Z
+                    </option>
+                    <option value="-name" {% if request.GET.sort_by == '-name' %}selected{% endif %}>
+                        Name Z-A
+                    </option>
+                    <option value="arrival_date" {% if request.GET.sort_by == 'arrival_date' %}selected{% endif %}>
+                        Arrival Date (Earliest)
+                    </option>
+                    <option value="-arrival_date" {% if request.GET.sort_by == '-arrival_date' %}selected{% endif %}>
+                        Arrival Date (Latest)
+                    </option>
+                    <option value="country" {% if request.GET.sort_by == 'country' %}selected{% endif %}>
+                        Country A-Z
+                    </option>
+                </select>
+            </div>
+            
+            <div style="display: flex; gap: 10px;">
+                <button type="submit" class="btn" style="background: #007bff; padding: 8px 16px;">
+                    Apply Filters
+                </button>
+                <a href="{% url 'users:diving_groups_list' %}" class="btn" style="background: #6c757d; padding: 8px 16px; text-decoration: none; color: white;">
+                    Clear
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Results Summary -->
+    {% if groups %}
+        <div style="margin-bottom: 20px; padding: 10px; background: #e3f2fd; border-radius: 4px;">
+            <strong>{{ groups|length }} group{{ groups|length|pluralize }} found</strong>
+            {% if request.GET.search or request.GET.country or request.GET.date_filter %}
+                (filtered results)
+            {% endif %}
+        </div>
+    {% endif %}
+
     {% if groups %}
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 20px;">
             {% for group in groups %}
