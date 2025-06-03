@@ -122,6 +122,19 @@ class CustomerDiveActivityForm(forms.ModelForm):
             self.fields['customer'].queryset = self.fields['customer'].queryset.exclude(
                 id__in=already_participating)
 
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        
+        # Automatically set equipment needs if course includes material
+        if instance.course and instance.course.includes_material:
+            instance.needs_wetsuit = True
+            instance.needs_bcd = True
+            instance.needs_regulator = True
+        
+        if commit:
+            instance.save()
+        return instance
+
 class QuickUpdateParticipantForm(forms.ModelForm):
     class Meta:
         model = CustomerDiveActivity

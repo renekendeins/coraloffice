@@ -530,14 +530,26 @@ def manage_dive_participants(request, dive_id):
                         if not CustomerDiveActivity.objects.filter(dive_schedule=dive, customer=member.customer).exists():
                             # Use customer's default tank size or form value
                             tank_size = member.customer.default_tank_size or form.cleaned_data['tank_size']
+                            
+                            # Auto-set equipment needs if course includes material
+                            course = form.cleaned_data['course']
+                            needs_wetsuit = form.cleaned_data['needs_wetsuit']
+                            needs_bcd = form.cleaned_data['needs_bcd']
+                            needs_regulator = form.cleaned_data['needs_regulator']
+                            
+                            if course and course.includes_material:
+                                needs_wetsuit = True
+                                needs_bcd = True
+                                needs_regulator = True
+                            
                             CustomerDiveActivity.objects.create(
                                 customer=member.customer,
                                 dive_schedule=dive,
-                                course=form.cleaned_data['course'],
+                                course=course,
                                 tank_size=tank_size,
-                                needs_wetsuit=form.cleaned_data['needs_wetsuit'],
-                                needs_bcd=form.cleaned_data['needs_bcd'],
-                                needs_regulator=form.cleaned_data['needs_regulator'],
+                                needs_wetsuit=needs_wetsuit,
+                                needs_bcd=needs_bcd,
+                                needs_regulator=needs_regulator,
                                 needs_guide=form.cleaned_data['needs_guide'],
                                 needs_insurance=form.cleaned_data['needs_insurance'],
                             )
@@ -550,6 +562,13 @@ def manage_dive_participants(request, dive_id):
                     # Use customer's default tank size if not specified
                     if not participant.tank_size and participant.customer.default_tank_size:
                         participant.tank_size = participant.customer.default_tank_size
+                    
+                    # Auto-set equipment needs if course includes material
+                    if participant.course and participant.course.includes_material:
+                        participant.needs_wetsuit = True
+                        participant.needs_bcd = True
+                        participant.needs_regulator = True
+                    
                     participant.save()
                     messages.success(request, 'Participant added to dive!')
                 return redirect('users:manage_dive_participants', dive_id=dive.id)
@@ -943,14 +962,25 @@ def manage_group_members(request, group_id):
                         ).exists():
                             # Use customer's default tank size
                             member_tank_size = member.customer.default_tank_size
+                            
+                            # Auto-set equipment needs if course includes material
+                            final_needs_wetsuit = needs_wetsuit
+                            final_needs_bcd = needs_bcd
+                            final_needs_regulator = needs_regulator
+                            
+                            if course and course.includes_material:
+                                final_needs_wetsuit = True
+                                final_needs_bcd = True
+                                final_needs_regulator = True
+                            
                             CustomerDiveActivity.objects.create(
                                 customer=member.customer,
                                 dive_schedule=dive,
                                 course=course,
                                 tank_size=member_tank_size,
-                                needs_wetsuit=needs_wetsuit,
-                                needs_bcd=needs_bcd,
-                                needs_regulator=needs_regulator,
+                                needs_wetsuit=final_needs_wetsuit,
+                                needs_bcd=final_needs_bcd,
+                                needs_regulator=final_needs_regulator,
                                 needs_guide=needs_guide,
                                 needs_insurance=needs_insurance,
                             )
@@ -1547,21 +1577,38 @@ def schedule_course_session(request, session_id):
             session.assistant_instructors.set(assistant_instructors)
 
             # Create CustomerDiveActivity for this course session using the enrollment's actual course
+            defaults = {
+                'course': session.enrollment.course,  # Use the actual course from enrollment
+                'course_session': session,
+                'assigned_staff': instructor,
+                'tank_size': session.enrollment.customer.default_tank_size,
+            }
+            
+            # Auto-set equipment needs if course includes material
+            if session.enrollment.course.includes_material:
+                defaults.update({
+                    'needs_wetsuit': True,
+                    'needs_bcd': True,
+                    'needs_regulator': True,
+                })
+            
             customer_dive_activity, created = CustomerDiveActivity.objects.get_or_create(
                 customer=session.enrollment.customer,
                 dive_schedule=dive_schedule,
-                defaults={
-                    'course': session.enrollment.course,  # Use the actual course from enrollment
-                    'course_session': session,
-                    'assigned_staff': instructor,
-                    'tank_size': session.enrollment.customer.default_tank_size,
-                }
+                defaults=defaults
             )
 
             if not created:
                 customer_dive_activity.course = session.enrollment.course  # Update to use enrollment course
                 customer_dive_activity.course_session = session
                 customer_dive_activity.assigned_staff = instructor
+                
+                # Auto-set equipment needs if course includes material
+                if session.enrollment.course.includes_material:
+                    customer_dive_activity.needs_wetsuit = True
+                    customer_dive_activity.needs_bcd = True
+                    customer_dive_activity.needs_regulator = True
+                
                 customer_dive_activity.save()
 
             # Update enrollment status if needed
