@@ -3,63 +3,65 @@
 {% block users_title %}Schedule Course Lesson - CoralOffice{% endblock %}
 
 {% block users_content %}
-<h2>Programar sesión</h2>
-<h3>{{ session.enrollment.course.name }} - Lesson {{ session.session_number }}</h3>
-<h4>Student: {{ session.enrollment.customer.get_full_name }}</h4>
+<div class="p-3">
+    <h2>Programar sesión</h2>
+    <h3>{{ session.enrollment.course.name }} - Lesson {{ session.session_number }}</h3>
+    <h4>Estudiante: {{ session.enrollment.customer.get_full_name }}</h4>
 
-<div class="session-info">
-    <p><strong>Lesson Title:</strong> {{ session.title }}</p>
-    <p><strong>Lesson Type:</strong> {{ session.get_session_type_display }}</p>
-    <p><strong>Current Status:</strong> 
-        <span class="status-badge status-{{ session.status|lower }}">{{ session.get_status_display }}</span>
-    </p>
-    {% if session.description %}
-        <p><strong>Description:</strong> {{ session.description }}</p>
-    {% endif %}
-    {% if session.skills_covered %}
-        <p><strong>Skills to Cover:</strong> {{ session.skills_covered }}</p>
-    {% endif %}
-    {% if session.dive_schedule %}
-        <p><strong>Currently Scheduled:</strong> {{ session.dive_schedule.dive_site.name }} on {{ session.dive_schedule.date|date:"M d, Y" }} at {{ session.dive_schedule.time|time:"H:i" }}</p>
-    {% endif %}
+    <div class="session-info">
+        <p><strong>Título de la lección:</strong> {{ session.title }}</p>
+        <p><strong>Tipo de sesión:</strong> {{ session.get_session_type_display }}</p>
+        <p><strong>Estado actual:</strong> 
+            <span class="status-badge status-{{ session.status|lower }}">{{ session.get_status_display }}</span>
+        </p>
+        {% if session.description %}
+            <p><strong>Descripción:</strong> {{ session.description }}</p>
+        {% endif %}
+        {% if session.skills_covered %}
+            <p><strong>Hablidades a repasar:</strong> {{ session.skills_covered }}</p>
+        {% endif %}
+        {% if session.dive_schedule %}
+            <p><strong>Programado para:</strong> {{ session.dive_schedule.dive_site.name }} on {{ session.dive_schedule.date|date:"M d, Y" }} at {{ session.dive_schedule.time|time:"H:i" }}</p>
+        {% endif %}
+    </div>
+
+    <form method="post" class="scheduling-form">
+        {% csrf_token %}
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="{{ form.dive_schedule.id_for_label }}">Espacios disponibles:</label>
+                {{ form.dive_schedule }}
+                <small class="help-text">{{ form.dive_schedule.help_text }}</small>
+            </div>
+
+            <div class="form-group">
+                <label for="{{ form.instructor.id_for_label }}">Instructor principal:</label>
+                {{ form.instructor }}
+                <small class="help-text">{{ form.instructor.help_text }}</small>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Asistentes:</label>
+            {{ form.assistant_instructors }}
+            <small class="help-text">{{ form.assistant_instructors.help_text }}</small>
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.instructor_notes.id_for_label }}">Notas de la lección:</label>
+            {{ form.instructor_notes }}
+            <small class="help-text">{{ form.instructor_notes.help_text }}</small>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn" style="background-color: #28a745;">
+                {% if session.status == 'NOT_SCHEDULED' %}Programar sesión{% else %}Actualizar sesión{% endif %}
+            </button>
+            <a href="{% url 'users:enrollment_detail' session.enrollment.id %}" class="btn" style="background: #6c757d;">Cancelar</a>
+        </div>
+    </form>
 </div>
-
-<form method="post" class="scheduling-form">
-    {% csrf_token %}
-
-    <div class="form-row">
-        <div class="form-group">
-            <label for="{{ form.dive_schedule.id_for_label }}">Available Dive Slots:</label>
-            {{ form.dive_schedule }}
-            <small class="help-text">{{ form.dive_schedule.help_text }}</small>
-        </div>
-
-        <div class="form-group">
-            <label for="{{ form.instructor.id_for_label }}">Primary Instructor:</label>
-            {{ form.instructor }}
-            <small class="help-text">{{ form.instructor.help_text }}</small>
-        </div>
-    </div>
-
-    <div class="form-group">
-        <label>Assistant Instructors:</label>
-        {{ form.assistant_instructors }}
-        <small class="help-text">{{ form.assistant_instructors.help_text }}</small>
-    </div>
-
-    <div class="form-group">
-        <label for="{{ form.instructor_notes.id_for_label }}">Lesson Notes:</label>
-        {{ form.instructor_notes }}
-        <small class="help-text">{{ form.instructor_notes.help_text }}</small>
-    </div>
-
-    <div class="form-actions">
-        <button type="submit" class="btn" style="background-color: #28a745;">
-            {% if session.status == 'NOT_SCHEDULED' %}Schedule Lesson{% else %}Update Lesson{% endif %}
-        </button>
-        <a href="{% url 'users:enrollment_detail' session.enrollment.id %}" class="btn" style="background: #6c757d;">Cancel</a>
-    </div>
-</form>
 
 <style>
 .session-info {

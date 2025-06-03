@@ -3,161 +3,162 @@
 {% block users_title %}{{ enrollment.course.name }} - {{ enrollment.customer.get_full_name }} - CoralOffice{% endblock %}
 
 {% block users_content %}
-<h2>{{ enrollment.course.name }}</h2>
-<h3>Student: {{ enrollment.customer.get_full_name }}</h3>
+<div class="p-3">
+    <h2>{{ enrollment.course.name }}</h2>
+    <h3>Student: {{ enrollment.customer.get_full_name }}</h3>
 
-<div class="enrollment-info">
-    <div class="info-card">
-        <h4>Información del curso</h4>
-        <p><strong>Curso:</strong> {{ enrollment.course.get_course_type_display }}</p>
-        <p><strong>Número de sesiones:</strong> {{ enrollment.course.total_dives }}</p>
-        <p><strong>Instructor:</strong> {{ enrollment.instructor.get_full_name|default:"Not assigned" }}</p>
-        <p><strong>Estado del curso:</strong> 
-            <span class="status-badge status-{{ enrollment.status|lower }}">
-                {{ enrollment.get_status_display }}
-            </span>
-        </p>
-        <p><strong>Progreso:</strong> {{ enrollment.get_completed_dives }}/{{ enrollment.course.total_dives }} dives completed</p>
-        <p><strong>Fecha de inscripción:</strong> {{ enrollment.enrollment_date|date:"F d, Y" }}</p>
-        {% if enrollment.completion_date %}
-            <p><strong>Fecha de finalización:</strong> {{ enrollment.completion_date|date:"F d, Y" }}</p>
+    <div class="enrollment-info">
+        <div class="info-card">
+            <h4>Información del curso</h4>
+            <p><strong>Curso:</strong> {{ enrollment.course.get_course_type_display }}</p>
+            <p><strong>Número de sesiones:</strong> {{ enrollment.course.total_dives }}</p>
+            <p><strong>Instructor:</strong> {{ enrollment.instructor.get_full_name|default:"Not assigned" }}</p>
+            <p><strong>Estado del curso:</strong> 
+                <span class="status-badge status-{{ enrollment.status|lower }}">
+                    {{ enrollment.get_status_display }}
+                </span>
+            </p>
+            <p><strong>Progreso:</strong> {{ enrollment.get_completed_dives }}/{{ enrollment.course.total_dives }} dives completed</p>
+            <p><strong>Fecha de inscripción:</strong> {{ enrollment.enrollment_date|date:"F d, Y" }}</p>
+            {% if enrollment.completion_date %}
+                <p><strong>Fecha de finalización:</strong> {{ enrollment.completion_date|date:"F d, Y" }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <h4>Sesiones del curso</h4>
+    <div class="sessions-list">
+        {% for session in sessions %}
+            <div class="session-card">
+                <div class="session-header d-flex flex-column flex-md-row justify-content-md-between align-items-md-center">
+                    <h5>Sesión {{ session.session_number }}: {{ session.title }}</h5>
+                    <p class="status-badge status-{{ session.status|lower }}" style="padding: .25rem 0.5rem;
+                        margin-left: 10px; background-color: #cfcfcf; border-radius: 5px;">
+                        Estado: <b>{{ session.get_status_display }}</b>
+                    </p>
+                </div>
+
+                <div class="session-details">
+                    {% if session.dive_schedule %}
+                        <p><strong>Programado:</strong> {{ session.dive_schedule.date|date:"M d, Y" }} at {{ session.dive_schedule.time|time:"H:i" }}</p>
+                        <p><strong>Ubicación:</strong> {{ session.get_location_name }}</p>
+                    {% else %}
+                        <p style="color:red"><em>Sin programar</em></p>
+                    {% endif %}
+                    <p><strong>Sesión:</strong> {{ session.get_session_type_display }}</p>
+                    {% if session.instructor %}
+                        <p><strong>Instructor:</strong> {{ session.instructor.get_full_name }}</p>
+                    {% endif %}
+
+                    {% if session.assistant_instructors.exists %}
+                        <p><strong>Asistentes:</strong>
+                            {% for assistant in session.assistant_instructors.all %}
+                                {{ assistant.get_full_name }}{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </p>
+                    {% endif %}
+
+                    {% if session.description %}
+                        <p><strong>Descripción:</strong> {{ session.description }}</p>
+                    {% endif %}
+
+                    {% if session.skills_covered %}
+                        <p><strong>Habilidades a repasar:</strong> {{ session.skills_covered }}</p>
+                    {% endif %}
+
+                    {% if session.grade %}
+                        <p><strong>Nota final:</strong> {{ session.grade }}</p>
+                    {% endif %}
+
+                    {% if session.completion_date %}
+                        <p><strong>Finalizado el:</strong> {{ session.completion_date|date:"M d, Y H:i" }}</p>
+                    {% endif %}
+
+                    {% if session.instructor_notes %}
+                        <div class="instructor-notes">
+                            <strong>Notas del instructor:</strong>
+                            <p>{{ session.instructor_notes }}</p>
+                        </div>
+                    {% endif %}
+
+                    {% if session.student_feedback %}
+                        <div class="student-feedback">
+                            <strong>Student Feedback:</strong>
+                            <p>{{ session.student_feedback }}</p>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="session-actions">
+                    {% if session.status == 'NOT_SCHEDULED' %}
+                        <a href="{% url 'users:schedule_course_session' session.id %}" class="btn-small" style="background: #007bff;">Programar sesión</a>
+                    {% elif session.status == 'SCHEDULED' or session.status == 'IN_PROGRESS' %}
+                        <a href="{% url 'users:schedule_course_session' session.id %}" class="btn-small" style="background: #ffc107;">Reprogramar sesión</a>
+                        <a href="{% url 'users:complete_course_session' session.id %}" class="btn-small" style="background: #28a745;">Finalizado</a>
+                    {% elif session.status == 'COMPLETED' %}
+                        <a href="{% url 'users:complete_course_session' session.id %}" class="btn-small" style="background: #17a2b8;">View/Edit</a>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="enrollment-actions">
+        <a href="{% url 'users:course_enrollments' %}" class="btn" style="background: #6c757d;">← Back to Enrollments</a>
+        {% if enrollment.status == 'ENROLLED' or enrollment.status == 'IN_PROGRESS' %}
+            <a href="{% url 'users:course_lesson_calendar' %}" class="btn">View Calendar</a>
+            <button type="button" onclick="showAddExtraSessionModal()" class="btn" style="background: #28a745;">Add Extra Session</button>
         {% endif %}
     </div>
-</div>
 
-<h4>Sesiones del curso</h4>
-<div class="sessions-list">
-    {% for session in sessions %}
-        <div class="session-card">
-            <div class="session-header">
-                <h5>Sesion {{ session.session_number }}: {{ session.title }}</h5>
-                <span class="session-type"> - {{ session.get_session_type_display }}</span>
-                <p class="status-badge status-{{ session.status|lower }}" style="padding: .25rem 0.5rem;
-                    margin-left: 10px; background-color: #cfcfcf; border-radius: 5px;">
-                    Estado: <b>{{ session.get_status_display }}</b>
-                </p>
-            </div>
+    <!-- Add Extra Session Modal -->
+    <div id="extraSessionModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeExtraSessionModal()">&times;</span>
+            <h3>Add Extra Session</h3>
+            <p>Add an additional session for {{ enrollment.customer.get_full_name }} in {{ enrollment.course.name }}</p>
+            <form id="extra-session-form">
+                {% csrf_token %}
+                <input type="hidden" name="enrollment_id" value="{{ enrollment.id }}">
 
-            <div class="session-details">
-                {% if session.dive_schedule %}
-                    <p><strong>Scheduled:</strong> {{ session.dive_schedule.date|date:"M d, Y" }} at {{ session.dive_schedule.time|time:"H:i" }}</p>
-                    <p><strong>Location:</strong> {{ session.get_location_name }}</p>
-                {% else %}
-                    <p style="color:red"><em>Sin programar</em></p>
-                {% endif %}
-
-                {% if session.instructor %}
-                    <p><strong>Primary Instructor:</strong> {{ session.instructor.get_full_name }}</p>
-                {% endif %}
-
-                {% if session.assistant_instructors.exists %}
-                    <p><strong>Assistant Instructors:</strong>
-                        {% for assistant in session.assistant_instructors.all %}
-                            {{ assistant.get_full_name }}{% if not forloop.last %}, {% endif %}
-                        {% endfor %}
-                    </p>
-                {% endif %}
-
-                {% if session.description %}
-                    <p><strong>Descripción:</strong> {{ session.description }}</p>
-                {% endif %}
-
-                {% if session.skills_covered %}
-                    <p><strong>Habilidades a repasar:</strong> {{ session.skills_covered }}</p>
-                {% endif %}
-
-                {% if session.grade %}
-                    <p><strong>Nota final:</strong> {{ session.grade }}</p>
-                {% endif %}
-
-                {% if session.completion_date %}
-                    <p><strong>Finalizado el:</strong> {{ session.completion_date|date:"M d, Y H:i" }}</p>
-                {% endif %}
-
-                {% if session.instructor_notes %}
-                    <div class="instructor-notes">
-                        <strong>Notas del instructor:</strong>
-                        <p>{{ session.instructor_notes }}</p>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="extra_session_number">Session Number:</label>
+                        <input type="number" id="extra_session_number" name="session_number" min="1" required class="form-control">
                     </div>
-                {% endif %}
-
-                {% if session.student_feedback %}
-                    <div class="student-feedback">
-                        <strong>Student Feedback:</strong>
-                        <p>{{ session.student_feedback }}</p>
+                    <div class="form-group">
+                        <label for="extra_session_type">Session Type:</label>
+                        <select id="extra_session_type" name="session_type" required class="form-control">
+                            <option value="THEORY">Theory Session</option>
+                            <option value="POOL">Pool Dive</option>
+                            <option value="OPEN_WATER">Open Water Dive</option>
+                            <option value="EXAM">Exam</option>
+                            <option value="PRACTICAL">Practical Skills</option>
+                        </select>
                     </div>
-                {% endif %}
-            </div>
+                </div>
 
-            <div class="session-actions">
-                {% if session.status == 'NOT_SCHEDULED' %}
-                    <a href="{% url 'users:schedule_course_session' session.id %}" class="btn-small" style="background: #007bff;">Programar sesión</a>
-                {% elif session.status == 'SCHEDULED' or session.status == 'IN_PROGRESS' %}
-                    <a href="{% url 'users:schedule_course_session' session.id %}" class="btn-small" style="background: #ffc107;">Reprogramar sesión</a>
-                    <a href="{% url 'users:complete_course_session' session.id %}" class="btn-small" style="background: #28a745;">Finalizado</a>
-                {% elif session.status == 'COMPLETED' %}
-                    <a href="{% url 'users:complete_course_session' session.id %}" class="btn-small" style="background: #17a2b8;">View/Edit</a>
-                {% endif %}
-            </div>
+                <div class="form-group">
+                    <label for="extra_title">Session Title:</label>
+                    <input type="text" id="extra_title" name="title" required class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label for="extra_description">Description:</label>
+                    <textarea id="extra_description" name="description" rows="3" class="form-control"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="extra_skills_covered">Skills Covered:</label>
+                    <textarea id="extra_skills_covered" name="skills_covered" rows="2" class="form-control"></textarea>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="submit" class="btn">Add Session</button>
+                    <button type="button" onclick="closeExtraSessionModal()" class="btn" style="background: #6c757d;">Cancel</button>
+                </div>
+            </form>
         </div>
-    {% endfor %}
-</div>
-
-<div class="enrollment-actions">
-    <a href="{% url 'users:course_enrollments' %}" class="btn" style="background: #6c757d;">← Back to Enrollments</a>
-    {% if enrollment.status == 'ENROLLED' or enrollment.status == 'IN_PROGRESS' %}
-        <a href="{% url 'users:course_lesson_calendar' %}" class="btn">View Calendar</a>
-        <button type="button" onclick="showAddExtraSessionModal()" class="btn" style="background: #28a745;">Add Extra Session</button>
-    {% endif %}
-</div>
-
-<!-- Add Extra Session Modal -->
-<div id="extraSessionModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeExtraSessionModal()">&times;</span>
-        <h3>Add Extra Session</h3>
-        <p>Add an additional session for {{ enrollment.customer.get_full_name }} in {{ enrollment.course.name }}</p>
-        <form id="extra-session-form">
-            {% csrf_token %}
-            <input type="hidden" name="enrollment_id" value="{{ enrollment.id }}">
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="extra_session_number">Session Number:</label>
-                    <input type="number" id="extra_session_number" name="session_number" min="1" required class="form-control">
-                </div>
-                <div class="form-group">
-                    <label for="extra_session_type">Session Type:</label>
-                    <select id="extra_session_type" name="session_type" required class="form-control">
-                        <option value="THEORY">Theory Session</option>
-                        <option value="POOL">Pool Dive</option>
-                        <option value="OPEN_WATER">Open Water Dive</option>
-                        <option value="EXAM">Exam</option>
-                        <option value="PRACTICAL">Practical Skills</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="extra_title">Session Title:</label>
-                <input type="text" id="extra_title" name="title" required class="form-control">
-            </div>
-
-            <div class="form-group">
-                <label for="extra_description">Description:</label>
-                <textarea id="extra_description" name="description" rows="3" class="form-control"></textarea>
-            </div>
-
-            <div class="form-group">
-                <label for="extra_skills_covered">Skills Covered:</label>
-                <textarea id="extra_skills_covered" name="skills_covered" rows="2" class="form-control"></textarea>
-            </div>
-
-            <div class="modal-actions">
-                <button type="submit" class="btn">Add Session</button>
-                <button type="button" onclick="closeExtraSessionModal()" class="btn" style="background: #6c757d;">Cancel</button>
-            </div>
-        </form>
     </div>
 </div>
 

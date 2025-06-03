@@ -164,14 +164,21 @@ class InventoryItemForm(forms.ModelForm):
         }
 
 class DivingGroupForm(forms.ModelForm):
+    name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+    country = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+    contact_person = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+    email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control'}))
+    phone = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+    description = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3}), required=False)
+    arrival_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}))
+    departure_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}))
+
     class Meta:
         model = DivingGroup
-        fields = ('name', 'country', 'contact_person', 'email', 'phone', 'description', 'arrival_date', 'departure_date')
-        widgets = {
-            'description': forms.Textarea(attrs={'rows': 3}),
-            'arrival_date': forms.DateInput(attrs={'type': 'date'}),
-            'departure_date': forms.DateInput(attrs={'type': 'date'}),
-        }
+        fields = (
+            'name', 'country', 'contact_person', 'email',
+            'phone', 'description', 'arrival_date', 'departure_date'
+        )
 
 class QuickCustomerForm(forms.ModelForm):
     """Simplified form for quickly adding customers in group management"""
@@ -243,14 +250,29 @@ class MedicalForm(forms.ModelForm):
 
 
 class CourseForm(forms.ModelForm):
+    name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
+    course_type = forms.ChoiceField(choices=Course.COURSE_TYPE_CHOICES, widget=forms.Select(attrs={'class': 'form-control'}))
+    description = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3}))
+    total_dives = forms.IntegerField(widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    duration_days = forms.IntegerField(widget=forms.NumberInput(attrs={'class': 'form-control'}))
+    price = forms.DecimalField(decimal_places=2, widget=forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}))
+    prerequisites = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 2}), required=False)
+    is_active = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
+    just_one_dive = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
+    includes_material = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
+    includes_instructor = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
+    includes_insurance = forms.BooleanField(required=False, widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}))
+
     class Meta:
         model = Course
-        fields = ['name', 'course_type', 'description', 'total_dives', 'duration_days', 'price', 'prerequisites', 'is_active', 'just_one_dive', 'includes_material', 'includes_instructor', 'includes_insurance']
-        widgets = {
-            'description': forms.Textarea(attrs={'rows': 3}),
-            'prerequisites': forms.Textarea(attrs={'rows': 2}),
-            'price': forms.NumberInput(attrs={'step': '0.01'}),
-        }
+        fields = [
+            'name', 'course_type', 'description', 'total_dives', 'duration_days',
+            'price', 'prerequisites', 'is_active', 'just_one_dive',
+            'includes_material', 'includes_instructor', 'includes_insurance'
+        ]
+
+
+
 
 class CourseEnrollmentForm(forms.ModelForm):
     class Meta:

@@ -391,13 +391,17 @@ class Staff(models.Model):
         ('INSTRUCTOR', 'Instructor'),
         ('SENIOR_INSTRUCTOR', 'Senior Instructor'),
         ('MASTER_INSTRUCTOR', 'Master Instructor'),
-        ('COURSE_DIRECTOR', 'Course Director'),
+        ('COURSE_DIRECTOR', 'Course Director'),        
+        ('SKIPPER', 'Marinero'),        
+        ('DRIVER', 'Patrón'),
+
+
     ]
     
     STATUS_CHOICES = [
-        ('ACTIVE', 'Active'),
-        ('INACTIVE', 'Inactive'),
-        ('ON_LEAVE', 'On Leave'),
+        ('ACTIVE', 'Activo'),
+        ('INACTIVE', 'Inactivo'),
+        ('ON_LEAVE', 'Ausente'),
     ]
     
     diving_center = models.ForeignKey(User, on_delete=models.CASCADE, related_name='staff_members')
@@ -478,11 +482,11 @@ class Course(models.Model):
 
 class CourseEnrollment(models.Model):
     STATUS_CHOICES = [
-        ('ENROLLED', 'Enrolled'),
-        ('IN_PROGRESS', 'In Progress'),
-        ('COMPLETED', 'Completed'),
-        ('CANCELLED', 'Cancelled'),
-        ('ON_HOLD', 'On Hold'),
+        ('ENROLLED', 'Inscritp'),
+        ('IN_PROGRESS', 'En progrso'),
+        ('COMPLETED', 'Completado'),
+        ('CANCELLED', 'Cancelado'),
+        ('ON_HOLD', 'En espera'),
     ]
     
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='course_enrollments')
@@ -575,20 +579,20 @@ class CourseEnrollment(models.Model):
 
 class CourseSession(models.Model):
     SESSION_TYPE_CHOICES = [
-        ('THEORY', 'Theory Session'),
-        ('POOL', 'Pool Dive'),
-        ('OPEN_WATER', 'Open Water Dive'),
-        ('EXAM', 'Exam'),
-        ('PRACTICAL', 'Practical Skills'),
+        ('THEORY', 'Sesión teórica'),
+        ('POOL', 'Aguas Confinadas'),
+        ('OPEN_WATER', 'Aguas Abiertas'),
+        ('EXAM', 'Examen'),
+        ('PRACTICAL', 'Habilidades'),
     ]
     
     STATUS_CHOICES = [
-        ('NOT_SCHEDULED', 'Not Scheduled'),
-        ('SCHEDULED', 'Scheduled'),
-        ('IN_PROGRESS', 'In Progress'),
-        ('COMPLETED', 'Completed'),
-        ('CANCELLED', 'Cancelled'),
-        ('RESCHEDULED', 'Rescheduled'),
+        ('NOT_SCHEDULED', 'Sin pogramar'),
+        ('SCHEDULED', 'Programado'),
+        ('IN_PROGRESS', 'En progrso'),
+        ('COMPLETED', 'Completado'),
+        ('CANCELLED', 'Cancelado'),
+        ('RESCHEDULED', 'Reprogramado'),
     ]
     
     enrollment = models.ForeignKey(CourseEnrollment, on_delete=models.CASCADE, related_name='course_sessions', null=True, blank=True)

@@ -14,304 +14,306 @@
         width: 100%;
     }
 </style>
-<h2>Manage Members - {{ group.name }}</h2>
+<div class="p-3">
+    <h2>Manage Members - {{ group.name }}</h2>
 
-<div style="margin-bottom: 20px;">
-    <a href="{% url 'users:diving_groups_list' %}" class="btn" style="background: #6c757d;">Back to Groups</a>
-</div>
-
-<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
-    <!-- Current Members -->
-    <div>
-        <h3>Current Members ({{ members.count }})</h3>
-        {% if members %}
-            {% for member in members %}
-            <div class="participant-card" style="display: flex; justify-content: space-between; align-items: center;">
-                <div style="display: flex; align-items: start; gap: 15px;">
-                    <div style="flex-shrink: 0;">
-                        {% if member.customer.profile_picture %}
-                            <img src="{{ member.customer.profile_picture.url }}" alt="{{ member.customer.first_name }}" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
-                        {% else %}
-                            <div style="width: 50px; height: 50px; border-radius: 50%; background: #ddd; display: flex; align-items: center; justify-content: center; color: #666;">
-                                {{ member.customer.first_name.0 }}{{ member.customer.last_name.0 }}
-                            </div>
-                        {% endif %}
-                    </div>
-                    <div>
-                        <h4>{{ member.customer.first_name }} {{ member.customer.last_name }}</h4>
-                    <p>{{ member.customer.email }}</p>
-                    <p><strong>Certification:</strong> {{ member.customer.get_certification_level_display }}</p>
-                    <p><strong>Tank Size:</strong> <span id="tank-size-{{ member.customer.id }}">{{ member.customer.default_tank_size }}</span></p>
-                    <p><strong>Equipment Sizes:</strong> Wetsuit: <span id="wetsuit-size-{{ member.customer.id }}">{{ member.customer.get_wetsuit_size }}</span>, BCD: <span id="bcd-size-{{ member.customer.id }}">{{ member.customer.get_bcd_size }}</span>, Fins: <span id="fins-size-{{ member.customer.id }}">{{ member.customer.get_fins_size }}</span></p>
-                    {% if member.is_leader %}
-                        <span style="background-color: #ff9800; color: white; padding: 2px 6px; border-radius: 3px; font-size: 12px;">Group Leader</span>
-                    {% endif %}
-                    <div style="margin-top: 10px;">
-                        <button type="button" onclick="showQuickEdit({{ member.customer.id }})" class="btn" style="background: #007bff; color: white; padding: 5px 10px; font-size: 12px; margin-right: 5px;">Quick Edit</button>
-                        {% if not member.is_leader %}
-                        <form method="post" style="display: inline;">
-                            {% csrf_token %}
-                            <input type="hidden" name="member_id" value="{{ member.id }}">
-                            <button type="submit" name="set_leader" class="btn" style="background: #ff9800; color: white; padding: 5px 10px; font-size: 12px;">Set as Leader</button>
-                        </form>
-                        {% endif %}
-                        <form method="post" style="margin: 0; display: inline;">
-                            {% csrf_token %}
-                            <input type="hidden" name="member_id" value="{{ member.id }}">
-                            <button type="submit" name="remove_member" class="btn" style="background: #f44336; padding: 5px 10px; font-size: 12px;">Remove</button>
-                        </form>
-                    </div>
-                    
-                    <!-- Quick Edit Form (Hidden by default) -->
-                    <div id="quick-edit-{{ member.customer.id }}" style="display: none; margin-top: 15px; padding: 15px; border: 1px solid #ddd; border-radius: 5px; background: #f9f9f9;">
-                        <form id="quick-edit-form-{{ member.customer.id }}" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                            <div>
-                                <label><strong>Tank Size:</strong></label>
-                                <select name="default_tank_size" class="form-control">
-                                    <option value="10L" {% if member.customer.default_tank_size == '10L' %}selected{% endif %}>10 Liters</option>
-                                    <option value="12L" {% if member.customer.default_tank_size == '12L' %}selected{% endif %}>12 Liters</option>
-                                    <option value="EAN12L" {% if member.customer.default_tank_size == 'EAN12L' %}selected{% endif %}>Nitrox 12 Liters</option>
-                                    <option value="15L" {% if member.customer.default_tank_size == '15L' %}selected{% endif %}>15 Liters</option>
-                                    <option value="EAN15L" {% if member.customer.default_tank_size == 'EAN15L' %}selected{% endif %}>Nitrox 15 Liters</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label><strong>Weight (kg):</strong></label>
-                                <input type="number" name="weight" value="{{ member.customer.weight }}" step="0.1" class="form-control">
-                            </div>
-                            <div>
-                                <label><strong>Height (cm):</strong></label>
-                                <input type="number" name="height" value="{{ member.customer.height }}" step="0.1" class="form-control">
-                            </div>
-                            <div>
-                                <label><strong>Foot Size (EU):</strong></label>
-                                <input type="number" name="foot_size" value="{{ member.customer.foot_size }}" step="0.5" class="form-control">
-                            </div>
-                            <div style="grid-column: span 2;">
-                                <button type="button" onclick="saveQuickEdit({{ member.customer.id }})" class="btn" style="background: #28a745; color: white; margin-right: 10px;">Save Changes</button>
-                                <button type="button" onclick="hideQuickEdit({{ member.customer.id }})" class="btn" style="background: #6c757d; color: white;">Cancel</button>
-                            </div>
-                        </form>
-                    </div>
-                    </div>
-                </div>
-                
-            </div>
-            {% endfor %}
-        {% else %}
-            <p>No members in this group yet.</p>
-        {% endif %}
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'users:diving_groups_list' %}" class="btn" style="background: #6c757d;">Back to Groups</a>
     </div>
 
-    <!-- Add Members -->
-    <div>
-        <h3>Add Members</h3>
-        <br>
-        <!-- Add Existing Customer -->
-            {% if available_customers %}
-            <div style="background: #fff; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
-                <h4>Add Existing Customer</h4>
-                <form method="post" style="margin-bottom: 5px;">
-                    {% csrf_token %}
-                    <div style="display: flex; gap: 10px; align-items: end;">
-                        <div style="flex: 1; position: relative;">
-                            <input type="text" id="member-search" placeholder="Start typing customer name..." autocomplete="off" class="form-control">
-                            <div id="member-suggestions" class="search-suggestions" style="border: 1px solid #ddd; max-height: 200px; overflow-y: auto; position: absolute; background: white; width: 100%; z-index: 100; display: none;"></div>
-                            <select name="customer_id" id="customer-select" class="form-control" style="display: none;">
-                                <option value="">Select a customer</option>
-                                {% for customer in available_customers %}
-                                    <option value="{{ customer.id }}">{{ customer.first_name }} {{ customer.last_name }} ({{ customer.get_country_display }})</option>
-                                {% endfor %}
-                            </select>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+        <!-- Current Members -->
+        <div>
+            <h3>Current Members ({{ members.count }})</h3>
+            {% if members %}
+                {% for member in members %}
+                <div class="participant-card" style="display: flex; justify-content: space-between; align-items: center;">
+                    <div style="display: flex; align-items: start; gap: 15px;">
+                        <div style="flex-shrink: 0;">
+                            {% if member.customer.profile_picture %}
+                                <img src="{{ member.customer.profile_picture.url }}" alt="{{ member.customer.first_name }}" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
+                            {% else %}
+                                <div style="width: 50px; height: 50px; border-radius: 50%; background: #ddd; display: flex; align-items: center; justify-content: center; color: #666;">
+                                    {{ member.customer.first_name.0 }}{{ member.customer.last_name.0 }}
+                                </div>
+                            {% endif %}
                         </div>
-                        <button type="submit" name="add_member" class="btn">Add Member</button>
+                        <div>
+                            <h4>{{ member.customer.first_name }} {{ member.customer.last_name }}</h4>
+                        <p>{{ member.customer.email }}</p>
+                        <p><strong>Certification:</strong> {{ member.customer.get_certification_level_display }}</p>
+                        <p><strong>Tank Size:</strong> <span id="tank-size-{{ member.customer.id }}">{{ member.customer.default_tank_size }}</span></p>
+                        <p><strong>Equipment Sizes:</strong> Wetsuit: <span id="wetsuit-size-{{ member.customer.id }}">{{ member.customer.get_wetsuit_size }}</span>, BCD: <span id="bcd-size-{{ member.customer.id }}">{{ member.customer.get_bcd_size }}</span>, Fins: <span id="fins-size-{{ member.customer.id }}">{{ member.customer.get_fins_size }}</span></p>
+                        {% if member.is_leader %}
+                            <span style="background-color: #ff9800; color: white; padding: 2px 6px; border-radius: 3px; font-size: 12px;">Group Leader</span>
+                        {% endif %}
+                        <div style="margin-top: 10px;">
+                            <button type="button" onclick="showQuickEdit({{ member.customer.id }})" class="btn" style="background: #007bff; color: white; padding: 5px 10px; font-size: 12px; margin-right: 5px;">Quick Edit</button>
+                            {% if not member.is_leader %}
+                            <form method="post" style="display: inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="member_id" value="{{ member.id }}">
+                                <button type="submit" name="set_leader" class="btn" style="background: #ff9800; color: white; padding: 5px 10px; font-size: 12px;">Set as Leader</button>
+                            </form>
+                            {% endif %}
+                            <form method="post" style="margin: 0; display: inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="member_id" value="{{ member.id }}">
+                                <button type="submit" name="remove_member" class="btn" style="background: #f44336; padding: 5px 10px; font-size: 12px;">Remove</button>
+                            </form>
+                        </div>
+
+                        <!-- Quick Edit Form (Hidden by default) -->
+                        <div id="quick-edit-{{ member.customer.id }}" style="display: none; margin-top: 15px; padding: 15px; border: 1px solid #ddd; border-radius: 5px; background: #f9f9f9;">
+                            <form id="quick-edit-form-{{ member.customer.id }}" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                                <div>
+                                    <label><strong>Tank Size:</strong></label>
+                                    <select name="default_tank_size" class="form-control">
+                                        <option value="10L" {% if member.customer.default_tank_size == '10L' %}selected{% endif %}>10 Liters</option>
+                                        <option value="12L" {% if member.customer.default_tank_size == '12L' %}selected{% endif %}>12 Liters</option>
+                                        <option value="EAN12L" {% if member.customer.default_tank_size == 'EAN12L' %}selected{% endif %}>Nitrox 12 Liters</option>
+                                        <option value="15L" {% if member.customer.default_tank_size == '15L' %}selected{% endif %}>15 Liters</option>
+                                        <option value="EAN15L" {% if member.customer.default_tank_size == 'EAN15L' %}selected{% endif %}>Nitrox 15 Liters</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label><strong>Weight (kg):</strong></label>
+                                    <input type="number" name="weight" value="{{ member.customer.weight }}" step="0.1" class="form-control">
+                                </div>
+                                <div>
+                                    <label><strong>Height (cm):</strong></label>
+                                    <input type="number" name="height" value="{{ member.customer.height }}" step="0.1" class="form-control">
+                                </div>
+                                <div>
+                                    <label><strong>Foot Size (EU):</strong></label>
+                                    <input type="number" name="foot_size" value="{{ member.customer.foot_size }}" step="0.5" class="form-control">
+                                </div>
+                                <div style="grid-column: span 2;">
+                                    <button type="button" onclick="saveQuickEdit({{ member.customer.id }})" class="btn" style="background: #28a745; color: white; margin-right: 10px;">Save Changes</button>
+                                    <button type="button" onclick="hideQuickEdit({{ member.customer.id }})" class="btn" style="background: #6c757d; color: white;">Cancel</button>
+                                </div>
+                            </form>
+                        </div>
+                        </div>
+                    </div>
+
+                </div>
+                {% endfor %}
+            {% else %}
+                <p>No members in this group yet.</p>
+            {% endif %}
+        </div>
+
+        <!-- Add Members -->
+        <div>
+            <h3>Add Members</h3>
+            <br>
+            <!-- Add Existing Customer -->
+                {% if available_customers %}
+                <div style="background: #fff; padding: 20px; border: 1px solid #ddd; border-radius: 8px;">
+                    <h4>Add Existing Customer</h4>
+                    <form method="post" style="margin-bottom: 5px;">
+                        {% csrf_token %}
+                        <div style="display: flex; gap: 10px; align-items: end;">
+                            <div style="flex: 1; position: relative;">
+                                <input type="text" id="member-search" placeholder="Start typing customer name..." autocomplete="off" class="form-control">
+                                <div id="member-suggestions" class="search-suggestions" style="border: 1px solid #ddd; max-height: 200px; overflow-y: auto; position: absolute; background: white; width: 100%; z-index: 100; display: none;"></div>
+                                <select name="customer_id" id="customer-select" class="form-control" style="display: none;">
+                                    <option value="">Select a customer</option>
+                                    {% for customer in available_customers %}
+                                        <option value="{{ customer.id }}">{{ customer.first_name }} {{ customer.last_name }} ({{ customer.get_country_display }})</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <button type="submit" name="add_member" class="btn">Add Member</button>
+                        </div>
+                    </form>
+                </div>
+    <br>
+                <script>
+                // Customer search functionality for group members
+                const memberSearch = document.getElementById('member-search');
+                const customerSelectDropdown = document.getElementById('customer-select');
+                const memberSuggestionsDiv = document.getElementById('member-suggestions');
+
+                const availableCustomers = [
+                    {% for customer in available_customers %}
+                    {
+                        id: {{ customer.id }},
+                        name: "{{ customer.first_name }} {{ customer.last_name }}",
+                        country: "{{ customer.get_country_display }}",
+                        certification: "{{ customer.get_certification_level_display }}"
+                    },
+                    {% endfor %}
+                ];
+
+                memberSearch.addEventListener('input', function() {
+                    const query = this.value.toLowerCase();
+                    if (query.length < 2) {
+                        memberSuggestionsDiv.style.display = 'none';
+                        return;
+                    }
+
+                    const matches = availableCustomers.filter(customer => 
+                        customer.name.toLowerCase().includes(query)
+                    );
+
+                    if (matches.length > 0) {
+                        memberSuggestionsDiv.innerHTML = matches.map(customer => 
+                            `<div class="suggestion-item" data-value="${customer.id}" style="padding: 10px; cursor: pointer; border-bottom: 1px solid #eee;">
+                                <strong>${customer.name}</strong><br>
+                                <small>${customer.country} • ${customer.certification}</small>
+                            </div>`
+                        ).join('');
+                        memberSuggestionsDiv.style.display = 'block';
+                    } else {
+                        memberSuggestionsDiv.style.display = 'none';
+                    }
+                });
+
+                memberSuggestionsDiv.addEventListener('click', function(e) {
+                    const suggestionItem = e.target.closest('.suggestion-item');
+                    if (suggestionItem) {
+                        const customerId = suggestionItem.getAttribute('data-value');
+                        const customer = availableCustomers.find(c => c.id == customerId);
+
+                        customerSelectDropdown.value = customerId;
+                        memberSearch.value = customer.name;
+                        memberSuggestionsDiv.style.display = 'none';
+                    }
+                });
+
+                document.addEventListener('click', function(e) {
+                    if (!e.target.closest('form')) {
+                        memberSuggestionsDiv.style.display = 'none';
+                    }
+                });
+
+                // Quick Edit Functions
+                function showQuickEdit(customerId) {
+                    document.getElementById('quick-edit-' + customerId).style.display = 'block';
+                }
+
+                function hideQuickEdit(customerId) {
+                    document.getElementById('quick-edit-' + customerId).style.display = 'none';
+                }
+
+                function saveQuickEdit(customerId) {
+                    const form = document.getElementById('quick-edit-form-' + customerId);
+                    const formData = new FormData(form);
+
+                    fetch(`/users/quick-edit-customer/${customerId}/`, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Update the display values
+                            document.getElementById('tank-size-' + customerId).textContent = data.tank_size;
+                            document.getElementById('wetsuit-size-' + customerId).textContent = data.wetsuit_size;
+                            document.getElementById('bcd-size-' + customerId).textContent = data.bcd_size;
+                            document.getElementById('fins-size-' + customerId).textContent = data.fins_size;
+
+                            // Hide the edit form
+                            hideQuickEdit(customerId);
+
+                            // Show success message
+                            alert('Customer details updated successfully!');
+                        } else {
+                            alert('Error updating customer: ' + data.error);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error updating customer details');
+                    });
+                }
+                </script>
+            {% else %}
+                <p>All customers are already members of this group.</p>
+            {% endif %}
+
+            <!-- Quick Create New Customer -->
+            <div style="background: #f8f9fa; border: 1px solid #ddd; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                <h4>Create New Customer</h4>
+                <form method="post" style="display: flex;flex-direction: column;">
+                    {% csrf_token %}
+                        <label><strong>First Name:</strong></label>
+                        {{ quick_customer_form.first_name }}
+                        <br>
+                        <label><strong>Last Name:</strong></label>
+                        {{ quick_customer_form.last_name }}
+                        <br>
+                        <label><strong>Email:</strong></label>
+                        {{ quick_customer_form.email }}
+                        <br>
+                        <label><strong>Phone:</strong></label>
+                        {{ quick_customer_form.phone_number }}
+                        <br>
+                        <label><strong>Country:</strong></label>
+                        {{ quick_customer_form.country }}
+                        <br>
+                        <label><strong>Certification:</strong></label>
+                        {{ quick_customer_form.certification_level }}
+                        <br>
+                        <label><strong>Default Tank Size:</strong></label>
+                        {{ quick_customer_form.default_tank_size }}
+                        <br>
+                    <div style="grid-column: span 2;">
+                        <button type="submit" name="add_new_customer_to_group" class="btn" style="background: #28a745; color: white; padding: 10px 20px;">Create & Add to Group</button>
                     </div>
                 </form>
             </div>
-<br>
-            <script>
-            // Customer search functionality for group members
-            const memberSearch = document.getElementById('member-search');
-            const customerSelectDropdown = document.getElementById('customer-select');
-            const memberSuggestionsDiv = document.getElementById('member-suggestions');
 
-            const availableCustomers = [
-                {% for customer in available_customers %}
-                {
-                    id: {{ customer.id }},
-                    name: "{{ customer.first_name }} {{ customer.last_name }}",
-                    country: "{{ customer.get_country_display }}",
-                    certification: "{{ customer.get_certification_level_display }}"
-                },
-                {% endfor %}
-            ];
 
-            memberSearch.addEventListener('input', function() {
-                const query = this.value.toLowerCase();
-                if (query.length < 2) {
-                    memberSuggestionsDiv.style.display = 'none';
-                    return;
-                }
+        </div>
+    </div>
 
-                const matches = availableCustomers.filter(customer => 
-                    customer.name.toLowerCase().includes(query)
-                );
-
-                if (matches.length > 0) {
-                    memberSuggestionsDiv.innerHTML = matches.map(customer => 
-                        `<div class="suggestion-item" data-value="${customer.id}" style="padding: 10px; cursor: pointer; border-bottom: 1px solid #eee;">
-                            <strong>${customer.name}</strong><br>
-                            <small>${customer.country} • ${customer.certification}</small>
-                        </div>`
-                    ).join('');
-                    memberSuggestionsDiv.style.display = 'block';
-                } else {
-                    memberSuggestionsDiv.style.display = 'none';
-                }
-            });
-
-            memberSuggestionsDiv.addEventListener('click', function(e) {
-                const suggestionItem = e.target.closest('.suggestion-item');
-                if (suggestionItem) {
-                    const customerId = suggestionItem.getAttribute('data-value');
-                    const customer = availableCustomers.find(c => c.id == customerId);
-
-                    customerSelectDropdown.value = customerId;
-                    memberSearch.value = customer.name;
-                    memberSuggestionsDiv.style.display = 'none';
-                }
-            });
-
-            document.addEventListener('click', function(e) {
-                if (!e.target.closest('form')) {
-                    memberSuggestionsDiv.style.display = 'none';
-                }
-            });
-
-            // Quick Edit Functions
-            function showQuickEdit(customerId) {
-                document.getElementById('quick-edit-' + customerId).style.display = 'block';
-            }
-
-            function hideQuickEdit(customerId) {
-                document.getElementById('quick-edit-' + customerId).style.display = 'none';
-            }
-
-            function saveQuickEdit(customerId) {
-                const form = document.getElementById('quick-edit-form-' + customerId);
-                const formData = new FormData(form);
-
-                fetch(`/users/quick-edit-customer/${customerId}/`, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Update the display values
-                        document.getElementById('tank-size-' + customerId).textContent = data.tank_size;
-                        document.getElementById('wetsuit-size-' + customerId).textContent = data.wetsuit_size;
-                        document.getElementById('bcd-size-' + customerId).textContent = data.bcd_size;
-                        document.getElementById('fins-size-' + customerId).textContent = data.fins_size;
-
-                        // Hide the edit form
-                        hideQuickEdit(customerId);
-
-                        // Show success message
-                        alert('Customer details updated successfully!');
-                    } else {
-                        alert('Error updating customer: ' + data.error);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('Error updating customer details');
-                });
-            }
-            </script>
-        {% else %}
-            <p>All customers are already members of this group.</p>
-        {% endif %}
-        
-        <!-- Quick Create New Customer -->
-        <div style="background: #f8f9fa; border: 1px solid #ddd; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
-            <h4>Create New Customer</h4>
-            <form method="post" style="display: flex;flex-direction: column;">
+        {% if members and available_dives %}
+        <div style="margin-top: 40px; border-top: 2px solid #e0e0e0; padding-top: 20px;">
+            <h3>Schedule Group for Dives</h3>
+            <form method="post" style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
                 {% csrf_token %}
-                    <label><strong>First Name:</strong></label>
-                    {{ quick_customer_form.first_name }}
-                    <br>
-                    <label><strong>Last Name:</strong></label>
-                    {{ quick_customer_form.last_name }}
-                    <br>
-                    <label><strong>Email:</strong></label>
-                    {{ quick_customer_form.email }}
-                    <br>
-                    <label><strong>Phone:</strong></label>
-                    {{ quick_customer_form.phone_number }}
-                    <br>
-                    <label><strong>Country:</strong></label>
-                    {{ quick_customer_form.country }}
-                    <br>
-                    <label><strong>Certification:</strong></label>
-                    {{ quick_customer_form.certification_level }}
-                    <br>
-                    <label><strong>Default Tank Size:</strong></label>
-                    {{ quick_customer_form.default_tank_size }}
-                    <br>
-                <div style="grid-column: span 2;">
-                    <button type="submit" name="add_new_customer_to_group" class="btn" style="background: #28a745; color: white; padding: 10px 20px;">Create & Add to Group</button>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                    <div>
+                        <label for="selected_dives"><strong>Select Dives:</strong></label>
+                        <select name="selected_dives" id="selected_dives" multiple class="form-control" style="height: 120px;" required>
+                            {% for dive in available_dives %}
+                                <option value="{{ dive.id }}">{{ dive.date }} {{ dive.time }} - {{ dive.dive_site.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <small class="text-muted">Hold Ctrl/Cmd to select multiple dives</small>
+                    </div>
+
+                    <div>
+                        <label for="activity_id"><strong>Activity:</strong></label>
+                        <select name="activity_id" id="activity_id" class="form-control" required>
+                            <option value="">Select an activity</option>
+                            {% for activity in group_activities %}
+                                <option value="{{ activity.id }}">{{ activity.name }} - ${{ activity.price }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
                 </div>
+
+                <div style="margin-bottom: 20px;">
+                    <p class="text-info">
+                        <i class="fas fa-info-circle"></i> 
+                        Each group member will be assigned their default tank size from their profile.
+                    </p>
+                </div>            
+                <button type="submit" name="schedule_group" class="btn" style="background: #28a745; color: white; padding: 12px 24px; font-size: 16px; width: 100%;">
+                    Schedule {{ group.name }} for Selected Dives
+                </button>
             </form>
         </div>
-        
-      
-    </div>
+        {% elif members %}
+        <p style="margin-top: 20px;">No upcoming dives available. <a href="{% url 'users:schedule_dive' %}">Schedule a new dive</a> to be able to assign this group.</p>
+        {% endif %}
 </div>
-
-    {% if members and available_dives %}
-    <div style="margin-top: 40px; border-top: 2px solid #e0e0e0; padding-top: 20px;">
-        <h3>Schedule Group for Dives</h3>
-        <form method="post" style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
-            {% csrf_token %}
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
-                <div>
-                    <label for="selected_dives"><strong>Select Dives:</strong></label>
-                    <select name="selected_dives" id="selected_dives" multiple class="form-control" style="height: 120px;" required>
-                        {% for dive in available_dives %}
-                            <option value="{{ dive.id }}">{{ dive.date }} {{ dive.time }} - {{ dive.dive_site.name }}</option>
-                        {% endfor %}
-                    </select>
-                    <small class="text-muted">Hold Ctrl/Cmd to select multiple dives</small>
-                </div>
-                
-                <div>
-                    <label for="activity_id"><strong>Activity:</strong></label>
-                    <select name="activity_id" id="activity_id" class="form-control" required>
-                        <option value="">Select an activity</option>
-                        {% for activity in group_activities %}
-                            <option value="{{ activity.id }}">{{ activity.name }} - ${{ activity.price }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
-            
-            <div style="margin-bottom: 20px;">
-                <p class="text-info">
-                    <i class="fas fa-info-circle"></i> 
-                    Each group member will be assigned their default tank size from their profile.
-                </p>
-            </div>            
-            <button type="submit" name="schedule_group" class="btn" style="background: #28a745; color: white; padding: 12px 24px; font-size: 16px; width: 100%;">
-                Schedule {{ group.name }} for Selected Dives
-            </button>
-        </form>
-    </div>
-    {% elif members %}
-    <p style="margin-top: 20px;">No upcoming dives available. <a href="{% url 'users:schedule_dive' %}">Schedule a new dive</a> to be able to assign this group.</p>
-    {% endif %}
 {% endblock %}

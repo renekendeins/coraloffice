@@ -5,7 +5,7 @@
 
 {% block users_content %}
 <div class="p-3">
-    <h2>Course Enrollments</h2>
+    <h2>Inscripciones</h2>
 
     <div style="margin-bottom: 20px;">
         <a href="{% url 'users:enroll_customer_general' %}" class="btn btn-primary">Nueva inscripción</a>
@@ -15,27 +15,27 @@
     <div class="filter-bar">
         <form method="get" style="display: inline;">
             <select name="status" onchange="this.form.submit()" class="form-control">
-                <option value="">All Statuses</option>
+                <option value="">Todos los estado</option>
                 {% for value, label in status_choices %}
                     <option value="{{ value }}" {% if status_filter == value %}selected{% endif %}>{{ label }}</option>
                 {% endfor %}
             </select>
         </form>
         {% if status_filter %}
-            <a href="{% url 'users:course_enrollments' %}" class="btn-small">Clear Filter</a>
+            <a href="{% url 'users:course_enrollments' %}" class="btn-small">Limpiar Filtro</a>
         {% endif %}
     </div>
 
     {% if enrollments %}
         <!-- Desktop Header (hidden on mobile) -->
         <div class="enrollments-header">
-            <div class="header-item">Customer</div>
-            <div class="header-item">Course</div>
+            <div class="header-item">Cliente</div>
+            <div class="header-item">Curso</div>
             <div class="header-item">Instructor</div>
-            <div class="header-item">Status</div>
-            <div class="header-item">Progress</div>
-            <div class="header-item">Enrollment Date</div>
-            <div class="header-item">Actions</div>
+            <div class="header-item">Estado</div>
+            <div class="header-item">Progreso</div>
+            <div class="header-item">Inscrito</div>
+            <div class="header-item">Acciones</div>
         </div>
 
         <!-- Enrollments List -->
@@ -43,31 +43,31 @@
             {% for enrollment in enrollments %}
                 <div class="enrollment-card">
                     <div class="enrollment-item customer">
-                        <span class="mobile-label">Customer:</span>
+                        <span class="mobile-label">Cliente:</span>
                         <a href="{% url 'users:customer_courses' enrollment.customer.id %}">
                             {{ enrollment.customer.get_full_name }}
                         </a>
                     </div>
                     
                     <div class="enrollment-item course">
-                        <span class="mobile-label">Course:</span>
+                        <span class="mobile-label">Curso:</span>
                         {{ enrollment.course.name }}
                     </div>
                     
                     <div class="enrollment-item instructor">
                         <span class="mobile-label">Instructor:</span>
-                        {{ enrollment.instructor.get_full_name|default:"Not assigned" }}
+                        {{ enrollment.instructor.get_full_name|default:"Sin asignar" }}
                     </div>
                     
                     <div class="enrollment-item status">
-                        <span class="mobile-label">Status:</span>
+                        <span class="mobile-label">Estado:</span>
                         <span class="status-badge status-{{ enrollment.status|lower }}">
                             {{ enrollment.get_status_display }}
                         </span>
                     </div>
                     
-                    <div class="enrollment-item progress">
-                        <span class="mobile-label">Progress:</span>
+                    <div class="enrollment-item progress p-3">
+                        <span class="mobile-label">Progreso:</span>
                         <div class="progress-bar">
                             <div class="progress-fill" style="width: {{ enrollment.get_progress_percentage }}%"></div>
                             <span class="progress-text">{{ enrollment.get_completed_dives }}/{{ enrollment.course.total_dives }}</span>
@@ -75,19 +75,19 @@
                     </div>
                     
                     <div class="enrollment-item date">
-                        <span class="mobile-label">Enrollment Date:</span>
+                        <span class="mobile-label">Inscrito:</span>
                         {{ enrollment.enrollment_date|date:"M d, Y" }}
                     </div>
                     
                     <div class="enrollment-item actions">
-                        <span class="mobile-label">Actions:</span>
-                        <a href="{% url 'users:enrollment_detail' enrollment.id %}" class="btn-small">View Details</a>
+                        <span class="mobile-label">Acciones:</span>
+                        <a href="{% url 'users:enrollment_detail' enrollment.id %}" class="btn-small">Ver Detalles</a>
                     </div>
                 </div>
             {% endfor %}
         </div>
     {% else %}
-        <p>No enrollments found. <a href="{% url 'users:enroll_customer_general' %}">Enroll a customer</a> to get started.</p>
+        <p>No enrollments found. <a href="{% url 'users:enroll_customer_general' %}">Inscribe un usuario</a> para empezar.</p>
     {% endif %}
 
     <style>

@@ -4,200 +4,202 @@
 {% block users_title %}Edit Course - {{ course.name }}{% endblock %}
 
 {% block users_content %}
-<h2>Edit Course - {{ course.name }}</h2>
+<div class="p-3">
+    <h2>Actualizar curso - {{ course.name }}</h2>
 
-<form method="post" id="course-form">
-    {% csrf_token %}
-    <div class="form-row">
-        <div class="form-group">
-            <label for="{{ form.name.id_for_label }}">Course Name:</label>
-            {{ form.name }}
+    <form method="post" id="course-form">
+        {% csrf_token %}
+        <div class="form-row">
+            <div class="form-group">
+                <label for="{{ form.name.id_for_label }}">Course Name:</label>
+                {{ form.name }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.course_type.id_for_label }}">Course Type:</label>
+                {{ form.course_type }}
+            </div>
         </div>
-        <div class="form-group">
-            <label for="{{ form.course_type.id_for_label }}">Course Type:</label>
-            {{ form.course_type }}
-        </div>
-    </div>
-    
-    <div class="form-group">
-        <label for="{{ form.description.id_for_label }}">Description:</label>
-        {{ form.description }}
-    </div>
-    
-    <div class="form-row">
-        <div class="form-group">
-            <label for="{{ form.total_dives.id_for_label }}">Total Dives:</label>
-            {{ form.total_dives }}
-        </div>
-        <div class="form-group">
-            <label for="{{ form.duration_days.id_for_label }}">Duration (Days):</label>
-            {{ form.duration_days }}
-        </div>
-    </div>
-    
-    <div class="form-row">
-        <div class="form-group">
-            <label for="{{ form.price.id_for_label }}">Price (€):</label>
-            {{ form.price }}
-        </div>
-    </div>
-    
-    <div class="form-group">
-        <label for="{{ form.prerequisites.id_for_label }}">Prerequisites:</label>
-        {{ form.prerequisites }}
-    </div>
-    
-    <div class="checkbox-group">
-        <label>
-            {{ form.is_active }} Active Course
-        </label>
-    </div>
-    
-    <div class="checkbox-group">
-        <label>
-            {{ form.just_one_dive }} Just One Dive
-        </label>
-    </div>
-    
-    <h3 style="margin-top: 30px; margin-bottom: 15px;">Course Inclusions</h3>
-    <p style="color: #666; margin-bottom: 20px;">Select what is included in the course price by default:</p>
-    
-    <div class="checkbox-group">
-        <label>
-            {{ form.includes_material }} Material Included
-        </label>
-    </div>
-    
-    <div class="checkbox-group">
-        <label>
-            {{ form.includes_instructor }} Instructor Included
-        </label>
-    </div>
-    
-    <div class="checkbox-group">
-        <label>
-            {{ form.includes_insurance }} Insurance Included
-        </label>
-    </div>
-    
-    <div style="margin-top: 20px;">
-        <button type="submit" class="btn">Update Course</button>
-        <a href="{% url 'users:courses_list' %}" class="btn" style="background: #6c757d;">Cancel</a>
-    </div>
-</form>
 
-<!-- Course Template Sessions Section -->
-<div class="sessions-section" style="margin-top: 40px;">
-    <h3>Course Template Sessions</h3>
-    <p style="color: #666; margin-bottom: 20px;">These are the default sessions for this course. When a customer enrolls, these sessions will be automatically created for them.</p>
-    
-    <div class="sessions-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h4>Template Sessions ({{ template_sessions.count }})</h4>
-        <button type="button" onclick="showAddSessionModal()" class="btn" style="background: #28a745;">Add Session</button>
-    </div>
-    
-    <div class="sessions-list">
-        {% for session in template_sessions %}
-            <div class="session-card" data-session-id="{{ session.id }}">
-                <div class="session-header">
-                    <span class="session-number">Session {{ session.session_number }}</span>
-                    <span class="session-type-badge session-type-{{ session.session_type|lower }}">{{ session.get_session_type_display }}</span>
-                    <div class="session-actions">
-                        <button type="button" onclick="editSession({{ session.id }})" class="btn-small" style="background: #ffc107;">Edit</button>
-                        <button type="button" onclick="deleteSession({{ session.id }})" class="btn-small" style="background: #dc3545;">Delete</button>
-                    </div>
-                </div>
-                <div class="session-details">
-                    <h5>{{ session.title }}</h5>
-                    {% if session.description %}
-                        <p>{{ session.description }}</p>
-                    {% endif %}
-                    {% if session.skills_covered %}
-                        <div class="skills-covered">
-                            <strong>Skills:</strong> {{ session.skills_covered }}
+        <div class="form-group">
+            <label for="{{ form.description.id_for_label }}">Description:</label>
+            {{ form.description }}
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="{{ form.total_dives.id_for_label }}">Total Dives:</label>
+                {{ form.total_dives }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.duration_days.id_for_label }}">Duration (Days):</label>
+                {{ form.duration_days }}
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="{{ form.price.id_for_label }}">Price (€):</label>
+                {{ form.price }}
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.prerequisites.id_for_label }}">Prerequisites:</label>
+            {{ form.prerequisites }}
+        </div>
+
+        <div class="checkbox-group">
+            <label>
+                {{ form.is_active }} Active Course
+            </label>
+        </div>
+
+        <div class="checkbox-group">
+            <label>
+                {{ form.just_one_dive }} Just One Dive
+            </label>
+        </div>
+
+        <h3 style="margin-top: 30px; margin-bottom: 15px;">Course Inclusions</h3>
+        <p style="color: #666; margin-bottom: 20px;">Select what is included in the course price by default:</p>
+
+        <div class="checkbox-group">
+            <label>
+                {{ form.includes_material }} Material Included
+            </label>
+        </div>
+
+        <div class="checkbox-group">
+            <label>
+                {{ form.includes_instructor }} Instructor Included
+            </label>
+        </div>
+
+        <div class="checkbox-group">
+            <label>
+                {{ form.includes_insurance }} Insurance Included
+            </label>
+        </div>
+
+        <div style="margin-top: 20px;">
+            <button type="submit" class="btn">Update Course</button>
+            <a href="{% url 'users:courses_list' %}" class="btn" style="background: #6c757d;">Cancel</a>
+        </div>
+    </form>
+
+    <!-- Course Template Sessions Section -->
+    <div class="sessions-section" style="margin-top: 40px;">
+        <h3>Course Template Sessions</h3>
+        <p style="color: #666; margin-bottom: 20px;">These are the default sessions for this course. When a customer enrolls, these sessions will be automatically created for them.</p>
+
+        <div class="sessions-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h4>Template Sessions ({{ template_sessions.count }})</h4>
+            <button type="button" onclick="showAddSessionModal()" class="btn" style="background: #28a745;">Add Session</button>
+        </div>
+
+        <div class="sessions-list">
+            {% for session in template_sessions %}
+                <div class="session-card" data-session-id="{{ session.id }}">
+                    <div class="session-header">
+                        <span class="session-number">Session {{ session.session_number }}</span>
+                        <span class="session-type-badge session-type-{{ session.session_type|lower }}">{{ session.get_session_type_display }}</span>
+                        <div class="session-actions">
+                            <button type="button" onclick="editSession({{ session.id }})" class="btn-small" style="background: #ffc107;">Edit</button>
+                            <button type="button" onclick="deleteSession({{ session.id }})" class="btn-small" style="background: #dc3545;">Delete</button>
                         </div>
-                    {% endif %}
-                </div>
-            </div>
-        {% empty %}
-            <div class="no-sessions">
-                <p>No template sessions configured. Click "Add Session" to create the first session template.</p>
-            </div>
-        {% endfor %}
-    </div>
-</div>
-
-<!-- Existing Enrollments Section -->
-{% if enrollments %}
-<div class="enrollments-section" style="margin-top: 40px;">
-    <h3>Current Enrollments</h3>
-    <div class="enrollments-list">
-        {% for enrollment in enrollments %}
-            <div class="enrollment-card">
-                <div class="enrollment-header">
-                    <h4>{{ enrollment.customer.get_full_name }}</h4>
-                    <span class="status-badge status-{{ enrollment.status|lower }}">{{ enrollment.get_status_display }}</span>
-                    <a href="{% url 'users:enrollment_detail' enrollment.id %}" class="btn-small">View Details</a>
-                </div>
-                <div class="enrollment-progress">
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: {{ enrollment.get_progress_percentage }}%"></div>
                     </div>
-                    <span class="progress-text">{{ enrollment.get_completed_lessons }}/{{ enrollment.course_sessions.count }} lessons completed</span>
+                    <div class="session-details">
+                        <h5>{{ session.title }}</h5>
+                        {% if session.description %}
+                            <p>{{ session.description }}</p>
+                        {% endif %}
+                        {% if session.skills_covered %}
+                            <div class="skills-covered">
+                                <strong>Skills:</strong> {{ session.skills_covered }}
+                            </div>
+                        {% endif %}
+                    </div>
                 </div>
-            </div>
-        {% endfor %}
+            {% empty %}
+                <div class="no-sessions">
+                    <p>No template sessions configured. Click "Add Session" to create the first session template.</p>
+                </div>
+            {% endfor %}
+        </div>
     </div>
-</div>
-{% endif %}
 
-<!-- Add/Edit Session Modal -->
-<div id="sessionModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeSessionModal()">&times;</span>
-        <h3 id="modal-title">Add Session</h3>
-        <form id="session-form">
-            {% csrf_token %}
-            <input type="hidden" id="session-id" name="session_id">
-            <input type="hidden" name="course_id" value="{{ course.id }}">
-            
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="session_number">Session Number:</label>
-                    <input type="number" id="session_number" name="session_number" min="1" required class="form-control">
+    <!-- Existing Enrollments Section -->
+    {% if enrollments %}
+    <div class="enrollments-section" style="margin-top: 40px;">
+        <h3>Current Enrollments</h3>
+        <div class="enrollments-list">
+            {% for enrollment in enrollments %}
+                <div class="enrollment-card">
+                    <div class="enrollment-header">
+                        <h4>{{ enrollment.customer.get_full_name }}</h4>
+                        <span class="status-badge status-{{ enrollment.status|lower }}">{{ enrollment.get_status_display }}</span>
+                        <a href="{% url 'users:enrollment_detail' enrollment.id %}" class="btn-small">View Details</a>
+                    </div>
+                    <div class="enrollment-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: {{ enrollment.get_progress_percentage }}%"></div>
+                        </div>
+                        <span class="progress-text">{{ enrollment.get_completed_lessons }}/{{ enrollment.course_sessions.count }} lessons completed</span>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label for="session_type">Session Type:</label>
-                    <select id="session_type" name="session_type" required class="form-control">
-                        <option value="THEORY">Theory Session</option>
-                        <option value="POOL">Pool Dive</option>
-                        <option value="OPEN_WATER">Open Water Dive</option>
-                        <option value="EXAM">Exam</option>
-                        <option value="PRACTICAL">Practical Skills</option>
-                    </select>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Add/Edit Session Modal -->
+    <div id="sessionModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeSessionModal()">&times;</span>
+            <h3 id="modal-title">Add Session</h3>
+            <form id="session-form">
+                {% csrf_token %}
+                <input type="hidden" id="session-id" name="session_id">
+                <input type="hidden" name="course_id" value="{{ course.id }}">
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="session_number">Session Number:</label>
+                        <input type="number" id="session_number" name="session_number" min="1" required class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="session_type">Session Type:</label>
+                        <select id="session_type" name="session_type" required class="form-control">
+                            <option value="THEORY">Theory Session</option>
+                            <option value="POOL">Pool Dive</option>
+                            <option value="OPEN_WATER">Open Water Dive</option>
+                            <option value="EXAM">Exam</option>
+                            <option value="PRACTICAL">Practical Skills</option>
+                        </select>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="form-group">
-                <label for="title">Session Title:</label>
-                <input type="text" id="title" name="title" required class="form-control">
-            </div>
-            
-            <div class="form-group">
-                <label for="description">Description:</label>
-                <textarea id="description" name="description" rows="3" class="form-control"></textarea>
-            </div>
-            
-            <div class="form-group">
-                <label for="skills_covered">Skills Covered:</label>
-                <textarea id="skills_covered" name="skills_covered" rows="2" class="form-control"></textarea>
-            </div>
-            
-            <div class="modal-actions">
-                <button type="submit" class="btn">Save Session</button>
-                <button type="button" onclick="closeSessionModal()" class="btn" style="background: #6c757d;">Cancel</button>
-            </div>
-        </form>
+
+                <div class="form-group">
+                    <label for="title">Session Title:</label>
+                    <input type="text" id="title" name="title" required class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description:</label>
+                    <textarea id="description" name="description" rows="3" class="form-control"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="skills_covered">Skills Covered:</label>
+                    <textarea id="skills_covered" name="skills_covered" rows="2" class="form-control"></textarea>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="submit" class="btn">Save Session</button>
+                    <button type="button" onclick="closeSessionModal()" class="btn" style="background: #6c757d;">Cancel</button>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 

@@ -3,39 +3,41 @@
 {% block users_title %}Profile - CoralOffice{% endblock %}
 
 {% block users_content %}
-<h2>Bienvenido, {{ user.get_full_name|default:user.username }}!</h2>
-<div class="user-card">
-    <h3>Tu información</h3>
-    <p><strong>Usuario:</strong> {{ user.username }}</p>
-    <p><strong>Email:</strong> {{ user.email }}</p>
-    {% if user.userprofile.is_diving_center %}
-        <p><strong>Tipo de cuenta:</strong> Diving Center</p>
-        <p><strong>Nombre del negocio:</strong> {{ user.userprofile.business_name }}</p>
-        {% if user.userprofile.business_license %}
-            <p><strong>Licencia:</strong> {{ user.userprofile.business_license }}</p>
+<div class="p-3">
+    <h2>Bienvenido, {{ user.get_full_name|default:user.username }}!</h2>
+    <div class="user-card">
+        <h3>Tu información</h3>
+        <p><strong>Usuario:</strong> {{ user.username }}</p>
+        <p><strong>Email:</strong> {{ user.email }}</p>
+        {% if user.userprofile.is_diving_center %}
+            <p><strong>Tipo de cuenta:</strong> Diving Center</p>
+            <p><strong>Nombre del negocio:</strong> {{ user.userprofile.business_name }}</p>
+            {% if user.userprofile.business_license %}
+                <p><strong>Licencia:</strong> {{ user.userprofile.business_license }}</p>
+            {% endif %}
+        {% else %}
+            <p><strong>Tipo de cuenta:</strong> Individual User</p>
         {% endif %}
-    {% else %}
-        <p><strong>Tipo de cuenta:</strong> Individual User</p>
-    {% endif %}
-    {% if user.userprofile.bio %}
-        <p><strong>Bio:</strong> {{ user.userprofile.bio }}</p>
-    {% endif %}
-    {% if user.userprofile.location %}
-        <p><strong>Ubicación:</strong> {{ user.userprofile.location }}</p>
-    {% endif %}
-    <p><strong>Miembro desde:</strong> {{ user.userprofile.created_at|date:"F d, Y" }}</p>
-</div>
+        {% if user.userprofile.bio %}
+            <p><strong>Bio:</strong> {{ user.userprofile.bio }}</p>
+        {% endif %}
+        {% if user.userprofile.location %}
+            <p><strong>Ubicación:</strong> {{ user.userprofile.location }}</p>
+        {% endif %}
+        <p><strong>Miembro desde:</strong> {{ user.userprofile.created_at|date:"F d, Y" }}</p>
+    </div>
 
-<div style="margin-top: 20px;">
-    <a href="{% url 'users:update_profile' %}" class="btn">Actualizar perfil</a>
+    <div style="margin-top: 20px;">
+        <a href="{% url 'users:update_profile' %}" class="btn">Actualizar perfil</a>
 
-    {% if user.userprofile.is_diving_center %}
-        <a href="{% url 'users:diving_center_dashboard' %}" class="btn" style="background: #007bff;">Dashboard</a>
-        <a href="{% url 'users:customer_list' %}" class="btn" style="background: #28a745;">Gestionar Clientes</a>
-        <a href="{% url 'users:dive_calendar' %}" class="btn" style="background: #ffc107; color: black;">Calendario</a>
-        <a href="{% url 'users:courses_list' %}" class="btn" style="background: #6f42c1;">Cursos</a>
-        <a href="{% url 'users:course_enrollments' %}" class="btn" style="background: #e83e8c;">Matriculaciones</a>
-    {% endif %}
+        {% if user.userprofile.is_diving_center %}
+            <a href="{% url 'users:diving_center_dashboard' %}" class="btn" style="background: #007bff;">Dashboard</a>
+            <a href="{% url 'users:customer_list' %}" class="btn" style="background: #28a745;">Gestionar Clientes</a>
+            <a href="{% url 'users:dive_calendar' %}" class="btn" style="background: #ffc107; color: black;">Calendario</a>
+            <a href="{% url 'users:courses_list' %}" class="btn" style="background: #6f42c1;">Cursos</a>
+            <a href="{% url 'users:course_enrollments' %}" class="btn" style="background: #e83e8c;">Matriculaciones</a>
+        {% endif %}
 
+    </div>
 </div>
 {% endblock %}
