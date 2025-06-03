@@ -236,7 +236,8 @@ class CustomerDiveActivity(models.Model):
     
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='dive_activities')
     dive_schedule = models.ForeignKey(DiveSchedule, on_delete=models.CASCADE, related_name='customer_activities')
-    activity = models.ForeignKey(DiveActivity, on_delete=models.CASCADE, related_name='customer_bookings')
+    course = models.ForeignKey('Course', on_delete=models.CASCADE, related_name='customer_bookings', help_text="Course/Activity for this dive")
+    activity = models.ForeignKey(DiveActivity, on_delete=models.CASCADE, related_name='customer_bookings', null=True, blank=True, help_text="DEPRECATED: Use course field instead")
     assigned_staff = models.ForeignKey('Staff', on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_activities', help_text="Instructor/guide assigned to this activity")
     course_session = models.ForeignKey('CourseSession', on_delete=models.SET_NULL, null=True, blank=True, related_name='dive_activities', help_text="Course session if this dive is part of a course")
     tank_size = models.CharField(max_length=10, choices=TANK_SIZE_CHOICES, default='12L')
@@ -254,7 +255,31 @@ class CustomerDiveActivity(models.Model):
         unique_together = ['customer', 'dive_schedule']
 
     def __str__(self):
-        return f"{self.customer} - {self.activity.name}"
+        return f"{self.customer} - {self.course.name}"
+    
+    def get_activity_name(self):
+        """Get the activity name from course or fallback to deprecated activity field"""
+        if self.course:
+            return self.course.name
+        elif self.activity:
+            return self.activity.name
+        return "Unknown Activity"
+    
+    def get_activity_price(self):
+        """Get the activity price from course or fallback to deprecated activity field"""
+        if self.course:
+            return self.course.price
+        elif self.activity:
+            return self.activity.price
+        return 0.00
+    
+    def get_activity_duration(self):
+        """Get the activity duration from course or fallback to deprecated activity field"""
+        if self.course:
+            return self.course.duration_days * 60  # Convert days to minutes for compatibility
+        elif self.activity:
+            return self.activity.duration_minutes
+        return 60
     
     def is_course_dive(self):
         """Check if this dive is part of a course"""

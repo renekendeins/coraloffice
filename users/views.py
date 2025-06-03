@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import User
+from django.contrib.auth.models User
 from django.contrib import messages
 from django.db import transaction
 from django.http import JsonResponse
@@ -533,7 +533,7 @@ def manage_dive_participants(request, dive_id):
                             CustomerDiveActivity.objects.create(
                                 customer=member.customer,
                                 dive_schedule=dive,
-                                activity=form.cleaned_data['activity'],
+                                course=form.cleaned_data['course'],
                                 tank_size=tank_size,
                                 needs_wetsuit=form.cleaned_data['needs_wetsuit'],
                                 needs_bcd=form.cleaned_data['needs_bcd'],
@@ -835,7 +835,8 @@ def diving_groups_list(request):
         return redirect('users:profile')
 
     groups = DivingGroup.objects.filter(diving_center=request.user)
-    return render(request, 'users/diving_groups_list.html', {'groups': groups})
+    return render(```python
+request, 'users/diving_groups_list.html', {'groups': groups})
 
 
 @login_required
@@ -919,15 +920,15 @@ def manage_group_members(request, group_id):
 
         elif 'schedule_group' in request.POST:
             dive_ids = request.POST.getlist('selected_dives')
-            activity_id = request.POST.get('activity_id')
+            course_id = request.POST.get('course_id')
             needs_wetsuit = 'needs_wetsuit' in request.POST
             needs_bcd = 'needs_bcd' in request.POST
             needs_regulator = 'needs_regulator' in request.POST
             needs_guide = 'needs_guide' in request.POST
             needs_insurance = 'needs_insurance' in request.POST
 
-            if dive_ids and activity_id:
-                activity = get_object_or_404(DiveActivity, id=activity_id, diving_center=request.user)
+            if dive_ids and course_id:
+                course = get_object_or_404(Course, id=course_id, diving_center=request.user)
                 scheduled_count = 0
 
                 for dive_id in dive_ids:
@@ -945,7 +946,7 @@ def manage_group_members(request, group_id):
                             CustomerDiveActivity.objects.create(
                                 customer=member.customer,
                                 dive_schedule=dive,
-                                activity=activity,
+                                course=course,
                                 tank_size=member_tank_size,
                                 needs_wetsuit=needs_wetsuit,
                                 needs_bcd=needs_bcd,
@@ -961,7 +962,7 @@ def manage_group_members(request, group_id):
                 messages.error(request, 'Please select at least one dive and an activity.')
 
     # Get group activities and tank size choices for the form
-    group_activities = DiveActivity.objects.filter(diving_center=request.user)
+    group_courses = Course.objects.filter(diving_center=request.user)
     tank_choices = CustomerDiveActivity.TANK_SIZE_CHOICES
     quick_customer_form = QuickCustomerForm()
 
@@ -970,7 +971,7 @@ def manage_group_members(request, group_id):
         'members': members,
         'available_customers': available_customers,
         'available_dives': available_dives,
-        'group_activities': group_activities,
+        'group_courses': group_courses,
         'tank_choices': tank_choices,
         'quick_customer_form': quick_customer_form,
     })
@@ -1416,7 +1417,7 @@ def enroll_customer(request, customer_id=None):
             # Create course sessions based on template sessions or fallback to default
             course = enrollment.course
             template_sessions = CourseSession.objects.filter(template_course=course).order_by('session_number')
-            
+
             if template_sessions.exists():
                 # Use template sessions
                 for template in template_sessions:
@@ -1534,17 +1535,17 @@ def schedule_course_session(request, session_id):
             session.assistant_instructors.set(assistant_instructors)
 
             # Create or update CustomerDiveActivity
-            activity = DiveActivity.objects.filter(
+            course = Course.objects.filter(
                 diving_center=request.user,
                 name__icontains='course'
             ).first()
 
-            if not activity:
-                activity = DiveActivity.objects.create(
+            if not course:
+                course = Course.objects.create(
                     diving_center=request.user,
                     name='Course Lesson',
                     description='Course training lesson',
-                    duration_minutes=90,
+                    total_dives=1,
                     price=0.00
                 )
 
@@ -1553,7 +1554,7 @@ def schedule_course_session(request, session_id):
                 customer=session.enrollment.customer,
                 dive_schedule=dive_schedule,
                 defaults={
-                    'activity': activity,
+                    'course': course,
                     'course_session': session,
                     'assigned_staff': instructor,
                     'tank_size': session.enrollment.customer.default_tank_size,
@@ -1597,7 +1598,7 @@ def complete_course_session(request, session_id):
             session.grade = form.cleaned_data.get('grade', '')
             session.instructor_notes = form.cleaned_data.get('instructor_notes', '')
             session.student_feedback = form.cleaned_data.get('student_feedback', '')
-            
+
             # Set completion date
             completion_date = form.cleaned_data.get('completion_date')
             if completion_date:
@@ -1605,7 +1606,7 @@ def complete_course_session(request, session_id):
             else:
                 from django.utils import timezone
                 session.completion_date = timezone.now()
-            
+
             session.status = 'COMPLETED'
             session.save()
 
@@ -1647,7 +1648,8 @@ def add_course_session_template(request, course_id):
             skills_covered = request.POST.get('skills_covered', '')
 
             # Check if session number already exists for this course template
-            if CourseSession.objects.filter(template_course=course, session_number=session_number).exists():
+            if CourseSession.objects.filter(template```python
+_course=course, session_number=session_number).exists():
                 return JsonResponse({'success': False, 'error': 'Session number already exists'})
 
             session = CourseSession.objects.create(
@@ -1695,13 +1697,13 @@ def update_course_session_template(request, course_id, session_id):
     if request.method == 'POST':
         try:
             session_number = int(request.POST.get('session_number'))
-            
+
             # Check if session number already exists (excluding current session)
             existing = CourseSession.objects.filter(
                 template_course=course, 
                 session_number=session_number
             ).exclude(id=session_id)
-            
+
             if existing.exists():
                 return JsonResponse({'success': False, 'error': 'Session number already exists'})
 

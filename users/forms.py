@@ -94,10 +94,10 @@ class CustomerDiveActivityForm(forms.ModelForm):
 
     class Meta:
         model = CustomerDiveActivity
-        fields = ('customer', 'activity', 'assigned_staff', 'tank_size', 'needs_wetsuit', 'needs_bcd', 'needs_regulator', 'needs_guide', 'needs_insurance')
+        fields = ('customer', 'course', 'assigned_staff', 'tank_size', 'needs_wetsuit', 'needs_bcd', 'needs_regulator', 'needs_guide', 'needs_insurance')
         widgets = {
             'customer': forms.Select(attrs={'class': 'form-control', 'style': 'display: none;', 'data-default-tank': 'true'}),
-            'activity': forms.Select(attrs={'class': 'form-control'}),
+            'course': forms.Select(attrs={'class': 'form-control'}),
             'assigned_staff': forms.Select(attrs={'class': 'form-control'}),
             'tank_size': forms.Select(attrs={'class': 'form-control', 'id': 'tank-size-select'}),
         }
@@ -106,7 +106,7 @@ class CustomerDiveActivityForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if diving_center:
             self.fields['customer'].queryset = Customer.objects.filter(diving_center=diving_center)
-            self.fields['activity'].queryset = DiveActivity.objects.filter(diving_center=diving_center)
+            self.fields['course'].queryset = Course.objects.filter(diving_center=diving_center, is_active=True)
             self.fields['selected_group'].queryset = DivingGroup.objects.filter(diving_center=diving_center)
             self.fields['assigned_staff'].queryset = Staff.objects.filter(diving_center=diving_center, status='ACTIVE')
             self.fields['assigned_staff'].empty_label = "Select instructor (optional)"
@@ -121,8 +121,9 @@ class CustomerDiveActivityForm(forms.ModelForm):
 class QuickUpdateParticipantForm(forms.ModelForm):
     class Meta:
         model = CustomerDiveActivity
-        fields = ('tank_size', 'needs_wetsuit', 'needs_bcd', 'needs_regulator', 'needs_guide', 'needs_insurance', 'status', 'has_arrived', 'is_paid')
+        fields = ('course', 'tank_size', 'needs_wetsuit', 'needs_bcd', 'needs_regulator', 'needs_guide', 'needs_insurance', 'status', 'has_arrived', 'is_paid')
         widgets = {
+            'course': forms.Select(attrs={'class': 'form-control'}),
             'tank_size': forms.Select(attrs={'class': 'form-control'}),
         }
 

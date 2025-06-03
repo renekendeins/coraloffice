@@ -84,6 +84,14 @@ class DiveScheduleAdmin(admin.ModelAdmin):
 # Customer Dive Activity Admin
 @admin.register(CustomerDiveActivity)
 class CustomerDiveActivityAdmin(admin.ModelAdmin):
+    list_display = ('customer', 'course', 'dive_schedule', 'status', 'tank_size', 'assigned_staff')
+    list_filter = ('status', 'course', 'dive_schedule__date', 'tank_size')
+    search_fields = ('customer__first_name', 'customer__last_name', 'course__name')
+    raw_id_fields = ('customer', 'dive_schedule', 'course', 'assigned_staff', 'course_session')
+
+# Keep the old registration for backwards compatibility
+# @admin.register(CustomerDiveActivity)
+class CustomerDiveActivityAdmin(admin.ModelAdmin):
     list_display = ('customer', 'dive_schedule', 'activity', 'status', 'is_paid', 'tank_size')
     list_filter = ('status', 'is_paid', 'tank_size', 'activity', 'dive_schedule__date')
     search_fields = ('customer__first_name', 'customer__last_name', 'dive_schedule__dive_site__name')
