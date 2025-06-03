@@ -139,8 +139,8 @@ class StaffAdmin(admin.ModelAdmin):
 # Course Admin
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
-    list_display = ('name', 'course_type', 'total_dives', 'duration_days', 'price', 'is_active')
-    list_filter = ('course_type', 'is_active', 'diving_center')
+    list_display = ('name', 'course_type', 'total_dives', 'duration_days', 'price', 'is_active', 'just_one_dive')
+    list_filter = ('course_type', 'is_active', 'just_one_dive', 'diving_center')
     search_fields = ('name', 'description')
     readonly_fields = ('created_at',)
     fieldsets = (
@@ -151,7 +151,7 @@ class CourseAdmin(admin.ModelAdmin):
             'fields': ('description', 'total_dives', 'duration_days', 'price')
         }),
         ('Requirements', {
-            'fields': ('prerequisites', 'is_active')
+            'fields': ('prerequisites', 'is_active', 'just_one_dive')
         }),
         ('Metadata', {
             'fields': ('created_at',)

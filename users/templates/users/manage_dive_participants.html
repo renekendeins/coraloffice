@@ -1,4 +1,3 @@
-
 {% extends 'users/base.html' %}
 
 {% block users_title %}Manage Participants for {{ dive.dive_site }}{% endblock %}
@@ -208,14 +207,14 @@ function toggleDetails(participantId) {
             <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                 <div style="flex: 1;">
                     <h4>{{ participant.customer.first_name }} {{ participant.customer.last_name }} ({{ participant.course.name }}) | {{ participant.get_tank_size_display }} | {{ participant.customer.get_language_display }}</h4>
-                    
+
                     <button class="btn" onclick="toggleDetails({{ participant.id }})">Mostrar detalles</button>
 
                     <div id="details-{{ participant.id }}" class="participant-details" style="display:none; margin-top: 10px;">
                         <p><strong>Certification Level:</strong> {{ participant.customer.certification_level|default:"Not specified" }}</p>
                         <p><strong>Country:</strong> {{ participant.customer.country|default:"Not specified" }} </p>
-                        
-                
+
+
                         </p>
                     </div>
 
@@ -228,12 +227,12 @@ function toggleDetails(participantId) {
                             <span style="color: #666;">Necesario:</span>
                         {% endif %}
                         {% if participant.needs_wetsuit %}<span class="equipment-item">Traje ({{ participant.customer.get_wetsuit_size }})</span>{% endif %}
-                        {% if participant.needs_bcd %}<span class="equipment-item">Jacket ({{ participant.customer.get_bcd_size }})</span>{% endif %}
+                        {% if participant.needs_bcd %><span class="equipment-item">Jacket ({{ participant.customer.get_bcd_size }})</span>{% endif %}
                         {% if participant.needs_regulator %}<span class="equipment-item">Regulador</span>{% endif %}
                         {% if participant.needs_guide %}<span class="equipment-item">Instructor</span>{% endif %}
                         {% if participant.needs_insurance %}<span class="equipment-item">Seguro</span>{% endif %}
                     </div>
-                    
+
                     <!-- Quick edit form -->
                     <div class="quick-edit-form" id="edit-form-{{ participant.id }}">
                         <form method="post" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
@@ -359,18 +358,18 @@ customerSearch.addEventListener('input', function() {
         suggestionsDiv.style.display = 'none';
         return;
     }
-    
+
     // Search both customers and groups
     const customerMatches = searchData.customers.filter(customer => 
         customer.name.toLowerCase().includes(query)
     );
-    
+
     const groupMatches = searchData.groups.filter(group => 
         group.name.toLowerCase().includes(query)
     );
-    
+
     const allMatches = [...customerMatches, ...groupMatches];
-    
+
     if (allMatches.length > 0) {
         suggestionsDiv.innerHTML = allMatches.map(item => {
             if (item.type === 'customer') {
@@ -403,7 +402,7 @@ suggestionsDiv.addEventListener('click', function(e) {
     if (suggestionItem) {
         const type = suggestionItem.getAttribute('data-type');
         const id = suggestionItem.getAttribute('data-id');
-        
+
         if (type === 'customer') {
             const customer = searchData.customers.find(c => c.id == id);
             customerSelect.value = id;
@@ -423,7 +422,7 @@ suggestionsDiv.addEventListener('click', function(e) {
                 tankSizeSelect.value = '12L'; // Default
             }
         }
-        
+
         suggestionsDiv.style.display = 'none';
     }
 });
@@ -443,5 +442,17 @@ window.onclick = function(event) {
     }
 }
 </script>
+<script>
+    // This script applies to course selection in add new participant form
+    document.addEventListener('DOMContentLoaded', function() {
+        const courseSelect = document.querySelector('select[name="course"]');
 
+        if (courseSelect) {
+            courseSelect.addEventListener('change', function() {
+                // You can add additional logic here if needed, such as updating
+                // display based on course selection
+            });
+        }
+    });
+</script>
 {% endblock %}

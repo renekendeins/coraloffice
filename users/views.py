@@ -962,7 +962,7 @@ def manage_group_members(request, group_id):
                 messages.error(request, 'Please select at least one dive and an activity.')
 
     # Get group activities and tank size choices for the form
-    group_courses = Course.objects.filter(diving_center=request.user)
+    group_courses = Course.objects.filter(diving_center=request.user).order_by('-just_one_dive', 'name')
     tank_choices = CustomerDiveActivity.TANK_SIZE_CHOICES
     quick_customer_form = QuickCustomerForm()
 

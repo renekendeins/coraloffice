@@ -106,7 +106,9 @@ class CustomerDiveActivityForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if diving_center:
             self.fields['customer'].queryset = Customer.objects.filter(diving_center=diving_center)
-            self.fields['course'].queryset = Course.objects.filter(diving_center=diving_center, is_active=True)
+            # Filter courses to show both regular courses and those marked as "just one dive"
+            # Order with "just one dive" courses first
+            self.fields['course'].queryset = Course.objects.filter(diving_center=diving_center, is_active=True).order_by('-just_one_dive', 'name')
             self.fields['selected_group'].queryset = DivingGroup.objects.filter(diving_center=diving_center)
             self.fields['assigned_staff'].queryset = Staff.objects.filter(diving_center=diving_center, status='ACTIVE')
             self.fields['assigned_staff'].empty_label = "Select instructor (optional)"
@@ -228,7 +230,7 @@ class MedicalForm(forms.ModelForm):
 class CourseForm(forms.ModelForm):
     class Meta:
         model = Course
-        fields = ['name', 'course_type', 'description', 'total_dives', 'duration_days', 'price', 'prerequisites', 'is_active']
+        fields = ['name', 'course_type', 'description', 'total_dives', 'duration_days', 'price', 'prerequisites', 'is_active', 'just_one_dive']
         widgets = {
             'description': forms.Textarea(attrs={'rows': 3}),
             'prerequisites': forms.Textarea(attrs={'rows': 2}),

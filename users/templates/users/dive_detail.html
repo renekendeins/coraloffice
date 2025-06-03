@@ -178,7 +178,12 @@ body {
                     <strong>{{ participant.customer.first_name }} {{ participant.customer.last_name }}</strong><br>
                     <small>{{ participant.customer.country|default:"" }}</small>
                 </td>
-                <td>{{ participant.course.name }}</td>
+                <td>
+                    {{ participant.course.name }}
+                    {% if participant.course.just_one_dive %}
+                        <span class="badge bg-info">Just One Dive</span>
+                    {% endif %}
+                </td>
                 <td>{{ participant.get_tank_size_display }}</td>
                 <td>
                     {% if participant.needs_wetsuit %}<span class="badge bg-secondary">Wetsuit</span> {% endif %}

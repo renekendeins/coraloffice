@@ -453,6 +453,7 @@ class Course(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     prerequisites = models.TextField(blank=True, help_text="Required certifications or prerequisites")
     is_active = models.BooleanField(default=True)
+    just_one_dive = models.BooleanField(default=False, help_text="Check if this course/activity is for a single dive only")
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
