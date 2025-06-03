@@ -197,9 +197,9 @@ body {
                 </td>
                 <td>{{ participant.get_tank_size_display }}</td>
                 <td>
-                    {% if participant.needs_wetsuit %}<span class="badge bg-secondary">Wetsuit</span> {% endif %}
-                    {% if participant.needs_bcd %}<span class="badge bg-secondary">BCD</span> {% endif %}
-                    {% if participant.needs_regulator %}<span class="badge bg-secondary">Regulator</span> {% endif %}
+                    {% if participant.needs_wetsuit %}<span class="badge bg-secondary">Wetsuit ({{ participant.customer.get_wetsuit_size }})</span> {% endif %}
+                    {% if participant.needs_bcd %}<span class="badge bg-secondary">BCD ({{ participant.customer.get_bcd_size }})</span> {% endif %}
+                    {% if participant.needs_regulator %}<span class="badge bg-secondary">Regulator + Fins ({{ participant.customer.get_fins_size }})</span> {% endif %}
                     {% if participant.needs_guide %}<span class="badge bg-info">Guide</span> {% endif %}
                     {% if participant.needs_insurance %}<span class="badge bg-warning">Insurance</span> {% endif %}
                     {% if not participant.needs_wetsuit and not participant.needs_bcd and not participant.needs_regulator and not participant.needs_guide and not participant.needs_insurance %}-{% endif %}
@@ -333,13 +333,73 @@ body {
                 <div style="padding: 8px 0; border-bottom: 1px solid #eee;">
                     <strong>{{ participant.customer.first_name }} {{ participant.customer.last_name }}</strong><br>
                     <small style="color: #666;">
-                        {% if participant.needs_wetsuit %}Wetsuit: {{ participant.customer.get_wetsuit_size }}{% if participant.needs_bcd or participant.needs_regulator %}, {% endif %}{% endif %}
-                        {% if participant.needs_bcd %}BCD: {{ participant.customer.get_bcd_size }}{% if participant.needs_regulator %}, {% endif %}{% endif %}
-                        {% if participant.needs_regulator %}Fins: {{ participant.customer.get_fins_size }}{% endif %}
+                        {% if participant.needs_wetsuit %}
+                            <span style="background: #e9ecef; padding: 2px 6px; border-radius: 3px; margin-right: 5px;">
+                                Wetsuit: {{ participant.customer.get_wetsuit_size }}
+                            </span>
+                        {% endif %}
+                        {% if participant.needs_bcd %}
+                            <span style="background: #e9ecef; padding: 2px 6px; border-radius: 3px; margin-right: 5px;">
+                                BCD: {{ participant.customer.get_bcd_size }}
+                            </span>
+                        {% endif %}
+                        {% if participant.needs_regulator %}
+                            <span style="background: #e9ecef; padding: 2px 6px; border-radius: 3px; margin-right: 5px;">
+                                Fins: {{ participant.customer.get_fins_size }}
+                            </span>
+                        {% endif %}
                     </small>
                 </div>
                 {% endif %}
             {% endfor %}
+            {% if not participants|length %}
+                <p>No equipment size requirements</p>
+            {% endif %}
+        </div>
+
+        <!-- Equipment Summary by Size -->
+        <div class="equipment-card">
+            <h4>📦 Equipment by Size</h4>
+            {% regroup participants by needs_wetsuit as wetsuit_groups %}
+            {% if participants|length %}
+                <!-- Wetsuit sizes -->
+                {% for participant in participants %}
+                    {% if participant.needs_wetsuit %}
+                        {% if forloop.first %}<strong>Wetsuits needed:</strong><br>{% endif %}
+                    {% endif %}
+                {% endfor %}
+                {% for participant in participants %}
+                    {% if participant.needs_wetsuit %}
+                        <span style="font-size: 12px; margin-right: 10px;">{{ participant.customer.get_wetsuit_size }}</span>
+                    {% endif %}
+                {% endfor %}
+                
+                <!-- BCD sizes -->
+                {% for participant in participants %}
+                    {% if participant.needs_bcd %}
+                        {% if forloop.first %}<br><strong>BCDs needed:</strong><br>{% endif %}
+                    {% endif %}
+                {% endfor %}
+                {% for participant in participants %}
+                    {% if participant.needs_bcd %}
+                        <span style="font-size: 12px; margin-right: 10px;">{{ participant.customer.get_bcd_size }}</span>
+                    {% endif %}
+                {% endfor %}
+                
+                <!-- Fins sizes -->
+                {% for participant in participants %}
+                    {% if participant.needs_regulator %}
+                        {% if forloop.first %}<br><strong>Fins needed:</strong><br>{% endif %}
+                    {% endif %}
+                {% endfor %}
+                {% for participant in participants %}
+                    {% if participant.needs_regulator %}
+                        <span style="font-size: 12px; margin-right: 10px;">{{ participant.customer.get_fins_size }}</span>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <p>No equipment sizes to display</p>
+            {% endif %}
         </div>
         {% endif %}
     </div>
