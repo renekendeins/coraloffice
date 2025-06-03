@@ -5,7 +5,7 @@ from django.contrib.auth.models import User
 from .models import (
     UserProfile, Customer, DiveSchedule, DiveActivity, CustomerDiveActivity, 
     DivingSite, InventoryItem, DivingGroup, DivingGroupMember, Staff, 
-    Course, Enrollment, CourseSession, MedicalForm
+    Course, CourseSession, CourseEnrollment, 
 )
 
 class UserProfileInline(admin.StackedInline):
@@ -65,8 +65,8 @@ class DivingSiteAdmin(admin.ModelAdmin):
 # Dive Activity Admin
 @admin.register(DiveActivity)
 class DiveActivityAdmin(admin.ModelAdmin):
-    list_display = ('name', 'diving_center', 'max_participants', 'price', 'duration')
-    list_filter = ('diving_center', 'max_participants')
+    list_display = ('name', 'diving_center', 'price')
+    list_filter = ('diving_center',)
     search_fields = ('name', 'description')
 
 # Dive Schedule Admin
@@ -106,8 +106,8 @@ class CustomerDiveActivityAdmin(admin.ModelAdmin):
 # Staff Admin
 @admin.register(Staff)
 class StaffAdmin(admin.ModelAdmin):
-    list_display = ('first_name', 'last_name', 'certification_level', 'hire_date', 'is_active')
-    list_filter = ('certification_level', 'is_active', 'hire_date')
+    list_display = ('first_name', 'last_name', 'certification_level', 'hire_date')
+    list_filter = ('certification_level', 'hire_date')
     search_fields = ('first_name', 'last_name', 'email', 'certification_number')
     readonly_fields = ('created_at',)
     fieldsets = (
@@ -118,10 +118,10 @@ class StaffAdmin(admin.ModelAdmin):
             'fields': ('certification_level', 'certification_number', 'languages', 'experience_years')
         }),
         ('Employment', {
-            'fields': ('hire_date', 'hourly_rate', 'is_active')
+            'fields': ('hire_date', 'hourly_rate')
         }),
         ('Additional Information', {
-            'fields': ('specialties', 'bio', 'notes')
+            'fields': ('specialties', 'notes')
         }),
         ('Metadata', {
             'fields': ('created_at',)
@@ -151,7 +151,7 @@ class CourseAdmin(admin.ModelAdmin):
     )
 
 # Enrollment Admin
-@admin.register(Enrollment)
+@admin.register(CourseEnrollment)
 class EnrollmentAdmin(admin.ModelAdmin):
     list_display = ('customer', 'course', 'enrollment_date', 'status', 'primary_instructor')
     list_filter = ('status', 'enrollment_date', 'course', 'primary_instructor')
@@ -175,8 +175,8 @@ class EnrollmentAdmin(admin.ModelAdmin):
 # Course Session Admin
 @admin.register(CourseSession)
 class CourseSessionAdmin(admin.ModelAdmin):
-    list_display = ('enrollment', 'session_number', 'title', 'scheduled_date', 'is_completed')
-    list_filter = ('is_completed', 'session_type', 'scheduled_date')
+    list_display = ('enrollment', 'session_number', 'title', 'scheduled_date', 'status')
+    list_filter = ('status', 'session_type', 'scheduled_date')
     search_fields = ('enrollment__customer__first_name', 'enrollment__customer__last_name', 'title')
     readonly_fields = ('created_at',)
     fieldsets = (
@@ -221,6 +221,7 @@ class InventoryItemAdmin(admin.ModelAdmin):
             'fields': ('created_at',)
         })
     )
+    
 
 # Diving Group Admin
 @admin.register(DivingGroup)
@@ -247,29 +248,28 @@ class DivingGroupAdmin(admin.ModelAdmin):
 # Diving Group Member Admin
 @admin.register(DivingGroupMember)
 class DivingGroupMemberAdmin(admin.ModelAdmin):
-    list_display = ('customer', 'group', 'role', 'joined_date')
-    list_filter = ('role', 'joined_date', 'group')
+    list_display = ('customer', 'group')
+    list_filter = ('group',)
     search_fields = ('customer__first_name', 'customer__last_name', 'group__name')
-    readonly_fields = ('joined_date',)
 
 # Medical Form Admin
-@admin.register(MedicalForm)
-class MedicalFormAdmin(admin.ModelAdmin):
-    list_display = ('first_name', 'last_name', 'email', 'phone_number', 'submitted_at')
-    list_filter = ('submitted_at', 'medical_conditions')
-    search_fields = ('first_name', 'last_name', 'email', 'phone_number')
-    readonly_fields = ('submitted_at',)
-    fieldsets = (
-        ('Personal Information', {
-            'fields': ('first_name', 'last_name', 'email', 'phone_number', 'emergency_contact')
-        }),
-        ('Medical Information', {
-            'fields': ('medical_conditions',)
-        }),
-        ('Metadata', {
-            'fields': ('submitted_at',)
-        })
-    )
+# @admin.register(MedicalForm)
+# class MedicalFormAdmin(admin.ModelAdmin):
+#     list_display = ('first_name', 'last_name', 'email', 'phone_number', 'submitted_at')
+#     list_filter = ('submitted_at', 'medical_conditions')
+#     search_fields = ('first_name', 'last_name', 'email', 'phone_number')
+#     readonly_fields = ('submitted_at',)
+#     fieldsets = (
+#         ('Personal Information', {
+#             'fields': ('first_name', 'last_name', 'email', 'phone_number', 'emergency_contact')
+#         }),
+#         ('Medical Information', {
+#             'fields': ('medical_conditions',)
+#         }),
+#         ('Metadata', {
+#             'fields': ('submitted_at',)
+#         })
+#     )
 
 # Unregister the default User admin and register our custom one
 admin.site.unregister(User)
