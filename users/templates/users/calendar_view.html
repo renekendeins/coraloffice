@@ -7,8 +7,8 @@
 {% block users_content %}
 <div style="display: flex; flex-direction: column; justify-content: space-between; align-items: center; margin-bottom: 30px;">
     <div style="margin-bottom: 20px;">
-        <a href="?year={{ prev_year }}&month={{ prev_month }}&view={{ view_type }}" class="btn" style="background: #6c757d; margin-right: 10px;">← Anterior</a>
-        <a href="?year={{ next_year }}&month={{ next_month }}&view={{ view_type }}" class="btn" style="background: #6c757d;">Siguiente →</a>
+        <a href="?year={{ prev_year }}&month={{ prev_month }}&view={{ view_type }}" class="btn text-bg-info" tyle="margin-right: 10px;">← Anterior</a>
+        <a href="?year={{ next_year }}&month={{ next_month }}&view={{ view_type }}" class="btn text-bg-info" >Siguiente →</a>
     </div>
     <h2>
         {% if view_type == 'day' %}
@@ -56,12 +56,13 @@
     font-weight: bold;
 }
 
+
 .calendar-day {
     font-weight: bold;
-    margin-bottom: 5px;
+    /* margin-bottom: 5px; */
     background-color: #77e0ee;
     text-align: center;
-    border-radius: 3px;
+    /* border-radius: 3px; */
 }
     .calendar-day a{
         text-decoration: none;
@@ -71,16 +72,16 @@
     }
 
 .calendar-today {
-    background-color: #e3f2fd;
+    background-color: #e3f2fd !important;
 }
 
 .dive-item {
     background-color: #f4f4f4;
     color: black;
-    border: 1px solid darkgray;
+    /* border: 1px solid darkgray; */
     padding: 10px 6px;
-    margin: 2px 0 10px 0;
-    border-radius: 3px;
+    /* margin: 2px 0 10px 0; */
+    /* border-radius: 3px; */
     font-size: 12px;
     cursor: pointer;
     font-weight: bold;
@@ -97,7 +98,7 @@
     width: 100% !important;
         background: lightgreen;
         padding: .5rem 1rem;
-        border-radius: 3px;
+        /* border-radius: 3px; */
         display: flex;
         color: #09250e;
         font-weight: bold;
@@ -110,9 +111,9 @@
 </style>
 
 <div style="margin-bottom: 100px; display: flex; justify-content:center;">
-    <a href="{% url 'users:diving_center_dashboard' %}" class="btn" style="background: #6c757d; margin-right: 10px;">Back to Dashboard</a>
+    <a href="{% url 'users:diving_center_dashboard' %}" class="btn text-bg-secondary" style="margin-right: 10px;">Back to Dashboard</a>
     <!-- <a href="{% url 'users:dive_calendar' %}" class="btn" style="background: #9c27b0; margin-right: 10px;">List View</a> -->
-    <a href="{% url 'users:quick_schedule_dive' %}" class="btn" style="background-color: #64bd6f !important;">Nueva Inmersión</a>
+    <a href="{% url 'users:quick_schedule_dive' %}" class="btn text-bg-success" >Nueva Inmersión</a>
 </div>
 
 {% if view_type == 'day' %}
@@ -177,38 +178,39 @@
 
 {% else %}
 <!-- Month View (default) -->
-<table class="calendar">
-    <thead>
+<table class="table">
+    <thead class="thead-dark">
         <tr>
-            <th>Monday</th>
-            <th>Tuesday</th>
-            <th>Wednesday</th>
-            <th>Thursday</th>
-            <th>Friday</th>
-            <th>Saturday</th>
-            <th>Sunday</th>
+            <th scope="col">Lun.</th>
+            <th scope="col">Mar.</th>
+            <th scope="col">Mie.</th>
+            <th scope="col">Jue.</th>
+            <th scope="col">Vie.</th>
+            <th scope="col">Sab.</th>
+            <th scope="col">Dom.</th>
         </tr>
     </thead>
     <tbody>
         {% for week in calendar %}
         <tr>
             {% for day in week %}
-            <td {% if day == today %}class="calendar-today"{% endif %}>
+            <td scope="row" class="p-0" {% if day == today %}class="calendar-today"{% endif %} >
                 {% if day != 0 %}
                     <div class="calendar-day">
                         <a href="?year={{ year }}&month={{ month }}&day={{ day }}&view=day">{{ day }}</a>
                     </div>
                     {% if day in dives_by_day %}
                         {% for dive in dives_by_day|lookup:day %}
-                        <a href="{% url 'users:dive_detail' dive.id %}" style="text-decoration: none;">
-                            <div class="dive-item" title="{{ dive.dive_site }} at {{ dive.time }}">
-                                {{ dive.time|time:"H:i" }} - {{ dive.dive_site }}
+                        <a href="{% url 'users:dive_detail' dive.id %}" style="text-decoration: none;" >
+                            <div class="dive-item text-center d-flex flex-column flex-sm-row align-items-sm-center justify-content-sm-center" title="{{ dive.dive_site }} at {{ dive.time }}">
+                                <p class="mb-0 me-sm-3">{{ dive.time|time:"H:i" }}h</p>
+                                <!-- - {{ dive.dive_site }} -->
                                 <small>({{ dive.get_participant_count }} / 46)</small>
                             </div>
                         </a>
                         {% endfor %}
                     {% endif %}
-                    <a href="{% url 'users:quick_schedule_dive' %}?date={{ year }}-{{ month|stringformat:'02d' }}-{{ day|stringformat:'02d' }}" class="add-dive-link">+ Add Dive</a>
+                    <a href="{% url 'users:quick_schedule_dive' %}?date={{ year }}-{{ month|stringformat:'02d' }}-{{ day|stringformat:'02d' }}" class="add-dive-link text-center">+ Add Dive</a>
                 {% endif %}
             </td>
             {% endfor %}

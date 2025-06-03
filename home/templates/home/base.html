@@ -86,7 +86,7 @@
 
         /* Main Content */
         .main-content { min-height: calc(100vh - 140px); padding: 40px 0; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
+        .container { max-width: 1200px; margin: 0 auto; }
 
         /* Hero Section */
         .hero { background: linear-gradient(rgba(0,105,148,0.8), rgba(0,168,204,0.8)), url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect fill="%23006994" width="1200" height="600"/><circle fill="%2300a8cc" cx="200" cy="100" r="50" opacity="0.3"/><circle fill="%2300a8cc" cx="800" cy="200" r="80" opacity="0.2"/><circle fill="%2300a8cc" cx="1000" cy="400" r="60" opacity="0.3"/></svg>'); 
@@ -204,9 +204,9 @@
         </div>
     </header>
 
-    <main class="main-content">
+    <main class="main-content pt-0">
         {% if messages %}
-            <div class="container">
+            <div class="container p-0 p-sm-4">
                 <div class="messages">
                     {% for message in messages %}
                         <div class="alert alert-{{ message.tags }}">{{ message }}</div>
