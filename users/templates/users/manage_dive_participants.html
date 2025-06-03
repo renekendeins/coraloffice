@@ -88,8 +88,8 @@
 }
 
 .status-pending { background-color: #ffc107; color: #000; }
-.status-on-board { background-color: #28a745; color: #fff; }
-.status-back-on-boat { background-color: #17a2b8; color: #fff; }
+.status-on_board { background-color: #28a745; color: #fff; }
+.status-back_on_boat { background-color: #17a2b8; color: #fff; }
 .status-departed { background-color: #6c757d; color: #fff; }
 .status-finished { background-color: #007bff; color: #fff; }
 
@@ -152,160 +152,197 @@ function toggleDetails(participantId) {
     }
 }
 </script>
-<div style="display> flex; align-items: flex-start;">
-    <a href="{% url 'users:dive_detail' dive.id %}" class="btn" style="background: #6c757d;">← Back to Dive Details</a>
-    <div>
-        <h2>Gestionar clientes para {{ dive.dive_site.name }}</h2>
-        <p><strong>Fecha:</strong> {{ dive.date }} | <strong>Hora:</strong> {{ dive.time }}</p>
-        <p><strong>Clientes actuales:</strong> {{ participants.count }}/{{ dive.max_participants }}</p>
-    </div>
-</div>
-{% if dive.special_notes %}
-    <div style="background-color: #fff3cd; border: 1px solid #ffeaa7; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
-        <strong>⚠️ Notas Especiales:</strong> {{ dive.special_notes }}
-    </div>
-{% endif %}
 
-<!-- Add new participant form -->
-<form method="post" style="padding: 2rem;background: #f4f4f4;border-radius: 5px;border: 1px solid #ddd;margin: 2rem 0 2rem 0;">
-    {% csrf_token %}
-    <div class="form-row">
-        <div class="form-group" style="position: relative;">
-            <label for="customer-search">Buscar clientes o grupos:</label>
-            <input type="text" id="customer-search" placeholder="Start typing customer or group name..." autocomplete="off" class="form-control">
-            <div id="search-suggestions" class="search-suggestions"></div>
-            {{ form.customer }}
-            {{ form.selected_group }}
-        </div>
-        <div class="form-group">
-            <label for="{{ form.course.id_for_label }}">Curso:</label>
-            {{ form.course }}
-        </div>
-        <div class="form-group">
-            <label for="{{ form.tank_size.id_for_label }}">Botella:</label>
-            {{ form.tank_size }}
+<div class="p-4">
+    <div style="display> flex; align-items: flex-start;">
+        <a href="{% url 'users:dive_detail' dive.id %}" class="btn text-white mb-4" style="background: #6c757d;">← Volver a detalles</a>
+        <div>
+            <h2>Gestionar clientes para {{ dive.dive_site.name }}</h2>
+            <p><strong>Fecha:</strong> {{ dive.date }} | <strong>Hora:</strong> {{ dive.time }}</p>
+            <p><strong>Clientes actuales:</strong> {{ participants.count }}/{{ dive.max_participants }}</p>
         </div>
     </div>
-
-    <div class="checkbox-group">
-        <label><input type="checkbox" name="needs_wetsuit" {% if form.needs_wetsuit.value %}checked{% endif %}> Traje</label>
-        <label><input type="checkbox" name="needs_bcd" {% if form.needs_bcd.value %}checked{% endif %}> BCD</label>
-        <label><input type="checkbox" name="needs_regulator" {% if form.needs_regulator.value %}checked{% endif %}> Regulador</label>
-        <label><input type="checkbox" name="needs_guide" {% if form.needs_guide.value %}checked{% endif %}> Instructor</label>
-        <label><input type="checkbox" name="needs_insurance" {% if form.needs_insurance.value %}checked{% endif %}> Seguro</label>
-    </div>
-
-    <div style="margin-top: 20px; display: flex; justify-content: space-between;">
-        <button type="submit" name="add_participant" class="btn">Añadir cliente</button>
-    </div>
-</form>
-
-<h3>Clientes actuales</h3>
-{% if participants %}
-    {% for participant in participants %}
-        <div class="participant-card">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                <div style="flex: 1;">
-                    <h4>{{ participant.customer.first_name }} {{ participant.customer.last_name }} ({{ participant.course.name }}) | {{ participant.get_tank_size_display }} | {{ participant.customer.get_language_display }}</h4>
-
-                    <button class="btn" onclick="toggleDetails({{ participant.id }})">Mostrar detalles</button>
-
-                    <div id="details-{{ participant.id }}" class="participant-details" style="display:none; margin-top: 10px;">
-                        <p><strong>Certification Level:</strong> {{ participant.customer.certification_level|default:"Not specified" }}</p>
-                        <p><strong>Country:</strong> {{ participant.customer.country|default:"Not specified" }} </p>
-
-
-                        </p>
-                    </div>
-
-                    <div style="margin-bottom: 10px;">
-                        <span class="status-badge status-{{ participant.status|lower }}">{{ participant.get_status_display }}</span>
-                        {% if participant.is_paid %}<span style="background-color: #007bff; color: white; padding: 2px 6px; border-radius: 3px; font-size: 12px; margin-left: 5px;">💰 Paid</span>{% endif %}
-                    </div>
-                    <div class="equipment-list">
-                        {% if participant.needs_wetsuit or participant.needs_bcd or participant.needs_regulator or participant.needs_guide or participant.needs_insurance %}
-                            <span style="color: #666;">Necesario:</span>
-                        {% endif %}
-                        {% if participant.needs_wetsuit %}<span class="equipment-item">Traje ({{ participant.customer.get_wetsuit_size }})</span>{% endif %}
-                        {% if participant.needs_bcd %}<span class="equipment-item">Jacket ({{ participant.customer.get_bcd_size }})</span>{% endif %}
-                        {% if participant.needs_regulator %}<span class="equipment-item">Regulador</span>{% endif %}
-                        {% if participant.needs_guide %}<span class="equipment-item">Instructor</span>{% endif %}
-                        {% if participant.needs_insurance %}<span class="equipment-item">Seguro</span>{% endif %}
-                    </div>
-
-                    <!-- Quick edit form -->
-                    <div class="quick-edit-form" id="edit-form-{{ participant.id }}">
-                        <form method="post" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
-                            {% csrf_token %}
-                            <input type="hidden" name="participant_id" value="{{ participant.id }}">
-                            <div>
-                                <label>Course:</label>
-                                <select name="course" class="form-control">
-                                    {% for course in form.course.field.queryset %}
-                                        <option value="{{ course.id }}" {% if participant.course.id == course.id %}selected{% endif %}>{{ course.name }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div>
-                                <label>Tank Size:</label>
-                                <select name="tank_size" class="form-control">
-                                    {% for value, label in tank_size_choices %}
-                                        <option value="{{ value }}" {% if participant.tank_size == value %}selected{% endif %}>{{ label }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div>
-                                <label>Status:</label>
-                                <select name="status" class="form-control">
-                                    {% for value, label in status_choices %}
-                                        <option value="{{ value }}" {% if participant.status == value %}selected{% endif %}>{{ label }}</option>
-                                    {% endfor %}
-                                </select>
-                            </div>
-                            <div style="display: flex; flex-direction: column; gap: 5px;">
-                                <label><input type="checkbox" name="needs_wetsuit" {% if participant.needs_wetsuit %}checked{% endif %}> Traje</label>
-                                <label><input type="checkbox" name="needs_bcd" {% if participant.needs_bcd %}checked{% endif %}> Jacket</label>
-                                <label><input type="checkbox" name="needs_regulator" {% if participant.needs_regulator %}checked{% endif %}> Regulador</label>
-                            </div>
-                            <div style="display: flex; flex-direction: column; gap: 5px;">
-                                <label><input type="checkbox" name="needs_guide" {% if participant.needs_guide %}checked{% endif %}> Instructor</label>
-                                <label><input type="checkbox" name="needs_insurance" {% if participant.needs_insurance %}checked{% endif %}> Seguro</label>
-                                <label><input type="checkbox" name="is_paid" {% if participant.is_paid %}checked{% endif %}> Pagado</label>
-                            </div>
-                            <div style="grid-column: span 2;">
-                                <button type="submit" name="quick_update_participant" class="btn" style="background-color: #28a745;">Actualizar</button>
-                                <button type="button" onclick="hideQuickEdit({{ participant.id }})" class="btn" style="background-color: #6c757d;">Cancelar</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-                <div style="display: flex; flex-direction: column; gap: 5px; margin-left: 15px;">
-    {% if participant.status == 'PENDING' %}
-        <form method="post" style="margin: 0;">
-            {% csrf_token %}
-            <input type="hidden" name="participant_id" value="{{ participant.id }}">
-            <button type="submit" name="on_board" class="btn" style="background-color: #28a745; padding: 5px 10px; font-size: 12px; margin-bottom: 3px; width: 100%;">On Board</button>
-        </form>
-    {% elif participant.status == 'ON_BOARD' %}
-        <form method="post" style="margin: 0;">
-            {% csrf_token %}
-            <input type="hidden" name="participant_id" value="{{ participant.id }}">
-            <button type="submit" name="back_on_boat" class="btn" style="background-color: #17a2b8; padding: 5px 10px; font-size: 12px; margin-bottom: 3px; width: 100%;">Back on Boat</button>
-        </form>
+    {% if dive.special_notes %}
+        <div style="background-color: #fff3cd; border: 1px solid #ffeaa7; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
+            <strong>⚠️ Notas Especiales:</strong> {{ dive.special_notes }}
+        </div>
     {% endif %}
-    <button onclick="showQuickEdit({{ participant.id }})" class="btn" style="background-color: #ffc107; color: #000; padding: 5px 10px; font-size: 12px; margin-bottom: 3px; width: 100%;">Edición rápida</button>
-    <form method="post" style="margin: 0;">
+
+    <!-- Add new participant form -->
+    <form method="post" style="padding: 2rem;background: #f4f4f4;border-radius: 5px;border: 1px solid #ddd;margin: 2rem 0 2rem 0;">
         {% csrf_token %}
-        <input type="hidden" name="customer" value="{{ participant.id }}">
-        <button type="submit" name="remove_participant" class="btn" style="background-color: #f44336; padding: 5px 10px; font-size: 12px; width: 100%;">Eliminar</button>
-    </form>
-</div>
+        <div class="d-flex flex-column">
+            <div class="form-group" style="position: relative;">
+                <label for="customer-search">Buscar clientes o grupos:</label>
+                <input type="text" id="customer-search" placeholder="Start typing customer or group name..." autocomplete="off" class="form-control">
+                <div id="search-suggestions" class="search-suggestions"></div>
+                {{ form.customer }}
+                {{ form.selected_group }}
+            </div>
+            <div class="d-flex flex-column flex-md-row">
+                <div class="form-group me-md-4">
+                    <label for="{{ form.course.id_for_label }}">Curso:</label>
+                    {{ form.course }}
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.tank_size.id_for_label }}">Botella:</label>
+                    {{ form.tank_size }}
+                </div>
             </div>
         </div>
-    {% endfor %}
-{% else %}
-    <p>No participants registered for this dive yet.</p>
-{% endif %}
+
+        <div class="checkbox-group">
+            <label><input type="checkbox" name="needs_wetsuit" {% if form.needs_wetsuit.value %}checked{% endif %}> Traje</label>
+            <label><input type="checkbox" name="needs_bcd" {% if form.needs_bcd.value %}checked{% endif %}> BCD</label>
+            <label><input type="checkbox" name="needs_regulator" {% if form.needs_regulator.value %}checked{% endif %}> Regulador</label>            
+            <label><input type="checkbox" name="needs_fins" {% if form.needs_fins.value %}checked{% endif %}> Aletas</label>
+            <label><input type="checkbox" name="needs_guide" {% if form.needs_guide.value %}checked{% endif %}> Instructor</label>
+            <label><input type="checkbox" name="needs_insurance" {% if form.needs_insurance.value %}checked{% endif %}> Seguro</label>
+        </div>
+
+        <div style="margin-top: 20px; display: flex; justify-content: space-between;">
+            <button type="submit" name="add_participant" class="btn btn-success">Añadir cliente</button>
+        </div>
+    </form>
+
+    <h3>Clientes actuales</h3>
+    {% if participants %}
+        {% for participant in participants %}
+            <div class="participant-card">
+                <div class="d-flex flex-column flex-lg-row align-items-start align-items-lg-start justify-content-between">
+                    
+                    <div class="col-12 col-lg-9">
+                        <div class="mb-2">
+                            <span class="status-badge status-{{ participant.status|lower }}">{{ participant.get_status_display }}</span>
+                        </div>
+                        <h4>{{ participant.customer.first_name }} {{ participant.customer.last_name }} <b>[{{ participant.course.name }}]</b> - {{ participant.get_tank_size_display }}</h4>
+
+                        
+
+                        <div id="details-{{ participant.id }}" class="participant-details" style="display:none; margin-top: 10px;">
+                            <p class="mb-0"><strong>Nivel de buceo:</strong> {{ participant.customer.get_certification_level|default:"Not specified" }}</p>
+                            <p class="mb-0"><strong>Pais:</strong> {{ participant.customer.get_country_name|default:"Not specified" }} </p>
+                            <p><strong>Idioma:</strong> {{ participant.customer.get_language_display }}</p>
+
+
+                            </p>
+                        </div>
+
+                        <div style="margin-bottom: 10px;">
+                            
+                            {% if participant.is_paid %}<span style="background-color: #007bff; color: white; padding: 2px 6px; border-radius: 3px; font-size: 12px; margin-left: 5px;">💰 Paid</span>{% endif %}
+                        </div>
+                        <div class="equipment-list d-inline-block">
+                            {% if participant.needs_wetsuit or participant.needs_bcd or participant.needs_regulator or participant.needs_guide or participant.needs_insurance %}
+                                <span style="color: #666;">Necesario:</span>
+                            {% endif %}
+                            {% if participant.needs_wetsuit %}<span class="equipment-item">Traje ({{ participant.customer.get_wetsuit_size }})</span>{% endif %}
+                            {% if participant.needs_bcd %}<span class="equipment-item">Jacket ({{ participant.customer.get_bcd_size }})</span>{% endif %}                            
+                            {% if participant.needs_fins %}<span class="equipment-item">Aletas ({{ participant.customer.get_fins_size }})</span>{% endif %}
+                            {% if participant.needs_regulator %}<span class="equipment-item">Regulador</span>{% endif %}
+                            {% if participant.needs_guide %}<span class="equipment-item">Instructor</span>{% endif %}
+                            {% if participant.needs_insurance %}<span class="equipment-item">Seguro</span>{% endif %}
+                        </div>
+
+                        <!-- Quick edit form -->
+                        <div class="quick-edit-form me-2" id="edit-form-{{ participant.id }}">
+                            <form method="post" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+                                {% csrf_token %}
+                                <input type="hidden" name="participant_id" value="{{ participant.id }}">
+                                <div class="d-flex flex-column">
+                                    <div>
+                                        <label>Course:</label>
+                                        <select name="course" class="form-control">
+                                            {% for course in form.course.field.queryset %}
+                                                <option value="{{ course.id }}" {% if participant.course.id == course.id %}selected{% endif %}>{{ course.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label>Tank Size:</label>
+                                        <select name="tank_size" class="form-control">
+                                            {% for value, label in tank_size_choices %}
+                                                <option value="{{ value }}" {% if participant.tank_size == value %}selected{% endif %}>{{ label }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label>Status:</label>
+                                        <select name="status" class="form-control">
+                                            {% for value, label in status_choices %}
+                                                <option value="{{ value }}" {% if participant.status == value %}selected{% endif %}>{{ label }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div style="display: flex; flex-direction: column; gap: 5px;">
+                                        <label><input type="checkbox" name="needs_wetsuit" {% if participant.needs_wetsuit %}checked{% endif %}> Traje</label>
+                                        <label><input type="checkbox" name="needs_bcd" {% if participant.needs_bcd %}checked{% endif %}> Jacket</label>
+                                        <label><input type="checkbox" name="needs_regulator" {% if participant.needs_regulator %}checked{% endif %}> Regulador</label>                                                             <label><input type="checkbox" name="needs_fins" {% if participant.needs_fins %}checked{% endif %}> Aletas</label>
+                                        <label><input type="checkbox" name="needs_guide" {% if participant.needs_guide %}checked{% endif %}> Instructor</label>
+                                        <label><input type="checkbox" name="needs_insurance" {% if participant.needs_insurance %}checked{% endif %}> Seguro</label>
+                                        <label><input type="checkbox" name="is_paid" {% if participant.is_paid %}checked{% endif %}> Pagado</label>
+                                    </div>
+                                    
+                                </div>
+                                <div style="grid-column: span 2;" class="mt-4">
+                                    <button type="submit" name="quick_update_participant" class="btn btn-primary">Actualizar</button>
+                                    <button type="button" onclick="hideQuickEdit({{ participant.id }})" class="btn btn-secondary">Cancelar</button>
+                                     <button type="button" class="btn  btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                                        Eliminar 
+                                      </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="z-index: 100000;">
+                        <!-- Code review comment -> Ensure the modal has a unique ID to avoid conflicts if multiple modals are used. -->
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-body">
+                              <!-- Code review comment -> Add meaningful content or instructions inside the modal body. -->
+                              <p class="text-center">
+                                  ¿Seguro que quieres eliminar este cliente?
+                              </p>
+                            </div>
+                            <div class="d-flex justify-content-around">
+                              <!-- Code review comment -> Ensure buttons in the footer have clear labels and functionality. -->
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                <form method="post" style="margin: 0;">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="customer" value="{{ participant.id }}">
+                                    <button type="submit" name="remove_participant" class="btn btn-danger w-100">Eliminar</button>
+                                </form>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    <div class="mt-4 d-flex flex-column flex-lg-row col-12 col-lg-auto flex-lg-column mt-lg-0 justify-content-lg-start">
+        {% if participant.status == 'PENDING' %}
+            <form method="post" class="mb-2">
+                {% csrf_token %}
+                <input type="hidden" name="participant_id" value="{{ participant.id }}">
+                <button type="submit" name="on_board" class="btn btn-warning w-100 text-dark">On Board</button>
+            </form>
+        {% elif participant.status == 'ON_BOARD' %}
+            <form method="post" class="mb-2">
+                {% csrf_token %}
+                <input type="hidden" name="participant_id" value="{{ participant.id }}">
+                <button type="submit" name="back_on_boat" class="btn btn-info w-100">Back on Boat</button>
+            </form>
+        {% endif %}
+        <button onclick="showQuickEdit({{ participant.id }})" class="btn btn-info mb-2 text-white">Edición rápida</button>
+                        <button class="btn btn-primary" onclick="toggleDetails({{ participant.id }})">Mostrar detalles</button>
+        
+    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>No participants registered for this dive yet.</p>
+    {% endif %}
+</div>
 
 
 <script>

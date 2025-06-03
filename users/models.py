@@ -21,13 +21,13 @@ class UserProfile(models.Model):
 
 class Customer(models.Model):
     DIVING_LEVEL_CHOICES = [
-        ('NONE', 'No certification'),
-        ('BEGINNER', 'Beginner'),
-        ('OPEN_WATER', 'Open Water'),
-        ('ADVANCED_OPEN_WATER', 'Advanced Open Water'),
-        ('RESCUE_DIVER', 'Rescue Diver'),
-        ('DIVEMASTER', 'Divemaster'),
-        ('INSTRUCTOR', 'Instructor'),
+        ('NONE', 'NO'),
+        ('BEGINNER', 'SCUBA'),
+        ('OPEN_WATER', 'OWD.'),
+        ('ADVANCED_OPEN_WATER', 'ADV.'),
+        ('RESCUE_DIVER', 'RESC.'),
+        ('DIVEMASTER', 'DM.'),
+        ('INSTRUCTOR', 'INST.'),
     ]
     
     LANGUAGE_CHOICES = [
@@ -158,8 +158,17 @@ class Customer(models.Model):
         # Direct EU size mapping for boots
         return f"EU {int(self.foot_size)}"
 
+    def get_country_name(self):
+        """Get the full country name from the country code"""
+        return dict(self.COUNTRY_CHOICES).get(self.country, self.country)
+    
     def get_full_name(self):
         return f"{self.first_name} {self.last_name}"
+
+    def get_certification_level(self):
+        """Get the full certification name from the certification level code"""
+        return dict(self.DIVING_LEVEL_CHOICES).get(self.certification_level, self.certification_level)
+        
 
 class DiveActivity(models.Model):
     diving_center = models.ForeignKey(User, on_delete=models.CASCADE, related_name='dive_activities')
@@ -244,7 +253,9 @@ class CustomerDiveActivity(models.Model):
     needs_wetsuit = models.BooleanField(default=False)
     needs_bcd = models.BooleanField(default=False)
     needs_regulator = models.BooleanField(default=False)
-    needs_guide = models.BooleanField(default=False)
+    needs_guide = models.BooleanField(default=False)    
+    needs_fins = models.BooleanField(default=False)
+
     needs_insurance = models.BooleanField(default=False)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
     has_arrived = models.BooleanField(default=False)

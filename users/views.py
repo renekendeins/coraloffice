@@ -510,7 +510,9 @@ def manage_dive_participants(request, dive_id):
                 participant.needs_bcd = 'needs_bcd' in request.POST
                 participant.needs_regulator = 'needs_regulator' in request.POST
                 participant.needs_guide = 'needs_guide' in request.POST
-                participant.needs_insurance = 'needs_insurance' in request.POST
+                participant.needs_insurance = 'needs_insurance' in request.POST                
+                participant.needs_fins = 'needs_fins' in request.POST
+
                 participant.is_paid = 'is_paid' in request.POST
                 participant.save()
                 messages.success(request, 'Participant updated successfully!')
