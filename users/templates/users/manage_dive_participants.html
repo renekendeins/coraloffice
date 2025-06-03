@@ -227,7 +227,7 @@ function toggleDetails(participantId) {
                             <span style="color: #666;">Necesario:</span>
                         {% endif %}
                         {% if participant.needs_wetsuit %}<span class="equipment-item">Traje ({{ participant.customer.get_wetsuit_size }})</span>{% endif %}
-                        {% if participant.needs_bcd %><span class="equipment-item">Jacket ({{ participant.customer.get_bcd_size }})</span>{% endif %}
+                        {% if participant.needs_bcd %}<span class="equipment-item">Jacket ({{ participant.customer.get_bcd_size }})</span>{% endif %}
                         {% if participant.needs_regulator %}<span class="equipment-item">Regulador</span>{% endif %}
                         {% if participant.needs_guide %}<span class="equipment-item">Instructor</span>{% endif %}
                         {% if participant.needs_insurance %}<span class="equipment-item">Seguro</span>{% endif %}

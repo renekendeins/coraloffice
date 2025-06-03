@@ -440,7 +440,6 @@ class Course(models.Model):
         ('SCUBA_DIVER', 'Scuba Diver'),
         ('DIVING_LESSON', 'Clase de Buceo'),
         ('REFRESH', 'Refresh'),
-        ('JUST_ONE_DIVE', 'Just One Dive'),
         ('CUSTOM', 'Custom Course'),
     ]
     

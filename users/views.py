@@ -314,7 +314,7 @@ def calendar_view(request):
         dives = DiveSchedule.objects.filter(
             diving_center=request.user,
             date=selected_date.date()
-        ).order_by('time')
+        ).order_by('-time')
 
         # Add participant count to dive objects
         for dive in dives:
@@ -338,7 +338,7 @@ def calendar_view(request):
         dives = DiveSchedule.objects.filter(
             diving_center=request.user,
             date__range=[week_start.date(), week_end.date()]
-        ).order_by('date', 'time')
+        ).order_by('date', '-time')
 
         # Organize dives by day for the week
         week_dives = {}
@@ -368,7 +368,7 @@ def calendar_view(request):
         # Get all dives for this month
         dives = DiveSchedule.objects.filter(diving_center=request.user,
                                             date__year=year,
-                                            date__month=month)
+                                            date__month=month).order_by('time')
 
         # Organize dives by day
         dives_by_day = {}
