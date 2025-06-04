@@ -19,10 +19,10 @@ class UserAdmin(BaseUserAdmin):
 # Customer Admin
 @admin.register(Customer)
 class CustomerAdmin(admin.ModelAdmin):
-    list_display = ('first_name', 'last_name', 'email', 'country', 'certification_level', 'created_at')
-    list_filter = ('country', 'certification_level', 'language', 'created_at')
+    list_display = ('first_name', 'last_name', 'email', 'country', 'certification_level', 'has_medical_form', 'created_at')
+    list_filter = ('country', 'certification_level', 'language', 'created_at', 'swimming_ability')
     search_fields = ('first_name', 'last_name', 'email', 'phone_number')
-    readonly_fields = ('created_at',)
+    readonly_fields = ('created_at', 'medical_questionnaire_display')
     fieldsets = (
         ('Basic Information', {
             'fields': ('diving_center', 'first_name', 'last_name', 'email', 'phone_number')
@@ -31,18 +31,93 @@ class CustomerAdmin(admin.ModelAdmin):
             'fields': ('country', 'language', 'birthday', 'certification_level')
         }),
         ('Emergency & Medical', {
-            'fields': ('emergency_contact', 'medical_conditions')
+            'fields': ('emergency_contact', 'medical_conditions', 'swimming_ability')
+        }),
+        ('Medical Questionnaire', {
+            'fields': ('medical_questionnaire_display',),
+            'classes': ('collapse',)
         }),
         ('Physical Details', {
             'fields': ('weight', 'height', 'foot_size', 'default_tank_size')
         }),
         ('Documents', {
-            'fields': ('profile_picture', 'diving_licence', 'diving_insurance', 'medical_check')
+            'fields': ('profile_picture', 'diving_licence', 'diving_insurance', 'medical_check', 'signature')
         }),
         ('Metadata', {
             'fields': ('created_at',)
         })
     )
+    
+    def has_medical_form(self, obj):
+        return bool(obj.medical_questionnaire_answers)
+    has_medical_form.boolean = True
+    has_medical_form.short_description = 'Has Medical Form'
+    
+    def medical_questionnaire_display(self, obj):
+        if not obj.medical_questionnaire_answers:
+            return "No medical questionnaire submitted"
+        
+        html = "<div style='max-width: 800px;'>"
+        html += "<h3>Medical Questionnaire Answers</h3>"
+        
+        questions = {
+            'pregunta_1': 'I have had problems with my lungs/breathing, heart or blood',
+            'pregunta_1_1': 'Chest surgery, heart surgery, heart valve surgery, implantable cardiovascular device (e.g. stent, pacemaker, replaceable valve), pneumothorax, and/or collapsed lung.',
+            'pregunta_1_2': 'Asthma, wheezing, severe allergies, hay fever or congested airways within the last 12 months that limits my physical activity/exercise.',
+            'pregunta_1_3': 'A problem with lung function or chest disease.',
+            'pregunta_1_4': 'High blood pressure, or take medication to control blood pressure.',
+            'pregunta_2': 'I have had problems with my brain or nervous system',
+            'pregunta_2_1': 'Behavioral health, mental or psychological problems that require medication or hospitalization.',
+            'pregunta_2_2': 'Head injury with or without loss of consciousness within the last 12 months.',
+            'pregunta_2_3': 'Persistent problem with balance, dizziness, fainting, seizures, convulsions or epilepsy.',
+            'pregunta_2_4': 'Inability to perform moderately strenuous exercise (e.g. walk 1.6 km/1 mile within 12 minutes).',
+            'pregunta_3': 'I have had problems with my stomach, intestines, or bowels',
+            'pregunta_4': 'I have had problems with my muscles, bones or joints',
+            'pregunta_4_1': 'Muscle, bone or joint injury.',
+            'pregunta_4_2': 'Chronic low back problems.',
+            'pregunta_4_3': 'Limitation of normal physical activity.',
+            'pregunta_4_4': 'Limitation of movement.',
+            'pregunta_5': 'I have diabetes',
+            'pregunta_6': 'I have had problems with my kidneys, bladder or intestines',
+            'pregunta_6_1': 'Medical or surgical treatment of the digestive system within the last 12 months.',
+            'pregunta_6_2': 'History of problems with decompression sickness and/or barotrauma.',
+            'pregunta_6_3': 'Hernia.',
+            'pregunta_6_4': 'Active ulcer or ulcer surgery within the last 12 months.',
+            'pregunta_6_5': 'Frequent diarrhea or blood in urine.',
+            'pregunta_7': 'I have had other important medical problems',
+            'pregunta_7_1': 'Pregnant, or trying to become pregnant.',
+            'pregunta_7_2': 'Over 45 years of age.',
+            'pregunta_7_3': 'Difficulty equalizing ears or sinus pain.',
+            'pregunta_7_4': 'Sinus surgery within the last 12 months.',
+            'pregunta_8': 'I take medications on a regular basis (except birth control or malaria prevention)',
+            'pregunta_8_1': 'Prescription or over-the-counter medications within the last 12 months (except birth control or malaria prevention).',
+            'pregunta_8_2': 'Previous adverse reaction to any medication.',
+            'pregunta_8_3': 'Currently under the care of a physician.',
+            'pregunta_8_4': 'Have been advised against participating in sports or exercise.',
+            'pregunta_8_5': 'Been a patient in a hospital, surgical or emergency facility within the last 12 months.',
+            'pregunta_9': 'I have had problems with recreational drugs',
+            'pregunta_9_1': 'Used tobacco products within the last 12 months.',
+            'pregunta_9_2': 'Used alcohol, prescription or over-the-counter drugs within the last 12 months.',
+            'pregunta_9_3': 'Been told I have a drinking problem.',
+            'pregunta_9_4': 'Failed a drug or alcohol test required by an employer.',
+            'pregunta_9_5': 'Been arrested for driving while under the influence of alcohol or drugs.',
+            'pregunta_9_6': 'Been in treatment for alcohol or drug use.',
+            'pregunta_10': 'I have used marijuana/cannabis in any form within the last 12 months'
+        }
+        
+        for key, question in questions.items():
+            answer = obj.medical_questionnaire_answers.get(key, False)
+            status = "YES" if answer else "NO"
+            color = "red" if answer else "green"
+            html += f"<div style='margin-bottom: 10px; padding: 10px; border-left: 3px solid {color};'>"
+            html += f"<strong>{question}</strong><br>"
+            html += f"<span style='color: {color}; font-weight: bold;'>{status}</span>"
+            html += "</div>"
+        
+        html += "</div>"
+        return html
+    medical_questionnaire_display.allow_tags = True
+    medical_questionnaire_display.short_description = 'Medical Questionnaire'
 
 # Diving Site Admin
 @admin.register(DivingSite)

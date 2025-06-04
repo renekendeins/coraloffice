@@ -188,6 +188,16 @@ class Customer(models.Model):
         if not self.medical_questionnaire_answers:
             self.medical_questionnaire_answers = {}
         self.medical_questionnaire_answers[question_key] = answer
+    
+    def get_swimming_ability_display(self):
+        """Get the display value for swimming ability"""
+        swimming_choices = {
+            'excellent': 'Excellent',
+            'good': 'Good',
+            'fair': 'Fair',
+            'poor': 'Poor',
+        }
+        return swimming_choices.get(self.swimming_ability, self.swimming_ability)
         
 
 class DiveActivity(models.Model):
