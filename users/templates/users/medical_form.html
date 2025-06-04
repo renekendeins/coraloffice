@@ -6,6 +6,7 @@
 <div class="container-fluid" style="max-width: 800px; margin: 0 auto; padding: 15px;">
     <div class="text-center mb-4">
         <h2 class="mb-3" id="form-title">Diving Medical Questionnaire</h2>
+        {{ form.errors }}
         <p class="text-muted" id="form-subtitle">Please complete this form before your diving activity. All information is confidential.</p>
     </div>
 
@@ -103,7 +104,10 @@
                     </div>
                 </div>
             </div>
-
+            <div class="form-group">
+                <label for="{{ form.default_tank_size.id_for_label }}" class="form-label" id="default-tank-size-label">Default Tank Size</label>
+                {{ form.default_tank_size }}
+            </div>
             <div class="form-group">
                 <label for="{{ form.emergency_contact.id_for_label }}" class="form-label" id="emergency-contact-label">Emergency Contact *</label>
                 {{ form.emergency_contact }}
@@ -116,24 +120,17 @@
             <p class="text-muted mb-3 fst-italic" id="medical-subtitle">
                 Please answer ALL questions honestly. Your safety depends on it. If you answer YES to any question, provide details in the additional information section at the end.
             </p>
-
             <div class="mt-2 form-medical">
                 <div class="question-section mb-3 p-3 border rounded">
-                    <div class="d-flex flex-wrap align-items-center justify-content-between p-2 bg-light rounded">
-                        <div class="d-flex align-items-start flex-grow-1">
-                            <div class="fw-bold me-2">1</div>
-                            <div class="fw-bold flex-grow-1" id="question-1">I have had problems with my lungs/breathing, heart or blood</div>
-                            {{ form.pregunta_1 }}
-                        </div>
-                        <div class="d-flex gap-3 mt-2 mt-md-0">
-                            <div class="form-check">
-                                {{ form.pregunta_1.0 }}
-                                <!-- <label class="form-check-label" for="{{ form.pregunta_1.0.id_for_label }}" id="yes-label">Yes</label> -->
+                    <div class="d-flex flex-column flex-wrap p-2 bg-light rounded">
+                        <div class="d-flex flex-column">
+                            <div class="d-flex">
+                                <div class="fw-bold me-2">1</div>
+                                <div class="fw-bold flex-grow-1" id="question-1">I have had problems with my lungs/breathing, heart or blood</div>
                             </div>
-                            <div class="form-check">
-                                {{ form.pregunta_1.1 }}
-                                <!-- <label class="form-check-label" for="{{ form.pregunta_1.1.id_for_label }}" id="no-label">No</label> -->
-                            </div>
+                           <div class="d-flex">
+                                {{ form.pregunta_1 }}
+                           </div>
                         </div>
                     </div>
 
@@ -143,18 +140,6 @@
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
                             <div class="flex-grow-1 pe-2" id="question-1-1">Chest surgery, heart surgery, heart valve surgery, stent placement, or pneumothorax (collapsed lung).</div>
                             {{ form.pregunta_1_1 }} 
-                            <div class="d-flex gap-3 mt-2 mt-md-0">
-                                <div class="form-check">
-                                                                       {{ form.pregunta_1_1.0 }}
-
-                                    <!-- <label class="form-check-label" for="{{ form.pregunta_1_1.0.id_for_label }}">Sí</label> -->
-                                </div>
-                                <div class="form-check">
-                                   {{ form.pregunta_1_1.1 }}
-
-                                    <!-- <label class="form-check-label" for="{{ form.pregunta_1_1.1.id_for_label }}">No</label> -->
-                                </div>
-                            </div>
                         </div>
                     </div>
 
@@ -162,48 +147,21 @@
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
                             <div class="flex-grow-1 pe-2" id="question-1-2">Asthma, wheezing, severe allergies, hay fever or congested airways in the last 12 months that limit my physical activity/exercise.</div>
                             {{ form.pregunta_1_2 }}
-                            <div class="d-flex gap-3 mt-2 mt-md-0">
-                                <div class="form-check">
-                                    {{ form.pregunta_1_2.0 }}
-                                    <!-- <label class="form-check-label" for="{{ form.pregunta_1_2.0.id_for_label }}">Sí</label> -->
-                                </div>
-                                <div class="form-check">
-                                    {{ form.pregunta_1_2.1 }}
-                                    <!-- <label class="form-check-label" for="{{ form.pregunta_1_2.1.id_for_label }}">No</label> -->
-                                </div>
-                            </div>
+
                         </div>
                     </div>
 
                     <div class="sub-question p-2 border-bottom">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
                             <div class="flex-grow-1 pe-2" id="question-1-3">A heart problem or disease involving my heart such as: angina, chest pain on exertion, heart failure, pulmonary edema, cardiomyopathy or stroke, or I am taking medications for any heart condition.</div>
-                            <div class="d-flex gap-3 mt-2 mt-md-0">
-                                <div class="form-check">
-                                    {{ form.pregunta_1_3.0 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_1_3.0.id_for_label }}">Sí</label>
-                                </div>
-                                <div class="form-check">
-                                    {{ form.pregunta_1_3.1 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_1_3.1.id_for_label }}">No</label>
-                                </div>
-                            </div>
+                            {{ form.pregunta_1_3 }}
                         </div>
                     </div>
 
                     <div class="sub-question p-2 bg-light">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
                             <div class="flex-grow-1 pe-2" id="question-1-4">Recurrent bronchitis and persistent cough in the last 12 months or I have been diagnosed with emphysema.</div>
-                            <div class="d-flex gap-3 mt-2 mt-md-0">
-                                <div class="form-check">
-                                    {{ form.pregunta_1_4.0 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_1_4.0.id_for_label }}">Sí</label>
-                                </div>
-                                <div class="form-check">
-                                    {{ form.pregunta_1_4.1 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_1_4.1.id_for_label }}">No</label>
-                                </div>
-                            </div>
+                            {{ form.pregunta_1_4 }}
                         </div>
                     </div>
                 </div>
@@ -216,16 +174,7 @@
                             <div class="fw-bold me-2">2</div>
                             <div class="fw-bold flex-grow-1" id="question-2">I am over 45 years old.</div>
                         </div>
-                        <div class="d-flex gap-3 mt-2 mt-md-0">
-                            <div class="form-check">
-                                {{ form.pregunta_2.0 }}
-                                <label class="form-check-label" for="{{ form.pregunta_2.0.id_for_label }}">Sí</label>
-                            </div>
-                            <div class="form-check">
-                                {{ form.pregunta_2.1 }}
-                                <label class="form-check-label" for="{{ form.pregunta_2.1.id_for_label }}">No</label>
-                            </div>
-                        </div>
+                        {{ form.pregunta_2.0 }}
                     </div>
 
                     <div class="mt-3 p-2 bg-secondary text-white fw-bold" id="over-45-header">I AM OVER 45 AND:</div>
@@ -234,64 +183,28 @@
                     <div class="sub-question p-2 border-bottom">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
                             <div class="flex-grow-1 pe-2" id="question-2-1">Currently smoke or inhale nicotine by other means.</div>
-                            <div class="d-flex gap-3 mt-2 mt-md-0">
-                                <div class="form-check">
-                                    {{ form.pregunta_2_1.0 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_2_1.0.id_for_label }}">Sí</label>
-                                </div>
-                                <div class="form-check">
-                                    {{ form.pregunta_2_1.1 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_2_1.1.id_for_label }}">No</label>
-                                </div>
-                            </div>
+                            {{ form.pregunta_2_1 }}
                         </div>
                     </div>
 
                     <div class="sub-question p-2 border-bottom bg-light">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
                             <div class="flex-grow-1 pe-2" id="question-2-2">I have a high cholesterol level.</div>
-                            <div class="d-flex gap-3 mt-2 mt-md-0">
-                                <div class="form-check">
-                                    {{ form.pregunta_2_2.0 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_2_2.0.id_for_label }}">Sí</label>
-                                </div>
-                                <div class="form-check">
-                                    {{ form.pregunta_2_2.1 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_2_2.1.id_for_label }}">No</label>
-                                </div>
-                            </div>
+                            {{ form.pregunta_2_2 }}
                         </div>
                     </div>
 
                     <div class="sub-question p-2 border-bottom">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
                             <div class="flex-grow-1 pe-2" id="question-2-3">I have high blood pressure.</div>
-                            <div class="d-flex gap-3 mt-2 mt-md-0">
-                                <div class="form-check">
-                                    {{ form.pregunta_2_3.0 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_2_3.0.id_for_label }}">Sí</label>
-                                </div>
-                                <div class="form-check">
-                                    {{ form.pregunta_2_3.1 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_2_3.1.id_for_label }}">No</label>
-                                </div>
-                            </div>
+                            {{ form.pregunta_2_3 }}
                         </div>
                     </div>
 
                     <div class="sub-question p-2 bg-light">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
                             <div class="flex-grow-1 pe-2" id="question-2-4">I have had a family member (1st or 2nd degree relative) who died of sudden death or heart disease or stroke before age 50 or I have a family history of heart disease before age 50 (including abnormal heart rhythms, coronary artery disease, or cardiomyopathy).</div>
-                            <div class="d-flex gap-3 mt-2 mt-md-0">
-                                <div class="form-check">
-                                    {{ form.pregunta_2_4.0 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_2_4.0.id_for_label }}">Sí</label>
-                                </div>
-                                <div class="form-check">
-                                    {{ form.pregunta_2_4.1 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_2_4.1.id_for_label }}">No</label>
-                                </div>
-                            </div>
+                             {{ form.pregunta_2_4 }}
                         </div>
                     </div>
                     <!-- Continue with remaining sub-questions... -->
@@ -304,16 +217,8 @@
                             <div class="fw-bold me-2">3</div>
                             <div class="fw-bold flex-grow-1" id="question-3">I find it difficult to perform moderate exercise (e.g., walk 1.6 kilometers/one mile in 12 minutes or swim 200 meters/yards without resting), or I have not been able to participate in normal physical activity due to fitness or health reasons in the last 12 months.</div>
                         </div>
-                        <div class="d-flex gap-3 mt-2 mt-md-0">
-                            <div class="form-check">
-                                {{ form.pregunta_3.0 }}
-                                <label class="form-check-label" for="{{ form.pregunta_3.0.id_for_label }}">Sí</label>
-                            </div>
-                            <div class="form-check">
-                                {{ form.pregunta_3.1 }}
-                                <label class="form-check-label" for="{{ form.pregunta_3.1.id_for_label }}">No</label>
-                            </div>
-                        </div>
+                        {{ form.pregunta_3 }}
+
                     </div>
                 </div>
 
@@ -323,80 +228,35 @@
                             <div class="fw-bold me-2">4</div>
                             <div class="fw-bold flex-grow-1" id="question-4">I have had problems with my eyes, ears, or sinuses/nasal passages.</div>
                         </div>
-                        <div class="d-flex gap-3 mt-2 mt-md-0">
-                            <div class="form-check">
-                                {{ form.pregunta_4.0 }}
-                                <label class="form-check-label" for="{{ form.pregunta_4.0.id_for_label }}">Sí</label>
-                            </div>
-                            <div class="form-check">
-                                {{ form.pregunta_4.1 }}
-                                <label class="form-check-label" for="{{ form.pregunta_4.1.id_for_label }}">No</label>
-                            </div>
-                        </div>
+                        {{ form.pregunta_4 }}
                     </div>
                     <div class="mt-3 p-2 bg-secondary text-white fw-bold" id="have-had-header-4">I HAVE / HAVE HAD:</div>
 
                     <div class="sub-question p-2 border-bottom">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
                             <div class="flex-grow-1 pe-2" id="question-4-1">Sinus surgery in the last 6 months.</div>
-                            <div class="d-flex gap-3 mt-2 mt-md-0">
-                                <div class="form-check">
-                                    {{ form.pregunta_4_1.0 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_4_1.0.id_for_label }}">Sí</label>
-                                </div>
-                                <div class="form-check">
-                                    {{ form.pregunta_4_1.1 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_4_1.1.id_for_label }}">No</label>
-                                </div>
-                            </div>
+                            {{ form.pregunta_4_1 }}
                         </div>
                     </div>
 
                     <div class="sub-question p-2 border-bottom bg-light">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
                             <div class="flex-grow-1 pe-2" id="question-4-2">Ear diseases or ear surgery, hearing loss, or balance disturbances.</div>
-                            <div class="d-flex gap-3 mt-2 mt-md-0">
-                                <div class="form-check">
-                                    {{ form.pregunta_4_2.0 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_4_2.0.id_for_label }}">Sí</label>
-                                </div>
-                                <div class="form-check">
-                                    {{ form.pregunta_4_2.1 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_4_2.1.id_for_label }}">No</label>
-                                </div>
-                            </div>
+                            {{ form.pregunta_4_2 }}
                         </div>
                     </div>
 
                     <div class="sub-question p-2 border-bottom">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
                             <div class="flex-grow-1 pe-2" id="question-4-3">Recurrent sinusitis in the last 12 months.</div>
-                            <div class="d-flex gap-3 mt-2 mt-md-0">
-                                <div class="form-check">
-                                    {{ form.pregunta_4_3.0 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_4_3.0.id_for_label }}">Sí</label>
-                                </div>
-                                <div class="form-check">
-                                    {{ form.pregunta_4_3.1 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_4_3.1.id_for_label }}">No</label>
-                                </div>
-                            </div>
+                            {{ form.pregunta_4_3 }}
                         </div>
                     </div>
 
                     <div class="sub-question p-2 bg-light">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
                             <div class="flex-grow-1 pe-2" id="question-4-4">Eye surgery in the last 3 months.</div>
-                            <div class="d-flex gap-3 mt-2 mt-md-0">
-                                <div class="form-check">
-                                    {{ form.pregunta_4_4.0 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_4_4.0.id_for_label }}">Sí</label>
-                                </div>
-                                <div class="form-check">
-                                    {{ form.pregunta_4_4.1 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_4_4.1.id_for_label }}">No</label>
-                                </div>
-                            </div>
+                            {{ form.pregunta_4_4 }}
                         </div>
                     </div>
                 </div>
@@ -407,16 +267,7 @@
                             <div class="fw-bold me-2">5</div>
                             <div class="fw-bold flex-grow-1" id="question-5">I have had surgery in the last 12 months or have ongoing problems related to previous surgery.</div>
                         </div>
-                        <div class="d-flex gap-3 mt-2 mt-md-0">
-                            <div class="form-check">
-                                {{ form.pregunta_5.0 }}
-                                <label class="form-check-label" for="{{ form.pregunta_5.0.id_for_label }}">Sí</label>
-                            </div>
-                            <div class="form-check">
-                                {{ form.pregunta_5.1 }}
-                                <label class="form-check-label" for="{{ form.pregunta_5.1.id_for_label }}">No</label>
-                            </div>
-                        </div>
+                        {{ form.pregunta_5 }}
                     </div>
                 </div>
 
@@ -426,96 +277,42 @@
                             <div class="fw-bold me-2">6</div>
                             <div class="fw-bold flex-grow-1" id="question-6">I have lost consciousness, had migraine headaches, seizures, stroke, significant head injury, or have suffered from persistent neurological injury or illness.</div>
                         </div>
-                        <div class="d-flex gap-3 mt-2 mt-md-0">
-                            <div class="form-check">
-                                {{ form.pregunta_6.0 }}
-                                <label class="form-check-label" for="{{ form.pregunta_6.0.id_for_label }}">Sí</label>
-                            </div>
-                            <div class="form-check">
-                                {{ form.pregunta_6.1 }}
-                                <label class="form-check-label" for="{{ form.pregunta_6.1.id_for_label }}">No</label>
-                            </div>
-                        </div>
+                        {{ form.pregunta_6 }}
                     </div>
                     <div class="mt-3 p-2 bg-secondary text-white fw-bold" id="have-had-header-6">I HAVE / HAVE HAD:</div>
 
                     <div class="sub-question p-2 border-bottom">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
                             <div class="flex-grow-1 pe-2" id="question-6-1">Head injury with loss of consciousness in the last 5 years.</div>
-                            <div class="d-flex gap-3 mt-2 mt-md-0">
-                                <div class="form-check">
-                                    {{ form.pregunta_6_1.0 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_6_1.0.id_for_label }}">Sí</label>
-                                </div>
-                                <div class="form-check">
-                                    {{ form.pregunta_6_1.1 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_6_1.1.id_for_label }}">No</label>
-                                </div>
-                            </div>
+                            {{ form.pregunta_6_1 }}
                         </div>
                     </div>
 
                     <div class="sub-question p-2 border-bottom bg-light">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
                             <div class="flex-grow-1 pe-2" id="question-6-2">Persistent neurological injuries or illnesses.</div>
-                            <div class="d-flex gap-3 mt-2 mt-md-0">
-                                <div class="form-check">
-                                    {{ form.pregunta_6_2.0 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_6_2.0.id_for_label }}">Sí</label>
-                                </div>
-                                <div class="form-check">
-                                    {{ form.pregunta_6_2.1 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_6_2.1.id_for_label }}">No</label>
-                                </div>
-                            </div>
+                            {{ form.pregunta_6_2 }}
                         </div>
                     </div>
 
                     <div class="sub-question p-2 border-bottom">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
                             <div class="flex-grow-1 pe-2" id="question-6-3">Recurrent migraine headaches in the last 12 months or I take medication to prevent them.</div>
-                            <div class="d-flex gap-3 mt-2 mt-md-0">
-                                <div class="form-check">
-                                    {{ form.pregunta_6_3.0 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_6_3.0.id_for_label }}">Sí</label>
-                                </div>
-                                <div class="form-check">
-                                    {{ form.pregunta_6_3.1 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_6_3.1.id_for_label }}">No</label>
-                                </div>
-                            </div>
+                            {{ form.pregunta_6_3 }}
                         </div>
                     </div>
 
                     <div class="sub-question p-2 border-bottom bg-light">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
                             <div class="flex-grow-1 pe-2" id="question-6-4">Fainting or blackouts (total/partial loss of consciousness) in the last 5 years.</div>
-                            <div class="d-flex gap-3 mt-2 mt-md-0">
-                                <div class="form-check">
-                                    {{ form.pregunta_6_4.0 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_6_4.0.id_for_label }}">Sí</label>
-                                </div>
-                                <div class="form-check">
-                                    {{ form.pregunta_6_4.1 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_6_4.1.id_for_label }}">No</label>
-                                </div>
-                            </div>
+                            {{ form.pregunta_6_4 }}
                         </div>
                     </div>
 
                     <div class="sub-question p-2 bg-light">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
                             <div class="flex-grow-1 pe-2" id="question-6-5">Epilepsy, seizures, or convulsions, or I take medication to prevent them.</div>
-                            <div class="d-flex gap-3 mt-2 mt-md-0">
-                                <div class="form-check">
-                                    {{ form.pregunta_6_5.0 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_6_5.0.id_for_label }}">Sí</label>
-                                </div>
-                                <div class="form-check">
-                                    {{ form.pregunta_6_5.1 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_6_5.1.id_for_label }}">No</label>
-                                </div>
-                            </div>
+                            {{ form.pregunta_6_5 }}
                         </div>
                     </div>
                 </div>
@@ -526,79 +323,35 @@
                             <div class="fw-bold me-2">7</div>
                             <div class="fw-bold flex-grow-1" id="question-7">I have had psychological problems (or have received psychological treatment in the last 5 years), been diagnosed with a learning disability, personality disorder, panic attacks, or a drug or alcohol addiction.</div>
                         </div>
-                        <div class="d-flex gap-3 mt-2 mt-md-0">
-                            <div class="form-check">
-                                {{ form.pregunta_7.0 }}
-                                <label class="form-check-label" for="{{ form.pregunta_7.0.id_for_label }}">Sí</label>
-                            </div>
-                            <div class="form-check">
-                                {{ form.pregunta_7.1 }}
-                                <label class="form-check-label" for="{{ form.pregunta_7.1.id_for_label }}">No</label>
-                            </div>
-                        </div>
+                        {{ form.pregunta_7 }}
                     </div>
                     <div class="mt-3 p-2 bg-secondary text-white fw-bold" id="have-had-header-7">I HAVE / HAVE HAD:</div>
 
                     <div class="sub-question p-2 border-bottom">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
                             <div class="flex-grow-1 pe-2" id="question-7-1">Behavioral health, mental or psychological problems requiring medical/psychiatric treatment.</div>
-                            <div class="d-flex gap-3 mt-2 mt-md-0">
-                                <div class="form-check">
-                                    {{ form.pregunta_7_1.0 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_7_1.0.id_for_label }}">Sí</label>
-                                </div>
-                                <div class="form-check">
-                                    {{ form.pregunta_7_1.1 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_7_1.1.id_for_label }}">No</label>
-                                </div>
-                            </div>
+                            {{ form.pregunta_7_1 }}
                         </div>
                     </div>
 
                     <div class="sub-question p-2 border-bottom bg-light">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
                             <div class="flex-grow-1 pe-2" id="question-7-2">Major depression, suicidal tendency, panic attacks, uncontrolled bipolar disorder requiring medication/psychiatric treatment.</div>
-                            <div class="d-flex gap-3 mt-2 mt-md-0">                                <div class="form-check">
-                                    {{ form.pregunta_7_2.0 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_7_2.0.id_for_label }}">Sí</label>
-                                </div>
-                                <div class="form-check">
-                                    {{ form.pregunta_7_2.1 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_7_2.1.id_for_label }}">No</label>
-                                </div>
-                            </div>
+                            {{ form.pregunta_7_2 }}
                         </div>
                     </div>
 
                     <div class="sub-question p-2 border-bottom">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
                             <div class="flex-grow-1 pe-2" id="question-7-3">I have been diagnosed with a mental health condition or a learning/developmental disorder that requires ongoing care.</div>
-                            <div class="d-flex gap-3 mt-2 mt-md-0">
-                                <div class="form-check">
-                                    {{ form.pregunta_7_3.0 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_7_3.0.id_for_label }}">Sí</label>
-                                </div>
-                                <div class="form-check">
-                                    {{ form.pregunta_7_3.1 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_7_3.1.id_for_label }}">No</label>
-                                </div>
-                            </div>
+                            {{ form.pregunta_7_3 }}
                         </div>
                     </div>
 
                     <div class="sub-question p-2 bg-light">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
                             <div class="flex-grow-1 pe-2" id="question-7-4">A drug or alcohol addiction requiring treatment in the last 5 years.</div>
-                            <div class="d-flex gap-3 mt-2 mt-md-0">
-                                <div class="form-check">
-                                    {{ form.pregunta_7_4.0 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_7_4.0.id_for_label }}">Sí</label>
-                                </div>
-                                <div class="form-check">
-                                    {{ form.pregunta_7_4.1 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_7_4.1.id_for_label }}">No</label>
-                                </div>
-                            </div>
+                            {{ form.pregunta_7_4 }}
                         </div>
                     </div>
                 </div>
@@ -609,96 +362,42 @@
                             <div class="fw-bold me-2">8</div>
                             <div class="fw-bold flex-grow-1" id="question-8">I have had back problems, hernia, ulcers or diabetes.</div>
                         </div>
-                        <div class="d-flex gap-3 mt-2 mt-md-0">
-                            <div class="form-check">
-                                {{ form.pregunta_8.0 }}
-                                <label class="form-check-label" for="{{ form.pregunta_8.0.id_for_label }}">Sí</label>
-                            </div>
-                            <div class="form-check">
-                                {{ form.pregunta_8.1 }}
-                                <label class="form-check-label" for="{{ form.pregunta_8.1.id_for_label }}">No</label>
-                            </div>
-                        </div>
+                        {{ form.pregunta_8 }}
                     </div>
                     <div class="mt-3 p-2 bg-secondary text-white fw-bold" id="have-had-header-8">I HAVE / HAVE HAD:</div>
 
                     <div class="sub-question p-2 border-bottom">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
                             <div class="flex-grow-1 pe-2" id="question-8-1">Recurrent back problems in the last 6 months that limit my daily activity.</div>
-                            <div class="d-flex gap-3 mt-2 mt-md-0">
-                                <div class="form-check">
-                                    {{ form.pregunta_8_1.0 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_8_1.0.id_for_label }}">Sí</label>
-                                </div>
-                                <div class="form-check">
-                                    {{ form.pregunta_8_1.1 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_8_1.1.id_for_label }}">No</label>
-                                </div>
-                            </div>
+                            {{ form.pregunta_8_1 }}
                         </div>
                     </div>
 
                     <div class="sub-question p-2 border-bottom bg-light">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
                             <div class="flex-grow-1 pe-2" id="question-8-2">Back or spinal surgery in the last 12 months.</div>
-                            <div class="d-flex gap-3 mt-2 mt-md-0">
-                                <div class="form-check">
-                                    {{ form.pregunta_8_2.0 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_8_2.0.id_for_label }}">Sí</label>
-                                </div>
-                                <div class="form-check">
-                                    {{ form.pregunta_8_2.1 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_8_2.1.id_for_label }}">No</label>
-                                </div>
-                            </div>
+                            {{ form.pregunta_8_2 }}
                         </div>
                     </div>
 
                     <div class="sub-question p-2 border-bottom">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
                             <div class="flex-grow-1 pe-2" id="question-8-3">Diabetes, whether controlled by insulin or by diet or gestational diabetes in the last 12 months.</div>
-                            <div class="d-flex gap-3 mt-2 mt-md-0">
-                                <div class="form-check">
-                                    {{ form.pregunta_8_3.0 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_8_3.0.id_for_label }}">Sí</label>
-                                </div>
-                                <div class="form-check">
-                                    {{ form.pregunta_8_3.1 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_8_3.1.id_for_label }}">No</label>
-                                </div>
-                            </div>
+                            {{ form.pregunta_8_3 }}
                         </div>
                     </div>
 
                     <div class="sub-question p-2 border-bottom bg-light">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
                             <div class="flex-grow-1 pe-2" id="question-8-4">An uncorrected hernia that limits my physical abilities.</div>
-                            <div class="d-flex gap-3 mt-2 mt-md-0">
-                                <div class="form-check">
-                                    {{ form.pregunta_8_4.0 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_8_4.0.id_for_label }}">Sí</label>
-                                </div>
-                                <div class="form-check">
-                                    {{ form.pregunta_8_4.1 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_8_4.1.id_for_label }}">No</label>
-                                </div>
-                            </div>
+                            {{ form.pregunta_8_4 }}
                         </div>
                     </div>
 
                     <div class="sub-question p-2 bg-light">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
                             <div class="flex-grow-1 pe-2" id="question-8-5">Active or untreated ulcers, problematic wounds, or ulcer surgery in the last 6 months.</div>
-                            <div class="d-flex gap-3 mt-2 mt-md-0">
-                                <div class="form-check">
-                                    {{ form.pregunta_8_5.0 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_8_5.0.id_for_label }}">Sí</label>
-                                </div>
-                                <div class="form-check">
-                                    {{ form.pregunta_8_5.1 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_8_5.1.id_for_label }}">No</label>
-                                </div>
-                            </div>
+                            {{ form.pregunta_8_5 }}
                         </div>
                     </div>
                 </div>
@@ -709,112 +408,49 @@
                             <div class="fw-bold me-2">9</div>
                             <div class="fw-bold flex-grow-1" id="question-9">I have had stomach or bowel problems, including recent diarrhea.</div>
                         </div>
-                        <div class="d-flex gap-3 mt-2 mt-md-0">
-                            <div class="form-check">
-                                {{ form.pregunta_9.0 }}
-                                <label class="form-check-label" for="{{ form.pregunta_9.0.id_for_label }}">Sí</label>
-                            </div>
-                            <div class="form-check">
-                                {{ form.pregunta_9.1 }}
-                                <label class="form-check-label" for="{{ form.pregunta_9.1.id_for_label }}">No</label>
-                            </div>
-                        </div>
+                        {{ form.pregunta_9 }}
                     </div>
                     <div class="mt-3 p-2 bg-secondary text-white fw-bold" id="have-had-header-9">I HAVE:</div>
 
                     <div class="sub-question p-2 border-bottom">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
                             <div class="flex-grow-1 pe-2" id="question-9-1">Ostomy surgery and I am not medically cleared to swim or participate in physical activity.</div>
-                            <div class="d-flex gap-3 mt-2 mt-md-0">
-                                <div class="form-check">
-                                    {{ form.pregunta_9_1.0 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_9_1.0.id_for_label }}">Sí</label>
-                                </div>
-                                <div class="form-check">
-                                    {{ form.pregunta_9_1.1 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_9_1.1.id_for_label }}">No</label>
-                                </div>
-                            </div>
+                            {{ form.pregunta_9_1 }}
                         </div>
                     </div>
 
                     <div class="sub-question p-2 border-bottom bg-light">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
                             <div class="flex-grow-1 pe-2" id="question-9-2">Dehydration requiring medical intervention in the last 7 days.</div>
-                            <div class="d-flex gap-3 mt-2 mt-md-0">
-                                <div class="form-check">
-                                    {{ form.pregunta_9_2.0 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_9_2.0.id_for_label }}">Sí</label>
-                                </div>
-                                <div class="form-check">
-                                    {{ form.pregunta_9_2.1 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_9_2.1.id_for_label }}">No</label>
-                                </div>
-                            </div>
+                            {{ form.pregunta_9_2 }}
                         </div>
                     </div>
 
                     <div class="sub-question p-2 border-bottom">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
                             <div class="flex-grow-1 pe-2" id="question-9-3">Active or untreated stomach or intestinal ulcers or ulcer surgery in the last 6 months.</div>
-                            <div class="d-flex gap-3 mt-2 mt-md-0">
-                                <div class="form-check">
-                                    {{ form.pregunta_9_3.0 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_9_3.0.id_for_label }}">Sí</label>
-                                </div>
-                                <div class="form-check">
-                                    {{ form.pregunta_9_3.1 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_9_3.1.id_for_label }}">No</label>
-                                </div>
-                            </div>
+                            {{ form.pregunta_9_3 }}
                         </div>
                     </div>
 
                     <div class="sub-question p-2 border-bottom bg-light">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
                             <div class="flex-grow-1 pe-2" id="question-9-4">Frequent heartburn, regurgitation, or gastroesophageal reflux disease (GERD).</div>
-                            <div class="d-flex gap-3 mt-2 mt-md-0">
-                                <div class="form-check">
-                                    {{ form.pregunta_9_4.0 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_9_4.0.id_for_label }}">Sí</label>
-                                </div>
-                                <div class="form-check">
-                                    {{ form.pregunta_9_4.1 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_9_4.1.id_for_label }}">No</label>
-                                </div>
-                            </div>
+                            {{ form.pregunta_9_4 }}
                         </div>
                     </div>
 
                     <div class="sub-question p-2 border-bottom">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
                             <div class="flex-grow-1 pe-2" id="question-9-5">Active or uncontrolled ulcerative colitis or Crohn’s disease.</div>
-                            <div class="d-flex gap-3 mt-2 mt-md-0">
-                                <div class="form-check">
-                                    {{ form.pregunta_9_5.0 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_9_5.0.id_for_label }}">Sí</label>
-                                </div>
-                                <div class="form-check">
-                                    {{ form.pregunta_9_5.1 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_9_5.1.id_for_label }}">No</label>
-                                </div>
-                            </div>
+                            {{ form.pregunta_9_5 }}
                         </div>
                     </div>
 
                     <div class="sub-question p-2 bg-light">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
                             <div class="flex-grow-1 pe-2" id="question-9-6">Bariatric surgery in the last 12 months.</div>
-                            <div class="d-flex gap-3 mt-2 mt-md-0">
-                                <div class="form-check">
-                                    {{ form.pregunta_9_6.0 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_9_6.0.id_for_label }}">Sí</label>
-                                </div>
-                                <div class="form-check">
-                                    {{ form.pregunta_9_6.1 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_9_6.1.id_for_label }}">No</label>
-                                </div>
-                            </div>
+                            {{ form.pregunta_9_6 }}
                         </div>
                     </div>
                 </div>
@@ -825,16 +461,7 @@
                             <div class="fw-bold me-2">10</div>
                             <div class="fw-bold flex-grow-1" id="question-10">I am taking prescription medications (with the exception of birth control or anti-malarial drugs that are not Lariam-mefloquine).</div>
                         </div>
-                        <div class="d-flex gap-3 mt-2 mt-md-0">
-                            <div class="form-check">
-                                {{ form.pregunta_10.0 }}
-                                <label class="form-check-label" for="{{ form.pregunta_10.0.id_for_label }}">Sí</label>
-                            </div>
-                            <div class="form-check">
-                                {{ form.pregunta_10.1 }}
-                                <label class="form-check-label" for="{{ form.pregunta_10.1.id_for_label }}">No</label>
-                            </div>
-                        </div>
+                        {{ form.pregunta_10 }}
                     </div>
                 </div>
             </div>
@@ -868,7 +495,7 @@
 
         <div class="signature-container mb-3">
             <label for="signatureCanvas" class="form-label" id="signature-label">Signature</label>
-            <canvas id="signatureCanvas" width="600" height="200" style="border:1px solid #000;"></canvas>
+            <canvas id="signatureCanvas" width="600" height="200" style="border:1px solid #000; width: 100%; max-width: 600px; touch-action: none;"></canvas>
             <button type="button" class="btn btn-sm btn-outline-secondary mt-2" id="clear-signature">Clear Signature</button>
             <input type="hidden" id="signatureImage" name="signature">
         </div>
@@ -878,7 +505,48 @@
         </div>
     </form>
 </div>
+                <style>
+                .radio-option {
+                  display: flex;
+                    width: 100%;
+                    justify-content: space-between;
+                  align-items: center;
+                  padding: 12px;
+                  margin: 8px 0;
+                  border: 2px solid #ccc;
+                  border-radius: 12px;
+                  background-color: #f9f9f9;
+                  font-size: 1.1rem;
+                  transition: border-color 0.2s, background-color 0.2s;
+                }
 
+                .radio-option input[type="radio"] {
+                  accent-color: #007bff; /* bonito azul */
+                  width: 20px;
+                  height: 20px;
+                  margin-right: 12px;
+                  flex-shrink: 0;
+                }
+
+                .radio-option:hover {
+                  border-color: #007bff;
+                  background-color: #f0f8ff;
+                }
+
+                .radio-option input[type="radio"]:focus-visible {
+                  outline: 3px solid #007bff;
+                }
+
+                .radio-option span {
+                  flex-grow: 1;
+                }
+                .radio-option label{
+                    display: flex !important;
+                    margin-right: 20px;
+                    align-items: center;
+                }
+                    
+                </style>
 <script>
 // Translation dictionary
 const translations = {
@@ -1089,100 +757,92 @@ function translateForm(language) {
     document.querySelectorAll('input[type="radio"]').forEach(radio => {
         const label = document.querySelector(`label[for="${radio.id}"]`);
         if (label) {
-            if (radio.value === '1') {
-                label.textContent = yesLabel;
-            } else if (radio.value === '0') {
-                label.textContent = noLabel;
+            const nodes = Array.from(label.childNodes);
+            const textNode = nodes.find(n => n.nodeType === Node.TEXT_NODE);
+            if (textNode) {
+                textNode.textContent = (radio.value === '1') ? ' ' + yesLabel : ' ' + noLabel;
             }
         }
     });
 }
+    // Initialize with default language on page load
+    document.addEventListener('DOMContentLoaded', function () {
+        const selectedLanguage = document.getElementById('language-select').value;
+        translateForm(selectedLanguage);
 
-// Initialize with default language on page load
-document.addEventListener('DOMContentLoaded', function() {
-    const selectedLanguage = document.getElementById('language-select').value;
-    translateForm(selectedLanguage);
+        // Signature Canvas Script
+        const canvas = document.getElementById("signatureCanvas");
+        const ctx = canvas.getContext("2d");
+        let drawing = false;
 
-    // Signature Canvas Script
-    const canvas = document.getElementById("signatureCanvas");
-    const ctx = canvas.getContext("2d");
-    let drawing = false;
-
-    function startDrawing(e) {
-        drawing = true;
-        draw(e);
-    }
-
-    function stopDrawing() {
-        drawing = false;
-        ctx.beginPath();
-    }
-
-    function draw(e) {
-        if (!drawing) return;
-
-        // Use pageX and pageY for cross-browser compatibility
-        const x = e.clientX - canvas.offsetLeft;
-        const y = e.clientY - canvas.offsetTop;
-
-        ctx.lineWidth = 2;
-        ctx.lineCap = "round";
-        ctx.strokeStyle = "black";
-
-        ctx.lineTo(x, y);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(x, y);
-    }
-
-    canvas.addEventListener("mousedown", startDrawing);
-    canvas.addEventListener("mouseup", stopDrawing);
-    canvas.addEventListener("mouseout", stopDrawing);
-    canvas.addEventListener("mousemove", draw);
-
-    //Touch support for mobile devices
-    canvas.addEventListener("touchstart", function (e) {
-        mousePos = getMousePos(canvas, e);
-        var touch = e.touches[0];
-        var mouseEvent = new MouseEvent("mousedown", {
-            clientX: touch.clientX,
-            clientY: touch.clientY
+        // Evita el scroll al tocar sobre el canvas (importante en móviles)
+        ['touchstart', 'touchmove', 'touchend'].forEach(event => {
+            canvas.addEventListener(event, e => e.preventDefault(), { passive: false });
         });
-        canvas.dispatchEvent(mouseEvent);
-    }, false);
-    canvas.addEventListener("touchend", function (e) {
-        var mouseEvent = new MouseEvent("mouseup", {});
-        canvas.dispatchEvent(mouseEvent);
-    }, false);
-    canvas.addEventListener("touchmove", function (e) {
-        var touch = e.touches[0];
-        var mouseEvent = new MouseEvent("mousemove", {
-            clientX: touch.clientX,
-            clientY: touch.clientY
+
+        function getCanvasCoords(e) {
+            const rect = canvas.getBoundingClientRect();
+            if (e.touches) {
+                return {
+                    x: e.touches[0].clientX - rect.left,
+                    y: e.touches[0].clientY - rect.top
+                };
+            } else {
+                return {
+                    x: e.clientX - rect.left,
+                    y: e.clientY - rect.top
+                };
+            }
+        }
+
+        function startDrawing(e) {
+            drawing = true;
+            draw(e);
+        }
+
+        function stopDrawing() {
+            drawing = false;
+            ctx.beginPath();
+        }
+
+        function draw(e) {
+            if (!drawing) return;
+
+            const pos = getCanvasCoords(e);
+
+            ctx.lineWidth = 2;
+            ctx.lineCap = "round";
+            ctx.strokeStyle = "black";
+
+            ctx.lineTo(pos.x, pos.y);
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(pos.x, pos.y);
+        }
+
+        // Mouse events
+        canvas.addEventListener("mousedown", startDrawing);
+        canvas.addEventListener("mouseup", stopDrawing);
+        canvas.addEventListener("mouseout", stopDrawing);
+        canvas.addEventListener("mousemove", draw);
+
+        // Touch events
+        canvas.addEventListener("touchstart", startDrawing);
+        canvas.addEventListener("touchend", stopDrawing);
+        canvas.addEventListener("touchmove", draw);
+
+        // Clear signature button
+        document.getElementById('clear-signature').addEventListener('click', function () {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
         });
-        canvas.dispatchEvent(mouseEvent);
-    }, false);
 
-    // Get the position of the mouse relative to the canvas
-    function getMousePos(canvasDom, mouseEvent) {
-        var rect = canvasDom.getBoundingClientRect();
-        return {
-            x: mouseEvent.clientX - rect.left,
-            y: mouseEvent.clientY - rect.top
-        };
-    }
-
-    // Clear signature
-    document.getElementById('clear-signature').addEventListener('click', function() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // Save signature as image on form submit
+        document.querySelector('form').addEventListener('submit', function (e) {
+            const signatureImage = document.getElementById('signatureImage');
+            signatureImage.value = canvas.toDataURL(); // Base64 encoded PNG
+        });
     });
 
-     // Save signature as image on form submission
-     document.querySelector('form').addEventListener('submit', function(e) {
-        const signatureImage = document.getElementById('signatureImage');
-        signatureImage.value = canvas.toDataURL(); // Save as base64 encoded PNG
-    });
-});
 </script>
 
 <style>
