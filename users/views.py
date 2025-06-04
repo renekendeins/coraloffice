@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import login
+from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.db import transaction
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseRedirect
+from django.urls import reverse_lazy
 from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime, timedelta
 import calendar
@@ -36,6 +37,13 @@ def signup(request):
 @login_required
 def profile(request):
     return render(request, 'users/profile.html', {'user': request.user})
+
+@login_required
+def user_logout(request):
+    logout(request)
+    response = HttpResponseRedirect(reverse_lazy('users:profile'))
+    response.delete_cookie('client')
+    return response
 
 
 @login_required

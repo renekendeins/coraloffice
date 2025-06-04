@@ -4,10 +4,28 @@
 {% block users_title %}Update Profile - CoralOffice{% endblock %}
 
 {% block users_content %}
-<h2>Update Profile</h2>
+<style>
+    input, textarea{
+        display: block;
+        width: 100%;
+        padding: .375rem .75rem;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: var(--bs-body-color);
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        background-color: var(--bs-body-bg);
+        background-clip: padding-box;
+        border: var(--bs-border-width) solid var(--bs-border-color);
+        border-radius: var(--bs-border-radius);
+        transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+    }
+</style>
+<h2>Actualizar perfil</h2>
 <form method="post">
     {% csrf_token %}
-    <h3>User Information</h3>
     {% for field in user_form %}
         <div class="form-group">
             {{ field.label_tag }}
@@ -29,7 +47,7 @@
         </div>
     {% endfor %}
     
-    <button type="submit" class="btn">Update Profile</button>
-    <a href="{% url 'users:profile' %}" class="btn" style="background: #6c757d;">Cancel</a>
+    <button type="submit" class="btn btn-success">Update Profile</button>
+    <a href="{% url 'users:profile' %}" class="btn btn-danger">Cancel</a>
 </form>
 {% endblock %}

@@ -5,9 +5,10 @@ from . import views
 app_name = 'users'
 
 urlpatterns = [
-    path('signup/', views.signup, name='signup'),
+    #path('signup/', views.signup, name='signup'),
     path('login/', auth_views.LoginView.as_view(template_name='users/login.html'), name='login'),
-    path('logout/', auth_views.LogoutView.as_view(template_name='users/logout.html'), name='logout'),
+    # path('logout/', auth_views.LogoutView.as_view(template_name='users/logout.html'), name='logout'),
+    path('logout/', views.user_logout, name='logout'),
     path('profile/', views.profile, name='profile'),
     path('profile/update/', views.update_profile, name='update_profile'),
     # path('users/', views.user_list, name='user_list'),

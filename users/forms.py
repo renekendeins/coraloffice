@@ -31,17 +31,45 @@ class UserProfileForm(forms.ModelForm):
 class CustomerForm(forms.ModelForm):
     class Meta:
         model = Customer
-        fields = ('first_name', 'last_name', 'email', 'phone_number', 'country', 'language', 'birthday', 'certification_level', 'emergency_contact', 'medical_conditions', 'weight', 'height', 'foot_size', 'default_tank_size', 'profile_picture', 'diving_licence', 'diving_insurance', 'medical_check')
+        fields = (
+            'first_name',
+            'last_name',
+            'email',
+            'phone_number',
+            'country',
+            'language',
+            'birthday',
+            'certification_level',
+            'emergency_contact',
+            'medical_conditions',
+            'weight',
+            'height',
+            'foot_size',
+            'default_tank_size',
+            'profile_picture',
+            'diving_licence',
+            'diving_insurance',
+            'medical_check',
+        )
         widgets = {
-            'medical_conditions': forms.Textarea(attrs={'rows': 3}),
-            'birthday': forms.DateInput(attrs={'type': 'date'}),
-            'weight': forms.NumberInput(attrs={'step': '0.1', 'placeholder': 'kg'}),
-            'height': forms.NumberInput(attrs={'step': '0.1', 'placeholder': 'cm'}),
-            'foot_size': forms.NumberInput(attrs={'step': '0.5', 'placeholder': 'EU size'}),
-            'profile_picture': forms.FileInput(attrs={'accept': 'image/*'}),
-            'diving_licence': forms.FileInput(attrs={'accept': '.pdf,.jpg,.jpeg,.png'}),
-            'diving_insurance': forms.FileInput(attrs={'accept': '.pdf,.jpg,.jpeg,.png'}),
-            'medical_check': forms.FileInput(attrs={'accept': '.pdf,.jpg,.jpeg,.png'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'phone_number': forms.TextInput(attrs={'class': 'form-control'}),
+            'country': forms.Select(attrs={'class': 'form-control'}),
+            'language': forms.Select(attrs={'class': 'form-control'}),
+            'birthday': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'certification_level': forms.TextInput(attrs={'class': 'form-control'}),
+            'emergency_contact': forms.TextInput(attrs={'class': 'form-control'}),
+            'medical_conditions': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+            'weight': forms.NumberInput(attrs={'step': '0.1', 'placeholder': 'kg', 'class': 'form-control'}),
+            'height': forms.NumberInput(attrs={'step': '0.1', 'placeholder': 'cm', 'class': 'form-control'}),
+            'foot_size': forms.NumberInput(attrs={'step': '0.5', 'placeholder': 'EU size', 'class': 'form-control'}),
+            'default_tank_size': forms.Select(attrs={'class': 'form-control'}),
+            'profile_picture': forms.FileInput(attrs={'accept': 'image/*', 'class': 'form-control'}),
+            'diving_licence': forms.FileInput(attrs={'accept': '.pdf,.jpg,.jpeg,.png', 'class': 'form-control'}),
+            'diving_insurance': forms.FileInput(attrs={'accept': '.pdf,.jpg,.jpeg,.png', 'class': 'form-control'}),
+            'medical_check': forms.FileInput(attrs={'accept': '.pdf,.jpg,.jpeg,.png', 'class': 'form-control'}),
         }
 
 class DiveActivityForm(forms.ModelForm):

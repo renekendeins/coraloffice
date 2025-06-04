@@ -7,18 +7,18 @@
     <h2>Customer List</h2>
 
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <a href="{% url 'users:add_customer' %}" class="btn">Add New Customer</a>
+        <a href="{% url 'users:add_customer' %}" class="btn btn-success">Añadir cliente</a>
 
         <form method="get" style="display: flex; gap: 10px;">
             <input type="text" name="search" value="{{ search_query|default:'' }}" 
                    placeholder="Search by name, email, or phone..." 
                    style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; width: 300px;">
-            <button type="submit" class="btn" style="background-color: #007bff;">
-                <i class="fas fa-search"></i> Search
+            <button type="submit" class="btn btn-primary";">
+                <i class="fas fa-search"></i> Buscar
             </button>
             {% if search_query %}
-            <a href="{% url 'users:customer_list' %}" class="btn" style="background-color: #6c757d;">
-                <i class="fas fa-times"></i> Clear
+            <a href="{% url 'users:customer_list' %}" class="btn btn-secondary">
+                <i class="fas fa-times"></i> Limpiar
             </a>
             {% endif %}
         </form>
@@ -32,32 +32,62 @@
     {% endif %}
 
     {% for customer in customers %}
-                <div class="customer-card" style="border-bottom: 1px solid #e3e3e3; padding: 2rem 1rem;">
-                    <div style="display: flex; align-items: start; gap: 15px;">
-                        <div style="flex-shrink: 0;">
+
+                <div class="mb-4 border border-1 border-dark-subtle rounded p-3">
+                    <div>
+                        <div class="d-flex align-items-center">
                             {% if customer.profile_picture %}
-                                <img src="{{ customer.profile_picture.url }}" alt="{{ customer.first_name }}" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover;">
+                                <img class="me-2" src="{{ customer.profile_picture.url }}" alt="{{ customer.first_name }}" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover;">
                             {% else %}
-                                <div style="width: 60px; height: 60px; border-radius: 50%; background: #ddd; display: flex; align-items: center; justify-content: center; color: #666;">
+                                <div class="me-2" style="width: 60px; height: 60px; border-radius: 50%; background: #ddd; display: flex; align-items: center; justify-content: center; color: #666;">
                                     {{ customer.first_name.0 }}{{ customer.last_name.0 }}
                                 </div>
                             {% endif %}
+                            <h4 class="m-0">{{ customer.first_name }} {{ customer.last_name }}</h4>
                         </div>
-                        <div style="flex: 1;">
-                            <h3><a href="{% url 'users:edit_customer' customer.id %}">{{ customer.first_name }} {{ customer.last_name }}</a></h3>
-                            <p><strong>Email:</strong> {{ customer.email }}</p>
-                            <p><strong>Phone:</strong> {{ customer.phone_number }}</p>
-                            <p><strong>Country:</strong> {{ customer.get_country_display }}</p>
-                            <p><strong>Certification:</strong> {{ customer.get_certification_level_display }}</p>
-                            <p style="margin-bottom: .75rem;"><strong>Tank Size:</strong> {{ customer.default_tank_size }}</p>
-                            <div class="customer-actions">
-                                <a href="{% url 'users:edit_customer' customer.id %}" class="btn btn-edit">Edit</a>
-                                <a href="{% url 'users:customer_activity_history' customer.id %}" class="btn btn-history">Activity History</a>
-                                <a href="{% url 'users:delete_customer' customer.id %}" class="btn btn-delete">Delete</a>
-                            </div>
+                        
+                    </div>
+                    <div class="d-flex flex-column flex-lg-row justify-content-lg-between">
+                        <div>
+                            <strong>Email:</strong> {{ customer.email|default:"Not provided" }}<br>
+                            <strong>Phone:</strong> {{ customer.phone_number|default:"Not provided" }}<br>
+                            <strong>Country:</strong> {{ customer.get_country_display|default:"Not specified" }}
+                        </div>
+                        <div>
+                            <strong>Language:</strong> {{ customer.get_language_display }}<br>
+                            <strong>Birthday:</strong> {{ customer.birthday|default:"Not provided" }}<br>
+                            <strong>Certification:</strong> {{ customer.get_certification_level_display }}<br>                            
+                            <strong>Botella:</strong> {{ customer.default_tank_size }}<br>
+                        </div>
+                        <div>
+                            <strong>Weight:</strong> {{ customer.weight|default:"Not provided" }} kg<br>
+                            <strong>Height:</strong> {{ customer.height|default:"Not provided" }} cm<br>
+                            <strong>Foot Size:</strong> {{ customer.foot_size|default:"Not provided" }} EU<br>
+                            <strong>Swimming Ability:</strong> {{ customer.get_swimming_ability_display|default:"Not provided" }}
                         </div>
                     </div>
+
+                    {% if customer.emergency_contact %}
+                    <div style="margin-top: 15px;">
+                        <strong>Emergency Contact:</strong> {{ customer.emergency_contact }}
+                    </div>
+                    {% endif %}
+
+                    {% if customer.medical_conditions %}
+                    <div style="margin-top: 15px; padding: 10px; background: #fff3cd; border-radius: 5px;">
+                        <strong>Medical Information:</strong><br>
+                        <span style="white-space: pre-line;">{{ customer.medical_conditions }}</span>
+                    </div>
+                    {% endif %}
+                    <div class="customer-actions mt-4">
+                        <a href="{% url 'users:edit_customer' customer.id %}" class="btn btn-info text-white me-2">Edit</a>
+                        <a href="{% url 'users:customer_activity_history' customer.id %}" class="btn btn-secondary me-2">Activity History</a>
+                        <a href="{% url 'users:delete_customer' customer.id %}" class="btn btn-danger">Delete</a>                        
+
+                    </div>
                 </div>
+
+
 
                 {% endfor %}
 
