@@ -113,61 +113,730 @@
 
         <!-- Medical Questions -->
         <fieldset class="border border-danger border-2 p-3 p-md-4 mb-4 rounded">
-            <legend class="fw-bold text-danger px-2 mb-3">Medical History</legend>
+            <legend class="fw-bold text-danger px-2 mb-3">Cuestionario Médico</legend>
             <p class="text-muted mb-3 fst-italic">
-                Please answer ALL questions honestly. Your safety depends on it. If you answer YES to any question, please provide details in the additional information section below.
+                Por favor responda TODAS las preguntas honestamente. Su seguridad depende de ello. Si responde SÍ a cualquier pregunta, proporcione detalles en la sección de información adicional al final.
             </p>
             
-            <div class="medical-questions-grid mb-3">
-                <label class="medical-question">
-                    {{ form.heart_problems }}
-                    <span>Do you have heart problems?</span>
-                </label>
-                
-                <label class="medical-question">
-                    {{ form.high_blood_pressure }}
-                    <span>Do you have high blood pressure?</span>
-                </label>
-                
-                <label class="medical-question">
-                    {{ form.breathing_problems }}
-                    <span>Do you have breathing problems or asthma?</span>
-                </label>
-                
-                <label class="medical-question">
-                    {{ form.diabetes }}
-                    <span>Do you have diabetes?</span>
-                </label>
-                
-                <label class="medical-question">
-                    {{ form.epilepsy }}
-                    <span>Do you have epilepsy or seizures?</span>
-                </label>
-                
-                <label class="medical-question">
-                    {{ form.pregnant }}
-                    <span>Are you pregnant?</span>
-                </label>
-                
-                <label class="medical-question">
-                    {{ form.medications }}
-                    <span>Are you taking any medications?</span>
-                </label>
-                
-                <label class="medical-question">
-                    {{ form.allergies }}
-                    <span>Do you have any allergies?</span>
-                </label>
-                
-                <label class="medical-question">
-                    {{ form.surgery_recent }}
-                    <span>Have you had surgery in the last 6 months?</span>
-                </label>
-                
-                <label class="medical-question">
-                    {{ form.ear_problems }}
-                    <span>Do you have ear or sinus problems?</span>
-                </label>
+            <div class="mt-2 form-medical">
+                <div class="question-section mb-3 p-3 border rounded">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between p-2 bg-light rounded">
+                        <div class="d-flex align-items-start flex-grow-1">
+                            <div class="fw-bold me-2">1</div>
+                            <div class="fw-bold flex-grow-1">He tenido problemas con mis pulmones/respiración, corazón o sangre</div>
+                        </div>
+                        <div class="d-flex gap-3 mt-2 mt-md-0">
+                            <div class="form-check">
+                                <input type="radio" name="pregunta_1" value="1" class="form-check-input" id="q1_si">
+                                <label class="form-check-label" for="q1_si">Sí</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="radio" name="pregunta_1" value="0" class="form-check-input" id="q1_no">
+                                <label class="form-check-label" for="q1_no">No</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-3 p-2 bg-secondary text-white fw-bold">TENGO / HE TENIDO:</div>
+                    
+                    <div class="sub-question p-2 border-bottom">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center">
+                            <div class="flex-grow-1 pe-2">Cirugía torácica, cirugía cardíaca, cirugía de válvula cardíaca, colocación de "stent" o neumotórax (pulmón colapsado).</div>
+                            <div class="d-flex gap-3 mt-2 mt-md-0">
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_1_1" value="1" class="form-check-input" id="q1_1_si">
+                                    <label class="form-check-label" for="q1_1_si">Sí</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_1_1" value="0" class="form-check-input" id="q1_1_no">
+                                    <label class="form-check-label" for="q1_1_no">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sub-question p-2 border-bottom bg-light">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center">
+                            <div class="flex-grow-1 pe-2">Asma, sibilancias, alergias graves, fiebre del heno o vías respiratorias congestionadas en los últimos 12 meses que limite mi actividad física/ejercicio.</div>
+                            <div class="d-flex gap-3 mt-2 mt-md-0">
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_1_2" value="1" class="form-check-input" id="q1_2_si">
+                                    <label class="form-check-label" for="q1_2_si">Sí</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_1_2" value="0" class="form-check-input" id="q1_2_no">
+                                    <label class="form-check-label" for="q1_2_no">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sub-question p-2 border-bottom">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center">
+                            <div class="flex-grow-1 pe-2">Un problema o enfermedad que involucra mi corazón como: angina de pecho, dolor en el pecho en el esfuerzo, insuficiencia cardíaca, edema pulmonar, miocardiopatía o accidente cerebrovascular o estoy tomando medicamentos para cualquier afección cardíaca.</div>
+                            <div class="d-flex gap-3 mt-2 mt-md-0">
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_1_3" value="1" class="form-check-input" id="q1_3_si">
+                                    <label class="form-check-label" for="q1_3_si">Sí</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_1_3" value="0" class="form-check-input" id="q1_3_no">
+                                    <label class="form-check-label" for="q1_3_no">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sub-question p-2 bg-light">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center">
+                            <div class="flex-grow-1 pe-2">Bronquitis recurrente y tos persistente en los últimos 12 meses o he sido diagnosticado con enfisema.</div>
+                            <div class="d-flex gap-3 mt-2 mt-md-0">
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_1_4" value="1" class="form-check-input" id="q1_4_si">
+                                    <label class="form-check-label" for="q1_4_si">Sí</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_1_4" value="0" class="form-check-input" id="q1_4_no">
+                                    <label class="form-check-label" for="q1_4_no">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="question-section mb-3 p-3 border rounded bg-light">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between p-2 bg-white rounded">
+                        <div class="d-flex align-items-start flex-grow-1">
+                            <div class="fw-bold me-2">2</div>
+                            <div class="fw-bold flex-grow-1">Tengo más de 45 años.</div>
+                        </div>
+                        <div class="d-flex gap-3 mt-2 mt-md-0">
+                            <div class="form-check">
+                                <input type="radio" name="pregunta_2" value="1" class="form-check-input" id="q2_si">
+                                <label class="form-check-label" for="q2_si">Sí</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="radio" name="pregunta_2" value="0" class="form-check-input" id="q2_no">
+                                <label class="form-check-label" for="q2_no">No</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-3 p-2 bg-secondary text-white fw-bold">TENGO MÁS DE 45 AÑOS Y:</div>
+                    
+                    <div class="sub-question p-2 border-bottom">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center">
+                            <div class="flex-grow-1 pe-2">Actualmente fumo o inhalo nicotina por otros medios.</div>
+                            <div class="d-flex gap-3 mt-2 mt-md-0">
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_2_1" value="1" class="form-check-input" id="q2_1_si">
+                                    <label class="form-check-label" for="q2_1_si">Sí</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_2_1" value="0" class="form-check-input" id="q2_1_no">
+                                    <label class="form-check-label" for="q2_1_no">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sub-question p-2 border-bottom bg-light">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center">
+                            <div class="flex-grow-1 pe-2">Tengo un nivel alto de colesterol.</div>
+                            <div class="d-flex gap-3 mt-2 mt-md-0">
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_2_2" value="1" class="form-check-input" id="q2_2_si">
+                                    <label class="form-check-label" for="q2_2_si">Sí</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_2_2" value="0" class="form-check-input" id="q2_2_no">
+                                    <label class="form-check-label" for="q2_2_no">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sub-question p-2 border-bottom">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center">
+                            <div class="flex-grow-1 pe-2">Tengo presión arterial alta.</div>
+                            <div class="d-flex gap-3 mt-2 mt-md-0">
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_2_3" value="1" class="form-check-input" id="q2_3_si">
+                                    <label class="form-check-label" for="q2_3_si">Sí</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_2_3" value="0" class="form-check-input" id="q2_3_no">
+                                    <label class="form-check-label" for="q2_3_no">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sub-question p-2 bg-light">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center">
+                            <div class="flex-grow-1 pe-2">He tenido un familiar (de 1er o 2º grado de consanguinidad) que murió de muerte súbita o de enfermedad cardíaca o accidente cerebrovascular antes de los 50 años o tengo antecedentes familiares de enfermedad cardíaca antes de los 50 años (incluidos ritmos cardíacos anormales, enfermedad de las arterias coronarias o cardiomiopatía).</div>
+                            <div class="d-flex gap-3 mt-2 mt-md-0">
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_2_4" value="1" class="form-check-input" id="q2_4_si">
+                                    <label class="form-check-label" for="q2_4_si">Sí</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_2_4" value="0" class="form-check-input" id="q2_4_no">
+                                    <label class="form-check-label" for="q2_4_no">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Continue with remaining questions 3-10 -->
+                <div class="question-section mb-3 p-3 border rounded">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between p-2 bg-light rounded">
+                        <div class="d-flex align-items-start flex-grow-1">
+                            <div class="fw-bold me-2">3</div>
+                            <div class="fw-bold flex-grow-1">Me cuesta realizar ejercicio moderado (por ejemplo, caminar 1,6 kilómetros/una milla en 12 minutos o nadar 200 metros/yardas sin descansar), o no he podido participar en una actividad física normal debido a razones de estado físico o de salud en los últimos 12 meses.</div>
+                        </div>
+                        <div class="d-flex gap-3 mt-2 mt-md-0">
+                            <div class="form-check">
+                                <input type="radio" name="pregunta_3" value="1" class="form-check-input" id="q3_si">
+                                <label class="form-check-label" for="q3_si">Sí</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="radio" name="pregunta_3" value="0" class="form-check-input" id="q3_no">
+                                <label class="form-check-label" for="q3_no">No</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="question-section mb-3 p-3 border rounded bg-light">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between p-2 bg-white rounded">
+                        <div class="d-flex align-items-start flex-grow-1">
+                            <div class="fw-bold me-2">4</div>
+                            <div class="fw-bold flex-grow-1">He tenido problemas con mis ojos, oídos o fosas nasales / senos paranasales.</div>
+                        </div>
+                        <div class="d-flex gap-3 mt-2 mt-md-0">
+                            <div class="form-check">
+                                <input type="radio" name="pregunta_4" value="1" class="form-check-input" id="q4_si">
+                                <label class="form-check-label" for="q4_si">Sí</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="radio" name="pregunta_4" value="0" class="form-check-input" id="q4_no">
+                                <label class="form-check-label" for="q4_no">No</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-3 p-2 bg-secondary text-white fw-bold">TENGO / HE TENIDO:</div>
+                    
+                    <div class="sub-question p-2 border-bottom">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center">
+                            <div class="flex-grow-1 pe-2">Cirugía sinusal en los últimos 6 meses.</div>
+                            <div class="d-flex gap-3 mt-2 mt-md-0">
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_4_1" value="1" class="form-check-input" id="q4_1_si">
+                                    <label class="form-check-label" for="q4_1_si">Sí</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_4_1" value="0" class="form-check-input" id="q4_1_no">
+                                    <label class="form-check-label" for="q4_1_no">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sub-question p-2 border-bottom bg-light">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center">
+                            <div class="flex-grow-1 pe-2">Enfermedades del oído o cirugía del oído, pérdida de audición o alteraciones del equilibrio.</div>
+                            <div class="d-flex gap-3 mt-2 mt-md-0">
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_4_2" value="1" class="form-check-input" id="q4_2_si">
+                                    <label class="form-check-label" for="q4_2_si">Sí</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_4_2" value="0" class="form-check-input" id="q4_2_no">
+                                    <label class="form-check-label" for="q4_2_no">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sub-question p-2 border-bottom">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center">
+                            <div class="flex-grow-1 pe-2">Sinusitis recurrente en los últimos 12 meses.</div>
+                            <div class="d-flex gap-3 mt-2 mt-md-0">
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_4_3" value="1" class="form-check-input" id="q4_3_si">
+                                    <label class="form-check-label" for="q4_3_si">Sí</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_4_3" value="0" class="form-check-input" id="q4_3_no">
+                                    <label class="form-check-label" for="q4_3_no">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sub-question p-2 bg-light">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center">
+                            <div class="flex-grow-1 pe-2">Cirugía ocular en los últimos 3 meses.</div>
+                            <div class="d-flex gap-3 mt-2 mt-md-0">
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_4_4" value="1" class="form-check-input" id="q4_4_si">
+                                    <label class="form-check-label" for="q4_4_si">Sí</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_4_4" value="0" class="form-check-input" id="q4_4_no">
+                                    <label class="form-check-label" for="q4_4_no">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Questions 5-10 continue in similar format -->
+                <div class="question-section mb-3 p-3 border rounded">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between p-2 bg-light rounded">
+                        <div class="d-flex align-items-start flex-grow-1">
+                            <div class="fw-bold me-2">5</div>
+                            <div class="fw-bold flex-grow-1">He tenido una cirugía en los últimos 12 meses o tengo problemas continuos relacionados con una cirugía anterior.</div>
+                        </div>
+                        <div class="d-flex gap-3 mt-2 mt-md-0">
+                            <div class="form-check">
+                                <input type="radio" name="pregunta_5" value="1" class="form-check-input" id="q5_si">
+                                <label class="form-check-label" for="q5_si">Sí</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="radio" name="pregunta_5" value="0" class="form-check-input" id="q5_no">
+                                <label class="form-check-label" for="q5_no">No</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="question-section mb-3 p-3 border rounded bg-light">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between p-2 bg-white rounded">
+                        <div class="d-flex align-items-start flex-grow-1">
+                            <div class="fw-bold me-2">6</div>
+                            <div class="fw-bold flex-grow-1">He perdido el conocimiento, he tenido dolores de cabeza por migraña, convulsiones, accidente cerebrovascular, lesión significativa en la cabeza o he sufrido de lesión o enfermedad neurológica persistente.</div>
+                        </div>
+                        <div class="d-flex gap-3 mt-2 mt-md-0">
+                            <div class="form-check">
+                                <input type="radio" name="pregunta_6" value="1" class="form-check-input" id="q6_si">
+                                <label class="form-check-label" for="q6_si">Sí</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="radio" name="pregunta_6" value="0" class="form-check-input" id="q6_no">
+                                <label class="form-check-label" for="q6_no">No</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-3 p-2 bg-secondary text-white fw-bold">TENGO / HE TENIDO:</div>
+                    
+                    <div class="sub-question p-2 border-bottom">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center">
+                            <div class="flex-grow-1 pe-2">Lesión en la cabeza con pérdida de conciencia en los últimos 5 años.</div>
+                            <div class="d-flex gap-3 mt-2 mt-md-0">
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_6_1" value="1" class="form-check-input" id="q6_1_si">
+                                    <label class="form-check-label" for="q6_1_si">Sí</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_6_1" value="0" class="form-check-input" id="q6_1_no">
+                                    <label class="form-check-label" for="q6_1_no">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sub-question p-2 border-bottom bg-light">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center">
+                            <div class="flex-grow-1 pe-2">Lesiones o enfermedades neurológicas persistentes.</div>
+                            <div class="d-flex gap-3 mt-2 mt-md-0">
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_6_2" value="1" class="form-check-input" id="q6_2_si">
+                                    <label class="form-check-label" for="q6_2_si">Sí</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_6_2" value="0" class="form-check-input" id="q6_2_no">
+                                    <label class="form-check-label" for="q6_2_no">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sub-question p-2 border-bottom">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center">
+                            <div class="flex-grow-1 pe-2">Dolores de cabeza recurrentes por migraña en los últimos 12 meses o tomo medicamentos para prevenirlos.</div>
+                            <div class="d-flex gap-3 mt-2 mt-md-0">
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_6_3" value="1" class="form-check-input" id="q6_3_si">
+                                    <label class="form-check-label" for="q6_3_si">Sí</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_6_3" value="0" class="form-check-input" id="q6_3_no">
+                                    <label class="form-check-label" for="q6_3_no">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sub-question p-2 border-bottom bg-light">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center">
+                            <div class="flex-grow-1 pe-2">Desvanecimientos o desmayos (pérdida total/parcial de la conciencia) en los últimos 5 años.</div>
+                            <div class="d-flex gap-3 mt-2 mt-md-0">
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_6_4" value="1" class="form-check-input" id="q6_4_si">
+                                    <label class="form-check-label" for="q6_4_si">Sí</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_6_4" value="0" class="form-check-input" id="q6_4_no">
+                                    <label class="form-check-label" for="q6_4_no">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sub-question p-2 bg-light">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center">
+                            <div class="flex-grow-1 pe-2">Epilepsia, ataques o convulsiones o tomo medicamentos para prevenirlos.</div>
+                            <div class="d-flex gap-3 mt-2 mt-md-0">
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_6_5" value="1" class="form-check-input" id="q6_5_si">
+                                    <label class="form-check-label" for="q6_5_si">Sí</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_6_5" value="0" class="form-check-input" id="q6_5_no">
+                                    <label class="form-check-label" for="q6_5_no">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Questions 7-10 continue -->
+                <div class="question-section mb-3 p-3 border rounded">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between p-2 bg-light rounded">
+                        <div class="d-flex align-items-start flex-grow-1">
+                            <div class="fw-bold me-2">7</div>
+                            <div class="fw-bold flex-grow-1">He tenido problemas psicológicos (o he recibido tratamiento psicológico en los últimos 5 años), me diagnosticaron una discapacidad de aprendizaje, trastorno de la personalidad, ataques de pánico o una adicción a las drogas o al alcohol.</div>
+                        </div>
+                        <div class="d-flex gap-3 mt-2 mt-md-0">
+                            <div class="form-check">
+                                <input type="radio" name="pregunta_7" value="1" class="form-check-input" id="q7_si">
+                                <label class="form-check-label" for="q7_si">Sí</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="radio" name="pregunta_7" value="0" class="form-check-input" id="q7_no">
+                                <label class="form-check-label" for="q7_no">No</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-3 p-2 bg-secondary text-white fw-bold">TENGO / HE TENIDO:</div>
+                    
+                    <div class="sub-question p-2 border-bottom">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center">
+                            <div class="flex-grow-1 pe-2">Salud conductual, problemas mentales o psicológicos que requieran tratamiento médico/psiquiátrico.</div>
+                            <div class="d-flex gap-3 mt-2 mt-md-0">
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_7_1" value="1" class="form-check-input" id="q7_1_si">
+                                    <label class="form-check-label" for="q7_1_si">Sí</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_7_1" value="0" class="form-check-input" id="q7_1_no">
+                                    <label class="form-check-label" for="q7_1_no">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sub-question p-2 border-bottom bg-light">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center">
+                            <div class="flex-grow-1 pe-2">Depresión mayor, tendencia suicida, ataques de pánico, trastorno bipolar descontrolado que requiere medicación/tratamiento psiquiátrico.</div>
+                            <div class="d-flex gap-3 mt-2 mt-md-0">
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_7_2" value="1" class="form-check-input" id="q7_2_si">
+                                    <label class="form-check-label" for="q7_2_si">Sí</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_7_2" value="0" class="form-check-input" id="q7_2_no">
+                                    <label class="form-check-label" for="q7_2_no">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sub-question p-2 border-bottom">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center">
+                            <div class="flex-grow-1 pe-2">He sido diagnosticado con una condición de salud mental o un trastorno de aprendizaje/desarrollo que requiere atención continua.</div>
+                            <div class="d-flex gap-3 mt-2 mt-md-0">
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_7_3" value="1" class="form-check-input" id="q7_3_si">
+                                    <label class="form-check-label" for="q7_3_si">Sí</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_7_3" value="0" class="form-check-input" id="q7_3_no">
+                                    <label class="form-check-label" for="q7_3_no">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sub-question p-2 bg-light">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center">
+                            <div class="flex-grow-1 pe-2">Una adicción a las drogas o al alcohol que requiere tratamiento en los últimos 5 años.</div>
+                            <div class="d-flex gap-3 mt-2 mt-md-0">
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_7_4" value="1" class="form-check-input" id="q7_4_si">
+                                    <label class="form-check-label" for="q7_4_si">Sí</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_7_4" value="0" class="form-check-input" id="q7_4_no">
+                                    <label class="form-check-label" for="q7_4_no">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="question-section mb-3 p-3 border rounded bg-light">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between p-2 bg-white rounded">
+                        <div class="d-flex align-items-start flex-grow-1">
+                            <div class="fw-bold me-2">8</div>
+                            <div class="fw-bold flex-grow-1">He tenido problemas de espalda, hernia, úlceras o diabetes.</div>
+                        </div>
+                        <div class="d-flex gap-3 mt-2 mt-md-0">
+                            <div class="form-check">
+                                <input type="radio" name="pregunta_8" value="1" class="form-check-input" id="q8_si">
+                                <label class="form-check-label" for="q8_si">Sí</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="radio" name="pregunta_8" value="0" class="form-check-input" id="q8_no">
+                                <label class="form-check-label" for="q8_no">No</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-3 p-2 bg-secondary text-white fw-bold">TENGO / HE TENIDO:</div>
+                    
+                    <div class="sub-question p-2 border-bottom">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center">
+                            <div class="flex-grow-1 pe-2">Problemas recurrentes en la espalda en los últimos 6 meses que limitan mi actividad diaria.</div>
+                            <div class="d-flex gap-3 mt-2 mt-md-0">
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_8_1" value="1" class="form-check-input" id="q8_1_si">
+                                    <label class="form-check-label" for="q8_1_si">Sí</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_8_1" value="0" class="form-check-input" id="q8_1_no">
+                                    <label class="form-check-label" for="q8_1_no">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sub-question p-2 border-bottom bg-light">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center">
+                            <div class="flex-grow-1 pe-2">Cirugía de espalda o columna vertebral en los últimos 12 meses.</div>
+                            <div class="d-flex gap-3 mt-2 mt-md-0">
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_8_2" value="1" class="form-check-input" id="q8_2_si">
+                                    <label class="form-check-label" for="q8_2_si">Sí</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_8_2" value="0" class="form-check-input" id="q8_2_no">
+                                    <label class="form-check-label" for="q8_2_no">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sub-question p-2 border-bottom">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center">
+                            <div class="flex-grow-1 pe-2">Diabetes, ya sea controlada por insulina o por dieta o diabetes gestacional en los últimos 12 meses.</div>
+                            <div class="d-flex gap-3 mt-2 mt-md-0">
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_8_3" value="1" class="form-check-input" id="q8_3_si">
+                                    <label class="form-check-label" for="q8_3_si">Sí</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_8_3" value="0" class="form-check-input" id="q8_3_no">
+                                    <label class="form-check-label" for="q8_3_no">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sub-question p-2 border-bottom bg-light">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center">
+                            <div class="flex-grow-1 pe-2">Una hernia no corregida que limita mis habilidades físicas.</div>
+                            <div class="d-flex gap-3 mt-2 mt-md-0">
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_8_4" value="1" class="form-check-input" id="q8_4_si">
+                                    <label class="form-check-label" for="q8_4_si">Sí</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_8_4" value="0" class="form-check-input" id="q8_4_no">
+                                    <label class="form-check-label" for="q8_4_no">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sub-question p-2 bg-light">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center">
+                            <div class="flex-grow-1 pe-2">Úlceras activas o no tratadas, heridas problemáticas o cirugía de úlceras en los últimos 6 meses.</div>
+                            <div class="d-flex gap-3 mt-2 mt-md-0">
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_8_5" value="1" class="form-check-input" id="q8_5_si">
+                                    <label class="form-check-label" for="q8_5_si">Sí</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_8_5" value="0" class="form-check-input" id="q8_5_no">
+                                    <label class="form-check-label" for="q8_5_no">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="question-section mb-3 p-3 border rounded">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between p-2 bg-light rounded">
+                        <div class="d-flex align-items-start flex-grow-1">
+                            <div class="fw-bold me-2">9</div>
+                            <div class="fw-bold flex-grow-1">He tenido problemas estomacales o intestinales, incluyendo diarrea reciente.</div>
+                        </div>
+                        <div class="d-flex gap-3 mt-2 mt-md-0">
+                            <div class="form-check">
+                                <input type="radio" name="pregunta_9" value="1" class="form-check-input" id="q9_si">
+                                <label class="form-check-label" for="q9_si">Sí</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="radio" name="pregunta_9" value="0" class="form-check-input" id="q9_no">
+                                <label class="form-check-label" for="q9_no">No</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-3 p-2 bg-secondary text-white fw-bold">TENGO:</div>
+                    
+                    <div class="sub-question p-2 border-bottom">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center">
+                            <div class="flex-grow-1 pe-2">Cirugía de ostomía y no tengo autorización médica para nadar o participar en actividad física.</div>
+                            <div class="d-flex gap-3 mt-2 mt-md-0">
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_9_1" value="1" class="form-check-input" id="q9_1_si">
+                                    <label class="form-check-label" for="q9_1_si">Sí</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_9_1" value="0" class="form-check-input" id="q9_1_no">
+                                    <label class="form-check-label" for="q9_1_no">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sub-question p-2 border-bottom bg-light">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center">
+                            <div class="flex-grow-1 pe-2">Deshidratación que requiere intervención médica en los últimos 7 días.</div>
+                            <div class="d-flex gap-3 mt-2 mt-md-0">
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_9_2" value="1" class="form-check-input" id="q9_2_si">
+                                    <label class="form-check-label" for="q9_2_si">Sí</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_9_2" value="0" class="form-check-input" id="q9_2_no">
+                                    <label class="form-check-label" for="q9_2_no">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sub-question p-2 border-bottom">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center">
+                            <div class="flex-grow-1 pe-2">Úlceras estomacales o intestinales activas o no tratadas o cirugía de úlceras en los últimos 6 meses.</div>
+                            <div class="d-flex gap-3 mt-2 mt-md-0">
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_9_3" value="1" class="form-check-input" id="q9_3_si">
+                                    <label class="form-check-label" for="q9_3_si">Sí</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_9_3" value="0" class="form-check-input" id="q9_3_no">
+                                    <label class="form-check-label" for="q9_3_no">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sub-question p-2 border-bottom bg-light">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center">
+                            <div class="flex-grow-1 pe-2">Ardor de estómago frecuente, regurgitación o enfermedad por reflujo gastroesofágico (ERGE).</div>
+                            <div class="d-flex gap-3 mt-2 mt-md-0">
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_9_4" value="1" class="form-check-input" id="q9_4_si">
+                                    <label class="form-check-label" for="q9_4_si">Sí</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_9_4" value="0" class="form-check-input" id="q9_4_no">
+                                    <label class="form-check-label" for="q9_4_no">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sub-question p-2 border-bottom">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center">
+                            <div class="flex-grow-1 pe-2">Colitis ulcerosa activa o no controlada o enfermedad de Crohn.</div>
+                            <div class="d-flex gap-3 mt-2 mt-md-0">
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_9_5" value="1" class="form-check-input" id="q9_5_si">
+                                    <label class="form-check-label" for="q9_5_si">Sí</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_9_5" value="0" class="form-check-input" id="q9_5_no">
+                                    <label class="form-check-label" for="q9_5_no">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="sub-question p-2 bg-light">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center">
+                            <div class="flex-grow-1 pe-2">Cirugía bariátrica en los últimos 12 meses.</div>
+                            <div class="d-flex gap-3 mt-2 mt-md-0">
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_9_6" value="1" class="form-check-input" id="q9_6_si">
+                                    <label class="form-check-label" for="q9_6_si">Sí</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="radio" name="pregunta_9_6" value="0" class="form-check-input" id="q9_6_no">
+                                    <label class="form-check-label" for="q9_6_no">No</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="question-section mb-3 p-3 border rounded bg-light">
+                    <div class="d-flex flex-wrap align-items-center justify-content-between p-2 bg-white rounded">
+                        <div class="d-flex align-items-start flex-grow-1">
+                            <div class="fw-bold me-2">10</div>
+                            <div class="fw-bold flex-grow-1">Estoy tomando medicamentos recetados (con la excepción de los anticonceptivos o los medicamentos antipalúdicos que no sea Lariam-mefloquina).</div>
+                        </div>
+                        <div class="d-flex gap-3 mt-2 mt-md-0">
+                            <div class="form-check">
+                                <input type="radio" name="pregunta_10" value="1" class="form-check-input" id="q10_si">
+                                <label class="form-check-label" for="q10_si">Sí</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="radio" name="pregunta_10" value="0" class="form-check-input" id="q10_no">
+                                <label class="form-check-label" for="q10_no">No</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             
             <div class="form-group mb-3">
