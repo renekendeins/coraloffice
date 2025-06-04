@@ -4,57 +4,59 @@
 {% block users_title %}Add Inventory Item - CoralOffice{% endblock %}
 
 {% block users_content %}
-<h2>Add New Equipment</h2>
+<div class="p-3">
+    <h2>Add New Equipment</h2>
 
-<form method="post">
-    {% csrf_token %}
-    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px;">
-        <div class="form-group">
-            <label for="{{ form.name.id_for_label }}">Equipment Name:</label>
-            {{ form.name }}
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+            <div class="form-group">
+                <label for="{{ form.name.id_for_label }}">Equipment Name:</label>
+                {{ form.name }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.category.id_for_label }}">Category:</label>
+                {{ form.category }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.size.id_for_label }}">Size:</label>
+                {{ form.size }}
+            </div>
         </div>
-        <div class="form-group">
-            <label for="{{ form.category.id_for_label }}">Category:</label>
-            {{ form.category }}
+
+        <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+            <div class="form-group">
+                <label for="{{ form.quantity_total.id_for_label }}">Total Quantity:</label>
+                {{ form.quantity_total }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.quantity_available.id_for_label }}">Available Quantity:</label>
+                {{ form.quantity_available }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.condition.id_for_label }}">Condition:</label>
+                {{ form.condition }}
+            </div>
         </div>
-        <div class="form-group">
-            <label for="{{ form.size.id_for_label }}">Size:</label>
-            {{ form.size }}
+
+        <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+            <div class="form-group">
+                <label for="{{ form.purchase_date.id_for_label }}">Purchase Date:</label>
+                {{ form.purchase_date }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.last_maintenance.id_for_label }}">Last Maintenance:</label>
+                {{ form.last_maintenance }}
+            </div>
         </div>
-    </div>
-    
-    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px;">
-        <div class="form-group">
-            <label for="{{ form.quantity_total.id_for_label }}">Total Quantity:</label>
-            {{ form.quantity_total }}
+
+        <div class="form-group" style="margin-bottom: 20px;">
+            <label for="{{ form.notes.id_for_label }}">Notes:</label>
+            {{ form.notes }}
         </div>
-        <div class="form-group">
-            <label for="{{ form.quantity_available.id_for_label }}">Available Quantity:</label>
-            {{ form.quantity_available }}
-        </div>
-        <div class="form-group">
-            <label for="{{ form.condition.id_for_label }}">Condition:</label>
-            {{ form.condition }}
-        </div>
-    </div>
-    
-    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
-        <div class="form-group">
-            <label for="{{ form.purchase_date.id_for_label }}">Purchase Date:</label>
-            {{ form.purchase_date }}
-        </div>
-        <div class="form-group">
-            <label for="{{ form.last_maintenance.id_for_label }}">Last Maintenance:</label>
-            {{ form.last_maintenance }}
-        </div>
-    </div>
-    
-    <div class="form-group" style="margin-bottom: 20px;">
-        <label for="{{ form.notes.id_for_label }}">Notes:</label>
-        {{ form.notes }}
-    </div>
-    
-    <button type="submit" class="btn">Add Equipment</button>
-    <a href="{% url 'users:inventory_list' %}" class="btn" style="background: #6c757d;">Cancel</a>
-</form>
+
+        <button type="submit" class="btn">Add Equipment</button>
+        <a href="{% url 'users:inventory_list' %}" class="btn" style="background: #6c757d;">Cancel</a>
+    </form>
+</div>
 {% endblock %}

@@ -4,20 +4,22 @@
 {% block users_title %}Delete Customer - CoralOffice{% endblock %}
 
 {% block users_content %}
-<h2>Delete Customer</h2>
-<div class="alert alert-warning">
-    <strong>Warning:</strong> Are you sure you want to delete customer "{{ customer.first_name }} {{ customer.last_name }}"? This action cannot be undone.
-</div>
+<div class="p-3">
+    <h2>Delete Customer</h2>
+    <div class="alert alert-warning">
+        <strong>Warning:</strong> Are you sure you want to delete customer "{{ customer.first_name }} {{ customer.last_name }}"? This action cannot be undone.
+    </div>
 
-<div class="user-card">
-    <h3>{{ customer.first_name }} {{ customer.last_name }}</h3>
-    <p><strong>Email:</strong> {{ customer.email }}</p>
-    <p><strong>Phone:</strong> {{ customer.phone_number }}</p>
-</div>
+    <div class="user-card">
+        <h3>{{ customer.first_name }} {{ customer.last_name }}</h3>
+        <p><strong>Email:</strong> {{ customer.email }}</p>
+        <p><strong>Phone:</strong> {{ customer.phone_number }}</p>
+    </div>
 
-<form method="post">
-    {% csrf_token %}
-    <button type="submit" class="btn" style="background: #f44336;">Yes, Delete Customer</button>
-    <a href="{% url 'users:customer_list' %}" class="btn" style="background: #6c757d;">Cancel</a>
-</form>
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn" style="background: #f44336;">Yes, Delete Customer</button>
+        <a href="{% url 'users:customer_list' %}" class="btn" style="background: #6c757d;">Cancel</a>
+    </form>
+</div>
 {% endblock %}

@@ -3,87 +3,89 @@
 {% block users_title %}Customer List{% endblock %}
 
 {% block users_content %}
-<h2>Customer List</h2>
+<div class="p-3">
+    <h2>Customer List</h2>
 
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-    <a href="{% url 'users:add_customer' %}" class="btn">Add New Customer</a>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <a href="{% url 'users:add_customer' %}" class="btn">Add New Customer</a>
 
-    <form method="get" style="display: flex; gap: 10px;">
-        <input type="text" name="search" value="{{ search_query|default:'' }}" 
-               placeholder="Search by name, email, or phone..." 
-               style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; width: 300px;">
-        <button type="submit" class="btn" style="background-color: #007bff;">
-            <i class="fas fa-search"></i> Search
-        </button>
-        {% if search_query %}
-        <a href="{% url 'users:customer_list' %}" class="btn" style="background-color: #6c757d;">
-            <i class="fas fa-times"></i> Clear
-        </a>
-        {% endif %}
-    </form>
-</div>
+        <form method="get" style="display: flex; gap: 10px;">
+            <input type="text" name="search" value="{{ search_query|default:'' }}" 
+                   placeholder="Search by name, email, or phone..." 
+                   style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; width: 300px;">
+            <button type="submit" class="btn" style="background-color: #007bff;">
+                <i class="fas fa-search"></i> Search
+            </button>
+            {% if search_query %}
+            <a href="{% url 'users:customer_list' %}" class="btn" style="background-color: #6c757d;">
+                <i class="fas fa-times"></i> Clear
+            </a>
+            {% endif %}
+        </form>
+    </div>
 
-{% if search_query %}
-<div class="alert alert-info" style="background-color: #d1ecf1; padding: 10px; border-radius: 4px; margin-bottom: 20px;">
-    <i class="fas fa-info-circle"></i> 
-    Showing {{ customers.count }} result{{ customers.count|pluralize }} for "{{ search_query }}"
-</div>
-{% endif %}
+    {% if search_query %}
+    <div class="alert alert-info" style="background-color: #d1ecf1; padding: 10px; border-radius: 4px; margin-bottom: 20px;">
+        <i class="fas fa-info-circle"></i> 
+        Showing {{ customers.count }} result{{ customers.count|pluralize }} for "{{ search_query }}"
+    </div>
+    {% endif %}
 
-{% for customer in customers %}
-            <div class="customer-card" style="border-bottom: 1px solid #e3e3e3; padding: 2rem 1rem;">
-                <div style="display: flex; align-items: start; gap: 15px;">
-                    <div style="flex-shrink: 0;">
-                        {% if customer.profile_picture %}
-                            <img src="{{ customer.profile_picture.url }}" alt="{{ customer.first_name }}" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover;">
-                        {% else %}
-                            <div style="width: 60px; height: 60px; border-radius: 50%; background: #ddd; display: flex; align-items: center; justify-content: center; color: #666;">
-                                {{ customer.first_name.0 }}{{ customer.last_name.0 }}
+    {% for customer in customers %}
+                <div class="customer-card" style="border-bottom: 1px solid #e3e3e3; padding: 2rem 1rem;">
+                    <div style="display: flex; align-items: start; gap: 15px;">
+                        <div style="flex-shrink: 0;">
+                            {% if customer.profile_picture %}
+                                <img src="{{ customer.profile_picture.url }}" alt="{{ customer.first_name }}" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover;">
+                            {% else %}
+                                <div style="width: 60px; height: 60px; border-radius: 50%; background: #ddd; display: flex; align-items: center; justify-content: center; color: #666;">
+                                    {{ customer.first_name.0 }}{{ customer.last_name.0 }}
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div style="flex: 1;">
+                            <h3><a href="{% url 'users:edit_customer' customer.id %}">{{ customer.first_name }} {{ customer.last_name }}</a></h3>
+                            <p><strong>Email:</strong> {{ customer.email }}</p>
+                            <p><strong>Phone:</strong> {{ customer.phone_number }}</p>
+                            <p><strong>Country:</strong> {{ customer.get_country_display }}</p>
+                            <p><strong>Certification:</strong> {{ customer.get_certification_level_display }}</p>
+                            <p style="margin-bottom: .75rem;"><strong>Tank Size:</strong> {{ customer.default_tank_size }}</p>
+                            <div class="customer-actions">
+                                <a href="{% url 'users:edit_customer' customer.id %}" class="btn btn-edit">Edit</a>
+                                <a href="{% url 'users:customer_activity_history' customer.id %}" class="btn btn-history">Activity History</a>
+                                <a href="{% url 'users:delete_customer' customer.id %}" class="btn btn-delete">Delete</a>
                             </div>
-                        {% endif %}
-                    </div>
-                    <div style="flex: 1;">
-                        <h3><a href="{% url 'users:edit_customer' customer.id %}">{{ customer.first_name }} {{ customer.last_name }}</a></h3>
-                        <p><strong>Email:</strong> {{ customer.email }}</p>
-                        <p><strong>Phone:</strong> {{ customer.phone_number }}</p>
-                        <p><strong>Country:</strong> {{ customer.get_country_display }}</p>
-                        <p><strong>Certification:</strong> {{ customer.get_certification_level_display }}</p>
-                        <p style="margin-bottom: .75rem;"><strong>Tank Size:</strong> {{ customer.default_tank_size }}</p>
-                        <div class="customer-actions">
-                            <a href="{% url 'users:edit_customer' customer.id %}" class="btn btn-edit">Edit</a>
-                            <a href="{% url 'users:customer_activity_history' customer.id %}" class="btn btn-history">Activity History</a>
-                            <a href="{% url 'users:delete_customer' customer.id %}" class="btn btn-delete">Delete</a>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            {% endfor %}
+                {% endfor %}
 
-<!-- Pagination -->
-{% if customers.has_other_pages %}
-<div class="pagination-container" style="margin: 2rem 0; text-align: center;">
-    <div class="pagination-info" style="margin-bottom: 1rem; color: #666;">
-        Showing {{ customers.start_index }}-{{ customers.end_index }} of {{ total_customers }} customer{{ total_customers|pluralize }}
+    <!-- Pagination -->
+    {% if customers.has_other_pages %}
+    <div class="pagination-container" style="margin: 2rem 0; text-align: center;">
+        <div class="pagination-info" style="margin-bottom: 1rem; color: #666;">
+            Showing {{ customers.start_index }}-{{ customers.end_index }} of {{ total_customers }} customer{{ total_customers|pluralize }}
+        </div>
+
+        <div class="pagination" style="display: inline-flex; gap: 5px; align-items: center;">
+            {% if customers.has_previous %}
+                <a href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}" class="btn" style="padding: 8px 12px; background-color: #007bff;">First</a>
+                <a href="?page={{ customers.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}" class="btn" style="padding: 8px 12px; background-color: #007bff;">Previous</a>
+            {% endif %}
+
+            <span style="margin: 0 10px; font-weight: bold;">
+                Page {{ customers.number }} of {{ customers.paginator.num_pages }}
+            </span>
+
+            {% if customers.has_next %}
+                <a href="?page={{ customers.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}" class="btn" style="padding: 8px 12px; background-color: #007bff;">Next</a>
+                <a href="?page={{ customers.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}" class="btn" style="padding: 8px 12px; background-color: #007bff;">Last</a>
+            {% endif %}
+        </div>
     </div>
-    
-    <div class="pagination" style="display: inline-flex; gap: 5px; align-items: center;">
-        {% if customers.has_previous %}
-            <a href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}" class="btn" style="padding: 8px 12px; background-color: #007bff;">First</a>
-            <a href="?page={{ customers.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}" class="btn" style="padding: 8px 12px; background-color: #007bff;">Previous</a>
-        {% endif %}
-        
-        <span style="margin: 0 10px; font-weight: bold;">
-            Page {{ customers.number }} of {{ customers.paginator.num_pages }}
-        </span>
-        
-        {% if customers.has_next %}
-            <a href="?page={{ customers.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}" class="btn" style="padding: 8px 12px; background-color: #007bff;">Next</a>
-            <a href="?page={{ customers.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}" class="btn" style="padding: 8px 12px; background-color: #007bff;">Last</a>
-        {% endif %}
-    </div>
+    {% endif %}
+
+    <a href="{% url 'users:diving_center_dashboard' %}" class="btn" style="background: #6c757d;">Back to Dashboard</a>
 </div>
-{% endif %}
-
-<a href="{% url 'users:diving_center_dashboard' %}" class="btn" style="background: #6c757d;">Back to Dashboard</a>
 {% endblock %}

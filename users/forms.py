@@ -149,8 +149,15 @@ class DivingSiteForm(forms.ModelForm):
         model = DivingSite
         fields = ('name', 'location', 'depth_min', 'depth_max', 'difficulty_level', 'description', 'special_requirements')
         widgets = {
-            'description': forms.Textarea(attrs={'rows': 3}),
-            'special_requirements': forms.Textarea(attrs={'rows': 2}),
+            'description': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+            'special_requirements': forms.Textarea(attrs={'rows': 2, 'class': 'form-control'}),
+            'difficulty_level': forms.Select(attrs={'class': 'form-control'}),
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'location': forms.TextInput(attrs={'class': 'form-control'}),
+            'depth_min': forms.NumberInput(attrs={'class': 'form-control'}),
+            'depth_max': forms.NumberInput(attrs={'class': 'form-control'}),            
+            
+
         }
 
 class InventoryItemForm(forms.ModelForm):
@@ -207,16 +214,46 @@ class StaffForm(forms.ModelForm):
 class MedicalForm(forms.ModelForm):
     """Form for external users to fill medical information"""
     # Medical questions as boolean fields
-    heart_problems = forms.BooleanField(required=False, label="Do you have heart problems?")
-    high_blood_pressure = forms.BooleanField(required=False, label="Do you have high blood pressure?")
-    breathing_problems = forms.BooleanField(required=False, label="Do you have breathing problems or asthma?")
-    diabetes = forms.BooleanField(required=False, label="Do you have diabetes?")
-    epilepsy = forms.BooleanField(required=False, label="Do you have epilepsy or seizures?")
-    pregnant = forms.BooleanField(required=False, label="Are you pregnant?")
-    medications = forms.BooleanField(required=False, label="Are you taking any medications?")
-    allergies = forms.BooleanField(required=False, label="Do you have any allergies?")
-    surgery_recent = forms.BooleanField(required=False, label="Have you had surgery in the last 6 months?")
-    ear_problems = forms.BooleanField(required=False, label="Do you have ear or sinus problems?")
+    heart_problems = forms.BooleanField(
+        required=False, label="Do you have heart problems?",
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+    )
+    high_blood_pressure = forms.BooleanField(
+        required=False, label="Do you have high blood pressure?",
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+    )
+    breathing_problems = forms.BooleanField(
+        required=False, label="Do you have breathing problems or asthma?",
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+    )
+    diabetes = forms.BooleanField(
+        required=False, label="Do you have diabetes?",
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+    )
+    epilepsy = forms.BooleanField(
+        required=False, label="Do you have epilepsy or seizures?",
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+    )
+    pregnant = forms.BooleanField(
+        required=False, label="Are you pregnant?",
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+    )
+    medications = forms.BooleanField(
+        required=False, label="Are you taking any medications?",
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+    )
+    allergies = forms.BooleanField(
+        required=False, label="Do you have any allergies?",
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+    )
+    surgery_recent = forms.BooleanField(
+        required=False, label="Have you had surgery in the last 6 months?",
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+    )
+    ear_problems = forms.BooleanField(
+        required=False, label="Do you have ear or sinus problems?",
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
+    )
     swimming_ability = forms.ChoiceField(
         choices=[
             ('excellent', 'Excellent'),
@@ -225,26 +262,47 @@ class MedicalForm(forms.ModelForm):
             ('poor', 'Poor'),
         ],
         label="Swimming ability",
-        required=True
+        required=True,
+        widget=forms.Select(attrs={'class': 'form-control'})
     )
 
     class Meta:
         model = Customer
-        fields = ('first_name', 'last_name', 'email', 'phone_number', 'country', 'language', 'birthday', 'certification_level', 'emergency_contact', 'medical_conditions', 'weight', 'height', 'foot_size', 'default_tank_size')
+        fields = (
+            'first_name', 'last_name', 'email', 'phone_number', 'country', 'language',
+            'birthday', 'certification_level', 'emergency_contact', 'medical_conditions',
+            'weight', 'height', 'foot_size', 'default_tank_size'
+        )
         widgets = {
-            'medical_conditions': forms.Textarea(attrs={'rows': 4, 'placeholder': 'Please provide additional medical information or details about any conditions mentioned above...'}),
-            'birthday': forms.DateInput(attrs={'type': 'date'}),
-            'weight': forms.NumberInput(attrs={'step': '0.1', 'placeholder': 'kg'}),
-            'height': forms.NumberInput(attrs={'step': '0.1', 'placeholder': 'cm'}),
-            'foot_size': forms.NumberInput(attrs={'step': '0.5', 'placeholder': 'EU size'}),
-            'language': forms.Select(choices=[
-                ('EN', 'English'),
-                ('ES', 'Español'),
-                ('FR', 'Français'),
-                ('DE', 'Deutsch'),
-                ('NL', 'Nederlands'),
-            ])
+            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control'}),
+            'phone_number': forms.TextInput(attrs={'class': 'form-control'}),
+            'country': forms.TextInput(attrs={'class': 'form-control'}),
+            'language': forms.Select(
+                choices=[
+                    ('EN', 'English'),
+                    ('ES', 'Español'),
+                    ('FR', 'Français'),
+                    ('DE', 'Deutsch'),
+                    ('NL', 'Nederlands'),
+                ],
+                attrs={'class': 'form-control'}
+            ),
+            'birthday': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'certification_level': forms.TextInput(attrs={'class': 'form-control'}),
+            'emergency_contact': forms.TextInput(attrs={'class': 'form-control'}),
+            'medical_conditions': forms.Textarea(attrs={
+                'rows': 4,
+                'class': 'form-control',
+                'placeholder': 'Please provide additional medical information or details about any conditions mentioned above...'
+            }),
+            'weight': forms.NumberInput(attrs={'step': '0.1', 'placeholder': 'kg', 'class': 'form-control'}),
+            'height': forms.NumberInput(attrs={'step': '0.1', 'placeholder': 'cm', 'class': 'form-control'}),
+            'foot_size': forms.NumberInput(attrs={'step': '0.5', 'placeholder': 'EU size', 'class': 'form-control'}),
+            'default_tank_size': forms.NumberInput(attrs={'class': 'form-control'}),
         }
+
 
 
 

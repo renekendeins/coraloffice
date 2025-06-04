@@ -11,15 +11,15 @@
     </div>
 
     <div class="mb-3 d-flex flex-column flex-md-row justify-content-md-between align-items-md-center">
-        <a href="{% url 'users:diving_center_dashboard' %}" class="btn" style="background: #6c757d;">Back to Dashboard</a>
-        <a href="{% url 'users:add_diving_group' %}" class="btn btn-success">Add New Group</a>
+        <a href="{% url 'users:diving_center_dashboard' %}" class="btn btn-secondary mb-2 mb-md-0" style="background: #6c757d;">Volver</a>
+        <a href="{% url 'users:add_diving_group' %}" class="btn btn-success">Añadir grupo</a>
     </div>
 
     <!-- Filter and Sort Controls -->
     <div class="filter-controls" style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 30px;">
         <form method="get" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; align-items: end;">
             <div>
-                <label for="search" style="display: block; margin-bottom: 5px; font-weight: bold;">Search:</label>
+                <label for="search" style="display: block; margin-bottom: 5px; font-weight: bold;">Buscar:</label>
                 <input type="text" id="search" name="search" value="{{ request.GET.search }}" 
                        placeholder="Group name, contact person..." 
                        style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
@@ -28,7 +28,7 @@
             <div>
                 <label for="country" style="display: block; margin-bottom: 5px; font-weight: bold;">Country:</label>
                 <select name="country" id="country" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
-                    <option value="">All Countries</option>
+                    <option value="">Todos los paises</option>
                     {% for code, name in country_choices %}
                         <option value="{{ code }}" {% if request.GET.country == code %}selected{% endif %}>
                             {{ name }}
@@ -38,7 +38,7 @@
             </div>
             
             <div>
-                <label for="date_filter" style="display: block; margin-bottom: 5px; font-weight: bold;">Date Filter:</label>
+                <label for="date_filter" style="display: block; margin-bottom: 5px; font-weight: bold;">Filtrar fechas:</label>
                 <select name="date_filter" id="date_filter" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
                     <option value="">All Groups</option>
                     <option value="arriving_soon" {% if request.GET.date_filter == 'arriving_soon' %}selected{% endif %}>
@@ -57,38 +57,38 @@
             </div>
             
             <div>
-                <label for="sort_by" style="display: block; margin-bottom: 5px; font-weight: bold;">Sort By:</label>
+                <label for="sort_by" style="display: block; margin-bottom: 5px; font-weight: bold;">Ordenar por:</label>
                 <select name="sort_by" id="sort_by" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
                     <option value="-created_at" {% if request.GET.sort_by == '-created_at' %}selected{% endif %}>
-                        Newest First
+                        Nuevos primero
                     </option>
                     <option value="created_at" {% if request.GET.sort_by == 'created_at' %}selected{% endif %}>
-                        Oldest First
+                        Antiguos primero
                     </option>
                     <option value="name" {% if request.GET.sort_by == 'name' %}selected{% endif %}>
-                        Name A-Z
+                        Nombre A-Z
                     </option>
                     <option value="-name" {% if request.GET.sort_by == '-name' %}selected{% endif %}>
-                        Name Z-A
+                        Nombre Z-A
                     </option>
                     <option value="arrival_date" {% if request.GET.sort_by == 'arrival_date' %}selected{% endif %}>
-                        Arrival Date (Earliest)
+                        Fecha de llegada (Más reciente)
                     </option>
                     <option value="-arrival_date" {% if request.GET.sort_by == '-arrival_date' %}selected{% endif %}>
-                        Arrival Date (Latest)
+                        fecha de llegada (Más antigua)
                     </option>
                     <option value="country" {% if request.GET.sort_by == 'country' %}selected{% endif %}>
-                        Country A-Z
+                        País A-Z
                     </option>
                 </select>
             </div>
             
             <div style="display: flex; gap: 10px;">
-                <button type="submit" class="btn" style="background: #007bff; padding: 8px 16px;">
-                    Apply Filters
+                <button type="submit" class="btn btn-primary">
+                    Buscar
                 </button>
-                <a href="{% url 'users:diving_groups_list' %}" class="btn" style="background: #6c757d; padding: 8px 16px; text-decoration: none; color: white;">
-                    Clear
+                <a href="{% url 'users:diving_groups_list' %}" class="btn btn-secondary">
+                    Limpiar
                 </a>
             </div>
         </form>
@@ -109,24 +109,24 @@
             {% for group in groups %}
             <div class="card">
                 <h3>{{ group.name }}</h3>
-                <p><strong>Country:</strong> {{ group.get_country_display }}</p>
-                <p><strong>Contact Person:</strong> {{ group.contact_person }}</p>
+                <p><strong>País:</strong> {{ group.get_country_display }}</p>
+                <p><strong>Persona de contacto:</strong> {{ group.contact_person }}</p>
                 <p><strong>Email:</strong> {{ group.email }}</p>
-                <p><strong>Phone:</strong> {{ group.phone }}</p>
+                <p><strong>Teléfono:</strong> {{ group.phone }}</p>
                 {% if group.arrival_date %}
-                    <p><strong>Arrival:</strong> {{ group.arrival_date }}</p>
+                    <p><strong>Llegada:</strong> {{ group.arrival_date }}</p>
                 {% endif %}
                 {% if group.departure_date %}
-                    <p><strong>Departure:</strong> {{ group.departure_date }}</p>
+                    <p><strong>Salida:</strong> {{ group.departure_date }}</p>
                 {% endif %}
                 {% if group.description %}
-                    <p><strong>Description:</strong> {{ group.description|truncatewords:20 }}</p>
+                    <p><strong>Descripción:</strong> {{ group.description|truncatewords:20 }}</p>
                 {% endif %}
-                <p><strong>Members:</strong> {{ group.members.count }}</p>
-                <div style="margin-top: 15px;">
-                    <a href="{% url 'users:manage_group_members' group.id %}" class="btn" style="background: #2196f3; font-size: 14px;">Manage Members</a>
+                <p><strong>Miembros:</strong> {{ group.members.count }}</p>
+                <div class="my-2">
+                    <a href="{% url 'users:manage_group_members' group.id %}" class="btn btn-info">Gestionar miembros</a>
                 </div>
-                <p><small>Created: {{ group.created_at|date:"F d, Y" }}</small></p>
+                <p><small>Creado: {{ group.created_at|date:"F d, Y" }}</small></p>
             </div>
             {% endfor %}
         </div>
