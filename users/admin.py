@@ -2,6 +2,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
+from django.utils.safestring import mark_safe
 from .models import (
     UserProfile, Customer, DiveSchedule, DiveActivity, CustomerDiveActivity, 
     DivingSite, InventoryItem, DivingGroup, DivingGroupMember, Staff, 
@@ -115,8 +116,7 @@ class CustomerAdmin(admin.ModelAdmin):
             html += "</div>"
         
         html += "</div>"
-        return html
-    medical_questionnaire_display.allow_tags = True
+        return mark_safe(html)
     medical_questionnaire_display.short_description = 'Medical Questionnaire'
 
 # Diving Site Admin
