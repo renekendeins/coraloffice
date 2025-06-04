@@ -1,4 +1,3 @@
-
 {% extends 'users/base.html' %}
 
 {% block users_title %}Medical Questionnaire - CoralOffice{% endblock %}
@@ -6,8 +5,8 @@
 {% block users_content %}
 <div class="container-fluid" style="max-width: 800px; margin: 0 auto; padding: 15px;">
     <div class="text-center mb-4">
-        <h2 class="mb-3">Diving Medical Questionnaire</h2>
-        <p class="text-muted">Please complete this form before your diving activity. All information is confidential.</p>
+        <h2 class="mb-3" id="form-title">Diving Medical Questionnaire</h2>
+        <p class="text-muted" id="form-subtitle">Please complete this form before your diving activity. All information is confidential.</p>
     </div>
 
     {% if messages %}
@@ -20,290 +19,294 @@
 
     <form method="post" class="bg-light p-3 p-md-4 rounded">
         {% csrf_token %}
-        
+
         <!-- Language Selection -->
         <div class="row mb-4">
             <div class="col-12 text-end">
-                <label for="{{ form.language.id_for_label }}" class="form-label me-2">Language / Idioma / Langue / Sprache / Taal:</label>
+                <label for="{{ form.language.id_for_label }}" class="form-label me-2" id="language-label">Language / Idioma / Langue / Sprache / Taal:</label>
                 {{ form.language }}
             </div>
         </div>
 
         <!-- Personal Information -->
         <fieldset class="border border-2 p-3 p-md-4 mb-4 rounded">
-            <legend class="fw-bold text-secondary px-2 mb-3">Personal Information</legend>
-            
+            <legend class="fw-bold text-secondary px-2 mb-3" id="personal-info-legend">Personal Information</legend>
+
             <div class="row g-3 mb-3">
                 <div class="col-12 col-md-6">
                     <div class="form-group">
-                        <label for="{{ form.first_name.id_for_label }}" class="form-label">First Name *</label>
+                        <label for="{{ form.first_name.id_for_label }}" class="form-label" id="first-name-label">First Name *</label>
                         {{ form.first_name }}
                     </div>
                 </div>
                 <div class="col-12 col-md-6">
                     <div class="form-group">
-                        <label for="{{ form.last_name.id_for_label }}" class="form-label">Last Name *</label>
+                        <label for="{{ form.last_name.id_for_label }}" class="form-label" id="last-name-label">Last Name *</label>
                         {{ form.last_name }}
                     </div>
                 </div>
             </div>
-            
+
             <div class="row g-3 mb-3">
                 <div class="col-12 col-md-6">
                     <div class="form-group">
-                        <label for="{{ form.email.id_for_label }}" class="form-label">Email *</label>
+                        <label for="{{ form.email.id_for_label }}" class="form-label" id="email-label">Email *</label>
                         {{ form.email }}
                     </div>
                 </div>
                 <div class="col-12 col-md-6">
                     <div class="form-group">
-                        <label for="{{ form.phone_number.id_for_label }}" class="form-label">Phone Number *</label>
+                        <label for="{{ form.phone_number.id_for_label }}" class="form-label" id="phone-label">Phone Number *</label>
                         {{ form.phone_number }}
                     </div>
                 </div>
             </div>
-            
+
             <div class="row g-3 mb-3">
                 <div class="col-12 col-md-4">
                     <div class="form-group">
-                        <label for="{{ form.birthday.id_for_label }}" class="form-label">Date of Birth *</label>
+                        <label for="{{ form.birthday.id_for_label }}" class="form-label" id="birthday-label">Date of Birth *</label>
                         {{ form.birthday }}
                     </div>
                 </div>
                 <div class="col-12 col-md-4">
                     <div class="form-group">
-                        <label for="{{ form.country.id_for_label }}" class="form-label">Country</label>
+                        <label for="{{ form.country.id_for_label }}" class="form-label" id="country-label">Country</label>
                         {{ form.country }}
                     </div>
                 </div>
                 <div class="col-12 col-md-4">
                     <div class="form-group">
-                        <label for="{{ form.certification_level.id_for_label }}" class="form-label">Diving Certification</label>
+                        <label for="{{ form.certification_level.id_for_label }}" class="form-label" id="certification-label">Diving Certification</label>
                         {{ form.certification_level }}
                     </div>
                 </div>
             </div>
-            
+
             <div class="row g-3 mb-3">
                 <div class="col-12 col-md-4">
                     <div class="form-group">
-                        <label for="{{ form.weight.id_for_label }}" class="form-label">Weight (kg)</label>
+                        <label for="{{ form.weight.id_for_label }}" class="form-label" id="weight-label">Weight (kg)</label>
                         {{ form.weight }}
                     </div>
                 </div>
                 <div class="col-12 col-md-4">
                     <div class="form-group">
-                        <label for="{{ form.height.id_for_label }}" class="form-label">Height (cm)</label>
+                        <label for="{{ form.height.id_for_label }}" class="form-label" id="height-label">Height (cm)</label>
                         {{ form.height }}
                     </div>
                 </div>
                 <div class="col-12 col-md-4">
                     <div class="form-group">
-                        <label for="{{ form.foot_size.id_for_label }}" class="form-label">Foot Size (EU)</label>
+                        <label for="{{ form.foot_size.id_for_label }}" class="form-label" id="foot-size-label">Foot Size (EU)</label>
                         {{ form.foot_size }}
                     </div>
                 </div>
             </div>
-            
+
             <div class="form-group">
-                <label for="{{ form.emergency_contact.id_for_label }}" class="form-label">Emergency Contact *</label>
+                <label for="{{ form.emergency_contact.id_for_label }}" class="form-label" id="emergency-contact-label">Emergency Contact *</label>
                 {{ form.emergency_contact }}
             </div>
         </fieldset>
 
         <!-- Medical Questions -->
         <fieldset class="border border-danger border-2 p-3 p-md-4 mb-4 rounded">
-            <legend class="fw-bold text-danger px-2 mb-3">Cuestionario Médico</legend>
-            <p class="text-muted mb-3 fst-italic">
-                Por favor responda TODAS las preguntas honestamente. Su seguridad depende de ello. Si responde SÍ a cualquier pregunta, proporcione detalles en la sección de información adicional al final.
+            <legend class="fw-bold text-danger px-2 mb-3" id="medical-legend">Medical Questionnaire</legend>
+            <p class="text-muted mb-3 fst-italic" id="medical-subtitle">
+                Please answer ALL questions honestly. Your safety depends on it. If you answer YES to any question, provide details in the additional information section at the end.
             </p>
-            
+
             <div class="mt-2 form-medical">
                 <div class="question-section mb-3 p-3 border rounded">
                     <div class="d-flex flex-wrap align-items-center justify-content-between p-2 bg-light rounded">
                         <div class="d-flex align-items-start flex-grow-1">
                             <div class="fw-bold me-2">1</div>
-                            <div class="fw-bold flex-grow-1">He tenido problemas con mis pulmones/respiración, corazón o sangre</div>
+                            <div class="fw-bold flex-grow-1" id="question-1">I have had problems with my lungs/breathing, heart or blood</div>
                         </div>
                         <div class="d-flex gap-3 mt-2 mt-md-0">
                             <div class="form-check">
-                                <input type="radio" name="pregunta_1" value="1" class="form-check-input" id="q1_si">
-                                <label class="form-check-label" for="q1_si">Sí</label>
+                                {{ form.pregunta_1.0 }}
+                                <label class="form-check-label" for="{{ form.pregunta_1.0.id_for_label }}" id="yes-label">Yes</label>
                             </div>
                             <div class="form-check">
-                                <input type="radio" name="pregunta_1" value="0" class="form-check-input" id="q1_no">
-                                <label class="form-check-label" for="q1_no">No</label>
+                                {{ form.pregunta_1.1 }}
+                                <label class="form-check-label" for="{{ form.pregunta_1.1.id_for_label }}" id="no-label">No</label>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="mt-3 p-2 bg-secondary text-white fw-bold">TENGO / HE TENIDO:</div>
-                    
+
+                    <div class="mt-3 p-2 bg-secondary text-white fw-bold" id="have-had-header">I HAVE / HAVE HAD:</div>
+
                     <div class="sub-question p-2 border-bottom">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
-                            <div class="flex-grow-1 pe-2">Cirugía torácica, cirugía cardíaca, cirugía de válvula cardíaca, colocación de "stent" o neumotórax (pulmón colapsado).</div>
+                            <div class="flex-grow-1 pe-2" id="question-1-1">Chest surgery, heart surgery, heart valve surgery, stent placement, or pneumothorax (collapsed lung).</div>
                             <div class="d-flex gap-3 mt-2 mt-md-0">
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_1_1" value="1" class="form-check-input" id="q1_1_si">
-                                    <label class="form-check-label" for="q1_1_si">Sí</label>
+                                    {{ form.pregunta_1_1.0 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_1_1.0.id_for_label }}">Sí</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_1_1" value="0" class="form-check-input" id="q1_1_no">
-                                    <label class="form-check-label" for="q1_1_no">No</label>
+                                    {{ form.pregunta_1_1.1 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_1_1.1.id_for_label }}">No</label>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="sub-question p-2 border-bottom bg-light">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
-                            <div class="flex-grow-1 pe-2">Asma, sibilancias, alergias graves, fiebre del heno o vías respiratorias congestionadas en los últimos 12 meses que limite mi actividad física/ejercicio.</div>
+                            <div class="flex-grow-1 pe-2" id="question-1-2">Asthma, wheezing, severe allergies, hay fever or congested airways in the last 12 months that limit my physical activity/exercise.</div>
                             <div class="d-flex gap-3 mt-2 mt-md-0">
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_1_2" value="1" class="form-check-input" id="q1_2_si">
-                                    <label class="form-check-label" for="q1_2_si">Sí</label>
+                                    {{ form.pregunta_1_2.0 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_1_2.0.id_for_label }}">Sí</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_1_2" value="0" class="form-check-input" id="q1_2_no">
-                                    <label class="form-check-label" for="q1_2_no">No</label>
+                                    {{ form.pregunta_1_2.1 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_1_2.1.id_for_label }}">No</label>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="sub-question p-2 border-bottom">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
-                            <div class="flex-grow-1 pe-2">Un problema o enfermedad que involucra mi corazón como: angina de pecho, dolor en el pecho en el esfuerzo, insuficiencia cardíaca, edema pulmonar, miocardiopatía o accidente cerebrovascular o estoy tomando medicamentos para cualquier afección cardíaca.</div>
+                            <div class="flex-grow-1 pe-2" id="question-1-3">A heart problem or disease involving my heart such as: angina, chest pain on exertion, heart failure, pulmonary edema, cardiomyopathy or stroke, or I am taking medications for any heart condition.</div>
                             <div class="d-flex gap-3 mt-2 mt-md-0">
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_1_3" value="1" class="form-check-input" id="q1_3_si">
-                                    <label class="form-check-label" for="q1_3_si">Sí</label>
+                                    {{ form.pregunta_1_3.0 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_1_3.0.id_for_label }}">Sí</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_1_3" value="0" class="form-check-input" id="q1_3_no">
-                                    <label class="form-check-label" for="q1_3_no">No</label>
+                                    {{ form.pregunta_1_3.1 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_1_3.1.id_for_label }}">No</label>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="sub-question p-2 bg-light">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
-                            <div class="flex-grow-1 pe-2">Bronquitis recurrente y tos persistente en los últimos 12 meses o he sido diagnosticado con enfisema.</div>
+                            <div class="flex-grow-1 pe-2" id="question-1-4">Recurrent bronchitis and persistent cough in the last 12 months or I have been diagnosed with emphysema.</div>
                             <div class="d-flex gap-3 mt-2 mt-md-0">
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_1_4" value="1" class="form-check-input" id="q1_4_si">
-                                    <label class="form-check-label" for="q1_4_si">Sí</label>
+                                    {{ form.pregunta_1_4.0 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_1_4.0.id_for_label }}">Sí</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_1_4" value="0" class="form-check-input" id="q1_4_no">
-                                    <label class="form-check-label" for="q1_4_no">No</label>
+                                    {{ form.pregunta_1_4.1 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_1_4.1.id_for_label }}">No</label>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Continue with remaining questions using the same pattern -->
+                <!-- Question 2 -->
                 <div class="question-section mb-3 p-3 border rounded bg-light">
                     <div class="d-flex flex-wrap align-items-center justify-content-between p-2 bg-white rounded">
                         <div class="d-flex align-items-start flex-grow-1">
                             <div class="fw-bold me-2">2</div>
-                            <div class="fw-bold flex-grow-1">Tengo más de 45 años.</div>
+                            <div class="fw-bold flex-grow-1" id="question-2">I am over 45 years old.</div>
                         </div>
                         <div class="d-flex gap-3 mt-2 mt-md-0">
                             <div class="form-check">
-                                <input type="radio" name="pregunta_2" value="1" class="form-check-input" id="q2_si">
-                                <label class="form-check-label" for="q2_si">Sí</label>
+                                {{ form.pregunta_2.0 }}
+                                <label class="form-check-label" for="{{ form.pregunta_2.0.id_for_label }}">Sí</label>
                             </div>
                             <div class="form-check">
-                                <input type="radio" name="pregunta_2" value="0" class="form-check-input" id="q2_no">
-                                <label class="form-check-label" for="q2_no">No</label>
+                                {{ form.pregunta_2.1 }}
+                                <label class="form-check-label" for="{{ form.pregunta_2.1.id_for_label }}">No</label>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="mt-3 p-2 bg-secondary text-white fw-bold">TENGO MÁS DE 45 AÑOS Y:</div>
-                    
+
+                    <div class="mt-3 p-2 bg-secondary text-white fw-bold" id="over-45-header">I AM OVER 45 AND:</div>
+
+                    <!-- Add all sub-questions for question 2 -->
                     <div class="sub-question p-2 border-bottom">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
-                            <div class="flex-grow-1 pe-2">Actualmente fumo o inhalo nicotina por otros medios.</div>
+                            <div class="flex-grow-1 pe-2" id="question-2-1">Currently smoke or inhale nicotine by other means.</div>
                             <div class="d-flex gap-3 mt-2 mt-md-0">
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_2_1" value="1" class="form-check-input" id="q2_1_si">
-                                    <label class="form-check-label" for="q2_1_si">Sí</label>
+                                    {{ form.pregunta_2_1.0 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_2_1.0.id_for_label }}">Sí</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_2_1" value="0" class="form-check-input" id="q2_1_no">
-                                    <label class="form-check-label" for="q2_1_no">No</label>
+                                    {{ form.pregunta_2_1.1 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_2_1.1.id_for_label }}">No</label>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="sub-question p-2 border-bottom bg-light">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
-                            <div class="flex-grow-1 pe-2">Tengo un nivel alto de colesterol.</div>
+                            <div class="flex-grow-1 pe-2" id="question-2-2">I have a high cholesterol level.</div>
                             <div class="d-flex gap-3 mt-2 mt-md-0">
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_2_2" value="1" class="form-check-input" id="q2_2_si">
-                                    <label class="form-check-label" for="q2_2_si">Sí</label>
+                                    {{ form.pregunta_2_2.0 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_2_2.0.id_for_label }}">Sí</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_2_2" value="0" class="form-check-input" id="q2_2_no">
-                                    <label class="form-check-label" for="q2_2_no">No</label>
+                                    {{ form.pregunta_2_2.1 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_2_2.1.id_for_label }}">No</label>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="sub-question p-2 border-bottom">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
-                            <div class="flex-grow-1 pe-2">Tengo presión arterial alta.</div>
+                            <div class="flex-grow-1 pe-2" id="question-2-3">I have high blood pressure.</div>
                             <div class="d-flex gap-3 mt-2 mt-md-0">
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_2_3" value="1" class="form-check-input" id="q2_3_si">
-                                    <label class="form-check-label" for="q2_3_si">Sí</label>
+                                    {{ form.pregunta_2_3.0 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_2_3.0.id_for_label }}">Sí</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_2_3" value="0" class="form-check-input" id="q2_3_no">
-                                    <label class="form-check-label" for="q2_3_no">No</label>
+                                    {{ form.pregunta_2_3.1 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_2_3.1.id_for_label }}">No</label>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="sub-question p-2 bg-light">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
-                            <div class="flex-grow-1 pe-2">He tenido un familiar (de 1er o 2º grado de consanguinidad) que murió de muerte súbita o de enfermedad cardíaca o accidente cerebrovascular antes de los 50 años o tengo antecedentes familiares de enfermedad cardíaca antes de los 50 años (incluidos ritmos cardíacos anormales, enfermedad de las arterias coronarias o cardiomiopatía).</div>
+                            <div class="flex-grow-1 pe-2" id="question-2-4">I have had a family member (1st or 2nd degree relative) who died of sudden death or heart disease or stroke before age 50 or I have a family history of heart disease before age 50 (including abnormal heart rhythms, coronary artery disease, or cardiomyopathy).</div>
                             <div class="d-flex gap-3 mt-2 mt-md-0">
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_2_4" value="1" class="form-check-input" id="q2_4_si">
-                                    <label class="form-check-label" for="q2_4_si">Sí</label>
+                                    {{ form.pregunta_2_4.0 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_2_4.0.id_for_label }}">Sí</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_2_4" value="0" class="form-check-input" id="q2_4_no">
-                                    <label class="form-check-label" for="q2_4_no">No</label>
+                                    {{ form.pregunta_2_4.1 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_2_4.1.id_for_label }}">No</label>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    <!-- Continue with remaining sub-questions... -->
+                    <!-- For brevity, I'll add just the structure. Add all remaining questions following the same pattern -->
                 </div>
 
-                <!-- Continue with remaining questions 3-10 -->
                 <div class="question-section mb-3 p-3 border rounded">
                     <div class="d-flex flex-wrap align-items-center justify-content-between p-2 bg-light rounded">
                         <div class="d-flex align-items-start flex-grow-1">
                             <div class="fw-bold me-2">3</div>
-                            <div class="fw-bold flex-grow-1">Me cuesta realizar ejercicio moderado (por ejemplo, caminar 1,6 kilómetros/una milla en 12 minutos o nadar 200 metros/yardas sin descansar), o no he podido participar en una actividad física normal debido a razones de estado físico o de salud en los últimos 12 meses.</div>
+                            <div class="fw-bold flex-grow-1" id="question-3">I find it difficult to perform moderate exercise (e.g., walk 1.6 kilometers/one mile in 12 minutes or swim 200 meters/yards without resting), or I have not been able to participate in normal physical activity due to fitness or health reasons in the last 12 months.</div>
                         </div>
                         <div class="d-flex gap-3 mt-2 mt-md-0">
                             <div class="form-check">
-                                <input type="radio" name="pregunta_3" value="1" class="form-check-input" id="q3_si">
-                                <label class="form-check-label" for="q3_si">Sí</label>
+                                {{ form.pregunta_3.0 }}
+                                <label class="form-check-label" for="{{ form.pregunta_3.0.id_for_label }}">Sí</label>
                             </div>
                             <div class="form-check">
-                                <input type="radio" name="pregunta_3" value="0" class="form-check-input" id="q3_no">
-                                <label class="form-check-label" for="q3_no">No</label>
+                                {{ form.pregunta_3.1 }}
+                                <label class="form-check-label" for="{{ form.pregunta_3.1.id_for_label }}">No</label>
                             </div>
                         </div>
                     </div>
@@ -313,102 +316,100 @@
                     <div class="d-flex flex-wrap align-items-center justify-content-between p-2 bg-white rounded">
                         <div class="d-flex align-items-start flex-grow-1">
                             <div class="fw-bold me-2">4</div>
-                            <div class="fw-bold flex-grow-1">He tenido problemas con mis ojos, oídos o fosas nasales / senos paranasales.</div>
+                            <div class="fw-bold flex-grow-1" id="question-4">I have had problems with my eyes, ears, or sinuses/nasal passages.</div>
                         </div>
                         <div class="d-flex gap-3 mt-2 mt-md-0">
                             <div class="form-check">
-                                <input type="radio" name="pregunta_4" value="1" class="form-check-input" id="q4_si">
-                                <label class="form-check-label" for="q4_si">Sí</label>
+                                {{ form.pregunta_4.0 }}
+                                <label class="form-check-label" for="{{ form.pregunta_4.0.id_for_label }}">Sí</label>
                             </div>
                             <div class="form-check">
-                                <input type="radio" name="pregunta_4" value="0" class="form-check-input" id="q4_no">
-                                <label class="form-check-label" for="q4_no">No</label>
+                                {{ form.pregunta_4.1 }}
+                                <label class="form-check-label" for="{{ form.pregunta_4.1.id_for_label }}">No</label>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="mt-3 p-2 bg-secondary text-white fw-bold">TENGO / HE TENIDO:</div>
-                    
+                    <div class="mt-3 p-2 bg-secondary text-white fw-bold" id="have-had-header-4">I HAVE / HAVE HAD:</div>
+
                     <div class="sub-question p-2 border-bottom">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
-                            <div class="flex-grow-1 pe-2">Cirugía sinusal en los últimos 6 meses.</div>
+                            <div class="flex-grow-1 pe-2" id="question-4-1">Sinus surgery in the last 6 months.</div>
                             <div class="d-flex gap-3 mt-2 mt-md-0">
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_4_1" value="1" class="form-check-input" id="q4_1_si">
-                                    <label class="form-check-label" for="q4_1_si">Sí</label>
+                                    {{ form.pregunta_4_1.0 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_4_1.0.id_for_label }}">Sí</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_4_1" value="0" class="form-check-input" id="q4_1_no">
-                                    <label class="form-check-label" for="q4_1_no">No</label>
+                                    {{ form.pregunta_4_1.1 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_4_1.1.id_for_label }}">No</label>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="sub-question p-2 border-bottom bg-light">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
-                            <div class="flex-grow-1 pe-2">Enfermedades del oído o cirugía del oído, pérdida de audición o alteraciones del equilibrio.</div>
+                            <div class="flex-grow-1 pe-2" id="question-4-2">Ear diseases or ear surgery, hearing loss, or balance disturbances.</div>
                             <div class="d-flex gap-3 mt-2 mt-md-0">
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_4_2" value="1" class="form-check-input" id="q4_2_si">
-                                    <label class="form-check-label" for="q4_2_si">Sí</label>
+                                    {{ form.pregunta_4_2.0 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_4_2.0.id_for_label }}">Sí</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_4_2" value="0" class="form-check-input" id="q4_2_no">
-                                    <label class="form-check-label" for="q4_2_no">No</label>
+                                    {{ form.pregunta_4_2.1 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_4_2.1.id_for_label }}">No</label>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="sub-question p-2 border-bottom">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
-                            <div class="flex-grow-1 pe-2">Sinusitis recurrente en los últimos 12 meses.</div>
+                            <div class="flex-grow-1 pe-2" id="question-4-3">Recurrent sinusitis in the last 12 months.</div>
                             <div class="d-flex gap-3 mt-2 mt-md-0">
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_4_3" value="1" class="form-check-input" id="q4_3_si">
-                                    <label class="form-check-label" for="q4_3_si">Sí</label>
+                                    {{ form.pregunta_4_3.0 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_4_3.0.id_for_label }}">Sí</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_4_3" value="0" class="form-check-input" id="q4_3_no">
-                                    <label class="form-check-label" for="q4_3_no">No</label>
+                                    {{ form.pregunta_4_3.1 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_4_3.1.id_for_label }}">No</label>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="sub-question p-2 bg-light">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
-                            <div class="flex-grow-1 pe-2">Cirugía ocular en los últimos 3 meses.</div>
+                            <div class="flex-grow-1 pe-2" id="question-4-4">Eye surgery in the last 3 months.</div>
                             <div class="d-flex gap-3 mt-2 mt-md-0">
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_4_4" value="1" class="form-check-input" id="q4_4_si">
-                                    <label class="form-check-label" for="q4_4_si">Sí</label>
+                                    {{ form.pregunta_4_4.0 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_4_4.0.id_for_label }}">Sí</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_4_4" value="0" class="form-check-input" id="q4_4_no">
-                                    <label class="form-check-label" for="q4_4_no">No</label>
+                                    {{ form.pregunta_4_4.1 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_4_4.1.id_for_label }}">No</label>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Questions 5-10 continue in similar format -->
                 <div class="question-section mb-3 p-3 border rounded">
                     <div class="d-flex flex-wrap align-items-center justify-content-between p-2 bg-light rounded">
                         <div class="d-flex align-items-start flex-grow-1">
                             <div class="fw-bold me-2">5</div>
-                            <div class="fw-bold flex-grow-1">He tenido una cirugía en los últimos 12 meses o tengo problemas continuos relacionados con una cirugía anterior.</div>
+                            <div class="fw-bold flex-grow-1" id="question-5">I have had surgery in the last 12 months or have ongoing problems related to previous surgery.</div>
                         </div>
                         <div class="d-flex gap-3 mt-2 mt-md-0">
                             <div class="form-check">
-                                <input type="radio" name="pregunta_5" value="1" class="form-check-input" id="q5_si">
-                                <label class="form-check-label" for="q5_si">Sí</label>
+                                {{ form.pregunta_5.0 }}
+                                <label class="form-check-label" for="{{ form.pregunta_5.0.id_for_label }}">Sí</label>
                             </div>
                             <div class="form-check">
-                                <input type="radio" name="pregunta_5" value="0" class="form-check-input" id="q5_no">
-                                <label class="form-check-label" for="q5_no">No</label>
+                                {{ form.pregunta_5.1 }}
+                                <label class="form-check-label" for="{{ form.pregunta_5.1.id_for_label }}">No</label>
                             </div>
                         </div>
                     </div>
@@ -418,183 +419,180 @@
                     <div class="d-flex flex-wrap align-items-center justify-content-between p-2 bg-white rounded">
                         <div class="d-flex align-items-start flex-grow-1">
                             <div class="fw-bold me-2">6</div>
-                            <div class="fw-bold flex-grow-1">He perdido el conocimiento, he tenido dolores de cabeza por migraña, convulsiones, accidente cerebrovascular, lesión significativa en la cabeza o he sufrido de lesión o enfermedad neurológica persistente.</div>
+                            <div class="fw-bold flex-grow-1" id="question-6">I have lost consciousness, had migraine headaches, seizures, stroke, significant head injury, or have suffered from persistent neurological injury or illness.</div>
                         </div>
                         <div class="d-flex gap-3 mt-2 mt-md-0">
                             <div class="form-check">
-                                <input type="radio" name="pregunta_6" value="1" class="form-check-input" id="q6_si">
-                                <label class="form-check-label" for="q6_si">Sí</label>
+                                {{ form.pregunta_6.0 }}
+                                <label class="form-check-label" for="{{ form.pregunta_6.0.id_for_label }}">Sí</label>
                             </div>
                             <div class="form-check">
-                                <input type="radio" name="pregunta_6" value="0" class="form-check-input" id="q6_no">
-                                <label class="form-check-label" for="q6_no">No</label>
+                                {{ form.pregunta_6.1 }}
+                                <label class="form-check-label" for="{{ form.pregunta_6.1.id_for_label }}">No</label>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="mt-3 p-2 bg-secondary text-white fw-bold">TENGO / HE TENIDO:</div>
-                    
+                    <div class="mt-3 p-2 bg-secondary text-white fw-bold" id="have-had-header-6">I HAVE / HAVE HAD:</div>
+
                     <div class="sub-question p-2 border-bottom">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
-                            <div class="flex-grow-1 pe-2">Lesión en la cabeza con pérdida de conciencia en los últimos 5 años.</div>
+                            <div class="flex-grow-1 pe-2" id="question-6-1">Head injury with loss of consciousness in the last 5 years.</div>
                             <div class="d-flex gap-3 mt-2 mt-md-0">
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_6_1" value="1" class="form-check-input" id="q6_1_si">
-                                    <label class="form-check-label" for="q6_1_si">Sí</label>
+                                    {{ form.pregunta_6_1.0 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_6_1.0.id_for_label }}">Sí</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_6_1" value="0" class="form-check-input" id="q6_1_no">
-                                    <label class="form-check-label" for="q6_1_no">No</label>
+                                    {{ form.pregunta_6_1.1 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_6_1.1.id_for_label }}">No</label>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="sub-question p-2 border-bottom bg-light">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
-                            <div class="flex-grow-1 pe-2">Lesiones o enfermedades neurológicas persistentes.</div>
+                            <div class="flex-grow-1 pe-2" id="question-6-2">Persistent neurological injuries or illnesses.</div>
                             <div class="d-flex gap-3 mt-2 mt-md-0">
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_6_2" value="1" class="form-check-input" id="q6_2_si">
-                                    <label class="form-check-label" for="q6_2_si">Sí</label>
+                                    {{ form.pregunta_6_2.0 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_6_2.0.id_for_label }}">Sí</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_6_2" value="0" class="form-check-input" id="q6_2_no">
-                                    <label class="form-check-label" for="q6_2_no">No</label>
+                                    {{ form.pregunta_6_2.1 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_6_2.1.id_for_label }}">No</label>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="sub-question p-2 border-bottom">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
-                            <div class="flex-grow-1 pe-2">Dolores de cabeza recurrentes por migraña en los últimos 12 meses o tomo medicamentos para prevenirlos.</div>
+                            <div class="flex-grow-1 pe-2" id="question-6-3">Recurrent migraine headaches in the last 12 months or I take medication to prevent them.</div>
                             <div class="d-flex gap-3 mt-2 mt-md-0">
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_6_3" value="1" class="form-check-input" id="q6_3_si">
-                                    <label class="form-check-label" for="q6_3_si">Sí</label>
+                                    {{ form.pregunta_6_3.0 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_6_3.0.id_for_label }}">Sí</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_6_3" value="0" class="form-check-input" id="q6_3_no">
-                                    <label class="form-check-label" for="q6_3_no">No</label>
+                                    {{ form.pregunta_6_3.1 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_6_3.1.id_for_label }}">No</label>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="sub-question p-2 border-bottom bg-light">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
-                            <div class="flex-grow-1 pe-2">Desvanecimientos o desmayos (pérdida total/parcial de la conciencia) en los últimos 5 años.</div>
+                            <div class="flex-grow-1 pe-2" id="question-6-4">Fainting or blackouts (total/partial loss of consciousness) in the last 5 years.</div>
                             <div class="d-flex gap-3 mt-2 mt-md-0">
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_6_4" value="1" class="form-check-input" id="q6_4_si">
-                                    <label class="form-check-label" for="q6_4_si">Sí</label>
+                                    {{ form.pregunta_6_4.0 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_6_4.0.id_for_label }}">Sí</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_6_4" value="0" class="form-check-input" id="q6_4_no">
-                                    <label class="form-check-label" for="q6_4_no">No</label>
+                                    {{ form.pregunta_6_4.1 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_6_4.1.id_for_label }}">No</label>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="sub-question p-2 bg-light">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
-                            <div class="flex-grow-1 pe-2">Epilepsia, ataques o convulsiones o tomo medicamentos para prevenirlos.</div>
+                            <div class="flex-grow-1 pe-2" id="question-6-5">Epilepsy, seizures, or convulsions, or I take medication to prevent them.</div>
                             <div class="d-flex gap-3 mt-2 mt-md-0">
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_6_5" value="1" class="form-check-input" id="q6_5_si">
-                                    <label class="form-check-label" for="q6_5_si">Sí</label>
+                                    {{ form.pregunta_6_5.0 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_6_5.0.id_for_label }}">Sí</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_6_5" value="0" class="form-check-input" id="q6_5_no">
-                                    <label class="form-check-label" for="q6_5_no">No</label>
+                                    {{ form.pregunta_6_5.1 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_6_5.1.id_for_label }}">No</label>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Questions 7-10 continue -->
                 <div class="question-section mb-3 p-3 border rounded">
                     <div class="d-flex flex-wrap align-items-center justify-content-between p-2 bg-light rounded">
                         <div class="d-flex align-items-start flex-grow-1">
                             <div class="fw-bold me-2">7</div>
-                            <div class="fw-bold flex-grow-1">He tenido problemas psicológicos (o he recibido tratamiento psicológico en los últimos 5 años), me diagnosticaron una discapacidad de aprendizaje, trastorno de la personalidad, ataques de pánico o una adicción a las drogas o al alcohol.</div>
+                            <div class="fw-bold flex-grow-1" id="question-7">I have had psychological problems (or have received psychological treatment in the last 5 years), been diagnosed with a learning disability, personality disorder, panic attacks, or a drug or alcohol addiction.</div>
                         </div>
                         <div class="d-flex gap-3 mt-2 mt-md-0">
                             <div class="form-check">
-                                <input type="radio" name="pregunta_7" value="1" class="form-check-input" id="q7_si">
-                                <label class="form-check-label" for="q7_si">Sí</label>
+                                {{ form.pregunta_7.0 }}
+                                <label class="form-check-label" for="{{ form.pregunta_7.0.id_for_label }}">Sí</label>
                             </div>
                             <div class="form-check">
-                                <input type="radio" name="pregunta_7" value="0" class="form-check-input" id="q7_no">
-                                <label class="form-check-label" for="q7_no">No</label>
+                                {{ form.pregunta_7.1 }}
+                                <label class="form-check-label" for="{{ form.pregunta_7.1.id_for_label }}">No</label>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="mt-3 p-2 bg-secondary text-white fw-bold">TENGO / HE TENIDO:</div>
-                    
+                    <div class="mt-3 p-2 bg-secondary text-white fw-bold" id="have-had-header-7">I HAVE / HAVE HAD:</div>
+
                     <div class="sub-question p-2 border-bottom">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
-                            <div class="flex-grow-1 pe-2">Salud conductual, problemas mentales o psicológicos que requieran tratamiento médico/psiquiátrico.</div>
+                            <div class="flex-grow-1 pe-2" id="question-7-1">Behavioral health, mental or psychological problems requiring medical/psychiatric treatment.</div>
                             <div class="d-flex gap-3 mt-2 mt-md-0">
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_7_1" value="1" class="form-check-input" id="q7_1_si">
-                                    <label class="form-check-label" for="q7_1_si">Sí</label>
+                                    {{ form.pregunta_7_1.0 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_7_1.0.id_for_label }}">Sí</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_7_1" value="0" class="form-check-input" id="q7_1_no">
-                                    <label class="form-check-label" for="q7_1_no">No</label>
+                                    {{ form.pregunta_7_1.1 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_7_1.1.id_for_label }}">No</label>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="sub-question p-2 border-bottom bg-light">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
-                            <div class="flex-grow-1 pe-2">Depresión mayor, tendencia suicida, ataques de pánico, trastorno bipolar descontrolado que requiere medicación/tratamiento psiquiátrico.</div>
+                            <div class="flex-grow-1 pe-2" id="question-7-2">Major depression, suicidal tendency, panic attacks, uncontrolled bipolar disorder requiring medication/psychiatric treatment.</div>
                             <div class="d-flex gap-3 mt-2 mt-md-0">
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_7_2" value="1" class="form-check-input" id="q7_2_si">
-                                    <label class="form-check-label" for="q7_2_si">Sí</label>
+                                    {{ form.pregunta_7_2.0 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_7_2.0.id_for_label }}">Sí</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_7_2" value="0" class="form-check-input" id="q7_2_no">
-                                    <label class="form-check-label" for="q7_2_no">No</label>
+                                    {{ form.pregunta_7_2.1 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_7_2.1.id_for_label }}">No</label>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="sub-question p-2 border-bottom">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
-                            <div class="flex-grow-1 pe-2">He sido diagnosticado con una condición de salud mental o un trastorno de aprendizaje/desarrollo que requiere atención continua.</div>
+                            <div class="flex-grow-1 pe-2" id="question-7-3">I have been diagnosed with a mental health condition or a learning/developmental disorder that requires ongoing care.</div>
                             <div class="d-flex gap-3 mt-2 mt-md-0">
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_7_3" value="1" class="form-check-input" id="q7_3_si">
-                                    <label class="form-check-label" for="q7_3_si">Sí</label>
+                                    {{ form.pregunta_7_3.0 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_7_3.0.id_for_label }}">Sí</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_7_3" value="0" class="form-check-input" id="q7_3_no">
-                                    <label class="form-check-label" for="q7_3_no">No</label>
+                                    {{ form.pregunta_7_3.1 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_7_3.1.id_for_label }}">No</label>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="sub-question p-2 bg-light">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
-                            <div class="flex-grow-1 pe-2">Una adicción a las drogas o al alcohol que requiere tratamiento en los últimos 5 años.</div>
+                            <div class="flex-grow-1 pe-2" id="question-7-4">A drug or alcohol addiction requiring treatment in the last 5 years.</div>
                             <div class="d-flex gap-3 mt-2 mt-md-0">
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_7_4" value="1" class="form-check-input" id="q7_4_si">
-                                    <label class="form-check-label" for="q7_4_si">Sí</label>
+                                    {{ form.pregunta_7_4.0 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_7_4.0.id_for_label }}">Sí</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_7_4" value="0" class="form-check-input" id="q7_4_no">
-                                    <label class="form-check-label" for="q7_4_no">No</label>
+                                    {{ form.pregunta_7_4.1 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_7_4.1.id_for_label }}">No</label>
                                 </div>
                             </div>
                         </div>
@@ -605,97 +603,96 @@
                     <div class="d-flex flex-wrap align-items-center justify-content-between p-2 bg-white rounded">
                         <div class="d-flex align-items-start flex-grow-1">
                             <div class="fw-bold me-2">8</div>
-                            <div class="fw-bold flex-grow-1">He tenido problemas de espalda, hernia, úlceras o diabetes.</div>
+                            <div class="fw-bold flex-grow-1" id="question-8">I have had back problems, hernia, ulcers or diabetes.</div>
                         </div>
                         <div class="d-flex gap-3 mt-2 mt-md-0">
                             <div class="form-check">
-                                <input type="radio" name="pregunta_8" value="1" class="form-check-input" id="q8_si">
-                                <label class="form-check-label" for="q8_si">Sí</label>
+                                {{ form.pregunta_8.0 }}
+                                <label class="form-check-label" for="{{ form.pregunta_8.0.id_for_label }}">Sí</label>
                             </div>
                             <div class="form-check">
-                                <input type="radio" name="pregunta_8" value="0" class="form-check-input" id="q8_no">
-                                <label class="form-check-label" for="q8_no">No</label>
+                                {{ form.pregunta_8.1 }}
+                                <label class="form-check-label" for="{{ form.pregunta_8.1.id_for_label }}">No</label>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="mt-3 p-2 bg-secondary text-white fw-bold">TENGO / HE TENIDO:</div>
-                    
+                    <div class="mt-3 p-2 bg-secondary text-white fw-bold" id="have-had-header-8">I HAVE / HAVE HAD:</div>
+
                     <div class="sub-question p-2 border-bottom">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
-                            <div class="flex-grow-1 pe-2">Problemas recurrentes en la espalda en los últimos 6 meses que limitan mi actividad diaria.</div>
+                            <div class="flex-grow-1 pe-2" id="question-8-1">Recurrent back problems in the last 6 months that limit my daily activity.</div>
                             <div class="d-flex gap-3 mt-2 mt-md-0">
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_8_1" value="1" class="form-check-input" id="q8_1_si">
-                                    <label class="form-check-label" for="q8_1_si">Sí</label>
+                                    {{ form.pregunta_8_1.0 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_8_1.0.id_for_label }}">Sí</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_8_1" value="0" class="form-check-input" id="q8_1_no">
-                                    <label class="form-check-label" for="q8_1_no">No</label>
+                                    {{ form.pregunta_8_1.1 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_8_1.1.id_for_label }}">No</label>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="sub-question p-2 border-bottom bg-light">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
-                            <div class="flex-grow-1 pe-2">Cirugía de espalda o columna vertebral en los últimos 12 meses.</div>
+                            <div class="flex-grow-1 pe-2" id="question-8-2">Back or spinal surgery in the last 12 months.</div>
                             <div class="d-flex gap-3 mt-2 mt-md-0">
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_8_2" value="1" class="form-check-input" id="q8_2_si">
-                                    <label class="form-check-label" for="q8_2_si">Sí</label>
+                                    {{ form.pregunta_8_2.0 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_8_2.0.id_for_label }}">Sí</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_8_2" value="0" class="form-check-input" id="q8_2_no">
-                                    <label class="form-check-label" for="q8_2_no">No</label>
+                                    {{ form.pregunta_8_2.1 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_8_2.1.id_for_label }}">No</label>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="sub-question p-2 border-bottom">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
-                            <div class="flex-grow-1 pe-2">Diabetes, ya sea controlada por insulina o por dieta o diabetes gestacional en los últimos 12 meses.</div>
+                            <div class="flex-grow-1 pe-2" id="question-8-3">Diabetes, whether controlled by insulin or by diet or gestational diabetes in the last 12 months.</div>
                             <div class="d-flex gap-3 mt-2 mt-md-0">
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_8_3" value="1" class="form-check-input" id="q8_3_si">
-                                    <label class="form-check-label" for="q8_3_si">Sí</label>
+                                    {{ form.pregunta_8_3.0 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_8_3.0.id_for_label }}">Sí</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_8_3" value="0" class="form-check-input" id="q8_3_no">
-                                    <label class="form-check-label" for="q8_3_no">No</label>
+                                    {{ form.pregunta_8_3.1 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_8_3.1.id_for_label }}">No</label>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="sub-question p-2 border-bottom bg-light">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
-                            <div class="flex-grow-1 pe-2">Una hernia no corregida que limita mis habilidades físicas.</div>
+                            <div class="flex-grow-1 pe-2" id="question-8-4">An uncorrected hernia that limits my physical abilities.</div>
                             <div class="d-flex gap-3 mt-2 mt-md-0">
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_8_4" value="1" class="form-check-input" id="q8_4_si">
-                                    <label class="form-check-label" for="q8_4_si">Sí</label>
+                                    {{ form.pregunta_8_4.0 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_8_4.0.id_for_label }}">Sí</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_8_4" value="0" class="form-check-input" id="q8_4_no">
-                                    <label class="form-check-label" for="q8_4_no">No</label>
+                                    {{ form.pregunta_8_4.1 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_8_4.1.id_for_label }}">No</label>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="sub-question p-2 bg-light">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
-                            <div class="flex-grow-1 pe-2">Úlceras activas o no tratadas, heridas problemáticas o cirugía de úlceras en los últimos 6 meses.</div>
+                            <div class="flex-grow-1 pe-2" id="question-8-5">Active or untreated ulcers, problematic wounds, or ulcer surgery in the last 6 months.</div>
                             <div class="d-flex gap-3 mt-2 mt-md-0">
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_8_5" value="1" class="form-check-input" id="q8_5_si">
-                                    <label class="form-check-label" for="q8_5_si">Sí</label>
+                                    {{ form.pregunta_8_5.0 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_8_5.0.id_for_label }}">Sí</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_8_5" value="0" class="form-check-input" id="q8_5_no">
-                                    <label class="form-check-label" for="q8_5_no">No</label>
+                                    {{ form.pregunta_8_5.1 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_8_5.1.id_for_label }}">No</label>
                                 </div>
                             </div>
                         </div>
@@ -706,113 +703,112 @@
                     <div class="d-flex flex-wrap align-items-center justify-content-between p-2 bg-light rounded">
                         <div class="d-flex align-items-start flex-grow-1">
                             <div class="fw-bold me-2">9</div>
-                            <div class="fw-bold flex-grow-1">He tenido problemas estomacales o intestinales, incluyendo diarrea reciente.</div>
+                            <div class="fw-bold flex-grow-1" id="question-9">I have had stomach or bowel problems, including recent diarrhea.</div>
                         </div>
                         <div class="d-flex gap-3 mt-2 mt-md-0">
                             <div class="form-check">
-                                <input type="radio" name="pregunta_9" value="1" class="form-check-input" id="q9_si">
-                                <label class="form-check-label" for="q9_si">Sí</label>
+                                {{ form.pregunta_9.0 }}
+                                <label class="form-check-label" for="{{ form.pregunta_9.0.id_for_label }}">Sí</label>
                             </div>
                             <div class="form-check">
-                                <input type="radio" name="pregunta_9" value="0" class="form-check-input" id="q9_no">
-                                <label class="form-check-label" for="q9_no">No</label>
+                                {{ form.pregunta_9.1 }}
+                                <label class="form-check-label" for="{{ form.pregunta_9.1.id_for_label }}">No</label>
                             </div>
                         </div>
                     </div>
-                    
-                    <div class="mt-3 p-2 bg-secondary text-white fw-bold">TENGO:</div>
-                    
+                    <div class="mt-3 p-2 bg-secondary text-white fw-bold" id="have-had-header-9">I HAVE:</div>
+
                     <div class="sub-question p-2 border-bottom">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
-                            <div class="flex-grow-1 pe-2">Cirugía de ostomía y no tengo autorización médica para nadar o participar en actividad física.</div>
+                            <div class="flex-grow-1 pe-2" id="question-9-1">Ostomy surgery and I am not medically cleared to swim or participate in physical activity.</div>
                             <div class="d-flex gap-3 mt-2 mt-md-0">
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_9_1" value="1" class="form-check-input" id="q9_1_si">
-                                    <label class="form-check-label" for="q9_1_si">Sí</label>
+                                    {{ form.pregunta_9_1.0 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_9_1.0.id_for_label }}">Sí</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_9_1" value="0" class="form-check-input" id="q9_1_no">
-                                    <label class="form-check-label" for="q9_1_no">No</label>
+                                    {{ form.pregunta_9_1.1 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_9_1.1.id_for_label }}">No</label>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="sub-question p-2 border-bottom bg-light">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
-                            <div class="flex-grow-1 pe-2">Deshidratación que requiere intervención médica en los últimos 7 días.</div>
+                            <div class="flex-grow-1 pe-2" id="question-9-2">Dehydration requiring medical intervention in the last 7 days.</div>
                             <div class="d-flex gap-3 mt-2 mt-md-0">
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_9_2" value="1" class="form-check-input" id="q9_2_si">
-                                    <label class="form-check-label" for="q9_2_si">Sí</label>
+                                    {{ form.pregunta_9_2.0 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_9_2.0.id_for_label }}">Sí</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_9_2" value="0" class="form-check-input" id="q9_2_no">
-                                    <label class="form-check-label" for="q9_2_no">No</label>
+                                    {{ form.pregunta_9_2.1 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_9_2.1.id_for_label }}">No</label>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="sub-question p-2 border-bottom">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
-                            <div class="flex-grow-1 pe-2">Úlceras estomacales o intestinales activas o no tratadas o cirugía de úlceras en los últimos 6 meses.</div>
+                            <div class="flex-grow-1 pe-2" id="question-9-3">Active or untreated stomach or intestinal ulcers or ulcer surgery in the last 6 months.</div>
                             <div class="d-flex gap-3 mt-2 mt-md-0">
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_9_3" value="1" class="form-check-input" id="q9_3_si">
-                                    <label class="form-check-label" for="q9_3_si">Sí</label>
+                                    {{ form.pregunta_9_3.0 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_9_3.0.id_for_label }}">Sí</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_9_3" value="0" class="form-check-input" id="q9_3_no">
-                                    <label class="form-check-label" for="q9_3_no">No</label>
+                                    {{ form.pregunta_9_3.1 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_9_3.1.id_for_label }}">No</label>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="sub-question p-2 border-bottom bg-light">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
-                            <div class="flex-grow-1 pe-2">Ardor de estómago frecuente, regurgitación o enfermedad por reflujo gastroesofágico (ERGE).</div>
+                            <div class="flex-grow-1 pe-2" id="question-9-4">Frequent heartburn, regurgitation, or gastroesophageal reflux disease (GERD).</div>
                             <div class="d-flex gap-3 mt-2 mt-md-0">
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_9_4" value="1" class="form-check-input" id="q9_4_si">
-                                    <label class="form-check-label" for="q9_4_si">Sí</label>
+                                    {{ form.pregunta_9_4.0 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_9_4.0.id_for_label }}">Sí</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_9_4" value="0" class="form-check-input" id="q9_4_no">
-                                    <label class="form-check-label" for="q9_4_no">No</label>
+                                    {{ form.pregunta_9_4.1 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_9_4.1.id_for_label }}">No</label>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="sub-question p-2 border-bottom">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
-                            <div class="flex-grow-1 pe-2">Colitis ulcerosa activa o no controlada o enfermedad de Crohn.</div>
+                            <div class="flex-grow-1 pe-2" id="question-9-5">Active or uncontrolled ulcerative colitis or Crohn’s disease.</div>
                             <div class="d-flex gap-3 mt-2 mt-md-0">
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_9_5" value="1" class="form-check-input" id="q9_5_si">
-                                    <label class="form-check-label" for="q9_5_si">Sí</label>
+                                    {{ form.pregunta_9_5.0 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_9_5.0.id_for_label }}">Sí</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_9_5" value="0" class="form-check-input" id="q9_5_no">
-                                    <label class="form-check-label" for="q9_5_no">No</label>
+                                    {{ form.pregunta_9_5.1 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_9_5.1.id_for_label }}">No</label>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="sub-question p-2 bg-light">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
-                            <div class="flex-grow-1 pe-2">Cirugía bariátrica en los últimos 12 meses.</div>
+                            <div class="flex-grow-1 pe-2" id="question-9-6">Bariatric surgery in the last 12 months.</div>
                             <div class="d-flex gap-3 mt-2 mt-md-0">
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_9_6" value="1" class="form-check-input" id="q9_6_si">
-                                    <label class="form-check-label" for="q9_6_si">Sí</label>
+                                    {{ form.pregunta_9_6.0 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_9_6.0.id_for_label }}">Sí</label>
                                 </div>
                                 <div class="form-check">
-                                    <input type="radio" name="pregunta_9_6" value="0" class="form-check-input" id="q9_6_no">
-                                    <label class="form-check-label" for="q9_6_no">No</label>
+                                    {{ form.pregunta_9_6.1 }}
+                                    <label class="form-check-label" for="{{ form.pregunta_9_6.1.id_for_label }}">No</label>
                                 </div>
                             </div>
                         </div>
@@ -823,54 +819,274 @@
                     <div class="d-flex flex-wrap align-items-center justify-content-between p-2 bg-white rounded">
                         <div class="d-flex align-items-start flex-grow-1">
                             <div class="fw-bold me-2">10</div>
-                            <div class="fw-bold flex-grow-1">Estoy tomando medicamentos recetados (con la excepción de los anticonceptivos o los medicamentos antipalúdicos que no sea Lariam-mefloquina).</div>
+                            <div class="fw-bold flex-grow-1" id="question-10">I am taking prescription medications (with the exception of birth control or anti-malarial drugs that are not Lariam-mefloquine).</div>
                         </div>
                         <div class="d-flex gap-3 mt-2 mt-md-0">
                             <div class="form-check">
-                                <input type="radio" name="pregunta_10" value="1" class="form-check-input" id="q10_si">
-                                <label class="form-check-label" for="q10_si">Sí</label>
+                                {{ form.pregunta_10.0 }}
+                                <label class="form-check-label" for="{{ form.pregunta_10.0.id_for_label }}">Sí</label>
                             </div>
                             <div class="form-check">
-                                <input type="radio" name="pregunta_10" value="0" class="form-check-input" id="q10_no">
-                                <label class="form-check-label" for="q10_no">No</label>
+                                {{ form.pregunta_10.1 }}
+                                <label class="form-check-label" for="{{ form.pregunta_10.1.id_for_label }}">No</label>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-            
+
             <div class="form-group mb-3">
-                <label for="{{ form.swimming_ability.id_for_label }}" class="form-label">Swimming Ability *</label>
+                <label for="{{ form.swimming_ability.id_for_label }}" class="form-label" id="swimming-label">Swimming Ability *</label>
                 {{ form.swimming_ability }}
             </div>
-            
+
             <div class="form-group">
-                <label for="{{ form.medical_conditions.id_for_label }}" class="form-label">Additional Medical Information</label>
+                <label for="{{ form.medical_conditions.id_for_label }}" class="form-label" id="additional-info-label">Additional Medical Information</label>
                 {{ form.medical_conditions }}
-                <small class="form-text text-muted">Please provide details about any YES answers above, current medications, allergies, or other relevant medical information.</small>
+                <small class="form-text text-muted" id="additional-info-help">Please provide details about any YES answers above, current medications, allergies, or other relevant medical information.</small>
             </div>
         </fieldset>
 
         <!-- Declaration -->
         <fieldset class="border border-success border-2 p-3 p-md-4 mb-4 rounded">
-            <legend class="fw-bold text-success px-2 mb-3">Declaration</legend>
+            <legend class="fw-bold text-success px-2 mb-3" id="declaration-legend">Declaration</legend>
             <div class="bg-light p-3 rounded">
-                <p class="fw-bold mb-2">I declare that:</p>
-                <ul class="mb-0 ps-3">
-                    <li>All information provided is true and complete</li>
-                    <li>I understand that diving activities carry inherent risks</li>
-                    <li>I am physically and mentally fit to participate in diving activities</li>
-                    <li>I will inform the diving center of any changes to my medical condition</li>
-                    <li>I understand that this information will be kept confidential</li>
+                <p class="fw-bold mb-2" id="declaration-intro">I declare that:</p>
+                <ul class="mb-0 ps-3" id="declaration-list">
+                    <li id="declaration-1">All information provided is true and complete</li>
+                    <li id="declaration-2">I understand that diving activities carry inherent risks</li>
+                    <li id="declaration-3">I am physically and mentally fit to participate in diving activities</li>
+                    <li id="declaration-4">I will inform the diving center of any changes to my medical condition</li>
+                    <li id="declaration-5">I understand that this information will be kept confidential</li>
                 </ul>
             </div>
         </fieldset>
 
         <div class="text-center">
-            <button type="submit" class="btn btn-success btn-lg px-4 py-2">Submit Medical Form</button>
+            <button type="submit" class="btn btn-success btn-lg px-4 py-2" id="submit-button">Submit Medical Form</button>
         </div>
     </form>
 </div>
+
+<script>
+// Translation dictionary
+const translations = {
+    'EN': {
+        'form-title': 'Diving Medical Questionnaire',
+        'form-subtitle': 'Please complete this form before your diving activity. All information is confidential.',
+        'language-label': 'Language:',
+        'personal-info-legend': 'Personal Information',
+        'first-name-label': 'First Name *',
+        'last-name-label': 'Last Name *',
+        'email-label': 'Email *',
+        'phone-label': 'Phone Number *',
+        'birthday-label': 'Date of Birth *',
+        'country-label': 'Country',
+        'certification-label': 'Diving Certification',
+        'weight-label': 'Weight (kg)',
+        'height-label': 'Height (cm)',
+        'foot-size-label': 'Foot Size (EU)',
+        'emergency-contact-label': 'Emergency Contact *',
+        'medical-legend': 'Medical Questionnaire',
+        'medical-subtitle': 'Please answer ALL questions honestly. Your safety depends on it. If you answer YES to any question, provide details in the additional information section at the end.',
+        'question-1': 'I have had problems with my lungs/breathing, heart or blood',
+        'have-had-header': 'I HAVE / HAVE HAD:',
+        'yes-label': 'Yes',
+        'no-label': 'No',
+        'swimming-label': 'Swimming Ability *',
+        'additional-info-label': 'Additional Medical Information',
+        'additional-info-help': 'Please provide details about any YES answers above, current medications, allergies, or other relevant medical information.',
+        'declaration-legend': 'Declaration',
+        'declaration-intro': 'I declare that:',
+        'submit-button': 'Submit Medical Form'
+    },
+    'ES': {
+        'form-title': 'Cuestionario Médico de Buceo',
+        'form-subtitle': 'Por favor complete este formulario antes de su actividad de buceo. Toda la información es confidencial.',
+        'language-label': 'Idioma:',
+        'personal-info-legend': 'Información Personal',
+        'first-name-label': 'Nombre *',
+        'last-name-label': 'Apellido *',
+        'email-label': 'Email *',
+        'phone-label': 'Número de Teléfono *',
+        'birthday-label': 'Fecha de Nacimiento *',
+        'country-label': 'País',
+        'certification-label': 'Certificación de Buceo',
+        'weight-label': 'Peso (kg)',
+        'height-label': 'Altura (cm)',
+        'foot-size-label': 'Talla de Pie (EU)',
+        'emergency-contact-label': 'Contacto de Emergencia *',
+        'medical-legend': 'Cuestionario Médico',
+        'medical-subtitle': 'Por favor responda TODAS las preguntas honestamente. Su seguridad depende de ello. Si responde SÍ a cualquier pregunta, proporcione detalles en la sección de información adicional al final.',
+        'question-1': 'He tenido problemas con mis pulmones/respiración, corazón o sangre',
+        'have-had-header': 'TENGO / HE TENIDO:',
+        'yes-label': 'Sí',
+        'no-label': 'No',
+        'swimming-label': 'Habilidad de Natación *',
+        'additional-info-label': 'Información Médica Adicional',
+        'additional-info-help': 'Por favor proporcione detalles sobre cualquier respuesta SÍ anterior, medicamentos actuales, alergias u otra información médica relevante.',
+        'declaration-legend': 'Declaración',
+        'declaration-intro': 'Declaro que:',
+        'submit-button': 'Enviar Formulario Médico'
+    },
+    'FR': {
+        'form-title': 'Questionnaire Médical de Plongée',
+        'form-subtitle': 'Veuillez remplir ce formulaire avant votre activité de plongée. Toutes les informations sont confidentielles.',
+        'language-label': 'Langue:',
+        'personal-info-legend': 'Informations Personnelles',
+        'first-name-label': 'Prénom *',
+        'last-name-label': 'Nom *',
+        'email-label': 'Email *',
+        'phone-label': 'Numéro de Téléphone *',
+        'birthday-label': 'Date de Naissance *',
+        'country-label': 'Pays',
+        'certification-label': 'Certification de Plongée',
+        'weight-label': 'Poids (kg)',
+        'height-label': 'Taille (cm)',
+        'foot-size-label': 'Pointure (EU)',
+        'emergency-contact-label': 'Contact d\'Urgence *',
+        'medical-legend': 'Questionnaire Médical',
+        'medical-subtitle': 'Veuillez répondre à TOUTES les questions honnêtement. Votre sécurité en dépend. Si vous répondez OUI à une question, fournissez des détails dans la section d\'informations supplémentaires à la fin.',
+        'question-1': 'J\'ai eu des problèmes avec mes poumons/respiration, cœur ou sang',
+        'have-had-header': 'J\'AI / J\'AI EU:',
+        'yes-label': 'Oui',
+        'no-label': 'Non',
+        'swimming-label': 'Capacité de Nage *',
+        'additional-info-label': 'Informations Médicales Supplémentaires',
+        'additional-info-help': 'Veuillez fournir des détails sur toute réponse OUI ci-dessus, médicaments actuels, allergies ou autres informations médicales pertinentes.',
+        'declaration-legend': 'Déclaration',
+        'declaration-intro': 'Je déclare que:',
+        'submit-button': 'Soumettre le Formulaire Médical'
+    },
+    'DE': {
+        'form-title': 'Medizinischer Fragebogen für Tauchen',
+        'form-subtitle': 'Bitte füllen Sie dieses Formular vor Ihrer Tauchaktivität aus. Alle Informationen sind vertraulich.',
+        'language-label': 'Sprache:',
+        'personal-info-legend': 'Persönliche Informationen',
+        'first-name-label': 'Vorname *',
+        'last-name-label': 'Nachname *',
+        'email-label': 'Email *',
+        'phone-label': 'Telefonnummer *',
+        'birthday-label': 'Geburtsdatum *',
+        'country-label': 'Land',
+        'certification-label': 'Tauchzertifizierung',
+        'weight-label': 'Gewicht (kg)',
+        'height-label': 'Größe (cm)',
+        'foot-size-label': 'Schuhgröße (EU)',
+        'emergency-contact-label': 'Notfallkontakt *',
+        'medical-legend': 'Medizinischer Fragebogen',
+        'medical-subtitle': 'Bitte beantworten Sie ALLE Fragen ehrlich. Ihre Sicherheit hängt davon ab. Wenn Sie JA zu einer Frage antworten, geben Sie Details im Zusatzinformationsbereich am Ende an.',
+        'question-1': 'Ich hatte Probleme mit meiner Lunge/Atmung, Herz oder Blut',
+        'have-had-header': 'ICH HABE / HATTE:',
+        'yes-label': 'Ja',
+        'no-label': 'Nein',
+        'swimming-label': 'Schwimmfähigkeit *',
+        'additional-info-label': 'Zusätzliche Medizinische Informationen',
+        'additional-info-help': 'Bitte geben Sie Details zu JA-Antworten oben, aktuellen Medikamenten, Allergien oder anderen relevanten medizinischen Informationen an.',
+        'declaration-legend': 'Erklärung',
+        'declaration-intro': 'Ich erkläre, dass:',
+        'submit-button': 'Medizinisches Formular Einreichen'
+    },
+    'NL': {
+        'form-title': 'Medische Vragenlijst voor Duiken',
+        'form-subtitle': 'Vul dit formulier in voor uw duikactiviteit. Alle informatie is vertrouwelijk.',
+        'language-label': 'Taal:',
+        'personal-info-legend': 'Persoonlijke Informatie',
+        'first-name-label': 'Voornaam *',
+        'last-name-label': 'Achternaam *',
+        'email-label': 'Email *',
+        'phone-label': 'Telefoonnummer *',
+        'birthday-label': 'Geboortedatum *',
+        'country-label': 'Land',
+        'certification-label': 'Duikcertificering',
+        'weight-label': 'Gewicht (kg)',
+        'height-label': 'Lengte (cm)',
+        'foot-size-label': 'Schoenmaat (EU)',
+        'emergency-contact-label': 'Noodcontact *',
+        'medical-legend': 'Medische Vragenlijst',
+        'medical-subtitle': 'Beantwoord ALLE vragen eerlijk. Uw veiligheid hangt ervan af. Als u JA antwoordt op een vraag, geef details in de aanvullende informatiesectie aan het einde.',
+        'question-1': 'Ik heb problemen gehad met mijn longen/ademhaling, hart of bloed',
+        'have-had-header': 'IK HEB / HAD:',
+        'yes-label': 'Ja',
+        'no-label': 'Nee',
+        'swimming-label': 'Zwemvaardigheid *',
+        'additional-info-label': 'Aanvullende Medische Informatie',
+        'additional-info-help': 'Geef details over JA-antwoorden hierboven, huidige medicijnen, allergieën of andere relevante medische informatie.',
+        'declaration-legend': 'Verklaring',
+        'declaration-intro': 'Ik verklaar dat:',
+        'submit-button': 'Medisch Formulier Indienen'
+    },
+    'CAT': {
+        'form-title': 'Qüestionari Mèdic de Busseig',
+        'form-subtitle': 'Si us plau, completeu aquest formulari abans de la vostra activitat de busseig. Tota la informació és confidencial.',
+        'language-label': 'Idioma:',
+        'personal-info-legend': 'Informació Personal',
+        'first-name-label': 'Nom *',
+        'last-name-label': 'Cognoms *',
+        'email-label': 'Email *',
+        'phone-label': 'Número de Telèfon *',
+        'birthday-label': 'Data de Naixement *',
+        'country-label': 'País',
+        'certification-label': 'Certificació de Busseig',
+        'weight-label': 'Pes (kg)',
+        'height-label': 'Alçada (cm)',
+        'foot-size-label': 'Mida de Peu (EU)',
+        'emergency-contact-label': 'Contacte d\'Emergència *',
+        'medical-legend': 'Qüestionari Mèdic',
+        'medical-subtitle': 'Si us plau, responeu TOTES les preguntes honestament. La vostra seguretat en depèn. Si responeu SÍ a qualsevol pregunta, proporcioneu detalls a la secció d\'informació addicional al final.',
+        'question-1': 'He tingut problemes amb els meus pulmons/respiració, cor o sang',
+        'have-had-header': 'TINC / HE TINGUT:',
+        'yes-label': 'Sí',
+        'no-label': 'No',
+        'swimming-label': 'Habilitat de Natació *',
+        'additional-info-label': 'Informació Mèdica Addicional',
+        'additional-info-help': 'Si us plau, proporcioneu detalls sobre qualsevol resposta SÍ anterior, medicaments actuals, al·lèrgies o altra informació mèdica rellevant.',
+        'declaration-legend': 'Declaració',
+        'declaration-intro': 'Declaro que:',
+        'submit-button': 'Enviar Formulari Mèdic'
+    }
+};
+
+// Language change handler
+document.getElementById('language-select').addEventListener('change', function() {
+    const selectedLanguage = this.value;
+    translateForm(selectedLanguage);
+});
+
+function translateForm(language) {
+    const langTranslations = translations[language] || translations['EN'];
+
+    // Update all elements with translation IDs
+    Object.keys(langTranslations).forEach(key => {
+        const element = document.getElementById(key);
+        if (element) {
+            element.textContent = langTranslations[key];
+        }
+    });
+
+    // Update radio button labels based on language
+    const yesLabel = langTranslations['yes-label'] || 'Yes';
+    const noLabel = langTranslations['no-label'] || 'No';
+
+    // Update all radio button labels
+    document.querySelectorAll('input[type="radio"]').forEach(radio => {
+        const label = document.querySelector(`label[for="${radio.id}"]`);
+        if (label) {
+            if (radio.value === '1') {
+                label.textContent = yesLabel;
+            } else if (radio.value === '0') {
+                label.textContent = noLabel;
+            }
+        }
+    });
+}
+
+// Initialize with default language on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const selectedLanguage = document.getElementById('language-select').value;
+    translateForm(selectedLanguage);
+});
+</script>
 
 <style>
 /* Medical Questions Responsive Grid */
@@ -936,36 +1152,16 @@
     .container-fluid {
         padding: 10px;
     }
-    
+
     fieldset {
         padding: 15px !important;
     }
-    
+
     .medical-question {
         padding: 10px;
     }
-    
+
     .btn-lg {
         width: 100%;
         font-size: 1rem;
     }
-    
-    /* Stack language selection on mobile */
-    .text-end {
-        text-align: left !important;
-    }
-    
-    .text-end .form-label {
-        display: block;
-        margin-bottom: 0.5rem;
-    }
-}
-
-/* Tablet adjustments */
-@media (min-width: 768px) and (max-width: 991px) {
-    .container-fluid {
-        padding: 20px;
-    }
-}
-</style>
-{% endblock %}

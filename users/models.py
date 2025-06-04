@@ -168,6 +168,25 @@ class Customer(models.Model):
     def get_certification_level(self):
         """Get the full certification name from the certification level code"""
         return dict(self.DIVING_LEVEL_CHOICES).get(self.certification_level, self.certification_level)
+    
+    # Medical questionnaire fields - storing as JSON for flexibility
+    medical_questionnaire_answers = models.JSONField(default=dict, blank=True, help_text="Stores answers to medical questionnaire")
+    swimming_ability = models.CharField(max_length=20, choices=[
+        ('excellent', 'Excellent'),
+        ('good', 'Good'),
+        ('fair', 'Fair'),
+        ('poor', 'Poor'),
+    ], blank=True)
+    
+    def get_medical_answer(self, question_key):
+        """Get answer to a specific medical question"""
+        return self.medical_questionnaire_answers.get(question_key, False)
+    
+    def set_medical_answer(self, question_key, answer):
+        """Set answer to a specific medical question"""
+        if not self.medical_questionnaire_answers:
+            self.medical_questionnaire_answers = {}
+        self.medical_questionnaire_answers[question_key] = answer
         
 
 class DiveActivity(models.Model):

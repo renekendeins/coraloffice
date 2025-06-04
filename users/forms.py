@@ -213,72 +213,73 @@ class StaffForm(forms.ModelForm):
 
 class MedicalForm(forms.ModelForm):
     """Form for external users to fill medical information"""
-    # Medical questions as boolean fields
-    heart_problems = forms.BooleanField(
-        required=False, label="Do you have heart problems?",
-        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
-    )
-    high_blood_pressure = forms.BooleanField(
-        required=False, label="Do you have high blood pressure?",
-        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
-    )
-    breathing_problems = forms.BooleanField(
-        required=False, label="Do you have breathing problems or asthma?",
-        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
-    )
-    diabetes = forms.BooleanField(
-        required=False, label="Do you have diabetes?",
-        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
-    )
-    epilepsy = forms.BooleanField(
-        required=False, label="Do you have epilepsy or seizures?",
-        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
-    )
-    pregnant = forms.BooleanField(
-        required=False, label="Are you pregnant?",
-        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
-    )
-    medications = forms.BooleanField(
-        required=False, label="Are you taking any medications?",
-        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
-    )
-    allergies = forms.BooleanField(
-        required=False, label="Do you have any allergies?",
-        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
-    )
-    surgery_recent = forms.BooleanField(
-        required=False, label="Have you had surgery in the last 6 months?",
-        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
-    )
-    ear_problems = forms.BooleanField(
-        required=False, label="Do you have ear or sinus problems?",
-        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'})
-    )
-    swimming_ability = forms.ChoiceField(
-        choices=[
-            ('excellent', 'Excellent'),
-            ('good', 'Good'),
-            ('fair', 'Fair'),
-            ('poor', 'Poor'),
-        ],
-        label="Swimming ability",
-        required=True,
-        widget=forms.Select(attrs={'class': 'form-control'})
-    )
+    
+    # Medical questionnaire fields - all the radio button questions
+    pregunta_1 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect, required=False)
+    pregunta_1_1 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect, required=False)
+    pregunta_1_2 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect, required=False)
+    pregunta_1_3 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect, required=False)
+    pregunta_1_4 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect, required=False)
+    
+    pregunta_2 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect, required=False)
+    pregunta_2_1 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect, required=False)
+    pregunta_2_2 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect, required=False)
+    pregunta_2_3 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect, required=False)
+    pregunta_2_4 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect, required=False)
+    
+    pregunta_3 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect, required=False)
+    
+    pregunta_4 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect, required=False)
+    pregunta_4_1 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect, required=False)
+    pregunta_4_2 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect, required=False)
+    pregunta_4_3 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect, required=False)
+    pregunta_4_4 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect, required=False)
+    
+    pregunta_5 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect, required=False)
+    
+    pregunta_6 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect, required=False)
+    pregunta_6_1 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect, required=False)
+    pregunta_6_2 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect, required=False)
+    pregunta_6_3 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect, required=False)
+    pregunta_6_4 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect, required=False)
+    pregunta_6_5 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect, required=False)
+    
+    pregunta_7 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect, required=False)
+    pregunta_7_1 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect, required=False)
+    pregunta_7_2 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect, required=False)
+    pregunta_7_3 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect, required=False)
+    pregunta_7_4 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect, required=False)
+    
+    pregunta_8 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect, required=False)
+    pregunta_8_1 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect, required=False)
+    pregunta_8_2 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect, required=False)
+    pregunta_8_3 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect, required=False)
+    pregunta_8_4 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect, required=False)
+    pregunta_8_5 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect, required=False)
+    
+    pregunta_9 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect, required=False)
+    pregunta_9_1 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect, required=False)
+    pregunta_9_2 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect, required=False)
+    pregunta_9_3 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect, required=False)
+    pregunta_9_4 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect, required=False)
+    pregunta_9_5 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect, required=False)
+    pregunta_9_6 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect, required=False)
+    
+    pregunta_10 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect, required=False)
 
     class Meta:
         model = Customer
         fields = (
             'first_name', 'last_name', 'email', 'phone_number', 'country', 'language',
             'birthday', 'certification_level', 'emergency_contact', 'medical_conditions',
-            'weight', 'height', 'foot_size', 'default_tank_size'
+            'weight', 'height', 'foot_size', 'default_tank_size', 'swimming_ability'
         )
         widgets = {
             'first_name': forms.TextInput(attrs={'class': 'form-control'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
             'phone_number': forms.TextInput(attrs={'class': 'form-control'}),
-            'country': forms.TextInput(attrs={'class': 'form-control'}),
+            'country': forms.Select(choices=Customer.COUNTRY_CHOICES, attrs={'class': 'form-control'}),
             'language': forms.Select(
                 choices=[
                     ('EN', 'English'),
@@ -286,11 +287,12 @@ class MedicalForm(forms.ModelForm):
                     ('FR', 'Français'),
                     ('DE', 'Deutsch'),
                     ('NL', 'Nederlands'),
+                    ('CAT', 'Català'),
                 ],
-                attrs={'class': 'form-control'}
+                attrs={'class': 'form-control', 'id': 'language-select'}
             ),
             'birthday': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'certification_level': forms.TextInput(attrs={'class': 'form-control'}),
+            'certification_level': forms.Select(choices=Customer.DIVING_LEVEL_CHOICES, attrs={'class': 'form-control'}),
             'emergency_contact': forms.TextInput(attrs={'class': 'form-control'}),
             'medical_conditions': forms.Textarea(attrs={
                 'rows': 4,
@@ -300,8 +302,26 @@ class MedicalForm(forms.ModelForm):
             'weight': forms.NumberInput(attrs={'step': '0.1', 'placeholder': 'kg', 'class': 'form-control'}),
             'height': forms.NumberInput(attrs={'step': '0.1', 'placeholder': 'cm', 'class': 'form-control'}),
             'foot_size': forms.NumberInput(attrs={'step': '0.5', 'placeholder': 'EU size', 'class': 'form-control'}),
-            'default_tank_size': forms.NumberInput(attrs={'class': 'form-control'}),
+            'default_tank_size': forms.Select(attrs={'class': 'form-control'}),
+            'swimming_ability': forms.Select(attrs={'class': 'form-control'}),
         }
+    
+    def save(self, commit=True):
+        instance = super().save(commit=False)
+        
+        # Store all medical questionnaire answers in JSON field
+        medical_answers = {}
+        for field_name in self.fields:
+            if field_name.startswith('pregunta_'):
+                value = self.cleaned_data.get(field_name)
+                if value:
+                    medical_answers[field_name] = value == '1'  # Convert to boolean
+        
+        instance.medical_questionnaire_answers = medical_answers
+        
+        if commit:
+            instance.save()
+        return instance
 
 
 
