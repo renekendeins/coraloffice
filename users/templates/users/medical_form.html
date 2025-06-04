@@ -123,15 +123,16 @@
                         <div class="d-flex align-items-start flex-grow-1">
                             <div class="fw-bold me-2">1</div>
                             <div class="fw-bold flex-grow-1" id="question-1">I have had problems with my lungs/breathing, heart or blood</div>
+                            {{ form.pregunta_1 }}
                         </div>
                         <div class="d-flex gap-3 mt-2 mt-md-0">
                             <div class="form-check">
                                 {{ form.pregunta_1.0 }}
-                                <label class="form-check-label" for="{{ form.pregunta_1.0.id_for_label }}" id="yes-label">Yes</label>
+                                <!-- <label class="form-check-label" for="{{ form.pregunta_1.0.id_for_label }}" id="yes-label">Yes</label> -->
                             </div>
                             <div class="form-check">
                                 {{ form.pregunta_1.1 }}
-                                <label class="form-check-label" for="{{ form.pregunta_1.1.id_for_label }}" id="no-label">No</label>
+                                <!-- <label class="form-check-label" for="{{ form.pregunta_1.1.id_for_label }}" id="no-label">No</label> -->
                             </div>
                         </div>
                     </div>
@@ -141,14 +142,17 @@
                     <div class="sub-question p-2 border-bottom">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
                             <div class="flex-grow-1 pe-2" id="question-1-1">Chest surgery, heart surgery, heart valve surgery, stent placement, or pneumothorax (collapsed lung).</div>
+                            {{ form.pregunta_1_1 }} 
                             <div class="d-flex gap-3 mt-2 mt-md-0">
                                 <div class="form-check">
-                                    {{ form.pregunta_1_1.0 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_1_1.0.id_for_label }}">Sí</label>
+                                                                       {{ form.pregunta_1_1.0 }}
+
+                                    <!-- <label class="form-check-label" for="{{ form.pregunta_1_1.0.id_for_label }}">Sí</label> -->
                                 </div>
                                 <div class="form-check">
-                                    {{ form.pregunta_1_1.1 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_1_1.1.id_for_label }}">No</label>
+                                   {{ form.pregunta_1_1.1 }}
+
+                                    <!-- <label class="form-check-label" for="{{ form.pregunta_1_1.1.id_for_label }}">No</label> -->
                                 </div>
                             </div>
                         </div>
@@ -157,14 +161,15 @@
                     <div class="sub-question p-2 border-bottom bg-light">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
                             <div class="flex-grow-1 pe-2" id="question-1-2">Asthma, wheezing, severe allergies, hay fever or congested airways in the last 12 months that limit my physical activity/exercise.</div>
+                            {{ form.pregunta_1_2 }}
                             <div class="d-flex gap-3 mt-2 mt-md-0">
                                 <div class="form-check">
                                     {{ form.pregunta_1_2.0 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_1_2.0.id_for_label }}">Sí</label>
+                                    <!-- <label class="form-check-label" for="{{ form.pregunta_1_2.0.id_for_label }}">Sí</label> -->
                                 </div>
                                 <div class="form-check">
                                     {{ form.pregunta_1_2.1 }}
-                                    <label class="form-check-label" for="{{ form.pregunta_1_2.1.id_for_label }}">No</label>
+                                    <!-- <label class="form-check-label" for="{{ form.pregunta_1_2.1.id_for_label }}">No</label> -->
                                 </div>
                             </div>
                         </div>
@@ -1165,3 +1170,6 @@ document.addEventListener('DOMContentLoaded', function() {
         width: 100%;
         font-size: 1rem;
     }
+
+</style>
+{% endblock %}
