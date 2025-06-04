@@ -558,8 +558,7 @@
                     <div class="sub-question p-2 border-bottom bg-light">
                         <div class="d-flex flex-wrap justify-content-between align-items-center">
                             <div class="flex-grow-1 pe-2" id="question-7-2">Major depression, suicidal tendency, panic attacks, uncontrolled bipolar disorder requiring medication/psychiatric treatment.</div>
-                            <div class="d-flex gap-3 mt-2 mt-md-0">
-                                <div class="form-check">
+                            <div class="d-flex gap-3 mt-2 mt-md-0">                                <div class="form-check">
                                     {{ form.pregunta_7_2.0 }}
                                     <label class="form-check-label" for="{{ form.pregunta_7_2.0.id_for_label }}">Sí</label>
                                 </div>
@@ -867,6 +866,13 @@
             </div>
         </fieldset>
 
+        <div class="signature-container mb-3">
+            <label for="signatureCanvas" class="form-label" id="signature-label">Signature</label>
+            <canvas id="signatureCanvas" width="600" height="200" style="border:1px solid #000;"></canvas>
+            <button type="button" class="btn btn-sm btn-outline-secondary mt-2" id="clear-signature">Clear Signature</button>
+            <input type="hidden" id="signatureImage" name="signature">
+        </div>
+
         <div class="text-center">
             <button type="submit" class="btn btn-success btn-lg px-4 py-2" id="submit-button">Submit Medical Form</button>
         </div>
@@ -903,7 +909,8 @@ const translations = {
         'additional-info-help': 'Please provide details about any YES answers above, current medications, allergies, or other relevant medical information.',
         'declaration-legend': 'Declaration',
         'declaration-intro': 'I declare that:',
-        'submit-button': 'Submit Medical Form'
+        'submit-button': 'Submit Medical Form',
+        'signature-label': 'Signature' // Add signature label
     },
     'ES': {
         'form-title': 'Cuestionario Médico de Buceo',
@@ -932,7 +939,8 @@ const translations = {
         'additional-info-help': 'Por favor proporcione detalles sobre cualquier respuesta SÍ anterior, medicamentos actuales, alergias u otra información médica relevante.',
         'declaration-legend': 'Declaración',
         'declaration-intro': 'Declaro que:',
-        'submit-button': 'Enviar Formulario Médico'
+        'submit-button': 'Enviar Formulario Médico',
+        'signature-label': 'Firma' // Add signature label
     },
     'FR': {
         'form-title': 'Questionnaire Médical de Plongée',
@@ -961,7 +969,8 @@ const translations = {
         'additional-info-help': 'Veuillez fournir des détails sur toute réponse OUI ci-dessus, médicaments actuels, allergies ou autres informations médicales pertinentes.',
         'declaration-legend': 'Déclaration',
         'declaration-intro': 'Je déclare que:',
-        'submit-button': 'Soumettre le Formulaire Médical'
+        'submit-button': 'Soumettre le Formulaire Médical',
+        'signature-label': 'Signature' // Add signature label
     },
     'DE': {
         'form-title': 'Medizinischer Fragebogen für Tauchen',
@@ -990,7 +999,8 @@ const translations = {
         'additional-info-help': 'Bitte geben Sie Details zu JA-Antworten oben, aktuellen Medikamenten, Allergien oder anderen relevanten medizinischen Informationen an.',
         'declaration-legend': 'Erklärung',
         'declaration-intro': 'Ich erkläre, dass:',
-        'submit-button': 'Medizinisches Formular Einreichen'
+        'submit-button': 'Medizinisches Formular Einreichen',
+        'signature-label': 'Unterschrift' // Add signature label
     },
     'NL': {
         'form-title': 'Medische Vragenlijst voor Duiken',
@@ -1019,9 +1029,10 @@ const translations = {
         'additional-info-help': 'Geef details over JA-antwoorden hierboven, huidige medicijnen, allergieën of andere relevante medische informatie.',
         'declaration-legend': 'Verklaring',
         'declaration-intro': 'Ik verklaar dat:',
-        'submit-button': 'Medisch Formulier Indienen'
+        'submit-button': 'Medisch Formulier Indienen',
+        'signature-label': 'Handtekening' // Add signature label
     },
-    'CAT': {
+     'CAT': {
         'form-title': 'Qüestionari Mèdic de Busseig',
         'form-subtitle': 'Si us plau, completeu aquest formulari abans de la vostra activitat de busseig. Tota la informació és confidencial.',
         'language-label': 'Idioma:',
@@ -1048,7 +1059,8 @@ const translations = {
         'additional-info-help': 'Si us plau, proporcioneu detalls sobre qualsevol resposta SÍ anterior, medicaments actuals, al·lèrgies o altra informació mèdica rellevant.',
         'declaration-legend': 'Declaració',
         'declaration-intro': 'Declaro que:',
-        'submit-button': 'Enviar Formulari Mèdic'
+        'submit-button': 'Enviar Formulari Mèdic',
+        'signature-label': 'Signatura'
     }
 };
 
@@ -1090,6 +1102,86 @@ function translateForm(language) {
 document.addEventListener('DOMContentLoaded', function() {
     const selectedLanguage = document.getElementById('language-select').value;
     translateForm(selectedLanguage);
+
+    // Signature Canvas Script
+    const canvas = document.getElementById("signatureCanvas");
+    const ctx = canvas.getContext("2d");
+    let drawing = false;
+
+    function startDrawing(e) {
+        drawing = true;
+        draw(e);
+    }
+
+    function stopDrawing() {
+        drawing = false;
+        ctx.beginPath();
+    }
+
+    function draw(e) {
+        if (!drawing) return;
+
+        // Use pageX and pageY for cross-browser compatibility
+        const x = e.clientX - canvas.offsetLeft;
+        const y = e.clientY - canvas.offsetTop;
+
+        ctx.lineWidth = 2;
+        ctx.lineCap = "round";
+        ctx.strokeStyle = "black";
+
+        ctx.lineTo(x, y);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+    }
+
+    canvas.addEventListener("mousedown", startDrawing);
+    canvas.addEventListener("mouseup", stopDrawing);
+    canvas.addEventListener("mouseout", stopDrawing);
+    canvas.addEventListener("mousemove", draw);
+
+    //Touch support for mobile devices
+    canvas.addEventListener("touchstart", function (e) {
+        mousePos = getMousePos(canvas, e);
+        var touch = e.touches[0];
+        var mouseEvent = new MouseEvent("mousedown", {
+            clientX: touch.clientX,
+            clientY: touch.clientY
+        });
+        canvas.dispatchEvent(mouseEvent);
+    }, false);
+    canvas.addEventListener("touchend", function (e) {
+        var mouseEvent = new MouseEvent("mouseup", {});
+        canvas.dispatchEvent(mouseEvent);
+    }, false);
+    canvas.addEventListener("touchmove", function (e) {
+        var touch = e.touches[0];
+        var mouseEvent = new MouseEvent("mousemove", {
+            clientX: touch.clientX,
+            clientY: touch.clientY
+        });
+        canvas.dispatchEvent(mouseEvent);
+    }, false);
+
+    // Get the position of the mouse relative to the canvas
+    function getMousePos(canvasDom, mouseEvent) {
+        var rect = canvasDom.getBoundingClientRect();
+        return {
+            x: mouseEvent.clientX - rect.left,
+            y: mouseEvent.clientY - rect.top
+        };
+    }
+
+    // Clear signature
+    document.getElementById('clear-signature').addEventListener('click', function() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+    });
+
+     // Save signature as image on form submission
+     document.querySelector('form').addEventListener('submit', function(e) {
+        const signatureImage = document.getElementById('signatureImage');
+        signatureImage.value = canvas.toDataURL(); // Save as base64 encoded PNG
+    });
 });
 </script>
 
@@ -1152,6 +1244,21 @@ document.addEventListener('DOMContentLoaded', function() {
     font-weight: 500;
 }
 
+/* Signature canvas styling */
+.signature-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#signatureCanvas {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
 /* Mobile-specific adjustments */
 @media (max-width: 767px) {
     .container-fluid {
@@ -1171,5 +1278,10 @@ document.addEventListener('DOMContentLoaded', function() {
         font-size: 1rem;
     }
 
+    #signatureCanvas {
+        width: 100% !important;
+        height: 150px !important;
+    }
+}
 </style>
 {% endblock %}

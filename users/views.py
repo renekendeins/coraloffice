@@ -1136,6 +1136,27 @@ def medical_form(request):
             if diving_center:
                 customer = form.save(commit=False)
                 customer.diving_center = diving_center
+                
+                # Handle signature data
+                signature_data = request.POST.get('signature')
+                if signature_data and signature_data.startswith('data:image/png;base64,'):
+                    import base64
+                    from django.core.files.base import ContentFile
+                    import uuid
+                    
+                    # Remove the data URL prefix
+                    format, imgstr = signature_data.split(';base64,')
+                    ext = format.split('/')[-1]
+                    
+                    # Decode the base64 image
+                    data = ContentFile(base64.b64decode(imgstr))
+                    
+                    # Generate a unique filename
+                    filename = f"signature_{uuid.uuid4().hex}.{ext}"
+                    
+                    # Save the signature
+                    customer.signature.save(filename, data, save=False)
+                
                 customer.save()
                 messages.success(request, 'Medical form submitted successfully! A diving center will contact you soon.')
                 return redirect('users:medical_form')

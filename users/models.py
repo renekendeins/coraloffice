@@ -85,6 +85,7 @@ class Customer(models.Model):
     diving_licence = models.FileField(upload_to='customer_documents/licences/', null=True, blank=True)
     diving_insurance = models.FileField(upload_to='customer_documents/insurance/', null=True, blank=True)
     medical_check = models.FileField(upload_to='customer_documents/medical/', null=True, blank=True)
+    signature = models.ImageField(upload_to='customer_signatures/', null=True, blank=True)
     
     created_at = models.DateTimeField(auto_now_add=True)
 
