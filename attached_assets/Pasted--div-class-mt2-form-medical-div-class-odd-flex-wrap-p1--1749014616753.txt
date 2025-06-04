@@ -1,0 +1,495 @@
+<div class="mt2 form_medical">
+                    <div class="odd flex wrap p1">
+                        <div class="flex col py1">
+                            <div class="bold px1">1</div>
+                            <div class="bold px1 col">He tenido problemas con mis pulmones/respiración, corazón o sangre</div>
+                        </div>
+                        <div class="flex py1 c12 justify-center md-c-auto">
+                            <div class="txt-nowrap px1">
+                                <input type="radio" name="pregunta_1" value="1" data-gtm-form-interact-field-id="0"> Si                            </div>
+                            <div class="txt-nowrap px1">
+                                <input type="radio" name="pregunta_1" value="0" data-gtm-form-interact-field-id="1"> No                            </div>
+                        </div>
+                    </div>
+                    <div class="cuadro_a cab-cuadro">
+                        <div class="p2">TENGO / HE TENIDO:</div>
+                    </div>
+                    <div class="cuadro_a odd2">
+                        <div class="flex wrap p1">
+                            <div class="p1 col">Cirugía torácica, cirugía cardíaca, cirugía de válvula cardíaca, colocación de “stent” o neumotórax (pulmón colapsado).</div>
+                            <div class="flex py1 c12 justify-center md-c-auto">
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_1_1" value="1"> Si                                </div>
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_1_1" value="0"> No                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cuadro_a even2">
+                        <div class="flex wrap p1">
+                            <div class="p1 col">Asma, sibilancias, alergias graves, fiebre del heno o vías respiratorias congestionadas en los últimos 12 meses que limite mi actividad física/ ejercicio.</div>
+                            <div class="flex py1 c12 justify-center md-c-auto">
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_1_2" value="1"> Si                                </div>
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_1_2" value="0"> No                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cuadro_a odd2">
+                        <div class="flex wrap p1">
+                            <div class="p1 col">Un problema o enfermedad que involucra mi corazón como: angina de pecho, dolor en el pecho en el esfuerzo, insuficiencia cardíaca, edema pulmonar, miocardiopatía o accidente cerebrovascular o estoy tomando medicamentos para cualquier afección cardíaca.</div>
+                            <div class="flex py1 c12 justify-center md-c-auto">
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_1_3" value="1"> Si                                </div>
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_1_3" value="0"> No                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cuadro_a even2">
+                        <div class="flex wrap p1">
+                            <div class="p1 col">Bronquitis recurrente y tos persistente en los últimos 12 meses o he sido diagnosticado con enfisema.</div>
+                            <div class="flex py1 c12 justify-center md-c-auto">
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_1_4" value="1"> Si                                </div>
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_1_4" value="0"> No                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="even flex wrap p1">
+                        <div class="flex col py1">
+                            <div class="bold px1">2</div>
+                            <div class="bold px1 col">Tengo más de 45 años.</div>
+                        </div>
+                        <div class="flex py1 c12 justify-center md-c-auto">
+                            <div class="txt-nowrap px1">
+                                <input type="radio" name="pregunta_2" value="1"> Si                            </div>
+                            <div class="txt-nowrap px1">
+                                <input type="radio" name="pregunta_2" value="0"> No                            </div>
+                        </div>
+                    </div>
+                    <div class="cuadro_b cab-cuadro">
+                        <div class="p2">TENGO MÁS DE 45 AÑOS Y:</div>
+                    </div>
+                    <div class="cuadro_b odd2">
+                        <div class="flex wrap p1">
+                            <div class="p1 col">Actualmente fumo o inhalo nicotina por otros medios.</div>
+                            <div class="flex py1 c12 justify-center md-c-auto">
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_2_1" value="1"> Si                                </div>
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_2_1" value="0"> No                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cuadro_b even2">
+                        <div class="flex wrap p1">
+                            <div class="p1 col">Tengo un nivel alto de colesterol.</div>
+                            <div class="flex py1 c12 justify-center md-c-auto">
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_2_2" value="1"> Si                                </div>
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_2_2" value="0"> No                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cuadro_b odd2">
+                        <div class="flex wrap p1">
+                            <div class="p1 col">Tengo presión arterial alta.</div>
+                            <div class="flex py1 c12 justify-center md-c-auto">
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_2_3" value="1"> Si                                </div>
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_2_3" value="0"> No                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cuadro_b even2">
+                        <div class="flex wrap p1">
+                            <div class="p1 col">He tenido un familiar (de 1er o 2º grado de consanguinidad) que murió de muerte súbita o de enfermedad cardíaca o accidente cerebrovascular antes de los 50 años o tengo antecedentes familiares de enfermedad cardíaca antes de los 50 años (incluidos ritmos cardíacos anormales, enfermedad de las arterias coronarias o cardiomiopatía).</div>
+                            <div class="flex py1 c12 justify-center md-c-auto">
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_2_4" value="1"> Si                                </div>
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_2_4" value="0"> No                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="odd flex wrap p1">
+                        <div class="flex col py1">
+                            <div class="bold px1">3</div>
+                            <div class="bold px1 col">Me cuesta realizar ejercicio moderado (por ejemplo, caminar 1,6 kilómetros/una milla en 12 minutos o nadar 200 metros/yardas sin descansar), o no he podido participar en una actividad física normal debido a razones de estado físico o de salud en los últimos 12meses.</div>
+                        </div>
+                        <div class="flex py1 c12 justify-center md-c-auto">
+                            <div class="txt-nowrap px1">
+                                <input type="radio" name="pregunta_3" value="1"> Si                            </div>
+                            <div class="txt-nowrap px1">
+                                <input type="radio" name="pregunta_3" value="0"> No                            </div>
+                        </div>
+                    </div>
+                    <div class="even flex wrap p1">
+                        <div class="flex col py1">
+                            <div class="bold px1">4</div>
+                            <div class="bold px1 col">He tenido problemas con mis ojos, oídos o fosas nasales / senos paranasales.</div>
+                        </div>
+                        <div class="flex py1 c12 justify-center md-c-auto">
+                            <div class="txt-nowrap px1">
+                                <input type="radio" name="pregunta_4" value="1"> Si                            </div>
+                            <div class="txt-nowrap px1">
+                                <input type="radio" name="pregunta_4" value="0"> No                            </div>
+                        </div>
+                    </div>
+                    <div class="cuadro_c cab-cuadro">
+                        <div class="p2">TENGO / HE TENIDO:</div>
+                    </div>
+                    <div class="cuadro_c odd2">
+                        <div class="flex wrap p1">
+                            <div class="p1 col">Cirugía sinusal en los últimos 6 meses.</div>
+                            <div class="flex py1 c12 justify-center md-c-auto">
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_4_1" value="1"> Si                                </div>
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_4_1" value="0"> No                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cuadro_c even2">
+                        <div class="flex wrap p1">
+                            <div class="p1 col">Enfermedades del oído o cirugía del oído, pérdida de audición o alteraciones del equilibrio.</div>
+                            <div class="flex py1 c12 justify-center md-c-auto">
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_4_2" value="1"> Si                                </div>
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_4_2" value="0"> No                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cuadro_c odd2">
+                        <div class="flex wrap p1">
+                            <div class="p1 col">Sinusitis recurrente en los últimos 12 meses.</div>
+                            <div class="flex py1 c12 justify-center md-c-auto">
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_4_3" value="1"> Si                                </div>
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_4_3" value="0"> No                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cuadro_c even2">
+                        <div class="flex wrap p1">
+                            <div class="p1 col">Cirugía ocular en los últimos 3 meses.</div>
+                            <div class="flex py1 c12 justify-center md-c-auto">
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_4_4" value="1"> Si                                </div>
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_4_4" value="0"> No                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="odd flex wrap p1">
+                        <div class="flex col py1">
+                            <div class="bold px1">5</div>
+                            <div class="bold px1 col">He tenido una cirugía en los últimos 12 meses o tengo problemas continuos relacionados con una cirugía anterior.</div>
+                        </div>
+                        <div class="flex py1 c12 justify-center md-c-auto">
+                            <div class="txt-nowrap px1">
+                                <input type="radio" name="pregunta_5" value="1"> Si                            </div>
+                            <div class="txt-nowrap px1">
+                                <input type="radio" name="pregunta_5" value="0"> No                            </div>
+                        </div>
+                    </div>
+                    <div class="even flex wrap p1">
+                        <div class="flex col py1">
+                            <div class="bold px1">6</div>
+                            <div class="bold px1 col">He perdido el conocimiento, he tenido dolores de cabeza por migraña, convulsiones, accidente cerebrovascular, lesión significativa en la cabeza o he sufrido de lesión o enfermedad neurológica persistente.</div>
+                        </div>
+                        <div class="flex py1 c12 justify-center md-c-auto">
+                            <div class="txt-nowrap px1">
+                                <input type="radio" name="pregunta_6" value="1"> Si                            </div>
+                            <div class="txt-nowrap px1">
+                                <input type="radio" name="pregunta_6" value="0"> No                            </div>
+                        </div>
+                    </div>
+                    <div class="cuadro_d cab-cuadro">
+                        <div class="p2">TENGO / HE TENIDO:</div>
+                    </div>
+                    <div class="cuadro_d odd2">
+                        <div class="flex wrap p1">
+                            <div class="p1 col">Lesión en la cabeza con pérdida de conciencia en los últimos 5 años.</div>
+                            <div class="flex py1 c12 justify-center md-c-auto">
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_6_1" value="1"> Si                                </div>
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_6_1" value="0"> No                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cuadro_d even2">
+                        <div class="flex wrap p1">
+                            <div class="p1 col">Lesiones o enfermedades neurológicas persistentes.</div>
+                            <div class="flex py1 c12 justify-center md-c-auto">
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_6_2" value="1"> Si                                </div>
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_6_2" value="0"> No                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cuadro_d odd2">
+                        <div class="flex wrap p1">
+                            <div class="p1 col">Dolores de cabeza recurrentes por migraña en los últimos 12 meses o tomo medicamentos para prevenirlos.</div>
+                            <div class="flex py1 c12 justify-center md-c-auto">
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_6_3" value="1"> Si                                </div>
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_6_3" value="0"> No                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cuadro_d even2">
+                        <div class="flex wrap p1">
+                            <div class="p1 col">Desvanecimientos o desmayos (pérdida total/parcial de la conciencia) en los últimos 5 años.</div>
+                            <div class="flex py1 c12 justify-center md-c-auto">
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_6_4" value="1"> Si                                </div>
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_6_4" value="0"> No                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cuadro_d odd2">
+                        <div class="flex wrap p1">
+                            <div class="p1 col">Epilepsia, ataques o convulsiones o tomo medicamentos para prevenirlos.</div>
+                            <div class="flex py1 c12 justify-center md-c-auto">
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_6_5" value="1"> Si                                </div>
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_6_5" value="0"> No                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="odd flex wrap p1">
+                        <div class="flex col py1">
+                            <div class="bold px1">7</div>
+                            <div class="bold px1 col">He tenido problemas psicológicos (o he recibido tratamiento psicológico en los últimos 5 años), me diagnosticaron una discapacidad de aprendizaje, trastorno de la personalidad, ataques de pánico o una adicción a las drogas o al alcohol.</div>
+                        </div>
+                        <div class="flex py1 c12 justify-center md-c-auto">
+                            <div class="txt-nowrap px1">
+                                <input type="radio" name="pregunta_7" value="1"> Si                            </div>
+                            <div class="txt-nowrap px1">
+                                <input type="radio" name="pregunta_7" value="0"> No                            </div>
+                        </div>
+                    </div>
+                    <div class="cuadro_e cab-cuadro">
+                        <div class="p2">TENGO / HE TENIDO:</div>
+                    </div>
+                    <div class="cuadro_e odd2">
+                        <div class="flex wrap p1">
+                            <div class="p1 col">Salud conductual, problemas mentales o psicológicos que requieran tratamiento médico/psiquiátrico.</div>
+                            <div class="flex py1 c12 justify-center md-c-auto">
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_7_1" value="1"> Si                                </div>
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_7_1" value="0"> No                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cuadro_e even2">
+                        <div class="flex wrap p1">
+                            <div class="p1 col">Depresión mayor, tendencia suicida, ataques de pánico, trastorno bipolar descontrolado que requiere medicación/tratamiento psiquiátrico.</div>
+                            <div class="flex py1 c12 justify-center md-c-auto">
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_7_2" value="1"> Si                                </div>
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_7_2" value="0"> No                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cuadro_e odd2">
+                        <div class="flex wrap p1">
+                            <div class="p1 col">He sido diagnosticado con una condición de salud mental o un trastorno de aprendizaje/desarrollo que requiere atención continua.</div>
+                            <div class="flex py1 c12 justify-center md-c-auto">
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_7_3" value="1"> Si                                </div>
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_7_3" value="0"> No                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cuadro_e even2">
+                        <div class="flex wrap p1">
+                            <div class="p1 col">Una adicción a las drogas o al alcohol que requiere tratamiento en los últimos 5 años.</div>
+                            <div class="flex py1 c12 justify-center md-c-auto">
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_7_4" value="1"> Si                                </div>
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_7_4" value="0"> No                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="even flex wrap p1">
+                        <div class="flex col py1">
+                            <div class="bold px1">8</div>
+                            <div class="bold px1 col">He tenido problemas de espalda, hernia, úlceras o diabetes.</div>
+                        </div>
+                        <div class="flex py1 c12 justify-center md-c-auto">
+                            <div class="txt-nowrap px1">
+                                <input type="radio" name="pregunta_8" value="1"> Si                            </div>
+                            <div class="txt-nowrap px1">
+                                <input type="radio" name="pregunta_8" value="0"> No                            </div>
+                        </div>
+                    </div>
+                    <div class="cuadro_f cab-cuadro">
+                        <div class="p2">TENGO / HE TENIDO:</div>
+                    </div>
+                    <div class="cuadro_f odd2">
+                        <div class="flex wrap p1">
+                            <div class="p1 col">Problemas recurrentes en la espalda en los últimos 6 meses que limitan mi actividad diaria.</div>
+                            <div class="flex py1 c12 justify-center md-c-auto">
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_8_1" value="1"> Si                                </div>
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_8_1" value="0"> No                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cuadro_f even2">
+                        <div class="flex wrap p1">
+                            <div class="p1 col">Cirugía de espalda o columna vertebral en los últimos 12 meses.</div>
+                            <div class="flex py1 c12 justify-center md-c-auto">
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_8_2" value="1"> Si                                </div>
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_8_2" value="0"> No                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cuadro_f odd2">
+                        <div class="flex wrap p1">
+                            <div class="p1 col">Diabetes, ya sea controlada por insulina o por dieta o diabetes gestacional en los últimos 12 meses.</div>
+                            <div class="flex py1 c12 justify-center md-c-auto">
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_8_3" value="1"> Si                                </div>
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_8_3" value="0"> No                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cuadro_f even2">
+                        <div class="flex wrap p1">
+                            <div class="p1 col">Una hernia no corregida que limita mis habilidades físicas.</div>
+                            <div class="flex py1 c12 justify-center md-c-auto">
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_8_4" value="1"> Si                                </div>
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_8_4" value="0"> No                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cuadro_f odd2">
+                        <div class="flex wrap p1">
+                            <div class="p1 col">Úlceras activas o no tratadas, heridas problemáticas o cirugía de úlceras en los últimos 6 meses.</div>
+                            <div class="flex py1 c12 justify-center md-c-auto">
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_8_5" value="1"> Si                                </div>
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_8_5" value="0"> No                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="odd flex wrap p1">
+                        <div class="flex col py1">
+                            <div class="bold px1">9</div>
+                            <div class="bold px1 col">He tenido problemas estomacales o intestinales, incluyendo diarrea reciente.</div>
+                        </div>
+                        <div class="flex py1 c12 justify-center md-c-auto">
+                            <div class="txt-nowrap px1">
+                                <input type="radio" name="pregunta_9" value="1"> Si                            </div>
+                            <div class="txt-nowrap px1">
+                                <input type="radio" name="pregunta_9" value="0"> No                            </div>
+                        </div>
+                    </div>
+                    <div class="cuadro_g cab-cuadro">
+                        <div class="p2">TENGO:</div>
+                    </div>
+                    <div class="cuadro_g odd2">
+                        <div class="flex wrap p1">
+                            <div class="p1 col">Cirugía de ostomía y no tengo autorización médica para nadar o participar en actividad física.</div>
+                            <div class="flex py1 c12 justify-center md-c-auto">
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_9_1" value="1"> Si                                </div>
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_9_1" value="0"> No                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cuadro_g even2">
+                        <div class="flex wrap p1">
+                            <div class="p1 col">Deshidratación que requiere intervención médica en los últimos 7 días.</div>
+                            <div class="flex py1 c12 justify-center md-c-auto">
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_9_2" value="1"> Si                                </div>
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_9_2" value="0"> No                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cuadro_g odd2">
+                        <div class="flex wrap p1">
+                            <div class="p1 col">Úlceras estomacales o intestinales activas o no tratadas o cirugía de úlceras en los últimos 6 meses.</div>
+                            <div class="flex py1 c12 justify-center md-c-auto">
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_9_3" value="1"> Si                                </div>
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_9_3" value="0"> No                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cuadro_g even2">
+                        <div class="flex wrap p1">
+                            <div class="p1 col">Ardor de estómago frecuente, regurgitación o enfermedad por reflujo gastroesofágico (ERGE).</div>
+                            <div class="flex py1 c12 justify-center md-c-auto">
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_9_4" value="1"> Si                                </div>
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_9_4" value="0"> No                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cuadro_g odd2">
+                        <div class="flex wrap p1">
+                            <div class="p1 col">Colitis ulcerosa activa o no controlada o enfermedad de Crohn.</div>
+                            <div class="flex py1 c12 justify-center md-c-auto">
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_9_5" value="1"> Si                                </div>
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_9_5" value="0"> No                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cuadro_g even2">
+                        <div class="flex wrap p1">
+                            <div class="p1 col">Cirugía bariátrica en los últimos 12 meses.</div>
+                            <div class="flex py1 c12 justify-center md-c-auto">
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_9_6" value="1"> Si                                </div>
+                                <div class="txt-nowrap px1">
+                                    <input type="radio" name="pregunta_9_6" value="0"> No                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="even flex wrap p1">
+                        <div class="flex col py1">
+                            <div class="bold px1">10</div>
+                            <div class="bold px1 col">Estoy tomando medicamentos recetados (con la excepción de los anticonceptivos o los medicamentos antipalúdicos que no sea Lariam-mefloquina).</div>
+                        </div>
+                        <div class="flex py1 c12 justify-center md-c-auto">
+                            <div class="txt-nowrap px1">
+                                <input type="radio" name="pregunta_10" value="1"> Si                            </div>
+                            <div class="txt-nowrap px1">
+                                <input type="radio" name="pregunta_10" value="0"> No                            </div>
+                        </div>
+                    </div>
+                </div>
