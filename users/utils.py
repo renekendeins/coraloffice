@@ -11,7 +11,7 @@ class EmailTranslations:
             'dive_reminder_subject': 'Dive Activity Reminder - {course_name}',
             'welcome_subject': 'Welcome to {diving_center}!',
             'dive_reminder': {
-                'greeting': 'Hello {customer_name}!',
+                'greeting': 'Hello {{customer_name}}!',
                 'reminder_text': 'This is a friendly reminder about your upcoming dive activity:',
                 'activity': 'Activity',
                 'date': 'Date',
@@ -30,10 +30,10 @@ class EmailTranslations:
                 'contact_info': 'If you have any questions or need to make changes, please contact us.',
                 'looking_forward': 'We look forward to diving with you!',
                 'best_regards': 'Best regards',
-                'team': 'The {diving_center} Team'
+                'team': 'The CIPS Team'
             },
             'welcome': {
-                'greeting': 'Welcome to {diving_center}!',
+                'greeting': ' Hello {{customer_name}} and welcome to {diving_center}!',
                 'thank_you': 'Thank you for completing your medical form. We have received your information and our team will review it shortly.',
                 'next_steps': 'What happens next?',
                 'review_process': 'Our certified diving professionals will review your medical form to ensure your safety.',
@@ -42,7 +42,7 @@ class EmailTranslations:
                 'questions': 'If you have any immediate questions or concerns, please don\'t hesitate to contact us.',
                 'excited': 'We are excited to share the underwater world with you!',
                 'best_regards': 'Best regards',
-                'team': 'The {diving_center} Team'
+                'team': 'The CIPS Team'
             }
         },
         'ES': {
@@ -273,17 +273,20 @@ def send_welcome_email(customer):
     try:
         # Get customer's preferred language
         language = customer.language or 'EN'
+        print('language',language)
         
         # Get diving center name
-        diving_center_name = customer.diving_center.userprofile.business_name or customer.diving_center.username
-        
+        diving_center_name = 'CIPS'
+
+        print('customer', customer)
         # Prepare context for email template
         context = {
             'customer': customer,
-            'diving_center_name': diving_center_name,
+            'diving_center_name': 'CIPS',
             'language': language,
             'translations': EmailTranslations.get_translation(language, 'welcome'),
         }
+        print('context',context)
         
         # Get translated subject
         subject = EmailTranslations.get_translation(
@@ -291,9 +294,11 @@ def send_welcome_email(customer):
             'welcome_subject', 
             diving_center=diving_center_name
         )
+        print('subject',subject)
         
         # Render email templates
         html_message = render_to_string('users/emails/welcome.html', context)
+        print('html_message', html_message)
         plain_message = strip_tags(html_message)
         
         # Send email
