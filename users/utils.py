@@ -284,7 +284,9 @@ def send_welcome_email(customer):
             'customer': customer,
             'diving_center_name': 'CIPS',
             'language': language,
-            'translations': EmailTranslations.get_translation(language, 'welcome'),
+            'translations': EmailTranslations.get_translation(language, 'welcome', 
+                                                            customer_name=customer.get_full_name(), 
+                                                            diving_center=diving_center_name),
         }
         print('context',context)
         
