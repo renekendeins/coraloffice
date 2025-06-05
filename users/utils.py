@@ -11,7 +11,7 @@ class EmailTranslations:
             'dive_reminder_subject': 'Dive Activity Reminder - {course_name}',
             'welcome_subject': 'Welcome to {diving_center}!',
             'dive_reminder': {
-                'greeting': 'Hello {{customer_name}}!',
+                'greeting': 'Hello {customer_name}!',
                 'reminder_text': 'This is a friendly reminder about your upcoming dive activity:',
                 'activity': 'Activity',
                 'date': 'Date',
@@ -33,7 +33,7 @@ class EmailTranslations:
                 'team': 'The CIPS Team'
             },
             'welcome': {
-                'greeting': ' Hello {{customer_name}} and welcome to {diving_center}!',
+                'greeting': ' Hello {customer_name} and welcome to {diving_center}!',
                 'thank_you': 'Thank you for completing your medical form. We have received your information and our team will review it shortly.',
                 'next_steps': 'What happens next?',
                 'review_process': 'Our certified diving professionals will review your medical form to ensure your safety.',
@@ -229,7 +229,8 @@ def send_dive_reminder_email(customer, dive_schedule, course):
         
         # Get diving center name
         diving_center_name = customer.diving_center.userprofile.business_name or customer.diving_center.username
-        
+        print(dive_schedule)
+        print('name', customer.first_name)
         # Prepare context for email template
         context = {
             'customer': customer,

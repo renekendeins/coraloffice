@@ -243,49 +243,49 @@ class MedicalForm(forms.ModelForm):
     """Form for external users to fill medical information"""
     
     # Medical questionnaire fields - all the radio button questions
-    pregunta_1 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}) , required=False)
+    pregunta_1 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}) , required=True)
     pregunta_1_1 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=False)
     pregunta_1_2 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=False)
     pregunta_1_3 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=False)
     pregunta_1_4 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=False)
     
-    pregunta_2 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=False)
+    pregunta_2 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=True)
     pregunta_2_1 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=False)
     pregunta_2_2 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=False)
     pregunta_2_3 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=False)
     pregunta_2_4 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=False)
     
-    pregunta_3 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=False)
+    pregunta_3 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=True)
     
-    pregunta_4 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=False)
+    pregunta_4 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=True)
     pregunta_4_1 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=False)
     pregunta_4_2 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=False)
     pregunta_4_3 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=False)
     pregunta_4_4 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=False)
     
-    pregunta_5 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=False)
+    pregunta_5 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=True)
     
-    pregunta_6 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=False)
+    pregunta_6 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=True)
     pregunta_6_1 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=False)
     pregunta_6_2 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=False)
     pregunta_6_3 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=False)
     pregunta_6_4 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=False)
     pregunta_6_5 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=False)
     
-    pregunta_7 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=False)
+    pregunta_7 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=True)
     pregunta_7_1 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=False)
     pregunta_7_2 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=False)
     pregunta_7_3 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=False)
     pregunta_7_4 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=False)
     
-    pregunta_8 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=False)
+    pregunta_8 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=True)
     pregunta_8_1 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=False)
     pregunta_8_2 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=False)
     pregunta_8_3 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=False)
     pregunta_8_4 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=False)
     pregunta_8_5 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=False)
     
-    pregunta_9 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=False)
+    pregunta_9 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=True)
     pregunta_9_1 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=False)
     pregunta_9_2 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=False)
     pregunta_9_3 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=False)
@@ -293,7 +293,7 @@ class MedicalForm(forms.ModelForm):
     pregunta_9_5 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=False)
     pregunta_9_6 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=False)
     
-    pregunta_10 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=False)
+    pregunta_10 = forms.ChoiceField(choices=[('1', 'Sí'), ('0', 'No')], widget=forms.RadioSelect(attrs={'class': 'radio-option'}), required=True)
 
     class Meta:
         model = Customer
@@ -303,11 +303,11 @@ class MedicalForm(forms.ModelForm):
             'weight', 'height', 'foot_size', 'default_tank_size', 'swimming_ability'
         )
         widgets = {
-            'first_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'last_name': forms.TextInput(attrs={'class': 'form-control'}),
-            'email': forms.EmailInput(attrs={'class': 'form-control'}),
-            'phone_number': forms.TextInput(attrs={'class': 'form-control'}),
-            'country': forms.Select(choices=Customer.COUNTRY_CHOICES, attrs={'class': 'form-control'}),
+            'first_name': forms.TextInput(attrs={'class': 'form-control','required': True}),
+            'last_name': forms.TextInput(attrs={'class': 'form-control','required': True}),
+            'email': forms.EmailInput(attrs={'class': 'form-control','required': True}),
+            'phone_number': forms.TextInput(attrs={'class': 'form-control','required': True}),
+            'country': forms.Select(choices=Customer.COUNTRY_CHOICES, attrs={'class': 'form-control','required': True}),
             'language': forms.Select(
                 choices=[
                     ('EN', 'English'),
@@ -317,11 +317,11 @@ class MedicalForm(forms.ModelForm):
                     ('NL', 'Nederlands'),
                     ('CAT', 'Català'),
                 ],
-                attrs={'class': 'form-control', 'id': 'language-select'}
+                attrs={'class': 'form-control', 'id': 'language-select','required': True}
             ),
-            'birthday': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'certification_level': forms.Select(choices=Customer.DIVING_LEVEL_CHOICES, attrs={'class': 'form-control'}),
-            'emergency_contact': forms.TextInput(attrs={'class': 'form-control'}),
+            'birthday': forms.DateInput(attrs={'type': 'date', 'class': 'form-control', 'required': True}),
+            'certification_level': forms.Select(choices=Customer.DIVING_LEVEL_CHOICES, attrs={'class': 'form-control','required': True}),
+            'emergency_contact': forms.TextInput(attrs={'class': 'form-control','required': True}),
             'medical_conditions': forms.Textarea(attrs={
                 'rows': 4,
                 'class': 'form-control',
@@ -330,8 +330,8 @@ class MedicalForm(forms.ModelForm):
             'weight': forms.NumberInput(attrs={'step': '0.1', 'placeholder': 'kg', 'class': 'form-control'}),
             'height': forms.NumberInput(attrs={'step': '0.1', 'placeholder': 'cm', 'class': 'form-control'}),
             'foot_size': forms.NumberInput(attrs={'step': '0.5', 'placeholder': 'EU size', 'class': 'form-control'}),
-            'default_tank_size': forms.Select(attrs={'class': 'form-control'}),
-            'swimming_ability': forms.Select(attrs={'class': 'form-control'}),
+            'default_tank_size': forms.Select(attrs={'class': 'form-control','required': True}),
+            'swimming_ability': forms.Select(attrs={'class': 'form-control','required': True}),
         }
     
     def save(self, commit=True):
