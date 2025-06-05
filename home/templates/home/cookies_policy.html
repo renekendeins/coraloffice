@@ -1,0 +1,151 @@
+
+{% extends 'home/base.html' %}
+
+{% block title %}Política de Cookies - CoralOffice{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <h1 class="mb-4">Política de Cookies</h1>
+            
+            <div class="card">
+                <div class="card-body">
+                    <h2>¿Qué son las Cookies?</h2>
+                    <p>Las cookies son pequeños archivos de texto que se almacenan en su dispositivo cuando visita un sitio web. Son ampliamente utilizadas para hacer que los sitios web funcionen, o funcionen de manera más eficiente, así como para proporcionar información a los propietarios del sitio.</p>
+
+                    <h2>¿Cómo Utilizamos las Cookies?</h2>
+                    <p>En CoralOffice utilizamos cookies para diferentes propósitos que se detallan a continuación:</p>
+
+                    <h3>Cookies Estrictamente Necesarias</h3>
+                    <p>Estas cookies son esenciales para que pueda navegar por el sitio web y utilizar sus funciones básicas. Sin estas cookies, no podemos proporcionar muchos servicios que solicita.</p>
+                    
+                    <div class="table-responsive mt-3">
+                        <table class="table table-bordered">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Cookie</th>
+                                    <th>Propósito</th>
+                                    <th>Duración</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>sessionid</td>
+                                    <td>Mantiene la sesión del usuario iniciada</td>
+                                    <td>Sesión</td>
+                                </tr>
+                                <tr>
+                                    <td>csrftoken</td>
+                                    <td>Protección contra ataques CSRF</td>
+                                    <td>1 año</td>
+                                </tr>
+                                <tr>
+                                    <td>cookies_accepted</td>
+                                    <td>Recordar las preferencias de cookies del usuario</td>
+                                    <td>1 año</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>Cookies de Rendimiento y Analíticas</h3>
+                    <p>Estas cookies recopilan información sobre cómo utiliza nuestro sitio web, como qué páginas visita más a menudo y si recibe mensajes de error de las páginas web. Toda la información que recopilan estas cookies es agregada y, por lo tanto, anónima.</p>
+                    
+                    <div class="table-responsive mt-3">
+                        <table class="table table-bordered">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Cookie</th>
+                                    <th>Propósito</th>
+                                    <th>Duración</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>_ga</td>
+                                    <td>Google Analytics - Distingue usuarios únicos</td>
+                                    <td>2 años</td>
+                                </tr>
+                                <tr>
+                                    <td>_ga_*</td>
+                                    <td>Google Analytics - Recopila datos estadísticos</td>
+                                    <td>2 años</td>
+                                </tr>
+                                <tr>
+                                    <td>_gid</td>
+                                    <td>Google Analytics - Distingue usuarios únicos</td>
+                                    <td>24 horas</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>Cookies de Funcionalidad</h3>
+                    <p>Estas cookies permiten que el sitio web recuerde las opciones que ha realizado (como su nombre de usuario, idioma o la región en la que se encuentra) y proporcionan características mejoradas y más personales.</p>
+
+                    <div class="table-responsive mt-3">
+                        <table class="table table-bordered">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>Cookie</th>
+                                    <th>Propósito</th>
+                                    <th>Duración</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>language_preference</td>
+                                    <td>Recordar el idioma seleccionado por el usuario</td>
+                                    <td>1 año</td>
+                                </tr>
+                                <tr>
+                                    <td>theme_preference</td>
+                                    <td>Recordar las preferencias de tema del usuario</td>
+                                    <td>1 año</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <h3>Cookies de Marketing y Publicidad</h3>
+                    <p>Estas cookies se utilizan para entregar anuncios más relevantes para usted y sus intereses. También se utilizan para limitar la cantidad de veces que ve un anuncio, así como para ayudar a medir la efectividad de la campaña publicitaria.</p>
+
+                    <h2>¿Cómo Controlar las Cookies?</h2>
+                    <p>Puede controlar y/o eliminar las cookies como desee. Para obtener más información, consulte <a href="https://www.aboutcookies.org" target="_blank">aboutcookies.org</a>. Puede eliminar todas las cookies que ya están en su dispositivo y puede configurar la mayoría de los navegadores para evitar que se coloquen.</p>
+
+                    <div class="alert alert-info">
+                        <h4>Gestión de Cookies en CoralOffice</h4>
+                        <p>Puede gestionar sus preferencias de cookies en cualquier momento visitando nuestra página de configuración de cookies:</p>
+                        <a href="{% url 'home:cookies_settings' %}" class="btn btn-primary">Configurar Cookies</a>
+                    </div>
+
+                    <h2>Cookies de Terceros</h2>
+                    <p>En algunos casos especiales también utilizamos cookies proporcionadas por terceros de confianza. Los siguientes detalles de la sección explican qué cookies de terceros puede encontrar a través de este sitio:</p>
+
+                    <h3>Google Analytics</h3>
+                    <p>Este sitio utiliza Google Analytics, que es una de las soluciones de análisis más extendidas y confiables en la web para ayudarnos a entender cómo utiliza el sitio y las formas en que podemos mejorar su experiencia.</p>
+
+                    <h2>Consentimiento de Cookies</h2>
+                    <p>Al utilizar nuestro sitio web, usted acepta el uso de cookies de acuerdo con esta política de cookies. Si no acepta el uso de estas cookies, debe ajustar la configuración de su navegador o no utilizar el sitio web.</p>
+
+                    <h2>Cambios en la Política de Cookies</h2>
+                    <p>CoralOffice puede actualizar esta Política de Cookies ocasionalmente para reflejar cambios operativos, legales o reglamentarios. Le recomendamos que revise esta página periódicamente para mantenerse informado sobre nuestro uso de cookies.</p>
+
+                    <h2>Contacto</h2>
+                    <p>Si tiene alguna pregunta sobre esta Política de Cookies, puede contactarnos en:</p>
+                    <ul>
+                        <li><strong>Email:</strong> cookies@coraloffice.com</li>
+                        <li><strong>Teléfono:</strong> +1 (555) CORAL-00</li>
+                        <li><strong>Dirección:</strong> 123 Ocean Drive, Coral Bay, Marine Islands</li>
+                    </ul>
+
+                    <div class="mt-4 p-3 bg-light rounded">
+                        <p class="mb-0"><strong>Última actualización:</strong> Diciembre 2024</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

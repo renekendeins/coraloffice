@@ -43,3 +43,45 @@ def services(request):
 
 def contact(request):
     return render(request, 'home/contact.html')
+
+def legal_notice(request):
+    return render(request, 'home/legal_notice.html')
+
+def privacy_policy(request):
+    return render(request, 'home/privacy_policy.html')
+
+def cookies_policy(request):
+    return render(request, 'home/cookies_policy.html')
+
+def cookies_settings(request):
+    if request.method == 'POST':
+        # Handle cookies preferences
+        essential_cookies = request.POST.get('essential_cookies', 'on')
+        analytics_cookies = request.POST.get('analytics_cookies', 'off')
+        marketing_cookies = request.POST.get('marketing_cookies', 'off')
+        
+        response = render(request, 'home/cookies_settings.html', {
+            'message': 'Cookies preferences updated successfully!',
+            'essential_cookies': essential_cookies,
+            'analytics_cookies': analytics_cookies,
+            'marketing_cookies': marketing_cookies,
+        })
+        
+        # Set cookies preferences
+        response.set_cookie('cookies_accepted', 'true', max_age=365*24*60*60)
+        response.set_cookie('essential_cookies', essential_cookies, max_age=365*24*60*60)
+        response.set_cookie('analytics_cookies', analytics_cookies, max_age=365*24*60*60)
+        response.set_cookie('marketing_cookies', marketing_cookies, max_age=365*24*60*60)
+        
+        return response
+    
+    # Get current preferences
+    essential_cookies = request.COOKIES.get('essential_cookies', 'on')
+    analytics_cookies = request.COOKIES.get('analytics_cookies', 'off')
+    marketing_cookies = request.COOKIES.get('marketing_cookies', 'off')
+    
+    return render(request, 'home/cookies_settings.html', {
+        'essential_cookies': essential_cookies,
+        'analytics_cookies': analytics_cookies,
+        'marketing_cookies': marketing_cookies,
+    })

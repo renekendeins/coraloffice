@@ -1,0 +1,145 @@
+
+{% extends 'home/base.html' %}
+
+{% block title %}Configuración de Cookies - CoralOffice{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <h1 class="mb-4">Configuración de Cookies</h1>
+            
+            {% if message %}
+            <div class="alert alert-success">
+                {{ message }}
+            </div>
+            {% endif %}
+            
+            <div class="card">
+                <div class="card-body">
+                    <p class="lead">Gestiona tus preferencias de cookies. Puedes cambiar estas configuraciones en cualquier momento.</p>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="cookies-category mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div>
+                                    <h3 class="h5 mb-1">🔒 Cookies Estrictamente Necesarias</h3>
+                                    <p class="text-muted mb-0">Estas cookies son esenciales para el funcionamiento del sitio web y no se pueden desactivar.</p>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="essential_cookies" checked disabled>
+                                    <label class="form-check-label">Siempre activas</label>
+                                </div>
+                            </div>
+                            <div class="cookies-details">
+                                <small class="text-muted">
+                                    Incluye cookies de sesión, autenticación y seguridad necesarias para que puedas navegar por el sitio y utilizar sus funciones básicas.
+                                </small>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <div class="cookies-category mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div>
+                                    <h3 class="h5 mb-1">📊 Cookies de Análisis</h3>
+                                    <p class="text-muted mb-0">Nos ayudan a entender cómo interactúas con nuestro sitio web recopilando y reportando información de forma anónima.</p>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="analytics_cookies" 
+                                           {% if analytics_cookies == 'on' %}checked{% endif %} id="analytics_cookies">
+                                    <label class="form-check-label" for="analytics_cookies">
+                                        {% if analytics_cookies == 'on' %}Activadas{% else %}Desactivadas{% endif %}
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="cookies-details">
+                                <small class="text-muted">
+                                    Incluye Google Analytics y otras herramientas de medición que nos permiten mejorar nuestro sitio web y servicios.
+                                </small>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <div class="cookies-category mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <div>
+                                    <h3 class="h5 mb-1">🎯 Cookies de Marketing</h3>
+                                    <p class="text-muted mb-0">Se utilizan para personalizar anuncios y medir la efectividad de nuestras campañas publicitarias.</p>
+                                </div>
+                                <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="marketing_cookies" 
+                                           {% if marketing_cookies == 'on' %}checked{% endif %} id="marketing_cookies">
+                                    <label class="form-check-label" for="marketing_cookies">
+                                        {% if marketing_cookies == 'on' %}Activadas{% else %}Desactivadas{% endif %}
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="cookies-details">
+                                <small class="text-muted">
+                                    Incluye cookies de redes sociales, publicidad personalizada y seguimiento de conversiones.
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <button type="button" class="btn btn-outline-secondary me-md-2" onclick="rejectAllCookies()">Rechazar todas</button>
+                            <button type="button" class="btn btn-outline-primary me-md-2" onclick="acceptAllCookies()">Aceptar todas</button>
+                            <button type="submit" class="btn btn-primary">Guardar preferencias</button>
+                        </div>
+                    </form>
+
+                    <hr class="my-4">
+
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h4>Más información</h4>
+                            <ul class="list-unstyled">
+                                <li><a href="{% url 'home:cookies_policy' %}">📋 Política de Cookies completa</a></li>
+                                <li><a href="{% url 'home:privacy_policy' %}">🔐 Política de Privacidad</a></li>
+                                <li><a href="{% url 'home:legal_notice' %}">⚖️ Aviso Legal</a></li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <h4>¿Necesitas ayuda?</h4>
+                            <p class="small text-muted">Si tienes alguna pregunta sobre las cookies o necesitas ayuda con la configuración, no dudes en <a href="{% url 'home:contact' %}">contactarnos</a>.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function acceptAllCookies() {
+    document.getElementById('analytics_cookies').checked = true;
+    document.getElementById('marketing_cookies').checked = true;
+    updateLabels();
+}
+
+function rejectAllCookies() {
+    document.getElementById('analytics_cookies').checked = false;
+    document.getElementById('marketing_cookies').checked = false;
+    updateLabels();
+}
+
+function updateLabels() {
+    const analyticsCheckbox = document.getElementById('analytics_cookies');
+    const marketingCheckbox = document.getElementById('marketing_cookies');
+    
+    document.querySelector('label[for="analytics_cookies"]').textContent = 
+        analyticsCheckbox.checked ? 'Activadas' : 'Desactivadas';
+    document.querySelector('label[for="marketing_cookies"]').textContent = 
+        marketingCheckbox.checked ? 'Activadas' : 'Desactivadas';
+}
+
+// Add event listeners to update labels when checkboxes change
+document.getElementById('analytics_cookies').addEventListener('change', updateLabels);
+document.getElementById('marketing_cookies').addEventListener('change', updateLabels);
+</script>
+{% endblock %}
