@@ -11,6 +11,7 @@ from datetime import datetime, timedelta
 import calendar
 from .forms import SignUpForm, UserForm, UserProfileForm, CustomerForm, DiveScheduleForm, DiveActivityForm, CustomerDiveActivityForm, DivingSiteForm, InventoryItemForm, DivingGroupForm, MedicalForm, QuickCustomerForm, StaffForm, CourseForm, CourseEnrollmentForm, CourseSessionScheduleForm, LessonCompletionForm
 from .models import UserProfile, Customer, DiveSchedule, DiveActivity, CustomerDiveActivity, DivingSite, InventoryItem, DivingGroup, DivingGroupMember, Staff, Course, CourseEnrollment, CourseSession
+from .utils import send_dive_reminder_email, send_welcome_email
 
 
 def signup(request):
@@ -535,6 +536,7 @@ def manage_dive_participants(request, dive_id):
                     # Add all group members
                     group_members = DivingGroupMember.objects.filter(group=selected_group)
                     added_count = 0
+                    emails_sent = 0
                     for member in group_members:
                         # Check if member not already participating
                         if not CustomerDiveActivity.objects.filter(dive_schedule=dive, customer=member.customer).exists():
@@ -564,7 +566,15 @@ def manage_dive_participants(request, dive_id):
                                 needs_insurance=form.cleaned_data['needs_insurance'],
                             )
                             added_count += 1
-                    messages.success(request, f'Added {added_count} group members to dive!')
+                            
+                            # Send reminder email
+                            if send_dive_reminder_email(member.customer, dive, course):
+                                emails_sent += 1
+                    
+                    if emails_sent > 0:
+                        messages.success(request, f'Added {added_count} group members to dive! {emails_sent} reminder emails sent.')
+                    else:
+                        messages.success(request, f'Added {added_count} group members to dive!')
                 else:
                     # Add single participant
                     participant = form.save(commit=False)
@@ -580,7 +590,13 @@ def manage_dive_participants(request, dive_id):
                         participant.needs_regulator = True
                     
                     participant.save()
-                    messages.success(request, 'Participant added to dive!')
+                    
+                    # Send reminder email
+                    email_sent = send_dive_reminder_email(participant.customer, dive, participant.course)
+                    if email_sent:
+                        messages.success(request, 'Participant added to dive! Reminder email sent.')
+                    else:
+                        messages.success(request, 'Participant added to dive!')
                 return redirect('users:manage_dive_participants', dive_id=dive.id)
             else:
                 messages.error(request, 'Please correct the form errors.')
@@ -1028,6 +1044,7 @@ def manage_group_members(request, group_id):
             if dive_ids and course_id:
                 course = get_object_or_404(Course, id=course_id, diving_center=request.user)
                 scheduled_count = 0
+                emails_sent = 0
 
                 for dive_id in dive_ids:
                     dive = get_object_or_404(DiveSchedule, id=dive_id, diving_center=request.user)
@@ -1064,8 +1081,15 @@ def manage_group_members(request, group_id):
                                 needs_insurance=needs_insurance,
                             )
                             scheduled_count += 1
+                            
+                            # Send reminder email
+                            if send_dive_reminder_email(member.customer, dive, course):
+                                emails_sent += 1
 
-                messages.success(request, f'Successfully scheduled {group.name} for {len(dive_ids)} dive(s)! Added {scheduled_count} participant slots.')
+                if emails_sent > 0:
+                    messages.success(request, f'Successfully scheduled {group.name} for {len(dive_ids)} dive(s)! Added {scheduled_count} participant slots. {emails_sent} reminder emails sent.')
+                else:
+                    messages.success(request, f'Successfully scheduled {group.name} for {len(dive_ids)} dive(s)! Added {scheduled_count} participant slots.')
                 return redirect('users:manage_group_members', group_id=group.id)
             else:
                 messages.error(request, 'Please select at least one dive and an activity.')
@@ -1168,7 +1192,14 @@ def medical_form(request):
                     customer.signature.save(filename, data, save=False)
                 
                 customer.save()
-                messages.success(request, 'Medical form submitted successfully! A diving center will contact you soon.')
+                
+                # Send welcome email
+                email_sent = send_welcome_email(customer)
+                if email_sent:
+                    messages.success(request, 'Medical form submitted successfully! A welcome email has been sent to your email address.')
+                else:
+                    messages.success(request, 'Medical form submitted successfully! A diving center will contact you soon.')
+                    
                 return redirect('users:medical_form')
             else:
                 messages.error(request, 'No diving center available. Please contact us directly.')
