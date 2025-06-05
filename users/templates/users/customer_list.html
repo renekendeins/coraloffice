@@ -6,18 +6,18 @@
 <div class="p-3">
     <h2>Customer List</h2>
 
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <a href="{% url 'users:add_customer' %}" class="btn btn-success">Añadir cliente</a>
+    <div class="mb-4 d-flex flex-column flex-md-row justify-content-md-between align-items-md-center">
+        <a href="{% url 'users:add_customer' %}" class="btn btn-success mb-4 mb-md-0">Añadir cliente</a>
 
-        <form method="get" style="display: flex; gap: 10px;">
+        <form method="get" class="d-flex flex-column flex-md-row justify-content-md-between align-items-md-center">
             <input type="text" name="search" value="{{ search_query|default:'' }}" 
                    placeholder="Search by name, email, or phone..." 
-                   style="padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; width: 300px;">
-            <button type="submit" class="btn btn-primary";">
+                   class="form-control mb-2 mb-md-0">
+            <button type="submit" class="btn btn-primary mb-2 mb-md-0";">
                 <i class="fas fa-search"></i> Buscar
             </button>
             {% if search_query %}
-            <a href="{% url 'users:customer_list' %}" class="btn btn-secondary">
+            <a href="{% url 'users:customer_list' %}" class="btn btn-secondary mb-2 mb-md-0">
                 <i class="fas fa-times"></i> Limpiar
             </a>
             {% endif %}
@@ -35,7 +35,7 @@
 
                 <div class="mb-4 border border-1 border-dark-subtle rounded p-3">
                     <div>
-                        <div class="d-flex align-items-center">
+                        <div class="d-flex align-items-center mb-4">
                             {% if customer.profile_picture %}
                                 <img class="me-2" src="{{ customer.profile_picture.url }}" alt="{{ customer.first_name }}" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover;">
                             {% else %}

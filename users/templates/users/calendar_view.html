@@ -5,7 +5,7 @@
 {% block users_title %}Calendar View - CoralOffice{% endblock %}
 
 {% block users_content %}
-<div class="p-3">
+<div class="p-0">
     <div style="display: flex; flex-direction: column; justify-content: space-between; align-items: center; margin-bottom: 30px;">
         <div style="margin-bottom: 20px;">
             <a href="?year={{ prev_year }}&month={{ prev_month }}&view={{ view_type }}" class="btn text-bg-info" tyle="margin-right: 10px;">← Anterior</a>
@@ -83,7 +83,7 @@
         padding: 10px 6px;
         /* margin: 2px 0 10px 0; */
         /* border-radius: 3px; */
-        font-size: 12px;
+        font-size: 8px;
         cursor: pointer;
         font-weight: bold;
     }
@@ -95,7 +95,7 @@
     .add-dive-link {
         color: #007bff;
         text-decoration: none;
-        font-size: 12px;
+        font-size: 8px;
         width: 100% !important;
             background: lightgreen;
             padding: .5rem 1rem;
@@ -109,6 +109,24 @@
     .add-dive-link:hover {
         text-decoration: underline;
     }
+        /* Base font size for mobile (xs: <576px) */
+        .add-dive-link, .dive-item{
+            font-size: 8px
+        }
+
+        /* Small devices (sm: ≥576px) */
+        @media (min-width: 768px) {
+            .add-dive-link{
+                font-size: 12px !important;
+            } 
+            .dive-item{
+                font-size: 12px !important;
+            }
+        }
+
+
+
+        
     </style>
 
     <div style="margin-bottom: 100px; display: flex; justify-content:center;">
@@ -132,7 +150,9 @@
                     <div>
                         <h5><a href="{% url 'users:dive_detail' dive.id %}">{{ dive.dive_site }}</a></h5>
                         <p><strong>Time:</strong> {{ dive.time|time:"g:i A" }}</p>
-                        <p><strong>Participants:</strong> {{ dive.participant_count }}/{{ dive.max_participants }}</p>
+                        <div>
+                            <p><strong>Participants:</strong> {{ dive.participant_count }}/{{ dive.max_participants }}</p>
+                        </div>
                     </div>
                     <div>
                         <a href="{% url 'users:dive_detail' dive.id %}" class="btn btn-primary btn-sm">View Details</a>
@@ -203,8 +223,8 @@
                         {% if day in dives_by_day %}
                             {% for dive in dives_by_day|lookup:day %}
                             <a href="{% url 'users:dive_detail' dive.id %}" style="text-decoration: none;" >
-                                <div class="dive-item text-center d-flex flex-column flex-sm-row align-items-sm-center justify-content-sm-center" title="{{ dive.dive_site }} at {{ dive.time }}">
-                                    <p class="mb-0 me-sm-3">{{ dive.time|time:"H:i" }}h</p>
+                                <div class="dive-item text-center d-flex flex-column flex-md-row align-items-md-center justify-content-md-center" title="{{ dive.dive_site }} at {{ dive.time }}">
+                                    <p class="mb-0 me-md-3">{{ dive.time|time:"H:i" }}h</p>
                                     <!-- - {{ dive.dive_site }} -->
                                     <small>({{ dive.get_participant_count }} / 46)</small>
                                 </div>

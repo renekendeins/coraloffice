@@ -963,6 +963,7 @@ def manage_group_members(request, group_id):
 
     group = get_object_or_404(DivingGroup, id=group_id, diving_center=request.user)
     members = DivingGroupMember.objects.filter(group=group)
+    courses = Course.objects.all().order_by('-just_one_dive', 'name')
     available_customers = Customer.objects.filter(diving_center=request.user).exclude(
         id__in=members.values_list('customer_id', flat=True)
     )
@@ -1077,6 +1078,7 @@ def manage_group_members(request, group_id):
     return render(request, 'users/manage_group_members.html', {
         'group': group,
         'members': members,
+        'courses': courses,
         'available_customers': available_customers,
         'available_dives': available_dives,
         'group_courses': group_courses,
@@ -1374,7 +1376,7 @@ def staff_planning(request):
         dive_schedule__diving_center=request.user,
         dive_schedule__date=tomorrow
     ).select_related(
-        'customer', 'assigned_staff', 'activity', 'dive_schedule', 'dive_schedule__dive_site'
+        'customer', 'assigned_staff', 'activity','course', 'dive_schedule', 'dive_schedule__dive_site'
     ).order_by('dive_schedule__time', 'assigned_staff__first_name')
 
     # Group activities by staff member

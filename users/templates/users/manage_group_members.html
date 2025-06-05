@@ -190,10 +190,10 @@
 
                     <div>
                         <label for="activity_id"><strong>Actividad:</strong></label>
-                        <select name="activity_id" id="activity_id" class="form-control" required>
+                        <select name="course_id" id="activity_id" class="form-control" required>
                             <option value="">Selecciona una actividad</option>
-                            {% for activity in group_activities %}
-                                <option value="{{ activity.id }}">{{ activity.name }} - ${{ activity.price }}</option>
+                            {% for course in courses %}
+                                <option value="{{ course.id }}">{{ course.name }} ({{ course.total_dives}} inmersión/es)</option>
                             {% endfor %}
                         </select>
                     </div>
