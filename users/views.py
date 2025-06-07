@@ -110,7 +110,8 @@ def customer_list(request):
         messages.error(request, 'Access denied.')
         return redirect('users:profile')
 
-    customers = Customer.objects.filter(diving_center=request.user)
+    customers = Customer.objects.filter(diving_center=request.user).order_by(
+        '-created_at')
 
     # Handle search
     search_query = request.GET.get('search', '').strip()
