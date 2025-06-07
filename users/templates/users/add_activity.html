@@ -4,22 +4,24 @@
 {% block users_title %}Add Activity - CoralOffice{% endblock %}
 
 {% block users_content %}
-<h2>Add New Activity</h2>
-<form method="post">
-    {% csrf_token %}
-    {% for field in form %}
-        <div class="form-group">
-            {{ field.label_tag }}
-            {{ field }}
-            {% if field.help_text %}
-                <small>{{ field.help_text }}</small>
-            {% endif %}
-            {% for error in field.errors %}
-                <div class="alert alert-error">{{ error }}</div>
-            {% endfor %}
-        </div>
-    {% endfor %}
-    <button type="submit" class="btn">Add Activity</button>
-    <a href="{% url 'users:activity_list' %}" class="btn" style="background: #6c757d;">Cancel</a>
-</form>
+<div class="p-3 container">
+    <h2>Añadir actividad</h2>
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.help_text %}
+                    <small>{{ field.help_text }}</small>
+                {% endif %}
+                {% for error in field.errors %}
+                    <div class="alert alert-error">{{ error }}</div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn">Añadir actividad</button>
+        <a href="{% url 'users:activity_list' %}" class="btn" style="background: #6c757d;">Cancelar</a>
+    </form>
+</div>
 {% endblock %}

@@ -4,43 +4,46 @@
 {% block users_title %}Staff Management - CoralOffice{% endblock %}
 
 {% block users_content %}
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-    <h2>Staff Management</h2>
-    <a href="{% url 'users:add_staff' %}" class="btn">Add New Staff Member</a>
-</div>
+<div class="p-3 container">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
+        <h2>Gestión de Personal</h2>
+        <a href="{% url 'users:add_staff' %}" class="btn">Agregar Nuevo Miembro del Personal</a>
+    </div>
 
-{% for staff in staff_members %}
-<div class="user-card">
-    <div style="display: flex; align-items: center; gap: 15px;">
-        {% if staff.profile_picture %}
-            <img src="{{ staff.profile_picture.url }}" alt="{{ staff.get_full_name }}" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover;">
-        {% else %}
-            <div style="width: 60px; height: 60px; border-radius: 50%; background: #f0f0f0; display: flex; align-items: center; justify-content: center; font-size: 24px;">👨‍🏫</div>
+    {% for staff in staff_members %}
+    <div class="user-card">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            {% if staff.profile_picture %}
+                <img src="{{ staff.profile_picture.url }}" alt="{{ staff.get_full_name }}" style="width: 60px; height: 60px; border-radius: 50%; object-fit: cover;">
+            {% else %}
+                <div style="width: 60px; height: 60px; border-radius: 50%; background: #f0f0f0; display: flex; align-items: center; justify-content: center; font-size: 24px;">👨‍🏫</div>
+            {% endif %}
+            <div style="flex: 1;">
+                <h3 style="margin: 0;">{{ staff.get_full_name }}</h3>
+                <p style="margin: 5px 0; color: #666;">{{ staff.get_certification_level_display }}</p>
+                <p style="margin: 0; font-size: 14px; color: #888;">{{ staff.experience_years }} años de experiencia | {{ staff.languages }}</p>
+            </div>
+            <div style="text-align: right;">
+                <p style="margin: 0; font-size: 14px; color: #666;">Estado: <span style="color: {% if staff.status == 'ACTIVE' %}#4caf50{% else %}#f44336{% endif %};">{{ staff.get_status_display }}</span></p>
+                <p style="margin: 5px 0 0 0; font-size: 14px; color: #666;">Actividades: {{ staff.get_activities_count }}</p>
+            </div>
+        </div>
+
+        {% if staff.specialties %}
+            <p style="margin: 10px 0 0 0;"><strong>Especialidades:</strong> {{ staff.specialties }}</p>
         {% endif %}
-        <div style="flex: 1;">
-            <h3 style="margin: 0;">{{ staff.get_full_name }}</h3>
-            <p style="margin: 5px 0; color: #666;">{{ staff.get_certification_level_display }}</p>
-            <p style="margin: 0; font-size: 14px; color: #888;">{{ staff.experience_years }} years experience | {{ staff.languages }}</p>
-        </div>
-        <div style="text-align: right;">
-            <p style="margin: 0; font-size: 14px; color: #666;">Status: <span style="color: {% if staff.status == 'ACTIVE' %}#4caf50{% else %}#f44336{% endif %};">{{ staff.get_status_display }}</span></p>
-            <p style="margin: 5px 0 0 0; font-size: 14px; color: #666;">Activities: {{ staff.get_activities_count }}</p>
-        </div>
-    </div>
-    
-    {% if staff.specialties %}
-        <p style="margin: 10px 0 0 0;"><strong>Specialties:</strong> {{ staff.specialties }}</p>
-    {% endif %}
-    
-    <div style="margin-top: 15px; display: flex; gap: 10px;">
-        <a href="{% url 'users:staff_detail' staff.id %}" class="btn" style="background: #2196f3;">View Details</a>
-        <a href="{% url 'users:edit_staff' staff.id %}" class="btn" style="background: #ff9800;">Edit</a>
-        <a href="{% url 'users:delete_staff' staff.id %}" class="btn" style="background: #f44336;">Delete</a>
-    </div>
-</div>
-{% empty %}
-<p>No staff members added yet. <a href="{% url 'users:add_staff' %}">Add your first staff member</a>.</p>
-{% endfor %}
 
-<a href="{% url 'users:diving_center_dashboard' %}" class="btn" style="background: #6c757d;">Back to Dashboard</a>
+        <div style="margin-top: 15px; display: flex; gap: 10px;">
+            <a href="{% url 'users:staff_detail' staff.id %}" class="btn" style="background: #2196f3;">Ver Detalles</a>
+            <a href="{% url 'users:edit_staff' staff.id %}" class="btn" style="background: #ff9800;">Editar</a>
+            <a href="{% url 'users:delete_staff' staff.id %}" class="btn" style="background: #f44336;">Eliminar</a>
+        </div>
+    </div>
+    {% empty %}
+    <p>No hay miembros del personal añadidos todavía. <a href="{% url 'users:add_staff' %}">Agrega tu primer miembro del personal</a>.</p>
+    {% endfor %}
+
+    <a href="{% url 'users:diving_center_dashboard' %}" class="btn" style="background: #6c757d;">Volver al Panel de Control</a>
+
+</div>
 {% endblock %}

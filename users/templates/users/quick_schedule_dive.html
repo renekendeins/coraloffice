@@ -4,22 +4,24 @@
 {% block users_title %}Quick Schedule - CoralOffice{% endblock %}
 
 {% block users_content %}
-<h2>Quick Schedule Dive{% if selected_date %} for {{ selected_date }}{% endif %}</h2>
-<form method="post">
-    {% csrf_token %}
-    {% for field in form %}
-        <div class="form-group">
-            {{ field.label_tag }}
-            {{ field }}
-            {% if field.help_text %}
-                <small>{{ field.help_text }}</small>
-            {% endif %}
-            {% for error in field.errors %}
-                <div class="alert alert-error">{{ error }}</div>
-            {% endfor %}
-        </div>
-    {% endfor %}
-    <button type="submit" class="btn">Schedule Dive</button>
-    <a href="{% url 'users:calendar_view' %}" class="btn" style="background: #6c757d;">Cancel</a>
-</form>
+<div class="p-3">
+    <h2>Quick Schedule Dive{% if selected_date %} for {{ selected_date }}{% endif %}</h2>
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+            <div class="form-group">
+                {{ field.label_tag }}
+                {{ field }}
+                {% if field.help_text %}
+                    <small>{{ field.help_text }}</small>
+                {% endif %}
+                {% for error in field.errors %}
+                    <div class="alert alert-error">{{ error }}</div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+        <button type="submit" class="btn">Schedule Dive</button>
+        <a href="{% url 'users:calendar_view' %}" class="btn" style="background: #6c757d;">Cancel</a>
+    </form>
+</div>
 {% endblock %}

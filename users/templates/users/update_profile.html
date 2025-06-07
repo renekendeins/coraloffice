@@ -22,34 +22,35 @@
         border-radius: var(--bs-border-radius);
         transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
     }
-</style>
-<div class="p-3">
-    <h2>Actualizar perfil</h2>
-    <form method="post">
-        {% csrf_token %}
-        {% for field in user_form %}
-            <div class="form-group">
-                {{ field.label_tag }}
-                {{ field }}
-                {% for error in field.errors %}
-                    <div class="alert alert-error">{{ error }}</div>
-                {% endfor %}
-            </div>
-        {% endfor %}
+    </style>
+    <div class="p-3 container">
+        <h2>Actualizar perfil</h2>
+        <form method="post">
+            {% csrf_token %}
+            {% for field in user_form %}
+                <div class="form-group">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {% for error in field.errors %}
+                        <div class="alert alert-error">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
 
-        <h3>Profile Information</h3>
-        {% for field in profile_form %}
-            <div class="form-group">
-                {{ field.label_tag }}
-                {{ field }}
-                {% for error in field.errors %}
-                    <div class="alert alert-error">{{ error }}</div>
-                {% endfor %}
-            </div>
-        {% endfor %}
+            <h3>Información del perfil</h3>
+            {% for field in profile_form %}
+                <div class="form-group">
+                    {{ field.label_tag }}
+                    {{ field }}
+                    {% for error in field.errors %}
+                        <div class="alert alert-error">{{ error }}</div>
+                    {% endfor %}
+                </div>
+            {% endfor %}
 
-        <button type="submit" class="btn btn-success">Update Profile</button>
-        <a href="{% url 'users:profile' %}" class="btn btn-danger">Cancel</a>
-    </form>
-</div>
+            <button type="submit" class="btn btn-success">Actualizar perfil</button>
+            <a href="{% url 'users:profile' %}" class="btn btn-danger">Cancelar</a>
+        </form>
+    </div>
+
 {% endblock %}

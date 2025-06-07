@@ -4,84 +4,84 @@
 {% block users_title %}Add Course - CoralOffice{% endblock %}
 
 {% block users_content %}
-<div class="p-3">
-    <h2>Add New Course</h2>
+<div class="p-3 container">
+    <h2>Añadir nuevo curso / Activiad</h2>
 
     <form method="post">
         {% csrf_token %}
         <div class="form-group">
-            <label for="{{ form.name.id_for_label }}">Course Name:</label>
+            <label for="{{ form.name.id_for_label }}">Nombre del curso o actividad:</label>
             {{ form.name }}
         </div>
 
         <div class="form-group">
-            <label for="{{ form.course_type.id_for_label }}">Course Type:</label>
+            <label for="{{ form.course_type.id_for_label }}">Tipo de curso o actividad:</label>
             {{ form.course_type }}
         </div>
 
         <div class="form-group">
-            <label for="{{ form.total_dives.id_for_label }}">Total Dives:</label>
+            <label for="{{ form.total_dives.id_for_label }}">Número de inmersiones:</label>
             {{ form.total_dives }}
         </div>
 
         <div class="form-group">
-            <label for="{{ form.duration_days.id_for_label }}">Duration (days):</label>
+            <label for="{{ form.duration_days.id_for_label }}">Duración (días):</label>
             {{ form.duration_days }}
         </div>
 
         <div class="form-group">
-            <label for="{{ form.price.id_for_label }}">Price (€):</label>
+            <label for="{{ form.price.id_for_label }}">Precio (€):</label>
             {{ form.price }}
         </div>
 
         <div class="form-group">
-            <label for="{{ form.description.id_for_label }}">Description:</label>
+            <label for="{{ form.description.id_for_label }}">Descripción:</label>
             {{ form.description }}
         </div>
 
         <div class="form-group">
-            <label for="{{ form.prerequisites.id_for_label }}">Prerequisites:</label>
+            <label for="{{ form.prerequisites.id_for_label }}">Pre-requisitos:</label>
             {{ form.prerequisites }}
         </div>
 
         <div class="checkbox-group">
             <label>
-                {{ form.is_active }} Active Course
+                {{ form.is_active }} Actividad o curso activo
             </label>
         </div>
 
         <div class="checkbox-group">
             <label>
-                {{ form.just_one_dive }} Just One Dive
+                {{ form.just_one_dive }} Solo una inmersión
             </label>
         </div>
 
-        <h3 style="margin-top: 30px; margin-bottom: 15px;">Course Inclusions</h3>
-        <p style="color: #666; margin-bottom: 20px;">Select what is included in the course price by default:</p>
+        <h3 style="margin-top: 30px; margin-bottom: 15px;">Ítems incluidos</h3>
+        <p style="color: #666; margin-bottom: 20px;">Selecciona qué está incluido por defecto:</p>
 
         <div class="checkbox-group">
             <label>
-                {{ form.includes_material }} Material Included
-            </label>
-        </div>
-
-        <div class="checkbox-group">
-            <label>
-                {{ form.includes_instructor }} Instructor Included
+                {{ form.includes_material }} Material Incluido
             </label>
         </div>
 
         <div class="checkbox-group">
             <label>
-                {{ form.includes_insurance }} Insurance Included
+                {{ form.includes_instructor }} Instructor Incluido
+            </label>
+        </div>
+
+        <div class="checkbox-group">
+            <label>
+                {{ form.includes_insurance }} Seguro Incluido
             </label>l>
                <div>
                     {{ form.is_active }}
                </div>
         </div>
 
-        <button type="submit" class="btn">Add Course</button>
-        <a href="{% url 'users:courses_list' %}" class="btn" style="background: #6c757d;">Cancel</a>
+        <button type="submit" class="btn btn-primary">Crear curso</button>
+        <a href="{% url 'users:courses_list' %}" class="btn btn-secondary">Cancelar</a>
     </form>
 </div>
 {% endblock %}

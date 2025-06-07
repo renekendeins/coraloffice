@@ -4,20 +4,20 @@
 {% block users_title %}Complete Lesson - {{ session.title }} - CoralOffice{% endblock %}
 
 {% block users_content %}
-<div class="p-3">
+<div class="p-3 container">
     <h2>Complete Lesson: {{ session.title }}</h2>
-    <h3>Student: {{ session.enrollment.customer.get_full_name }}</h3>
-    <h4>Course: {{ session.enrollment.course.name }}</h4>
+    <h3>Alumno: {{ session.enrollment.customer.get_full_name }}</h3>
+    <h4>Curso: {{ session.enrollment.course.name }}</h4>
 
     <div class="lesson-info">
-        <p><strong>Lesson Number:</strong> {{ session.session_number }}</p>
-        <p><strong>Type:</strong> {{ session.get_session_type_display }}</p>
-        <p><strong>Location:</strong> {{ session.get_location_name }}</p>
-        <p><strong>Date:</strong> {{ session.dive_schedule.date|date:"F d, Y" }}</p>
-        <p><strong>Time:</strong> {{ session.dive_schedule.time|time:"H:i" }}</p>
-        <p><strong>Primary Instructor:</strong> {{ session.instructor.get_full_name|default:"Not assigned" }}</p>
+        <p><strong>Número de sesión:</strong> {{ session.session_number }}</p>
+        <p><strong>Tipo:</strong> {{ session.get_session_type_display }}</p>
+        <p><strong>Ubicación:</strong> {{ session.get_location_name }}</p>
+        <p><strong>Fecha:</strong> {{ session.dive_schedule.date|date:"F d, Y" }}</p>
+        <p><strong>Hora:</strong> {{ session.dive_schedule.time|time:"H:i" }}</p>
+        <p><strong>Instructor principal:</strong> {{ session.instructor.get_full_name|default:"Not assigned" }}</p>
         {% if session.assistant_instructors.exists %}
-            <p><strong>Assistant Instructors:</strong> 
+            <p><strong>Asistentes:</strong> 
                 {% for assistant in session.assistant_instructors.all %}
                     {{ assistant.get_full_name }}{% if not forloop.last %}, {% endif %}
                 {% endfor %}
@@ -29,32 +29,32 @@
         {% csrf_token %}
 
         <div class="form-group">
-            <label for="{{ form.grade.id_for_label }}">Grade/Result:</label>
+            <label for="{{ form.grade.id_for_label }}">Nota final:</label>
             {{ form.grade }}
             {{ form.grade.help_text }}
         </div>
 
         <div class="form-group">
-            <label for="{{ form.instructor_notes.id_for_label }}">Instructor Notes:</label>
+            <label for="{{ form.instructor_notes.id_for_label }}">Notas del instructor:</label>
             {{ form.instructor_notes }}
             {{ form.instructor_notes.help_text }}
         </div>
 
         <div class="form-group">
-            <label for="{{ form.student_feedback.id_for_label }}">Student Feedback:</label>
+            <label for="{{ form.student_feedback.id_for_label }}">Feedback del usuario:</label>
             {{ form.student_feedback }}
             {{ form.student_feedback.help_text }}
         </div>
 
         <div class="form-group">
-            <label for="{{ form.completion_date.id_for_label }}">Completion Date/Time:</label>
+            <label for="{{ form.completion_date.id_for_label }}">Fecha de finalización:</label>
             {{ form.completion_date }}
             {{ form.completion_date.help_text }}
         </div>
 
         <div class="form-actions">
-            <button type="submit" class="btn" style="background-color: #28a745;">Complete Lesson</button>
-            <a href="{% url 'users:enrollment_detail' session.enrollment.id %}" class="btn" style="background: #6c757d;">Cancel</a>
+            <button type="submit" class="btn btn-primary">Finalizar sesión</button>
+            <a href="{% url 'users:enrollment_detail' session.enrollment.id %}" class="btn btn-secondary">Cancelar</a>
         </div>
     </form>
 </div>

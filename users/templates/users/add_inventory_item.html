@@ -4,59 +4,59 @@
 {% block users_title %}Add Inventory Item - CoralOffice{% endblock %}
 
 {% block users_content %}
-<div class="p-3">
-    <h2>Add New Equipment</h2>
+<div class="p-3 container">
+    <h2>Añadir nuevo equípo</h2>
 
     <form method="post">
         {% csrf_token %}
         <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px;">
             <div class="form-group">
-                <label for="{{ form.name.id_for_label }}">Equipment Name:</label>
+                <label for="{{ form.name.id_for_label }}">Nombre del equipo:</label>
                 {{ form.name }}
             </div>
             <div class="form-group">
-                <label for="{{ form.category.id_for_label }}">Category:</label>
+                <label for="{{ form.category.id_for_label }}">Categoría:</label>
                 {{ form.category }}
             </div>
             <div class="form-group">
-                <label for="{{ form.size.id_for_label }}">Size:</label>
+                <label for="{{ form.size.id_for_label }}">Talla:</label>
                 {{ form.size }}
             </div>
         </div>
 
         <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px;">
             <div class="form-group">
-                <label for="{{ form.quantity_total.id_for_label }}">Total Quantity:</label>
+                <label for="{{ form.quantity_total.id_for_label }}">Cantidad total:</label>
                 {{ form.quantity_total }}
             </div>
             <div class="form-group">
-                <label for="{{ form.quantity_available.id_for_label }}">Available Quantity:</label>
+                <label for="{{ form.quantity_available.id_for_label }}">Cantidad disponible:</label>
                 {{ form.quantity_available }}
             </div>
             <div class="form-group">
-                <label for="{{ form.condition.id_for_label }}">Condition:</label>
+                <label for="{{ form.condition.id_for_label }}">Condición:</label>
                 {{ form.condition }}
             </div>
         </div>
 
         <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
             <div class="form-group">
-                <label for="{{ form.purchase_date.id_for_label }}">Purchase Date:</label>
+                <label for="{{ form.purchase_date.id_for_label }}">Fecha de compra:</label>
                 {{ form.purchase_date }}
             </div>
             <div class="form-group">
-                <label for="{{ form.last_maintenance.id_for_label }}">Last Maintenance:</label>
+                <label for="{{ form.last_maintenance.id_for_label }}">Último mantenimiento:</label>
                 {{ form.last_maintenance }}
             </div>
         </div>
 
         <div class="form-group" style="margin-bottom: 20px;">
-            <label for="{{ form.notes.id_for_label }}">Notes:</label>
+            <label for="{{ form.notes.id_for_label }}">Notas:</label>
             {{ form.notes }}
         </div>
 
-        <button type="submit" class="btn">Add Equipment</button>
-        <a href="{% url 'users:inventory_list' %}" class="btn" style="background: #6c757d;">Cancel</a>
+        <button type="submit" class="btn btn-success">Añadir equipo</button>
+        <a href="{% url 'users:inventory_list' %}" class="btn btn-secondary">Cancelar</a>
     </form>
 </div>
 {% endblock %}

@@ -4,18 +4,18 @@
 {% block users_title %}Activity History - {{ customer.first_name }} {{ customer.last_name }}{% endblock %}
 
 {% block users_content %}
-<div class="p-3">
+<div class="p-3 container">
     <div style="margin-bottom: 20px;">
-        <h2>Activity History - {{ customer.first_name }} {{ customer.last_name }}</h2>
+        <h2>Historial de actividades - {{ customer.first_name }} {{ customer.last_name }}</h2>
         <p><strong>Email:</strong> {{ customer.email }}</p>
-        <p><strong>Certification Level:</strong> {{ customer.certification_level|default:"Not specified" }}</p>
+        <p><strong>Nivel de buceo:</strong> {{ customer.certification_level|default:"Not specified" }}</p>
     </div>
 
     <div style="margin-bottom: 20px;">
-        <a href="{% url 'users:customer_list' %}" class="btn" style="background: #6c757d;">Back to Customer List</a>
+        <a href="{% url 'users:customer_list' %}" class="btn" style="background: #6c757d;">Volver</a>
     </div>
 
-    <h3>Activity History ({{ activities.count }} activities)</h3>
+    <h3>Historial de actividades ({{ activities.count }} activities)</h3>
 
     {% if activities %}
         <div class="row">
@@ -25,34 +25,34 @@
                         <div class="card-body">
                             <h5 class="card-title">{{ activity.activity.name }}</h5>
                             <p class="card-text">
-                                <strong>Date:</strong> {{ activity.dive_schedule.date }}<br>
-                                <strong>Time:</strong> {{ activity.dive_schedule.time }}<br>
-                                <strong>Dive Site:</strong> {{ activity.dive_schedule.dive_site }}<br>
-                                <strong>Tank Size:</strong> {{ activity.get_tank_size_display }}
+                                <strong>Fecha:</strong> {{ activity.dive_schedule.date }}<br>
+                                <strong>Hora:</strong> {{ activity.dive_schedule.time }}<br>
+                                <strong>Lugar de buceo:</strong> {{ activity.dive_schedule.dive_site }}<br>
+                                <strong>Botella:</strong> {{ activity.get_tank_size_display }}
                             </p>
 
                             <div style="margin-top: 10px;">
-                                <strong>Equipment Used:</strong><br>
+                                <strong>Equipo usado:</strong><br>
                                 <div style="margin-top: 5px;">
-                                    {% if activity.needs_wetsuit %}<span class="badge" style="background-color: #4CAF50; color: white; padding: 2px 6px; margin: 2px; border-radius: 3px;">Wetsuit</span>{% endif %}
-                                    {% if activity.needs_bcd %}<span class="badge" style="background-color: #4CAF50; color: white; padding: 2px 6px; margin: 2px; border-radius: 3px;">BCD</span>{% endif %}
-                                    {% if activity.needs_regulator %}<span class="badge" style="background-color: #4CAF50; color: white; padding: 2px 6px; margin: 2px; border-radius: 3px;">Regulator</span>{% endif %}
-                                    {% if activity.needs_guide %}<span class="badge" style="background-color: #4CAF50; color: white; padding: 2px 6px; margin: 2px; border-radius: 3px;">Guide</span>{% endif %}
-                                    {% if activity.needs_insurance %}<span class="badge" style="background-color: #4CAF50; color: white; padding: 2px 6px; margin: 2px; border-radius: 3px;">Insurance</span>{% endif %}
+                                    {% if activity.needs_wetsuit %}<span class="badge" style="background-color: #4CAF50; color: white; padding: 2px 6px; margin: 2px; border-radius: 3px;">Traje</span>{% endif %}
+                                    {% if activity.needs_bcd %}<span class="badge" style="background-color: #4CAF50; color: white; padding: 2px 6px; margin: 2px; border-radius: 3px;">Jacket</span>{% endif %}
+                                    {% if activity.needs_regulator %}<span class="badge" style="background-color: #4CAF50; color: white; padding: 2px 6px; margin: 2px; border-radius: 3px;">Regulador</span>{% endif %}
+                                    {% if activity.needs_guide %}<span class="badge" style="background-color: #4CAF50; color: white; padding: 2px 6px; margin: 2px; border-radius: 3px;">Guía</span>{% endif %}
+                                    {% if activity.needs_insurance %}<span class="badge" style="background-color: #4CAF50; color: white; padding: 2px 6px; margin: 2px; border-radius: 3px;">Seguro</span>{% endif %}
                                     {% if not activity.needs_wetsuit and not activity.needs_bcd and not activity.needs_regulator and not activity.needs_guide and not activity.needs_insurance %}
-                                        <span style="color: #666;">None</span>
+                                        <span style="color: #666;">Ninguno</span>
                                     {% endif %}
                                 </div>
                             </div>
 
-                            <small class="text-muted">Registered: {{ activity.created_at|date:"M d, Y H:i" }}</small>
+                            <small class="text-muted">Fecha de registro: {{ activity.created_at|date:"M d, Y H:i" }}</small>
                         </div>
                     </div>
                 </div>
             {% endfor %}
         </div>
     {% else %}
-        <p>No activities found for this customer.</p>
+        <p>Este cliente no tiene actividades.</p>
     {% endif %}
 </div>
 {% endblock %}

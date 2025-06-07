@@ -4,13 +4,13 @@
 {% block users_title %}Course Lesson Calendar - CoralOffice{% endblock %}
 
 {% block users_content %}
-<div class="p-3">
-    <h2>Course Lesson Calendar</h2>
-    <p>Scheduled course lessons from {{ start_date|date:"M d" }} to {{ end_date|date:"M d, Y" }}</p>
+<div class="p-3 container">
+    <h2>Calendario de sesiones</h2>
+    <p>Sesiones programadas para el {{ start_date|date:"M d" }} to {{ end_date|date:"M d, Y" }}</p>
 
     <div style="margin-bottom: 20px;">
-        <a href="{% url 'users:course_enrollments' %}" class="btn">All Enrollments</a>
-        <a href="{% url 'users:calendar_view' %}" class="btn" style="background: #17a2b8;">Dive Calendar</a>
+        <a href="{% url 'users:course_enrollments' %}" class="btn">Todas las inscripciones</a>
+        <a href="{% url 'users:calendar_view' %}" class="btn" style="background: #17a2b8;">Calendario</a>
     </div>
 
     {% if scheduled_sessions %}
@@ -24,17 +24,17 @@
                     {% for session in day.list %}
                         <div class="lesson-card">
                             <div class="lesson-header">
-                                <h4>{{ session.enrollment.course.name }} - Lesson {{ session.session_number }}</h4>
+                                <h4>{{ session.enrollment.course.name }} - Sesión #{{ session.session_number }}</h4>
                                 <span class="time-badge">{{ session.dive_schedule.time|time:"H:i" }}</span>
                             </div>
 
                             <div class="lesson-details">
-                                <p><strong>Student:</strong> {{ session.enrollment.customer.get_full_name }}</p>
-                                <p><strong>Lesson:</strong> {{ session.title }}</p>
-                                <p><strong>Location:</strong> {{ session.get_location_name }}</p>
+                                <p><strong>Alumno:</strong> {{ session.enrollment.customer.get_full_name }}</p>
+                                <p><strong>Sesión:</strong> {{ session.title }}</p>
+                                <p><strong>Ubicación:</strong> {{ session.get_location_name }}</p>
                                 <p><strong>Instructor:</strong> {{ session.instructor.get_full_name|default:"Not assigned" }}</p>
                                 {% if session.assistant_instructors.exists %}
-                                    <p><strong>Assistants:</strong> 
+                                    <p><strong>Asistentes:</strong> 
                                         {% for assistant in session.assistant_instructors.all %}
                                             {{ assistant.get_full_name }}{% if not forloop.last %}, {% endif %}
                                         {% endfor %}
@@ -47,11 +47,11 @@
                             </div>
 
                             <div class="lesson-actions">
-                                <a href="{% url 'users:enrollment_detail' session.enrollment.id %}" class="btn-small">View Course</a>
+                                <a href="{% url 'users:enrollment_detail' session.enrollment.id %}" class="btn-small">Ver curso</a>
                                 {% if session.status == 'SCHEDULED' or session.status == 'IN_PROGRESS' %}
-                                    <a href="{% url 'users:complete_course_session' session.id %}" class="btn-small" style="background: #28a745;">Complete</a>
+                                    <a href="{% url 'users:complete_course_session' session.id %}" class="btn btn-success">Completado</a>
                                 {% endif %}
-                                <a href="{% url 'users:schedule_course_session' session.id %}" class="btn-small" style="background: #ffc107;">Reschedule</a>
+                                <a href="{% url 'users:schedule_course_session' session.id %}" class="btn btn-warning">Re-programar</a>
                             </div>
                         </div>
                     {% endfor %}
@@ -60,8 +60,8 @@
         </div>
     {% else %}
         <div class="no-lessons">
-            <p>No course lessons scheduled for this period.</p>
-            <a href="{% url 'users:course_enrollments' %}" class="btn">View All Enrollments</a>
+            <p>No hay lecciones programadas para este período.</p>
+            <a href="{% url 'users:course_enrollments' %}" class="btn">Ver todas las inscripciones</a>
         </div>
     {% endif %}
 </div>

@@ -1,25 +1,24 @@
-
 {% extends 'users/base.html' %}
 
-{% block users_title %}Staff Planning - {{ tomorrow|date:"F d, Y" }} - CoralOffice{% endblock %}
+{% block users_title %}Planificación de Personal - {{ tomorrow|date:"F d, Y" }} - CoralOffice{% endblock %}
 
 {% block users_content %}
-<div class="p-3">
+<div class="p-3 container">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-        <h2>Staff Planning - {{ tomorrow|date:"F d, Y" }}</h2>
-        <a href="{% url 'users:staff_list' %}" class="btn" style="background: #6c757d;">Back to Staff List</a>
+        <h2>Planificación de Personal - {{ tomorrow|date:"F d, Y" }}</h2>
+        <a href="{% url 'users:staff_list' %}" class="btn" style="background: #6c757d;">Volver a la Lista de Personal</a>
     </div>
 
-    <!-- Tomorrow's Dive Schedule Overview -->
+    <!-- Resumen del Programa de Inmersiones para Mañana -->
     <div class="user-card">
-        <h3>Dive Schedule Overview</h3>
+        <h3>Resumen del Programa de Inmersiones</h3>
         {% if tomorrow_dives %}
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 15px; margin-top: 15px;">
                 {% for dive in tomorrow_dives %}
                 <div style="padding: 15px; border: 1px solid #e0e0e0; border-radius: 8px;">
                     <h4 style="margin: 0 0 10px 0; color: #2196f3;">{{ dive.time|time:"g:i A" }} - {{ dive.dive_site.name }}</h4>
-                    <p style="margin: 0; color: #666;">Max Participants: {{ dive.max_participants }}</p>
-                    <p style="margin: 0; color: #666;">Current: {{ dive.get_participant_count }}/{{ dive.max_participants }}</p>
+                    <p style="margin: 0; color: #666;">Máximo de Participantes: {{ dive.max_participants }}</p>
+                    <p style="margin: 0; color: #666;">Actual: {{ dive.get_participant_count }}/{{ dive.max_participants }}</p>
                     {% if dive.special_notes %}
                         <p style="margin: 10px 0 0 0; font-size: 12px; background: #fff3e0; padding: 8px; border-radius: 4px;">{{ dive.special_notes }}</p>
                     {% endif %}
@@ -27,11 +26,11 @@
                 {% endfor %}
             </div>
         {% else %}
-            <p>No dives scheduled for tomorrow.</p>
+            <p>No hay inmersiones programadas para mañana.</p>
         {% endif %}
     </div>
 
-    <!-- Staff Assignments -->
+    <!-- Asignaciones de Personal -->
     {% if staff_assignments %}
         {% for assignment in staff_assignments %}
         <div class="user-card">
@@ -43,7 +42,7 @@
                 {% endif %}
                 <div>
                     <h3 style="margin: 0;">{{ assignment.staff.get_full_name }}</h3>
-                    <p style="margin: 0; color: #666;">{{ assignment.staff.get_certification_level_display }} | {{ assignment.activities|length }} activities</p>
+                    <p style="margin: 0; color: #666;">{{ assignment.staff.get_certification_level_display }} | {{ assignment.activities|length }} actividades</p>
                 </div>
             </div>
 
@@ -57,15 +56,15 @@
                             <p style="margin: 5px 0;"><strong>Actividad:</strong> {{ activity }}</p>
                             <p style="margin: 5px 0;"><strong>Lugar:</strong> {{ activity.dive_schedule.dive_site.name }}</p>
                             <p style="margin: 5px 0; font-size: 12px; color: #666;">
-                                Tank: {{ activity.tank_size }} | 
-                                {% if activity.needs_guide %}Guide needed | {% endif %}
-                                {% if activity.needs_wetsuit %}Wetsuit | {% endif %}
+                                Tanque: {{ activity.tank_size }} | 
+                                {% if activity.needs_guide %}Guía necesario | {% endif %}
+                                {% if activity.needs_wetsuit %}Traje de neopreno | {% endif %}
                                 {% if activity.needs_bcd %}BCD | {% endif %}
-                                {% if activity.needs_regulator %}Regulator{% endif %}
+                                {% if activity.needs_regulator %}Regulador{% endif %}
                             </p>
                             {% if activity.assigned_staff %}
                                 <p style="margin: 5px 0; font-size: 12px; color: #2e7d32;">
-                                    <strong>Assigned to:</strong> {{ activity.assigned_staff.get_full_name }}
+                                    <strong>Asignado a:</strong> {{ activity.assigned_staff.get_full_name }}
                                 </p>
                             {% endif %}
                         </div>
@@ -83,11 +82,11 @@
         {% endfor %}
     {% endif %}
 
-    <!-- Unassigned Activities -->
+    <!-- Actividades Sin Asignar -->
     {% if unassigned_activities %}
     <div class="user-card" style="border-left: 5px solid #ff9800;">
-        <h3 style="color: #ff9800;">⚠️ Unassigned Activities</h3>
-        <p>The following activities do not have an assigned instructor/guide:</p>
+        <h3 style="color: #ff9800;">⚠️ Actividades Sin Asignar</h3>
+        <p>Las siguientes actividades no tienen un instructor/guía asignado:</p>
 
         <div style="margin-top: 15px;">
             {% for activity in unassigned_activities %}
@@ -100,7 +99,7 @@
 
                         <p style="margin: 5px 0;"><strong>Lugar:</strong> {{ activity.dive_schedule.dive_site.name }}</p>
                         {% if activity.needs_guide %}
-                            <p style="margin: 5px 0; color: #d84315;"><strong>⚠️ Guide service requested</strong></p>
+                            <p style="margin: 5px 0; color: #d84315;"><strong>⚠️ Se solicita servicio de guía</strong></p>
                         {% endif %}
                     </div>
                     <div style="display: flex; gap: 10px; align-items: center;">
@@ -109,14 +108,14 @@
                             <input type="hidden" name="assign_staff_to_activity" value="1">
                             <input type="hidden" name="activity_id" value="{{ activity.id }}">
                             <select name="staff_id" style="padding: 4px 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px;">
-                                <option value="">Select Staff</option>
+                                <option value="">Seleccionar Personal</option>
                                 {% for staff in all_staff %}
                                     <option value="{{ staff.id }}">{{ staff.get_full_name }}</option>
                                 {% endfor %}
                             </select>
-                            <button type="submit" class="btn" style="background: #28a745; font-size: 12px; padding: 4px 8px;">Assign</button>
+                            <button type="submit" class="btn" style="background: #28a745; font-size: 12px; padding: 4px 8px;">Asignar</button>
                         </form>
-                        <a href="{% url 'users:manage_dive_participants' activity.dive_schedule.id %}" class="btn" style="background: #ff9800; font-size: 12px;">Manage</a>
+                        <a href="{% url 'users:manage_dive_participants' activity.dive_schedule.id %}" class="btn" style="background: #ff9800; font-size: 12px;">Gestionar</a>
                     </div>
                 </div>
             </div>
@@ -125,9 +124,9 @@
     </div>
     {% endif %}
 
-    <!-- Available Staff -->
+    <!-- Personal Disponible -->
     <div class="user-card">
-        <h3>Available Staff Members</h3>
+        <h3>Miembros del Personal Disponibles</h3>
         {% if all_staff %}
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
                 {% for staff in all_staff %}
@@ -144,15 +143,15 @@
                 {% endfor %}
             </div>
         {% else %}
-            <p>No active staff members available.</p>
+            <p>No hay miembros del personal activos disponibles.</p>
         {% endif %}
     </div>
 
     {% if not tomorrow_dives %}
     <div style="text-align: center; padding: 40px; color: #666;">
-        <h3>No dives scheduled for tomorrow</h3>
-        <p>There are currently no dive schedules planned for {{ tomorrow|date:"F d, Y" }}.</p>
-        <a href="{% url 'users:quick_schedule_dive' %}" class="btn">Schedule a Dive</a>
+        <h3>No hay inmersiones programadas para mañana</h3>
+        <p>Actualmente no hay programas de inmersión planeados para {{ tomorrow|date:"F d, Y" }}.</p>
+        <a href="{% url 'users:quick_schedule_dive' %}" class="btn">Programar una Inmersión</a>
     </div>
     {% endif %}
 </div>

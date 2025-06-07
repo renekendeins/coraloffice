@@ -3,7 +3,7 @@
 {% block users_title %}Profile - CoralOffice{% endblock %}
 
 {% block users_content %}
-<div class="p-3">
+<div class="p-3 container">
     <h2>Bienvenido, {{ user.get_full_name|default:user.username }}!</h2>
     <div class="user-card">
         <h3>Tu información</h3>
@@ -27,15 +27,15 @@
         <p><strong>Miembro desde:</strong> {{ user.userprofile.created_at|date:"F d, Y" }}</p>
     </div>
 
-    <div style="margin-top: 20px;">
-        <a href="{% url 'users:update_profile' %}" class="btn btn-secondary">Actualizar perfil</a>
+    <div class="d-flex flex-column d-md-inline-block mt-3">
+        <a href="{% url 'users:update_profile' %}" class="mb-2 btn btn-secondary">Actualizar perfil</a>
 
         {% if user.userprofile.is_diving_center %}
-            <a href="{% url 'users:diving_center_dashboard' %}" class="btn btn-primary">Dashboard</a>
-            <a href="{% url 'users:customer_list' %}" class="btn btn-success">Gestionar Clientes</a>
-            <a href="{% url 'users:dive_calendar' %}" class="btn btn-warning">Calendario</a>
-            <a href="{% url 'users:courses_list' %}" class="btn btn-info text-white" >Cursos</a>
-            <a href="{% url 'users:course_enrollments' %}" class="btn text-white" style="background: #e83e8c;">Matriculaciones</a>
+            <a href="{% url 'users:diving_center_dashboard' %}" class="mb-2 btn btn-primary">Dashboard</a>
+            <a href="{% url 'users:customer_list' %}" class="mb-2 btn btn-success">Gestionar Clientes</a>
+            <a href="{% url 'users:dive_calendar' %}" class="mb-2 btn btn-warning">Calendario</a>
+            <a href="{% url 'users:courses_list' %}" class="mb-2 btn btn-info text-white" >Cursos</a>
+            <a href="{% url 'users:course_enrollments' %}" class="mb-2 btn text-white" style="background: #e83e8c;">Matriculaciones</a>
         {% endif %}
 
     </div>

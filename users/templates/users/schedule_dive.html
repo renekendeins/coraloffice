@@ -4,8 +4,8 @@
 {% block users_title %}Schedule Dive - CoralOffice{% endblock %}
 
 {% block users_content %}
-<div class="p-3">
-    <h2>Schedule New Dive</h2>
+<div class="p-3 container">
+    <h2>Programar Nueva Inmersión</h2>
     <form method="post">
         {% csrf_token %}
         {% for field in form %}
@@ -20,8 +20,9 @@
                 {% endfor %}
             </div>
         {% endfor %}
-        <button type="submit" class="btn btn-success">Schedule Dive</button>
-        <a href="{% url 'users:dive_calendar' %}" class="btn btn-secondary">Cancel</a>
+        <button type="submit" class="btn btn-success">Programar Inmersión</button>
+        <a href="{% url 'users:dive_calendar' %}" class="btn btn-secondary">Cancelar</a>
     </form>
 </div>
+
 {% endblock %}

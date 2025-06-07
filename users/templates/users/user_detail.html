@@ -4,20 +4,23 @@
 {% block users_title %}{{ profile_user.get_full_name|default:profile_user.username }} - CoralOffice{% endblock %}
 
 {% block users_content %}
-<h2>{{ profile_user.get_full_name|default:profile_user.username }}'s Profile</h2>
-<div class="user-card">
-    <h3>{{ profile_user.get_full_name|default:profile_user.username }}</h3>
-    <p><strong>Username:</strong> {{ profile_user.username }}</p>
-    {% if profile_user.userprofile.bio %}
-        <p><strong>Bio:</strong> {{ profile_user.userprofile.bio }}</p>
-    {% endif %}
-    {% if profile_user.userprofile.location %}
-        <p><strong>Location:</strong> {{ profile_user.userprofile.location }}</p>
-    {% endif %}
-    {% if profile_user.userprofile.birth_date %}
-        <p><strong>Birth Date:</strong> {{ profile_user.userprofile.birth_date }}</p>
-    {% endif %}
-    <p><strong>Member since:</strong> {{ profile_user.userprofile.created_at|date:"F d, Y" }}</p>
+<div class="p-3 container">
+    <h2>Perfil de {{ profile_user.get_full_name|default:profile_user.username }}</h2>
+    <div class="user-card">
+        <h3>{{ profile_user.get_full_name|default:profile_user.username }}</h3>
+        <p><strong>Nombre de usuario:</strong> {{ profile_user.username }}</p>
+        {% if profile_user.userprofile.bio %}
+            <p><strong>Biografía:</strong> {{ profile_user.userprofile.bio }}</p>
+        {% endif %}
+        {% if profile_user.userprofile.location %}
+            <p><strong>Ubicación:</strong> {{ profile_user.userprofile.location }}</p>
+        {% endif %}
+        {% if profile_user.userprofile.birth_date %}
+            <p><strong>Fecha de nacimiento:</strong> {{ profile_user.userprofile.birth_date }}</p>
+        {% endif %}
+        <p><strong>Miembro desde:</strong> {{ profile_user.userprofile.created_at|date:"d \d\e F \d\e Y" }}</p>
+    </div>
+    <a href="{% url 'users:user_list' %}" class="btn" style="background: #6c757d;">Volver a Usuarios</a>
+
 </div>
-<a href="{% url 'users:user_list' %}" class="btn" style="background: #6c757d;">Back to Users</a>
 {% endblock %}

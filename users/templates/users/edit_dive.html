@@ -4,43 +4,45 @@
 {% block users_title %}Edit Dive - {{ dive.dive_site }}{% endblock %}
 
 {% block users_content %}
-<h2>Edit Dive: {{ dive.dive_site }}</h2>
+<div class="p-3">
+    <h2>Edit Dive: {{ dive.dive_site }}</h2>
 
-<form method="post">
-    {% csrf_token %}
-    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
-        <div class="form-group">
-            <label for="{{ form.date.id_for_label }}">Date:</label>
-            {{ form.date }}
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+            <div class="form-group">
+                <label for="{{ form.date.id_for_label }}">Date:</label>
+                {{ form.date }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.time.id_for_label }}">Time:</label>
+                {{ form.time }}
+            </div>
         </div>
-        <div class="form-group">
-            <label for="{{ form.time.id_for_label }}">Time:</label>
-            {{ form.time }}
+
+        <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+            <div class="form-group">
+                <label for="{{ form.dive_site.id_for_label }}">Dive Site:</label>
+                {{ form.dive_site }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.max_participants.id_for_label }}">Max Participants:</label>
+                {{ form.max_participants }}
+            </div>
         </div>
-    </div>
-    
-    <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
-        <div class="form-group">
-            <label for="{{ form.dive_site.id_for_label }}">Dive Site:</label>
-            {{ form.dive_site }}
+
+        <div class="form-group" style="margin-bottom: 20px;">
+            <label for="{{ form.description.id_for_label }}">Description:</label>
+            {{ form.description }}
         </div>
-        <div class="form-group">
-            <label for="{{ form.max_participants.id_for_label }}">Max Participants:</label>
-            {{ form.max_participants }}
+
+        <div class="form-group" style="margin-bottom: 20px;">
+            <label for="{{ form.special_notes.id_for_label }}">Special Notes:</label>
+            {{ form.special_notes }}
         </div>
-    </div>
-    
-    <div class="form-group" style="margin-bottom: 20px;">
-        <label for="{{ form.description.id_for_label }}">Description:</label>
-        {{ form.description }}
-    </div>
-    
-    <div class="form-group" style="margin-bottom: 20px;">
-        <label for="{{ form.special_notes.id_for_label }}">Special Notes:</label>
-        {{ form.special_notes }}
-    </div>
-    
-    <button type="submit" class="btn">Update Dive</button>
-    <a href="{% url 'users:dive_detail' dive.id %}" class="btn" style="background: #6c757d;">Cancel</a>
-</form>
+
+        <button type="submit" class="btn btn-primary">Update Dive</button>
+        <a href="{% url 'users:dive_detail' dive.id %}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
 {% endblock %}

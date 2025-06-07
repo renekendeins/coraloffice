@@ -51,6 +51,26 @@ class CustomerForm(forms.ModelForm):
             'diving_insurance',
             'medical_check',
         )
+        labels = {
+            'first_name': 'Nombre',
+            'last_name': 'Apellido',
+            'email': 'Correo electrónico',
+            'phone_number': 'Número de teléfono',
+            'country': 'País',
+            'language': 'Idioma',
+            'birthday': 'Fecha de nacimiento',
+            'certification_level': 'Nivel de certificación',
+            'emergency_contact': 'Contacto de emergencia',
+            'medical_conditions': 'Condiciones médicas',
+            'weight': 'Peso (kg)',
+            'height': 'Altura (cm)',
+            'foot_size': 'Talla de pie (EU)',
+            'default_tank_size': 'Tamaño de botella por defecto',
+            'profile_picture': 'Foto de perfil',
+            'diving_licence': 'Licencia de buceo',
+            'diving_insurance': 'Seguro de buceo',
+            'medical_check': 'Revisión médica',
+        }
         widgets = {
             'first_name': forms.TextInput(attrs={'class': 'form-control'}),
             'last_name': forms.TextInput(attrs={'class': 'form-control'}),
@@ -71,6 +91,7 @@ class CustomerForm(forms.ModelForm):
             'diving_insurance': forms.FileInput(attrs={'accept': '.pdf,.jpg,.jpeg,.png', 'class': 'form-control'}),
             'medical_check': forms.FileInput(attrs={'accept': '.pdf,.jpg,.jpeg,.png', 'class': 'form-control'}),
         }
+
 
 class DiveActivityForm(forms.ModelForm):
     class Meta:

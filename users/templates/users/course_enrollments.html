@@ -4,7 +4,7 @@
 {% block users_title %}Course Enrollments - CoralOffice{% endblock %}
 
 {% block users_content %}
-<div class="p-3">
+<div class="p-3 container">
     <h2>Inscripciones</h2>
 
     <div style="margin-bottom: 20px;">
@@ -87,7 +87,7 @@
             {% endfor %}
         </div>
     {% else %}
-        <p>No enrollments found. <a href="{% url 'users:enroll_customer_general' %}">Inscribe un usuario</a> para empezar.</p>
+        <p>No se han encontrado inscripciones. <a href="{% url 'users:enroll_customer_general' %}">Inscribe un usuario</a> para empezar.</p>
     {% endif %}
 
     <style>
