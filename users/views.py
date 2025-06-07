@@ -4,11 +4,13 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.db import transaction
-from django.http import JsonResponse, HttpResponseRedirect
-from django.urls import reverse_lazy
+from django.http import JsonResponse, HttpResponseRedirect, HttpResponse
+from django.urls import reverse_lazy, reverse
 from django.views.decorators.csrf import csrf_exempt
 from datetime import datetime, timedelta
 import calendar
+import qrcode
+import io
 from .forms import SignUpForm, UserForm, UserProfileForm, CustomerForm, DiveScheduleForm, DiveActivityForm, CustomerDiveActivityForm, DivingSiteForm, InventoryItemForm, DivingGroupForm, MedicalForm, QuickCustomerForm, StaffForm, CourseForm, CourseEnrollmentForm, CourseSessionScheduleForm, LessonCompletionForm
 from .models import UserProfile, Customer, DiveSchedule, DiveActivity, CustomerDiveActivity, DivingSite, InventoryItem, DivingGroup, DivingGroupMember, Staff, Course, CourseEnrollment, CourseSession
 from .utils import send_dive_reminder_email, send_welcome_email
@@ -1183,13 +1185,21 @@ def medical_forms_list(request):
 
 
 # Medical Form (accessible without login)
-def medical_form(request):
+def medical_form(request, dive_center_uuid=None):
+    diving_center = None
+    if dive_center_uuid:
+        try:
+            diving_center = User.objects.get(userprofile__uuid=dive_center_uuid, userprofile__is_diving_center=True)
+        except User.DoesNotExist:
+            messages.error(request, 'Invalid diving center link.')
+            return redirect('home:index')
+    else:
+        # Fallback to first diving center for backward compatibility
+        diving_center = User.objects.filter(userprofile__is_diving_center=True).first()
+    
     if request.method == 'POST':
         form = MedicalForm(request.POST)
         if form.is_valid():
-            # Create customer but assign to first diving center found
-            # In a real app, you'd want to handle this differently
-            diving_center = User.objects.filter(userprofile__is_diving_center=True).first()
             if diving_center:
                 customer = form.save(commit=False)
                 customer.diving_center = diving_center
@@ -1229,7 +1239,12 @@ def medical_form(request):
     else:
         form = MedicalForm()
 
-    return render(request, 'users/medical_form.html', {'form': form})
+    context = {
+        'form': form,
+        'diving_center': diving_center,
+        'dive_center_uuid': dive_center_uuid
+    }
+    return render(request, 'users/medical_form.html', context)
 
 
 @login_required
@@ -2162,3 +2177,55 @@ def download_medical_form_pdf(request, customer_id):
         # Fallback if reportlab is not installed
         messages.error(request, 'PDF generation library not available. Please contact administrator.')
         return redirect('users:customer_medical_detail', customer_id=customer.id)
+
+
+@login_required
+def generate_qr_code(request, dive_center_uuid=None):
+    if not request.user.userprofile.is_diving_center:
+        messages.error(request, 'Access denied.')
+        return redirect('users:profile')
+
+    # Use the current user's UUID if not specified
+    if not dive_center_uuid:
+        dive_center_uuid = request.user.userprofile.uuid
+
+    # Generate the full URL for the medical form
+    medical_form_url = request.build_absolute_uri(
+        reverse('users:medical_form_with_uuid', kwargs={'dive_center_uuid': dive_center_uuid})
+    )
+
+    # Create QR code
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(medical_form_url)
+    qr.make(fit=True)
+
+    # Create QR code image
+    qr_img = qr.make_image(fill_color="black", back_color="white")
+    
+    # Save to BytesIO
+    buffer = io.BytesIO()
+    qr_img.save(buffer, format='PNG')
+    buffer.seek(0)
+
+    # Return as downloadable file
+    response = HttpResponse(buffer.getvalue(), content_type='image/png')
+    response['Content-Disposition'] = f'attachment; filename="medical_form_qr_{request.user.userprofile.business_name or request.user.username}.png"'
+    
+    return response
+
+
+@login_required
+def get_medical_form_url(request):
+    if not request.user.userprofile.is_diving_center:
+        return JsonResponse({'error': 'Access denied'}, status=403)
+
+    medical_form_url = request.build_absolute_uri(
+        reverse('users:medical_form_with_uuid', kwargs={'dive_center_uuid': request.user.userprofile.uuid})
+    )
+    
+    return JsonResponse({'url': medical_form_url})

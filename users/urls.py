@@ -54,7 +54,11 @@ urlpatterns = [
 
     # Medical Form (public access)
     path('medical-form/', views.medical_form, name='medical_form'),
+    path('medical-form/<uuid:dive_center_uuid>/', views.medical_form, name='medical_form_with_uuid'),
     path('medical-forms/', views.medical_forms_list, name='medical_forms_list'),
+    path('qr-code/', views.generate_qr_code, name='generate_qr_code'),
+    path('qr-code/<uuid:dive_center_uuid>/', views.generate_qr_code, name='generate_qr_code_with_uuid'),
+    path('get-medical-form-url/', views.get_medical_form_url, name='get_medical_form_url'),
     path('quick-edit-customer/<int:customer_id>/', views.quick_edit_customer, name='quick_edit_customer'),
     path('dive/<int:dive_id>/print/', views.print_participants, name='print_participants'),
 

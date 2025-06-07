@@ -1,8 +1,16 @@
 {% extends 'users/base.html' %}
 
-{% block users_title %}Medical Questionnaire - CoralOffice{% endblock %}
+{% block users_title %}Formulario Médico{% endblock %}
 
 {% block users_content %}
+<div class="container mt-4">
+    <div class="text-center mb-4">
+        <h2>Formulario Médico para Buceo</h2>
+        {% if diving_center %}
+            <p class="text-muted">Centro de buceo: <strong>{{ diving_center.userprofile.business_name|default:diving_center.get_full_name }}</strong></p>
+        {% endif %}
+    </div>
+
 <div class="container-fluid" style="max-width: 800px; margin: 0 auto; padding: 15px;">
     <div class="text-center mb-4">
         <h2 class="mb-3" id="form-title">Diving Medical Questionnaire</h2>
@@ -587,8 +595,7 @@ const translations = {
         'question-1-4': 'Recurrent bronchitis and persistent cough in the last 12 months or I have been diagnosed with emphysema.',
         'question-2': 'I am over 45 years old. *',
         'question-2-1': 'Currently smoke or inhale nicotine by other means.',
-        'question-2-2': 'I have a high cholesterol level.',
-        'question-2-3': 'I have high blood pressure.',
+        'question-2-2': 'I have a high cholesterol level.',        'question-2-3': 'I have high blood pressure.',
         'question-2-4': 'I have had a family member (1st or 2nd degree relative) who died of sudden death or heart disease or stroke before age 50 or I have a family history of heart disease before age 50 (including abnormal heart rhythms, coronary artery disease, or cardiomyopathy).',
         'question-3': 'I find it difficult to perform moderate exercise (e.g., walk 1.6 kilometers/one mile in 12 minutes or swim 200 meters/yards without resting), or I have not been able to participate in normal physical activity due to fitness or health reasons in the last 12 months. *',
         'question-4': 'I have had problems with my eyes, ears, or sinuses/nasal passages. *',

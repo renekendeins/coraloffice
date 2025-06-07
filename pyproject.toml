@@ -8,6 +8,7 @@ Django = "^5.0"
 python = "^3.10"
 pillow = "^11.2.1"
 reportlab = "^4.4.1"
+qrcode = {extras = ["pil"], version = "^8.2"}
 [tool.poetry.dev-dependencies]
 
 [tool.pyright]
