@@ -5,10 +5,38 @@
 
 {% block users_content %}
 <div class="p-3 container">
-    <h2>Formularios Médicos Enviados</h2>
-    <p>Revisa y gestiona los formularios médicos enviados por los clientes.</p>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2>Formularios Médicos Enviados</h2>
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <span style="color: #666; font-size: 14px;">Total: {{ total_forms }} forms</span>
+        </div>
+    </div>
+    
+    <!-- Search Form -->
+    <div style="margin-bottom: 20px;">
+        <form method="get" style="display: flex; gap: 10px; align-items: center;">
+            <input type="text" name="search" value="{{ search_query }}" 
+                   placeholder="Search by name, email, or phone..." 
+                   style="flex: 1; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px;">
+            <button type="submit" class="btn" style="background: #007bff; color: white; padding: 8px 16px;">Search</button>
+            {% if search_query %}
+                <a href="{% url 'users:medical_forms_list' %}" class="btn" style="background: #6c757d; color: white; padding: 8px 16px;">Clear</a>
+            {% endif %}
+        </form>
+    </div>
+
+    {% if search_query %}
+        <p style="color: #666; margin-bottom: 15px;">
+            Showing results for "{{ search_query }}" - {{ medical_forms.paginator.count }} forms found
+        </p>
+    {% endif %}
 
     {% if medical_forms %}
+        <!-- Pagination Info -->
+        <div style="margin-bottom: 15px; color: #666; font-size: 14px;">
+            Showing {{ medical_forms.start_index }} - {{ medical_forms.end_index }} of {{ medical_forms.paginator.count }} forms
+        </div>
+
         <div style="margin-top: 20px;">
             {% for customer in medical_forms %}
             <div style="border: 1px solid #ddd; padding: 20px; margin-bottom: 15px; border-radius: 8px; background: white;">
@@ -404,13 +432,36 @@
             </div>
             {% endfor %}
         </div>
+    <!-- Pagination -->
+        {% if medical_forms.has_other_pages %}
+        <div style="display: flex; justify-content: center; align-items: center; margin: 30px 0; gap: 10px;">
+            {% if medical_forms.has_previous %}
+                <a href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}" class="btn" style="background: #6c757d; color: white; padding: 8px 12px;">First</a>
+                <a href="?page={{ medical_forms.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}" class="btn" style="background: #007bff; color: white; padding: 8px 12px;">Previous</a>
+            {% endif %}
+
+            <span style="margin: 0 15px; color: #666;">
+                Page {{ medical_forms.number }} of {{ medical_forms.paginator.num_pages }}
+            </span>
+
+            {% if medical_forms.has_next %}
+                <a href="?page={{ medical_forms.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}" class="btn" style="background: #007bff; color: white; padding: 8px 12px;">Next</a>
+                <a href="?page={{ medical_forms.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}" class="btn" style="background: #6c757d; color: white; padding: 8px 12px;">Last</a>
+            {% endif %}
+        </div>
+        {% endif %}
     {% else %}
         <div style="text-align: center; padding: 40px; color: #666;">
-            <p>No medical forms have been submitted yet.</p>
-            <p>Share the medical form link with customers:</p>
-            <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin-top: 10px;">
-                <code>{{ request.build_absolute_uri }}{% url 'users:medical_form' %}</code>
-            </div>
+            {% if search_query %}
+                <p>No medical forms found matching "{{ search_query }}".</p>
+                <a href="{% url 'users:medical_forms_list' %}" class="btn" style="background: #007bff; color: white;">Show All Forms</a>
+            {% else %}
+                <p>No medical forms have been submitted yet.</p>
+                <p>Share the medical form link with customers:</p>
+                <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin-top: 10px;">
+                    <code>{{ request.build_absolute_uri }}{% url 'users:medical_form' %}</code>
+                </div>
+            {% endif %}
         </div>
     {% endif %}
 

@@ -1156,7 +1156,29 @@ def medical_forms_list(request):
         return redirect('users:profile')
 
     medical_forms = Customer.objects.filter(diving_center=request.user).order_by('-created_at')
-    return render(request, 'users/medical_forms_list.html', {'medical_forms': medical_forms})
+
+    # Handle search
+    search_query = request.GET.get('search', '').strip()
+    if search_query:
+        from django.db.models import Q
+        medical_forms = medical_forms.filter(
+            Q(first_name__icontains=search_query) |
+            Q(last_name__icontains=search_query) |
+            Q(email__icontains=search_query) |
+            Q(phone_number__icontains=search_query)
+        )
+
+    # Add pagination
+    from django.core.paginator import Paginator
+    paginator = Paginator(medical_forms, 10)  # Show 10 forms per page
+    page_number = request.GET.get('page')
+    medical_forms_page = paginator.get_page(page_number)
+
+    return render(request, 'users/medical_forms_list.html', {
+        'medical_forms': medical_forms_page,
+        'search_query': search_query,
+        'total_forms': medical_forms.count()
+    })
 
 
 # Medical Form (accessible without login)
