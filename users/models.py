@@ -201,7 +201,6 @@ class Customer(models.Model):
         }
         return swimming_choices.get(self.swimming_ability, self.swimming_ability)
         
-
 class DiveActivity(models.Model):
     diving_center = models.ForeignKey(User, on_delete=models.CASCADE, related_name='dive_activities')
     name = models.CharField(max_length=100)

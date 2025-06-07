@@ -6,7 +6,6 @@
 <div class="p-3 container">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
         <h2>Planificación de Personal - {{ tomorrow|date:"F d, Y" }}</h2>
-        <a href="{% url 'users:staff_list' %}" class="btn" style="background: #6c757d;">Volver a la Lista de Personal</a>
     </div>
 
     <!-- Resumen del Programa de Inmersiones para Mañana -->
@@ -150,8 +149,8 @@
     {% if not tomorrow_dives %}
     <div style="text-align: center; padding: 40px; color: #666;">
         <h3>No hay inmersiones programadas para mañana</h3>
-        <p>Actualmente no hay programas de inmersión planeados para {{ tomorrow|date:"F d, Y" }}.</p>
-        <a href="{% url 'users:quick_schedule_dive' %}" class="btn">Programar una Inmersión</a>
+        <p>Actualmente no hay salidas planificadas para {{ tomorrow|date:"F d, Y" }}.</p>
+        <a href="{% url 'users:quick_schedule_dive' %}" class="btn btn-primary">Programar una Inmersión</a>
     </div>
     {% endif %}
 </div>
