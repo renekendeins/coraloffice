@@ -979,7 +979,7 @@ def manage_group_members(request, group_id):
         return redirect('users:profile')
 
     group = get_object_or_404(DivingGroup, id=group_id, diving_center=request.user)
-    members = DivingGroupMember.objects.filter(group=group)
+    members = DivingGroupMember.objects.filter(group=group).order_by('-is_leader', 'customer__first_name', 'customer__last_name')
     courses = Course.objects.all().order_by('-just_one_dive', 'name')
     available_customers = Customer.objects.filter(diving_center=request.user).exclude(
         id__in=members.values_list('customer_id', flat=True)

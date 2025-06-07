@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}CoralOffice - Diving Center Management{% endblock %}</title>
+    <title>{% block title %}CoralOffice - Gestor de centros de buceo{% endblock %}</title>
     
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
@@ -208,10 +208,10 @@
                 <li><a href="{% url 'users:courses_list' %}">Cursos</a></li>
 <li><a href="{% url 'users:staff_planning' %}">Planning</a></li>
                 {% else %}
-                    <li><a href="{% url 'home:home' %}">Home</a></li>
-                    <li><a href="{% url 'home:services' %}">Services</a></li>
-                    <li><a href="{% url 'home:about' %}">About</a></li>
-                    <li><a href="{% url 'home:contact' %}">Contact</a></li>
+                    <li><a href="{% url 'home:home' %}">Inicio</a></li>
+                    <li><a href="{% url 'home:services' %}">Servicios</a></li>
+                    <li><a href="{% url 'home:about' %}">Sobre nosotros</a></li>
+                    <li><a href="{% url 'home:contact' %}">Contacto</a></li>
                 {% endif %}
             </ul>
             <div class="user-menu ms-3">
@@ -220,9 +220,9 @@
                     {% if user.userprofile.is_diving_center %}
                         <a href="{% url 'users:diving_center_dashboard' %}">Dashboard</a>
                     {% endif %}
-                    <a href="{% url 'users:logout' %}">Logout</a>
+                    <a href="{% url 'users:logout' %}">Salir</a>
                 {% else %}
-                    <a href="{% url 'users:login' %}">Login</a>
+                    <a href="{% url 'users:login' %}">Acceder</a>
                 {% endif %}
             </div>
             <button class="mobile-menu-toggle" id="mobileMenuToggle">
@@ -240,10 +240,10 @@
                     <a href="{% url 'users:customer_list' %}">Clientes</a>
                     <a href="{% url 'users:calendar_view' %}">Calendario</a>
                 {% else %}
-                    <a href="{% url 'home:home' %}">Home</a>
-                    <a href="{% url 'home:services' %}">Services</a>
-                    <a href="{% url 'home:about' %}">About</a>
-                    <a href="{% url 'home:contact' %}">Contact</a>
+                    <a href="{% url 'home:home' %}">Inicio</a>
+                    <a href="{% url 'home:services' %}">Servicios</a>
+                    <a href="{% url 'home:about' %}">Sobrre nosotros</a>
+                    <a href="{% url 'home:contact' %}">Contacto</a>
                 {% endif %}
                 <div style="border-top: 1px solid rgba(255,255,255,0.3); margin: 20px 0; width: 200px;"></div>
                 {% if user.is_authenticated %}
@@ -295,15 +295,15 @@
         <div class="footer-content">
             <div class="footer-section">
                 <h3>CoralOffice</h3>
-                <p>Professional diving center management software designed for dive operators, instructors, and marine tourism businesses.</p>
-                <p>Making underwater adventures safer and more organized.</p>
+                <p>Aplicación gratuita de gestión de centros de buceo.</p>
+                <p>Haciendo que las aventuras subacuáticas sean más organizadas</p>
             </div>
             <div class="footer-section">
-                <h3>Quick Links</h3>
-                <p><a href="{% url 'home:services' %}">Our Services</a></p>
-                <p><a href="{% url 'home:about' %}">About Us</a></p>
-                <p><a href="{% url 'home:contact' %}">Contact Support</a></p>
-                <p><a href="{% url 'users:medical_form' %}">Medical Form</a></p>
+                <h3>Enlaces</h3>
+                <p><a href="{% url 'home:services' %}">Nustros servicios</a></p>
+                <p><a href="{% url 'home:about' %}">Sobre nosotros</a></p>
+                <p><a href="{% url 'home:contact' %}">Soporte</a></p>
+                <p><a href="{% url 'users:medical_form' %}">Formulario médico</a></p>
             </div>
             <div class="footer-section">
                 <h3>Legal</h3>
@@ -313,23 +313,20 @@
                 <p><a href="{% url 'home:cookies_settings' %}">Configurar Cookies</a></p>
             </div>
             <div class="footer-section">
-                <h3>Services</h3>
-                <p>Course Management</p>
-                <p>Equipment Tracking</p>
-                <p>Trip Planning</p>
-                <p>Customer Database</p>
-                <p>Safety Protocols</p>
+                <h3>Servicios</h3>
+                <p>Gestión de cursos</p>
+                <p>Inventario</p>
+                <p>Planificador de horarios</p>
+                <p>Base de datos de clientes</p>
             </div>
             <div class="footer-section">
-                <h3>Contact Info</h3>
+                <h3>Contacto</h3>
                 <p>📧 info@coraloffice.com</p>
-                <p>📞 +1 (555) CORAL-00</p>
-                <p>🏢 123 Ocean Drive<br>Coral Bay, Marine Islands</p>
-                <p>🕒 24/7 Support Available</p>
+                <p>📞 +34 671 91 55 04</p>
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2024 CoralOffice. All rights reserved. | Dive safe, manage smart.</p>
+            <p>&copy; 2025 CoralOffice. All rights reserved. | Dive safe, manage smart.</p>
         </div>
     </footer>
 <script>

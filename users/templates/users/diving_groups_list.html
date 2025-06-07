@@ -6,7 +6,7 @@
 {% block users_content %}
 <div class="p-3">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px;">
-        <h2>Diving Groups Management</h2>
+        <h2>Gestor de grupos de buceo</h2>
         
     </div>
 
@@ -21,12 +21,12 @@
             <div>
                 <label for="search" style="display: block; margin-bottom: 5px; font-weight: bold;">Buscar:</label>
                 <input type="text" id="search" name="search" value="{{ request.GET.search }}" 
-                       placeholder="Group name, contact person..." 
+                       placeholder="Nombre del grupo, persona de contacto..." 
                        style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
             </div>
             
             <div>
-                <label for="country" style="display: block; margin-bottom: 5px; font-weight: bold;">Country:</label>
+                <label for="country" style="display: block; margin-bottom: 5px; font-weight: bold;">País:</label>
                 <select name="country" id="country" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
                     <option value="">Todos los paises</option>
                     {% for code, name in country_choices %}
@@ -40,18 +40,18 @@
             <div>
                 <label for="date_filter" style="display: block; margin-bottom: 5px; font-weight: bold;">Filtrar fechas:</label>
                 <select name="date_filter" id="date_filter" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
-                    <option value="">All Groups</option>
+                    <option value="">Todos los grupos</option>
                     <option value="arriving_soon" {% if request.GET.date_filter == 'arriving_soon' %}selected{% endif %}>
-                        Arriving Soon (Next 7 days)
+                        Llegan pronto (Próximos 7 días)
                     </option>
                     <option value="currently_here" {% if request.GET.date_filter == 'currently_here' %}selected{% endif %}>
-                        Currently Here
+                        Ya han llegado
                     </option>
                     <option value="departing_soon" {% if request.GET.date_filter == 'departing_soon' %}selected{% endif %}>
-                        Departing Soon (Next 7 days)
+                        Se van pronto (Próximos 7 días)
                     </option>
                     <option value="past_groups" {% if request.GET.date_filter == 'past_groups' %}selected{% endif %}>
-                        Past Groups
+                        Grupos pasados
                     </option>
                 </select>
             </div>
@@ -97,7 +97,7 @@
     <!-- Results Summary -->
     {% if groups %}
         <div style="margin-bottom: 20px; padding: 10px; background: #e3f2fd; border-radius: 4px;">
-            <strong>{{ groups|length }} group{{ groups|length|pluralize }} found</strong>
+            <strong>Encontrado: {{ groups|length }} grupo{{ groups|length|pluralize }}</strong>
             {% if request.GET.search or request.GET.country or request.GET.date_filter %}
                 (filtered results)
             {% endif %}
