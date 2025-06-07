@@ -1,0 +1,315 @@
+
+{% extends 'users/base.html' %}
+
+{% block users_title %}Formulario Médico - {{ customer.get_full_name }}{% endblock %}
+
+{% block users_content %}
+<div class="p-3 container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Formulario Médico Completo</h2>
+        <div>
+            <button onclick="window.print()" class="btn btn-success me-2">🖨️ Imprimir</button>
+            <a href="{% url 'users:download_medical_form' customer.id %}" class="btn btn-primary me-2">📄 Descargar PDF</a>
+            <a href="{% url 'users:customer_list' %}" class="btn btn-secondary">Volver</a>
+        </div>
+    </div>
+
+    <div class="medical-form-container" style="background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+        <!-- Customer Basic Information -->
+        <section class="mb-5">
+            <h3 class="text-primary border-bottom pb-2">Información Personal</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Nombre:</strong> {{ customer.first_name }} {{ customer.last_name }}</p>
+                    <p><strong>Email:</strong> {{ customer.email }}</p>
+                    <p><strong>Teléfono:</strong> {{ customer.phone_number|default:"No proporcionado" }}</p>
+                    <p><strong>País:</strong> {{ customer.get_country_display|default:"No especificado" }}</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Idioma:</strong> {{ customer.get_language_display }}</p>
+                    <p><strong>Fecha de nacimiento:</strong> {{ customer.birthday|default:"No proporcionada" }}</p>
+                    <p><strong>Edad:</strong> {% if customer.get_age %}{{ customer.get_age }} años{% else %}No calculado{% endif %}</p>
+                    <p><strong>Nivel de certificación:</strong> {{ customer.get_certification_level_display }}</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Physical Information -->
+        <section class="mb-5">
+            <h3 class="text-primary border-bottom pb-2">Información Física</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Peso:</strong> {{ customer.weight|default:"No proporcionado" }} kg</p>
+                    <p><strong>Altura:</strong> {{ customer.height|default:"No proporcionada" }} cm</p>
+                    <p><strong>Talla de pie:</strong> {{ customer.foot_size|default:"No proporcionada" }} EU</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Talla de traje:</strong> {{ customer.get_wetsuit_size }}</p>
+                    <p><strong>Talla de jacket:</strong> {{ customer.get_bcd_size }}</p>
+                    <p><strong>Talla de aletas:</strong> {{ customer.get_fins_size }}</p>
+                </div>
+            </div>
+            {% if customer.swimming_ability %}
+            <p><strong>Habilidad para nadar:</strong> {{ customer.get_swimming_ability_display }}</p>
+            {% endif %}
+        </section>
+
+        <!-- Emergency Contact -->
+        {% if customer.emergency_contact %}
+        <section class="mb-5">
+            <h3 class="text-primary border-bottom pb-2">Contacto de Emergencia</h3>
+            <p>{{ customer.emergency_contact }}</p>
+        </section>
+        {% endif %}
+
+        <!-- Medical Questionnaire -->
+        {% if customer.medical_questionnaire_answers %}
+        <section class="mb-5">
+            <h3 class="text-danger border-bottom pb-2">Cuestionario Médico</h3>
+            
+            <!-- Question 1: Lungs/Breathing/Heart/Blood -->
+            <div class="mb-4 p-3 border rounded">
+                <h5 class="text-danger">¿Ha tenido problemas con los pulmones/respiración, corazón o sangre?</h5>
+                <p class="fw-bold">
+                    {% if customer.medical_questionnaire_answers.pregunta_1 == '1' %}
+                        <span class="text-danger">SÍ</span>
+                    {% else %}
+                        <span class="text-success">NO</span>
+                    {% endif %}
+                </p>
+                
+                {% if customer.medical_questionnaire_answers.pregunta_1 == '1' %}
+                <div class="ms-3">
+                    <h6>Detalles específicos:</h6>
+                    <ul>
+                        <li><strong>Cirugía de pecho, corazón, válvulas cardíacas, dispositivos cardiovasculares implantables, neumotórax:</strong>
+                            {% if customer.medical_questionnaire_answers.pregunta_1_1 == '1' %}
+                                <span class="text-danger">SÍ</span>
+                            {% else %}
+                                <span class="text-success">NO</span>
+                            {% endif %}
+                        </li>
+                        <li><strong>Asma, sibilancias, alergias severas en los últimos 12 meses:</strong>
+                            {% if customer.medical_questionnaire_answers.pregunta_1_2 == '1' %}
+                                <span class="text-danger">SÍ</span>
+                            {% else %}
+                                <span class="text-success">NO</span>
+                            {% endif %}
+                        </li>
+                        <li><strong>Problemas de función pulmonar o enfermedad torácica:</strong>
+                            {% if customer.medical_questionnaire_answers.pregunta_1_3 == '1' %}
+                                <span class="text-danger">SÍ</span>
+                            {% else %}
+                                <span class="text-success">NO</span>
+                            {% endif %}
+                        </li>
+                        <li><strong>Presión arterial alta o medicación para controlarla:</strong>
+                            {% if customer.medical_questionnaire_answers.pregunta_1_4 == '1' %}
+                                <span class="text-danger">SÍ</span>
+                            {% else %}
+                                <span class="text-success">NO</span>
+                            {% endif %}
+                        </li>
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Question 2: Brain/Nervous System -->
+            <div class="mb-4 p-3 border rounded">
+                <h5 class="text-danger">¿Ha tenido problemas con el cerebro o sistema nervioso?</h5>
+                <p class="fw-bold">
+                    {% if customer.medical_questionnaire_answers.pregunta_2 == '1' %}
+                        <span class="text-danger">SÍ</span>
+                    {% else %}
+                        <span class="text-success">NO</span>
+                    {% endif %}
+                </p>
+                
+                {% if customer.medical_questionnaire_answers.pregunta_2 == '1' %}
+                <div class="ms-3">
+                    <h6>Detalles específicos:</h6>
+                    <ul>
+                        <li><strong>Problemas de salud mental o psicológicos que requieren medicación:</strong>
+                            {% if customer.medical_questionnaire_answers.pregunta_2_1 == '1' %}
+                                <span class="text-danger">SÍ</span>
+                            {% else %}
+                                <span class="text-success">NO</span>
+                            {% endif %}
+                        </li>
+                        <li><strong>Lesión en la cabeza en los últimos 12 meses:</strong>
+                            {% if customer.medical_questionnaire_answers.pregunta_2_2 == '1' %}
+                                <span class="text-danger">SÍ</span>
+                            {% else %}
+                                <span class="text-success">NO</span>
+                            {% endif %}
+                        </li>
+                        <li><strong>Problemas persistentes de equilibrio, mareos, desmayos, convulsiones:</strong>
+                            {% if customer.medical_questionnaire_answers.pregunta_2_3 == '1' %}
+                                <span class="text-danger">SÍ</span>
+                            {% else %}
+                                <span class="text-success">NO</span>
+                            {% endif %}
+                        </li>
+                        <li><strong>Incapacidad para realizar ejercicio moderadamente intenso:</strong>
+                            {% if customer.medical_questionnaire_answers.pregunta_2_4 == '1' %}
+                                <span class="text-danger">SÍ</span>
+                            {% else %}
+                                <span class="text-success">NO</span>
+                            {% endif %}
+                        </li>
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Question 3: Medications/Pregnancy -->
+            <div class="mb-4 p-3 border rounded">
+                <h5 class="text-danger">¿Está tomando medicamentos o está embarazada?</h5>
+                <p class="fw-bold">
+                    {% if customer.medical_questionnaire_answers.pregunta_3 == '1' %}
+                        <span class="text-danger">SÍ</span>
+                    {% else %}
+                        <span class="text-success">NO</span>
+                    {% endif %}
+                </p>
+                
+                {% if customer.medical_questionnaire_answers.pregunta_3 == '1' %}
+                <div class="ms-3">
+                    <h6>Detalles específicos:</h6>
+                    <ul>
+                        <li><strong>Medicamentos de prescripción (excepto anticonceptivos o antimaláricos):</strong>
+                            {% if customer.medical_questionnaire_answers.pregunta_3_1 == '1' %}
+                                <span class="text-danger">SÍ</span>
+                            {% else %}
+                                <span class="text-success">NO</span>
+                            {% endif %}
+                        </li>
+                        <li><strong>Embarazo o posible embarazo:</strong>
+                            {% if customer.medical_questionnaire_answers.pregunta_3_2 == '1' %}
+                                <span class="text-danger">SÍ</span>
+                            {% else %}
+                                <span class="text-success">NO</span>
+                            {% endif %}
+                        </li>
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Question 4: Medical Clearance -->
+            <div class="mb-4 p-3 border rounded">
+                <h5 class="text-danger">¿Ha tenido que obtener autorización médica para bucear?</h5>
+                <p class="fw-bold">
+                    {% if customer.medical_questionnaire_answers.pregunta_4 == '1' %}
+                        <span class="text-danger">SÍ</span>
+                    {% else %}
+                        <span class="text-success">NO</span>
+                    {% endif %}
+                </p>
+            </div>
+
+            <!-- Question 5: Age and Previous Experience -->
+            <div class="mb-4 p-3 border rounded">
+                <h5 class="text-danger">¿Es mayor de 45 años y tiene alguna condición específica?</h5>
+                <p class="fw-bold">
+                    {% if customer.medical_questionnaire_answers.pregunta_5 == '1' %}
+                        <span class="text-danger">SÍ</span>
+                    {% else %}
+                        <span class="text-success">NO</span>
+                    {% endif %}
+                </p>
+                
+                {% if customer.medical_questionnaire_answers.pregunta_5 == '1' %}
+                <div class="ms-3">
+                    <h6>Detalles específicos:</h6>
+                    <ul>
+                        <li><strong>Fuma o inhala nicotina regularmente:</strong>
+                            {% if customer.medical_questionnaire_answers.pregunta_5_1 == '1' %}
+                                <span class="text-danger">SÍ</span>
+                            {% else %}
+                                <span class="text-success">NO</span>
+                            {% endif %}
+                        </li>
+                        <li><strong>Alto nivel de colesterol:</strong>
+                            {% if customer.medical_questionnaire_answers.pregunta_5_2 == '1' %}
+                                <span class="text-danger">SÍ</span>
+                            {% else %}
+                                <span class="text-success">NO</span>
+                            {% endif %}
+                        </li>
+                        <li><strong>Historial familiar de ataques cardíacos o derrames cerebrales:</strong>
+                            {% if customer.medical_questionnaire_answers.pregunta_5_3 == '1' %}
+                                <span class="text-danger">SÍ</span>
+                            {% else %}
+                                <span class="text-success">NO</span>
+                            {% endif %}
+                        </li>
+                        <li><strong>Diabetes mellitus actualmente tratada con medicación:</strong>
+                            {% if customer.medical_questionnaire_answers.pregunta_5_4 == '1' %}
+                                <span class="text-danger">SÍ</span>
+                            {% else %}
+                                <span class="text-success">NO</span>
+                            {% endif %}
+                        </li>
+                    </ul>
+                </div>
+                {% endif %}
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- Additional Medical Information -->
+        {% if customer.medical_conditions %}
+        <section class="mb-5">
+            <h3 class="text-warning border-bottom pb-2">Información Médica Adicional</h3>
+            <div class="p-3 bg-light rounded">
+                <p style="white-space: pre-line;">{{ customer.medical_conditions }}</p>
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- Signature -->
+        {% if customer.signature %}
+        <section class="mb-5">
+            <h3 class="text-primary border-bottom pb-2">Firma</h3>
+            <div class="text-center">
+                <img src="{{ customer.signature.url }}" alt="Firma del cliente" style="max-width: 300px; border: 1px solid #ddd; padding: 10px;">
+                <p class="mt-2"><strong>Fecha de registro:</strong> {{ customer.created_at|date:"d/m/Y H:i" }}</p>
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- Creation Date -->
+        <section class="text-center text-muted">
+            <p><strong>Formulario completado el:</strong> {{ customer.created_at|date:"d/m/Y H:i" }}</p>
+        </section>
+    </div>
+</div>
+
+<style>
+@media print {
+    .btn, .d-flex .btn, button {
+        display: none !important;
+    }
+    
+    .medical-form-container {
+        box-shadow: none !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    body {
+        font-size: 12px;
+    }
+    
+    h3 {
+        font-size: 16px;
+    }
+    
+    h5 {
+        font-size: 14px;
+    }
+}
+</style>
+{% endblock %}

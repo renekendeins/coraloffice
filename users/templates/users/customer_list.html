@@ -82,6 +82,7 @@
                     <div class="customer-actions mt-4">
                         <a href="{% url 'users:edit_customer' customer.id %}" class="btn btn-info text-white me-2">Editar</a>
                         <a href="{% url 'users:customer_activity_history' customer.id %}" class="btn btn-secondary me-2">Historial de actividades</a>
+                        <a href="{% url 'users:customer_medical_detail' customer.id %}" class="btn btn-warning text-white me-2">Formulario Médico</a>
                         <a href="{% url 'users:delete_customer' customer.id %}" class="btn btn-danger">Delete</a>                        
 
                     </div>

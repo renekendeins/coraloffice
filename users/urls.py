@@ -88,4 +88,6 @@ urlpatterns = [
     path('enrollments/<int:enrollment_id>/sessions/add/', views.add_enrollment_session, name='add_enrollment_session'),
 
     path('customers/<int:customer_id>/courses/', views.customer_courses, name='customer_courses'),
+    path('customers/<int:customer_id>/medical-detail/', views.customer_medical_detail, name='customer_medical_detail'),
+    path('customers/<int:customer_id>/medical-form/download/', views.download_medical_form_pdf, name='download_medical_form'),
 ]

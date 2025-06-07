@@ -2002,3 +2002,163 @@ def customer_courses(request, customer_id):
         'completed_enrollments': completed_enrollments,
         'all_enrollments': all_enrollments
     })
+
+
+@login_required
+def customer_medical_detail(request, customer_id):
+    if not request.user.userprofile.is_diving_center:
+        messages.error(request, 'Access denied.')
+        return redirect('users:profile')
+
+    customer = get_object_or_404(Customer, id=customer_id, diving_center=request.user)
+
+    return render(request, 'users/customer_medical_detail.html', {
+        'customer': customer
+    })
+
+
+@login_required
+def download_medical_form_pdf(request, customer_id):
+    if not request.user.userprofile.is_diving_center:
+        messages.error(request, 'Access denied.')
+        return redirect('users:profile')
+
+    customer = get_object_or_404(Customer, id=customer_id, diving_center=request.user)
+    
+    from django.http import HttpResponse
+    from django.template.loader import get_template
+    
+    # Try to import reportlab for PDF generation
+    try:
+        from reportlab.lib.pagesizes import letter, A4
+        from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image
+        from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+        from reportlab.lib.units import inch
+        from reportlab.lib import colors
+        import io
+        
+        # Create PDF response
+        response = HttpResponse(content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="formulario_medico_{customer.first_name}_{customer.last_name}.pdf"'
+        
+        # Create PDF document
+        buffer = io.BytesIO()
+        doc = SimpleDocTemplate(buffer, pagesize=A4)
+        styles = getSampleStyleSheet()
+        
+        # Custom styles
+        title_style = ParagraphStyle(
+            'CustomTitle',
+            parent=styles['Heading1'],
+            fontSize=18,
+            spaceAfter=30,
+            textColor=colors.HexColor('#007bff')
+        )
+        
+        section_style = ParagraphStyle(
+            'CustomSection',
+            parent=styles['Heading2'],
+            fontSize=14,
+            spaceAfter=12,
+            textColor=colors.HexColor('#007bff')
+        )
+        
+        normal_style = styles['Normal']
+        
+        # Build PDF content
+        content = []
+        
+        # Title
+        content.append(Paragraph(f"Formulario Médico - {customer.get_full_name()}", title_style))
+        content.append(Spacer(1, 20))
+        
+        # Personal Information
+        content.append(Paragraph("Información Personal", section_style))
+        personal_info = f"""
+        <b>Nombre:</b> {customer.first_name} {customer.last_name}<br/>
+        <b>Email:</b> {customer.email}<br/>
+        <b>Teléfono:</b> {customer.phone_number or 'No proporcionado'}<br/>
+        <b>País:</b> {customer.get_country_display() or 'No especificado'}<br/>
+        <b>Idioma:</b> {customer.get_language_display()}<br/>
+        <b>Fecha de nacimiento:</b> {customer.birthday or 'No proporcionada'}<br/>
+        <b>Edad:</b> {f'{customer.get_age()} años' if customer.get_age() else 'No calculado'}<br/>
+        <b>Nivel de certificación:</b> {customer.get_certification_level_display()}
+        """
+        content.append(Paragraph(personal_info, normal_style))
+        content.append(Spacer(1, 20))
+        
+        # Physical Information
+        content.append(Paragraph("Información Física", section_style))
+        physical_info = f"""
+        <b>Peso:</b> {customer.weight or 'No proporcionado'} kg<br/>
+        <b>Altura:</b> {customer.height or 'No proporcionada'} cm<br/>
+        <b>Talla de pie:</b> {customer.foot_size or 'No proporcionada'} EU<br/>
+        <b>Talla de traje:</b> {customer.get_wetsuit_size()}<br/>
+        <b>Talla de jacket:</b> {customer.get_bcd_size()}<br/>
+        <b>Talla de aletas:</b> {customer.get_fins_size()}
+        """
+        if customer.swimming_ability:
+            physical_info += f"<br/><b>Habilidad para nadar:</b> {customer.get_swimming_ability_display()}"
+        content.append(Paragraph(physical_info, normal_style))
+        content.append(Spacer(1, 20))
+        
+        # Emergency Contact
+        if customer.emergency_contact:
+            content.append(Paragraph("Contacto de Emergencia", section_style))
+            content.append(Paragraph(customer.emergency_contact, normal_style))
+            content.append(Spacer(1, 20))
+        
+        # Medical Questionnaire
+        if customer.medical_questionnaire_answers:
+            content.append(Paragraph("Cuestionario Médico", section_style))
+            
+            questions_text = {
+                'pregunta_1': '¿Ha tenido problemas con los pulmones/respiración, corazón o sangre?',
+                'pregunta_1_1': 'Cirugía de pecho, corazón, válvulas cardíacas, dispositivos cardiovasculares implantables, neumotórax',
+                'pregunta_1_2': 'Asma, sibilancias, alergias severas en los últimos 12 meses',
+                'pregunta_1_3': 'Problemas de función pulmonar o enfermedad torácica',
+                'pregunta_1_4': 'Presión arterial alta o medicación para controlarla',
+                'pregunta_2': '¿Ha tenido problemas con el cerebro o sistema nervioso?',
+                'pregunta_2_1': 'Problemas de salud mental o psicológicos que requieren medicación',
+                'pregunta_2_2': 'Lesión en la cabeza en los últimos 12 meses',
+                'pregunta_2_3': 'Problemas persistentes de equilibrio, mareos, desmayos, convulsiones',
+                'pregunta_2_4': 'Incapacidad para realizar ejercicio moderadamente intenso',
+                'pregunta_3': '¿Está tomando medicamentos o está embarazada?',
+                'pregunta_3_1': 'Medicamentos de prescripción (excepto anticonceptivos o antimaláricos)',
+                'pregunta_3_2': 'Embarazo o posible embarazo',
+                'pregunta_4': '¿Ha tenido que obtener autorización médica para bucear?',
+                'pregunta_5': '¿Es mayor de 45 años y tiene alguna condición específica?',
+                'pregunta_5_1': 'Fuma o inhala nicotina regularmente',
+                'pregunta_5_2': 'Alto nivel de colesterol',
+                'pregunta_5_3': 'Historial familiar de ataques cardíacos o derrames cerebrales',
+                'pregunta_5_4': 'Diabetes mellitus actualmente tratada con medicación',
+            }
+            
+            for key, question in questions_text.items():
+                if key in customer.medical_questionnaire_answers:
+                    answer = 'SÍ' if customer.medical_questionnaire_answers[key] == '1' else 'NO'
+                    color = 'red' if answer == 'SÍ' else 'green'
+                    content.append(Paragraph(f"<b>{question}</b><br/><font color='{color}'><b>{answer}</b></font>", normal_style))
+                    content.append(Spacer(1, 10))
+        
+        # Additional Medical Information
+        if customer.medical_conditions:
+            content.append(Paragraph("Información Médica Adicional", section_style))
+            content.append(Paragraph(customer.medical_conditions, normal_style))
+            content.append(Spacer(1, 20))
+        
+        # Creation date
+        content.append(Paragraph(f"<b>Formulario completado el:</b> {customer.created_at.strftime('%d/%m/%Y %H:%M')}", normal_style))
+        
+        # Build PDF
+        doc.build(content)
+        pdf = buffer.getvalue()
+        buffer.close()
+        response.write(pdf)
+        
+        return response
+        
+    except ImportError:
+        # Fallback if reportlab is not installed
+        messages.error(request, 'PDF generation library not available. Please contact administrator.')
+        return redirect('users:customer_medical_detail', customer_id=customer.id)
