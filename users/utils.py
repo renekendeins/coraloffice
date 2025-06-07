@@ -9,7 +9,7 @@ class EmailTranslations:
     TRANSLATIONS = {
         'EN': {
             'dive_reminder_subject': 'Dive Activity Reminder - {course_name}',
-            'welcome_subject': 'Welcome to {diving_center}!',
+            'welcome_subject': 'Welcome to CIPS!',
             'dive_reminder': {
                 'greeting': 'Hello {customer_name}!',
                 'reminder_text': 'This is a friendly reminder about your upcoming dive activity:',
@@ -33,7 +33,7 @@ class EmailTranslations:
                 'team': 'The CIPS Team'
             },
             'welcome': {
-                'greeting': ' Hello {customer_name} and welcome to {diving_center}!',
+                'greeting': ' Hello {customer_name} and welcome to CIPS!',
                 'thank_you': 'Thank you for completing your medical form. We have received your information and our team will review it shortly.',
                 'next_steps': 'What happens next?',
                 'review_process': 'Our certified diving professionals will review your medical form to ensure your safety.',
@@ -47,7 +47,7 @@ class EmailTranslations:
         },
         'ES': {
             'dive_reminder_subject': 'Recordatorio de Actividad de Buceo - {course_name}',
-            'welcome_subject': '¡Bienvenido a {diving_center}!',
+            'welcome_subject': '¡Bienvenido a CIPS!',
             'dive_reminder': {
                 'greeting': '¡Hola {customer_name}!',
                 'reminder_text': 'Este es un recordatorio amistoso sobre tu próxima actividad de buceo:',
@@ -68,10 +68,10 @@ class EmailTranslations:
                 'contact_info': 'Si tienes alguna pregunta o necesitas hacer cambios, por favor contáctanos.',
                 'looking_forward': '¡Esperamos bucear contigo!',
                 'best_regards': 'Saludos cordiales',
-                'team': 'El Equipo de {diving_center}'
+                'team': 'El Equipo de CIPS'
             },
             'welcome': {
-                'greeting': '¡Bienvenido a {diving_center}!',
+                'greeting': '¡Bienvenido a CIPS!',
                 'thank_you': 'Gracias por completar tu formulario médico. Hemos recibido tu información y nuestro equipo la revisará en breve.',
                 'next_steps': '¿Qué sigue?',
                 'review_process': 'Nuestros profesionales certificados de buceo revisarán tu formulario médico para asegurar tu seguridad.',
@@ -80,12 +80,12 @@ class EmailTranslations:
                 'questions': 'Si tienes alguna pregunta o inquietud inmediata, no dudes en contactarnos.',
                 'excited': '¡Estamos emocionados de compartir el mundo submarino contigo!',
                 'best_regards': 'Saludos cordiales',
-                'team': 'El Equipo de {diving_center}'
+                'team': 'El Equipo de CIPS'
             }
         },
         'FR': {
             'dive_reminder_subject': 'Rappel d\'Activité de Plongée - {course_name}',
-            'welcome_subject': 'Bienvenue chez {diving_center}!',
+            'welcome_subject': 'Bienvenue chez CIPS!',
             'dive_reminder': {
                 'greeting': 'Bonjour {customer_name}!',
                 'reminder_text': 'Ceci est un rappel amical concernant votre prochaine activité de plongée:',
@@ -106,10 +106,10 @@ class EmailTranslations:
                 'contact_info': 'Si vous avez des questions ou devez apporter des modifications, veuillez nous contacter.',
                 'looking_forward': 'Nous avons hâte de plonger avec vous!',
                 'best_regards': 'Meilleures salutations',
-                'team': 'L\'Équipe de {diving_center}'
+                'team': 'L\'Équipe de CIPS'
             },
             'welcome': {
-                'greeting': 'Bienvenue chez {diving_center}!',
+                'greeting': 'Bienvenue chez CIPS!',
                 'thank_you': 'Merci d\'avoir complété votre formulaire médical. Nous avons reçu vos informations et notre équipe les examinera sous peu.',
                 'next_steps': 'Que se passe-t-il ensuite?',
                 'review_process': 'Nos professionnels certifiés de plongée examineront votre formulaire médical pour assurer votre sécurité.',
@@ -118,12 +118,12 @@ class EmailTranslations:
                 'questions': 'Si vous avez des questions ou préoccupations immédiates, n\'hésitez pas à nous contacter.',
                 'excited': 'Nous sommes ravis de partager le monde sous-marin avec vous!',
                 'best_regards': 'Meilleures salutations',
-                'team': 'L\'Équipe de {diving_center}'
+                'team': 'L\'Équipe de CIPS'
             }
         },
         'CAT': {
             'dive_reminder_subject': 'Recordatori d\'Activitat de Busseig - {course_name}',
-            'welcome_subject': 'Benvingut a {diving_center}!',
+            'welcome_subject': 'Benvingut a CIPS!',
             'dive_reminder': {
                 'greeting': 'Hola {customer_name}!',
                 'reminder_text': 'Aquest és un recordatori amistós sobre la teva propera activitat de busseig:',
@@ -144,10 +144,10 @@ class EmailTranslations:
                 'contact_info': 'Si tens alguna pregunta o necessites fer canvis, si us plau contacta\'ns.',
                 'looking_forward': 'Esperem bussejar amb tu!',
                 'best_regards': 'Salutacions cordials',
-                'team': 'L\'Equip de {diving_center}'
+                'team': 'L\'Equip de CIPS'
             },
             'welcome': {
-                'greeting': 'Benvingut a {diving_center}!',
+                'greeting': 'Benvingut a CIPS!',
                 'thank_you': 'Gràcies per completar el teu formulari mèdic. Hem rebut la teva informació i el nostre equip la revisarà aviat.',
                 'next_steps': 'Què passa ara?',
                 'review_process': 'Els nostres professionals certificats de busseig revisaran el teu formulari mèdic per assegurar la teva seguretat.',
@@ -156,12 +156,12 @@ class EmailTranslations:
                 'questions': 'Si tens alguna pregunta o preocupació immediata, no dubtis a contactar-nos.',
                 'excited': 'Estem emocionats de compartir el món submarí amb tu!',
                 'best_regards': 'Salutacions cordials',
-                'team': 'L\'Equip de {diving_center}'
+                'team': 'L\'Equip de CIPS'
             }
         },
         'DE': {
             'dive_reminder_subject': 'Tauchaktivitäts-Erinnerung - {course_name}',
-            'welcome_subject': 'Willkommen bei {diving_center}!',
+            'welcome_subject': 'Willkommen bei CIPS!',
             'dive_reminder': {
                 'greeting': 'Hallo {customer_name}!',
                 'reminder_text': 'Dies ist eine freundliche Erinnerung an Ihre bevorstehende Tauchaktivität:',
@@ -182,10 +182,10 @@ class EmailTranslations:
                 'contact_info': 'Wenn Sie Fragen haben oder Änderungen vornehmen müssen, kontaktieren Sie uns bitte.',
                 'looking_forward': 'Wir freuen uns darauf, mit Ihnen zu tauchen!',
                 'best_regards': 'Mit freundlichen Grüßen',
-                'team': 'Das {diving_center} Team'
+                'team': 'Das CIPS Team'
             },
             'welcome': {
-                'greeting': 'Willkommen bei {diving_center}!',
+                'greeting': 'Willkommen bei CIPS!',
                 'thank_you': 'Vielen Dank für das Ausfüllen Ihres medizinischen Formulars. Wir haben Ihre Informationen erhalten und unser Team wird sie in Kürze überprüfen.',
                 'next_steps': 'Was passiert als nächstes?',
                 'review_process': 'Unsere zertifizierten Tauchprofis werden Ihr medizinisches Formular überprüfen, um Ihre Sicherheit zu gewährleisten.',
@@ -194,7 +194,7 @@ class EmailTranslations:
                 'questions': 'Wenn Sie sofortige Fragen oder Bedenken haben, zögern Sie nicht, uns zu kontaktieren.',
                 'excited': 'Wir freuen uns darauf, die Unterwasserwelt mit Ihnen zu teilen!',
                 'best_regards': 'Mit freundlichen Grüßen',
-                'team': 'Das {diving_center} Team'
+                'team': 'Das CIPS Team'
             }
         }
     }

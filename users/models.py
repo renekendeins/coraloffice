@@ -31,11 +31,12 @@ class Customer(models.Model):
     ]
     
     LANGUAGE_CHOICES = [
+        ('CAT', 'Català'),
+        ('ES', 'Español'),
+        ('FR', 'Français'),
         ('EN', 'English'),
-        ('ES', 'Spanish'),
-        ('FR', 'French'),
-        ('CAT', 'Catalan'),
-        ('OTHER', 'Other'),
+        ('NL', 'Nederlands'),
+        ('DE', 'Deutsch'),
     ]
     
     COUNTRY_CHOICES = [

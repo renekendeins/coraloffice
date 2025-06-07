@@ -32,6 +32,7 @@
             font-weight: bold;
             color: #007bff;
             margin-bottom: 10px;
+            text-transform: uppercase;
         }
         .subtitle {
             color: #6c757d;
@@ -116,6 +117,9 @@
             color: #6c757d;
             font-size: 14px;
         }
+        .footer a{
+            color: black;
+          }
         .contact-info {
             background-color: #e8f5e8;
             border: 1px solid #c3e6c3;
@@ -164,6 +168,10 @@
             <p><strong>{{ diving_center_name }}</strong></p>
             <p>{% block footer_text %}Thank you for choosing us for your diving adventure!{% endblock %}</p>
             <p><small>This email was sent automatically. Please do not reply to this email.</small></p>
+            <br>
+              <div>
+                <p>Powered by <b><a href="https://www.coraloffice.com">Coral Office</a></b></p>
+              </div>
         </div>
     </div>
 </body>

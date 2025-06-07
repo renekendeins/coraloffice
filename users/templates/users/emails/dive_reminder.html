@@ -3,18 +3,10 @@
 
 {% block title %}{{ translations.activity }} - {{ diving_center_name }}{% endblock %}
 
-{% block subtitle %}{{ translations.activity }} {{ translations.reminder_text|slice:":20" }}...{% endblock %}
-
 {% block content %}
-<div class="greeting">
-    {{ translations.greeting }}
-</div>
-
 <p>{{ translations.reminder_text }}</p>
-<h2>Welcome {{ customer }}</h2>
+<h2>{{ customer }}</h2>
 <div class="dive-details">
-    <h3>{{ course.name }}</h3>
-    
     <div class="detail-row">
         <span class="detail-label">{{ translations.activity }}:</span>
         <span class="detail-value">{{ course.name }}</span>
@@ -29,19 +21,7 @@
         <span class="detail-label">{{ translations.time }}:</span>
         <span class="detail-value">{{ dive_schedule.time|time:"H:i" }}</span>
     </div>
-    
-    <div class="detail-row">
-        <span class="detail-label">{{ translations.dive_site }}:</span>
-        <span class="detail-value">{{ dive_schedule.dive_site.name }}</span>
-    </div>
 </div>
-
-{% if dive_schedule.special_notes %}
-<div class="info-box">
-    <h4>{{ translations.important_notes }}</h4>
-    <p>{{ dive_schedule.special_notes }}</p>
-</div>
-{% endif %}
 
 <div class="what-to-bring">
     <h4>{{ translations.what_to_bring }}</h4>
