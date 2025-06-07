@@ -1,4 +1,5 @@
 
+
 {% extends 'users/base.html' %}
 
 {% block users_title %}Medical Forms - CoralOffice{% endblock %}
@@ -16,11 +17,11 @@
     <div style="margin-bottom: 20px;">
         <form method="get" style="display: flex; gap: 10px; align-items: center;">
             <input type="text" name="search" value="{{ search_query }}" 
-                   placeholder="Search by name, email, or phone..." 
+                   placeholder="Buscar por nombre, email o teléfono..." 
                    style="flex: 1; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px;">
             <button type="submit" class="btn" style="background: #007bff; color: white; padding: 8px 16px;">Buscar</button>
             {% if search_query %}
-                <a href="{% url 'users:medical_forms_list' %}" class="btn" style="background: #6c757d; color: white; padding: 8px 16px;">Clear</a>
+                <a href="{% url 'users:medical_forms_list' %}" class="btn" style="background: #6c757d; color: white; padding: 8px 16px;">Limpiar</a>
             {% endif %}
         </form>
     </div>
@@ -43,6 +44,8 @@
                 <div style="display: flex; justify-content: space-between; align-items: flex-start;">
                     <div style="flex: 1;">
                         <h4>{{ customer.first_name }} {{ customer.last_name }}</h4>
+                        
+                        <!-- Personal Information -->
                         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 10px;">
                             <div>
                                 <strong>Email:</strong> {{ customer.email|default:"No proporcionado" }}<br>
@@ -62,27 +65,28 @@
                             </div>
                         </div>
 
-                        {% if customer.emergency_contact %}
+                        <!-- Tank Size and Emergency Contact -->
                         <div style="margin-top: 15px;">
-                            <strong>Contacto de emergencia:</strong> {{ customer.emergency_contact }}
+                            <strong>Tamaño de botella por defecto:</strong> {{ customer.get_default_tank_size_display|default:"No especificado" }}<br>
+                            {% if customer.emergency_contact %}
+                                <strong>Contacto de emergencia:</strong> {{ customer.emergency_contact }}
+                            {% endif %}
                         </div>
-                        {% endif %}
 
                         {% if customer.medical_conditions %}
                         <div style="margin-top: 15px; padding: 10px; background: #fff3cd; border-radius: 5px;">
-                            <strong>Información médica:</strong><br>
+                            <strong>Información médica adicional:</strong><br>
                             <span style="white-space: pre-line;">{{ customer.medical_conditions }}</span>
                         </div>
                         {% endif %}
 
-                        <!-- Respuestas del cuestionario médico -->
+                        <!-- Medical Questionnaire Answers -->
                         {% if customer.medical_questionnaire_answers %}
                         <div style="margin-top: 15px;">
                             <button type="button" onclick="toggleMedicalAnswers({{ customer.id }})" 
                                     style="background: #007bff; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer;">
                                 Ver respuestas del cuestionario médico
                             </button>
-
 
                             <div id="medical-answers-{{ customer.id }}" style="display: none; margin-top: 15px; padding: 15px; background: #f8f9fa; border-radius: 5px; border: 1px solid #dee2e6;">
                                 <h5 style="color: #dc3545; margin-bottom: 15px;">Respuestas del Cuestionario Médico</h5>
@@ -98,25 +102,25 @@
                                     {% if customer.medical_questionnaire_answers.pregunta_1 %}
                                     <div style="margin-left: 20px; margin-bottom: 15px;">
                                         <div style="margin-bottom: 8px; padding: 8px; background: {% if customer.medical_questionnaire_answers.pregunta_1_1 %}#ffe6e6{% else %}#f8f9fa{% endif %};">
-                                            <strong>1.1</strong> Cirugía de tórax, cirugía cardíaca, cirugía de válvulas cardíacas, dispositivo cardiovascular implantable, neumotórax
+                                            <strong>1.1</strong> Cirugía torácica, cirugía cardíaca, cirugía de válvula cardíaca, colocación de stent o neumotórax (pulmón colapsado).
                                             <span style="float: right; color: {% if customer.medical_questionnaire_answers.pregunta_1_1 %}#dc3545{% else %}#28a745{% endif %};">
                                                 {% if customer.medical_questionnaire_answers.pregunta_1_1 %}SÍ{% else %}NO{% endif %}
                                             </span>
                                         </div>
                                         <div style="margin-bottom: 8px; padding: 8px; background: {% if customer.medical_questionnaire_answers.pregunta_1_2 %}#ffe6e6{% else %}#f8f9fa{% endif %};">
-                                            <strong>1.2</strong> Asma, sibilancias, alergias graves, fiebre del heno o vías respiratorias congestionadas en los últimos 12 meses
+                                            <strong>1.2</strong> Asma, sibilancias, alergias graves, fiebre del heno o vías respiratorias congestionadas en los últimos 12 meses que limiten mi actividad física/ejercicio.
                                             <span style="float: right; color: {% if customer.medical_questionnaire_answers.pregunta_1_2 %}#dc3545{% else %}#28a745{% endif %};">
                                                 {% if customer.medical_questionnaire_answers.pregunta_1_2 %}SÍ{% else %}NO{% endif %}
                                             </span>
                                         </div>
                                         <div style="margin-bottom: 8px; padding: 8px; background: {% if customer.medical_questionnaire_answers.pregunta_1_3 %}#ffe6e6{% else %}#f8f9fa{% endif %};">
-                                            <strong>1.3</strong> Problemas con la función pulmonar o enfermedad torácica
+                                            <strong>1.3</strong> Un problema cardíaco o enfermedad que involucre mi corazón como: angina, dolor en el pecho al hacer esfuerzo, insuficiencia cardíaca, edema pulmonar, cardiomiopatía o accidente cerebrovascular, o estoy tomando medicamentos para cualquier condición cardíaca.
                                             <span style="float: right; color: {% if customer.medical_questionnaire_answers.pregunta_1_3 %}#dc3545{% else %}#28a745{% endif %};">
                                                 {% if customer.medical_questionnaire_answers.pregunta_1_3 %}SÍ{% else %}NO{% endif %}
                                             </span>
                                         </div>
                                         <div style="margin-bottom: 8px; padding: 8px; background: {% if customer.medical_questionnaire_answers.pregunta_1_4 %}#ffe6e6{% else %}#f8f9fa{% endif %};">
-                                            <strong>1.4</strong> Presión arterial alta, o toma medicamentos para controlar la presión arterial
+                                            <strong>1.4</strong> Bronquitis recurrente y tos persistente en los últimos 12 meses o me han diagnosticado enfisema.
                                             <span style="float: right; color: {% if customer.medical_questionnaire_answers.pregunta_1_4 %}#dc3545{% else %}#28a745{% endif %};">
                                                 {% if customer.medical_questionnaire_answers.pregunta_1_4 %}SÍ{% else %}NO{% endif %}
                                             </span>
@@ -125,108 +129,106 @@
                                     {% endif %}
                                 </div>
 
-                                <!-- Pregunta 2: Cerebro/Sistema Nervioso -->
+                                <!-- Pregunta 2: Más de 45 años -->
                                 <div class="medical-section">
                                     <div class="question-header" style="background: {% if customer.medical_questionnaire_answers.pregunta_2 %}#ffe6e6{% else %}#e6f7e6{% endif %}; padding: 10px; margin-bottom: 10px; border-radius: 5px;">
-                                        <strong>2. He tenido problemas con mi cerebro o sistema nervioso</strong>
+                                        <strong>2. Tengo más de 45 años</strong>
                                         <span style="float: right; font-weight: bold; color: {% if customer.medical_questionnaire_answers.pregunta_2 %}#dc3545{% else %}#28a745{% endif %};">
                                             {% if customer.medical_questionnaire_answers.pregunta_2 %}SÍ{% else %}NO{% endif %}
                                         </span>
                                     </div>
-
                                     {% if customer.medical_questionnaire_answers.pregunta_2 %}
-                                        <div style="margin-left: 20px; margin-bottom: 15px;">
-                                            <div style="margin-bottom: 8px; padding: 8px; background: {% if customer.medical_questionnaire_answers.pregunta_2_1 %}#ffe6e6{% else %}#f8f9fa{% endif %};">
-                                                <strong>2.1</strong> Problemas de salud conductual, mentales o psicológicos
-                                                <span style="float: right; color: {% if customer.medical_questionnaire_answers.pregunta_2_1 %}#dc3545{% else %}#28a745{% endif %};">
-                                                    {% if customer.medical_questionnaire_answers.pregunta_2_1 %}SÍ{% else %}NO{% endif %}
-                                                </span>
-                                            </div>
-                                            <div style="margin-bottom: 8px; padding: 8px; background: {% if customer.medical_questionnaire_answers.pregunta_2_2 %}#ffe6e6{% else %}#f8f9fa{% endif %};">
-                                                <strong>2.2</strong> Lesión en la cabeza con o sin pérdida de conciencia en los últimos 12 meses
-                                                <span style="float: right; color: {% if customer.medical_questionnaire_answers.pregunta_2_2 %}#dc3545{% else %}#28a745{% endif %};">
-                                                    {% if customer.medical_questionnaire_answers.pregunta_2_2 %}SÍ{% else %}NO{% endif %}
-                                                </span>
-                                            </div>
-                                            <div style="margin-bottom: 8px; padding: 8px; background: {% if customer.medical_questionnaire_answers.pregunta_2_3 %}#ffe6e6{% else %}#f8f9fa{% endif %};">
-                                                <strong>2.3</strong> Problema persistente con el equilibrio, mareos, desmayos, convulsiones, ataques o epilepsia
-                                                <span style="float: right; color: {% if customer.medical_questionnaire_answers.pregunta_2_3 %}#dc3545{% else %}#28a745{% endif %};">
-                                                    {% if customer.medical_questionnaire_answers.pregunta_2_3 %}SÍ{% else %}NO{% endif %}
-                                                </span>
-                                            </div>
-                                            <div style="margin-bottom: 8px; padding: 8px; background: {% if customer.medical_questionnaire_answers.pregunta_2_4 %}#ffe6e6{% else %}#f8f9fa{% endif %};">
-                                                <strong>2.4</strong> Incapacidad para realizar ejercicio moderadamente intenso
-                                                <span style="float: right; color: {% if customer.medical_questionnaire_answers.pregunta_2_4 %}#dc3545{% else %}#28a745{% endif %};">
-                                                    {% if customer.medical_questionnaire_answers.pregunta_2_4 %}SÍ{% else %}NO{% endif %}
-                                                </span>
-                                            </div>
+                                    <div style="margin-left: 20px; margin-bottom: 15px;">
+                                        <div style="margin-bottom: 8px; padding: 8px; background: {% if customer.medical_questionnaire_answers.pregunta_2_1 %}#ffe6e6{% else %}#f8f9fa{% endif %};">
+                                            <strong>2.1</strong> Actualmente fumo o inhalo nicotina por otros medios.
+                                            <span style="float: right; color: {% if customer.medical_questionnaire_answers.pregunta_2_1 %}#dc3545{% else %}#28a745{% endif %};">
+                                                {% if customer.medical_questionnaire_answers.pregunta_2_1 %}SÍ{% else %}NO{% endif %}
+                                            </span>
                                         </div>
+                                        <div style="margin-bottom: 8px; padding: 8px; background: {% if customer.medical_questionnaire_answers.pregunta_2_2 %}#ffe6e6{% else %}#f8f9fa{% endif %};">
+                                            <strong>2.2</strong> Tengo un nivel alto de colesterol.
+                                            <span style="float: right; color: {% if customer.medical_questionnaire_answers.pregunta_2_2 %}#dc3545{% else %}#28a745{% endif %};">
+                                                {% if customer.medical_questionnaire_answers.pregunta_2_2 %}SÍ{% else %}NO{% endif %}
+                                            </span>
+                                        </div>
+                                        <div style="margin-bottom: 8px; padding: 8px; background: {% if customer.medical_questionnaire_answers.pregunta_2_3 %}#ffe6e6{% else %}#f8f9fa{% endif %};">
+                                            <strong>2.3</strong> Tengo presión arterial alta.
+                                            <span style="float: right; color: {% if customer.medical_questionnaire_answers.pregunta_2_3 %}#dc3545{% else %}#28a745{% endif %};">
+                                                {% if customer.medical_questionnaire_answers.pregunta_2_3 %}SÍ{% else %}NO{% endif %}
+                                            </span>
+                                        </div>
+                                        <div style="margin-bottom: 8px; padding: 8px; background: {% if customer.medical_questionnaire_answers.pregunta_2_4 %}#ffe6e6{% else %}#f8f9fa{% endif %};">
+                                            <strong>2.4</strong> He tenido un familiar (pariente de 1º o 2º grado) que murió de muerte súbita o enfermedad cardíaca o accidente cerebrovascular antes de los 50 años o tengo antecedentes familiares de enfermedad cardíaca antes de los 50 años.
+                                            <span style="float: right; color: {% if customer.medical_questionnaire_answers.pregunta_2_4 %}#dc3545{% else %}#28a745{% endif %};">
+                                                {% if customer.medical_questionnaire_answers.pregunta_2_4 %}SÍ{% else %}NO{% endif %}
+                                            </span>
+                                        </div>
+                                    </div>
                                     {% endif %}
-                                    </div>
+                                </div>
 
-                                    <!-- Pregunta 3: Estómago/Intestinos/Tripas -->
-                                    <div class="medical-section">
-                                        <div class="question-header" style="background: {% if customer.medical_questionnaire_answers.pregunta_3 %}#ffe6e6{% else %}#e6f7e6{% endif %}; padding: 10px; margin-bottom: 10px; border-radius: 5px;">
-                                            <strong>3. He tenido problemas con mi estómago, intestinos o tripas</strong>
-                                            <span style="float: right; font-weight: bold; color: {% if customer.medical_questionnaire_answers.pregunta_3 %}#dc3545{% else %}#28a745{% endif %};">
-                                                {% if customer.medical_questionnaire_answers.pregunta_3 %}SÍ{% else %}NO{% endif %}
+                                <!-- Pregunta 3: Ejercicio moderado -->
+                                <div class="medical-section">
+                                    <div class="question-header" style="background: {% if customer.medical_questionnaire_answers.pregunta_3 %}#ffe6e6{% else %}#e6f7e6{% endif %}; padding: 10px; margin-bottom: 10px; border-radius: 5px;">
+                                        <strong>3. Me resulta difícil realizar ejercicio moderado o no he podido participar en actividad física normal</strong>
+                                        <span style="float: right; font-weight: bold; color: {% if customer.medical_questionnaire_answers.pregunta_3 %}#dc3545{% else %}#28a745{% endif %};">
+                                            {% if customer.medical_questionnaire_answers.pregunta_3 %}SÍ{% else %}NO{% endif %}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <!-- Pregunta 4: Ojos, oídos, senos nasales -->
+                                <div class="medical-section">
+                                    <div class="question-header" style="background: {% if customer.medical_questionnaire_answers.pregunta_4 %}#ffe6e6{% else %}#e6f7e6{% endif %}; padding: 10px; margin-bottom: 10px; border-radius: 5px;">
+                                        <strong>4. He tenido problemas con mis ojos, oídos o senos nasales/fosas nasales</strong>
+                                        <span style="float: right; font-weight: bold; color: {% if customer.medical_questionnaire_answers.pregunta_4 %}#dc3545{% else %}#28a745{% endif %};">
+                                            {% if customer.medical_questionnaire_answers.pregunta_4 %}SÍ{% else %}NO{% endif %}
+                                        </span>
+                                    </div>
+                                    {% if customer.medical_questionnaire_answers.pregunta_4 %}
+                                    <div style="margin-left: 20px; margin-bottom: 15px;">
+                                        <div style="margin-bottom: 8px; padding: 8px; background: {% if customer.medical_questionnaire_answers.pregunta_4_1 %}#ffe6e6{% else %}#f8f9fa{% endif %};">
+                                            <strong>4.1</strong> Cirugía de senos nasales en los últimos 6 meses.
+                                            <span style="float: right; color: {% if customer.medical_questionnaire_answers.pregunta_4_1 %}#dc3545{% else %}#28a745{% endif %};">
+                                                {% if customer.medical_questionnaire_answers.pregunta_4_1 %}SÍ{% else %}NO{% endif %}
+                                            </span>
+                                        </div>
+                                        <div style="margin-bottom: 8px; padding: 8px; background: {% if customer.medical_questionnaire_answers.pregunta_4_2 %}#ffe6e6{% else %}#f8f9fa{% endif %};">
+                                            <strong>4.2</strong> Enfermedades del oído o cirugía de oído, pérdida auditiva o trastornos del equilibrio.
+                                            <span style="float: right; color: {% if customer.medical_questionnaire_answers.pregunta_4_2 %}#dc3545{% else %}#28a745{% endif %};">
+                                                {% if customer.medical_questionnaire_answers.pregunta_4_2 %}SÍ{% else %}NO{% endif %}
+                                            </span>
+                                        </div>
+                                        <div style="margin-bottom: 8px; padding: 8px; background: {% if customer.medical_questionnaire_answers.pregunta_4_3 %}#ffe6e6{% else %}#f8f9fa{% endif %};">
+                                            <strong>4.3</strong> Sinusitis recurrente en los últimos 12 meses.
+                                            <span style="float: right; color: {% if customer.medical_questionnaire_answers.pregunta_4_3 %}#dc3545{% else %}#28a745{% endif %};">
+                                                {% if customer.medical_questionnaire_answers.pregunta_4_3 %}SÍ{% else %}NO{% endif %}
+                                            </span>
+                                        </div>
+                                        <div style="margin-bottom: 8px; padding: 8px; background: {% if customer.medical_questionnaire_answers.pregunta_4_4 %}#ffe6e6{% else %}#f8f9fa{% endif %};">
+                                            <strong>4.4</strong> Cirugía ocular en los últimos 3 meses.
+                                            <span style="float: right; color: {% if customer.medical_questionnaire_answers.pregunta_4_4 %}#dc3545{% else %}#28a745{% endif %};">
+                                                {% if customer.medical_questionnaire_answers.pregunta_4_4 %}SÍ{% else %}NO{% endif %}
                                             </span>
                                         </div>
                                     </div>
+                                    {% endif %}
+                                </div>
 
-                                    <!-- Pregunta 4: Músculos/Huesos/Articulaciones -->
-                                    <div class="medical-section">
-                                        <div class="question-header" style="background: {% if customer.medical_questionnaire_answers.pregunta_4 %}#ffe6e6{% else %}#e6f7e6{% endif %}; padding: 10px; margin-bottom: 10px; border-radius: 5px;">
-                                            <strong>4. He tenido problemas con mis músculos, huesos o articulaciones</strong>
-                                            <span style="float: right; font-weight: bold; color: {% if customer.medical_questionnaire_answers.pregunta_4 %}#dc3545{% else %}#28a745{% endif %};">
-                                                {% if customer.medical_questionnaire_answers.pregunta_4 %}SÍ{% else %}NO{% endif %}
-                                            </span>
-                                        </div>
-                                        {% if customer.medical_questionnaire_answers.pregunta_4 %}
-                                        <div style="margin-left: 20px; margin-bottom: 15px;">
-                                            <div style="margin-bottom: 8px; padding: 8px; background: {% if customer.medical_questionnaire_answers.pregunta_4_1 %}#ffe6e6{% else %}#f8f9fa{% endif %};">
-                                                <strong>4.1</strong> Lesión muscular, ósea o articular
-                                                <span style="float: right; color: {% if customer.medical_questionnaire_answers.pregunta_4_1 %}#dc3545{% else %}#28a745{% endif %};">
-                                                    {% if customer.medical_questionnaire_answers.pregunta_4_1 %}SÍ{% else %}NO{% endif %}
-                                                </span>
-                                            </div>
-                                            <div style="margin-bottom: 8px; padding: 8px; background: {% if customer.medical_questionnaire_answers.pregunta_4_2 %}#ffe6e6{% else %}#f8f9fa{% endif %};">
-                                                <strong>4.2</strong> Problemas crónicos de espalda baja
-                                                <span style="float: right; color: {% if customer.medical_questionnaire_answers.pregunta_4_2 %}#dc3545{% else %}#28a745{% endif %};">
-                                                    {% if customer.medical_questionnaire_answers.pregunta_4_2 %}SÍ{% else %}NO{% endif %}
-                                                </span>
-                                            </div>
-                                            <div style="margin-bottom: 8px; padding: 8px; background: {% if customer.medical_questionnaire_answers.pregunta_4_3 %}#ffe6e6{% else %}#f8f9fa{% endif %};">
-                                                <strong>4.3</strong> Limitación de la actividad física normal
-                                                <span style="float: right; color: {% if customer.medical_questionnaire_answers.pregunta_4_3 %}#dc3545{% else %}#28a745{% endif %};">
-                                                    {% if customer.medical_questionnaire_answers.pregunta_4_3 %}SÍ{% else %}NO{% endif %}
-                                                </span>
-                                            </div>
-                                            <div style="margin-bottom: 8px; padding: 8px; background: {% if customer.medical_questionnaire_answers.pregunta_4_4 %}#ffe6e6{% else %}#f8f9fa{% endif %};">
-                                                <strong>4.4</strong> Limitación de movimiento
-                                                <span style="float: right; color: {% if customer.medical_questionnaire_answers.pregunta_4_4 %}#dc3545{% else %}#28a745{% endif %};">
-                                                    {% if customer.medical_questionnaire_answers.pregunta_4_4 %}SÍ{% else %}NO{% endif %}
-                                                </span>
-                                            </div>
-                                        </div>
-                                        {% endif %}
-                                    </div>
-
-
-                                <!-- Pregunta 5: Diabetes -->
+                                <!-- Pregunta 5: Cirugía en últimos 12 meses -->
                                 <div class="medical-section">
                                     <div class="question-header" style="background: {% if customer.medical_questionnaire_answers.pregunta_5 %}#ffe6e6{% else %}#e6f7e6{% endif %}; padding: 10px; margin-bottom: 10px; border-radius: 5px;">
-                                        <strong>5. Tengo diabetes</strong>
+                                        <strong>5. He tenido cirugía en los últimos 12 meses o tengo problemas continuos relacionados con cirugía previa</strong>
                                         <span style="float: right; font-weight: bold; color: {% if customer.medical_questionnaire_answers.pregunta_5 %}#dc3545{% else %}#28a745{% endif %};">
                                             {% if customer.medical_questionnaire_answers.pregunta_5 %}SÍ{% else %}NO{% endif %}
                                         </span>
                                     </div>
                                 </div>
 
-                                <!-- Pregunta 6: Riñones/Vejiga/Intestinos -->
+                                <!-- Pregunta 6: Pérdida de consciencia, migrañas, etc. -->
                                 <div class="medical-section">
                                     <div class="question-header" style="background: {% if customer.medical_questionnaire_answers.pregunta_6 %}#ffe6e6{% else %}#e6f7e6{% endif %}; padding: 10px; margin-bottom: 10px; border-radius: 5px;">
-                                        <strong>6. He tenido problemas con mis riñones, vejiga o intestinos</strong>
+                                        <strong>6. He perdido el conocimiento, he tenido dolores de cabeza por migraña, convulsiones, accidente cerebrovascular, lesión significativa del cap, o he sufrido de lesión neurológica persistente o enfermedad</strong>
                                         <span style="float: right; font-weight: bold; color: {% if customer.medical_questionnaire_answers.pregunta_6 %}#dc3545{% else %}#28a745{% endif %};">
                                             {% if customer.medical_questionnaire_answers.pregunta_6 %}SÍ{% else %}NO{% endif %}
                                         </span>
@@ -234,31 +236,31 @@
                                     {% if customer.medical_questionnaire_answers.pregunta_6 %}
                                     <div style="margin-left: 20px; margin-bottom: 15px;">
                                         <div style="margin-bottom: 8px; padding: 8px; background: {% if customer.medical_questionnaire_answers.pregunta_6_1 %}#ffe6e6{% else %}#f8f9fa{% endif %};">
-                                            <strong>6.1</strong> Tratamiento médico o quirúrgico del sistema digestivo en los últimos 12 meses
+                                            <strong>6.1</strong> Lesión en la cabeza con pérdida de conciencia en los últimos 5 años.
                                             <span style="float: right; color: {% if customer.medical_questionnaire_answers.pregunta_6_1 %}#dc3545{% else %}#28a745{% endif %};">
                                                 {% if customer.medical_questionnaire_answers.pregunta_6_1 %}SÍ{% else %}NO{% endif %}
                                             </span>
                                         </div>
                                         <div style="margin-bottom: 8px; padding: 8px; background: {% if customer.medical_questionnaire_answers.pregunta_6_2 %}#ffe6e6{% else %}#f8f9fa{% endif %};">
-                                            <strong>6.2</strong> Historial de problemas con enfermedad por descompresión y/o barotrauma
+                                            <strong>6.2</strong> Lesiones neurológicas persistentes o enfermedades.
                                             <span style="float: right; color: {% if customer.medical_questionnaire_answers.pregunta_6_2 %}#dc3545{% else %}#28a745{% endif %};">
                                                 {% if customer.medical_questionnaire_answers.pregunta_6_2 %}SÍ{% else %}NO{% endif %}
                                             </span>
                                         </div>
                                         <div style="margin-bottom: 8px; padding: 8px; background: {% if customer.medical_questionnaire_answers.pregunta_6_3 %}#ffe6e6{% else %}#f8f9fa{% endif %};">
-                                            <strong>6.3</strong> Hernia
+                                            <strong>6.3</strong> Dolores de cabeza por migraña recurrentes en los últimos 12 meses o tomo medicamentos para prevenirlos.
                                             <span style="float: right; color: {% if customer.medical_questionnaire_answers.pregunta_6_3 %}#dc3545{% else %}#28a745{% endif %};">
                                                 {% if customer.medical_questionnaire_answers.pregunta_6_3 %}SÍ{% else %}NO{% endif %}
                                             </span>
                                         </div>
                                         <div style="margin-bottom: 8px; padding: 8px; background: {% if customer.medical_questionnaire_answers.pregunta_6_4 %}#ffe6e6{% else %}#f8f9fa{% endif %};">
-                                            <strong>6.4</strong> Úlcera activa o cirugía de úlcera en los últimos 12 meses
+                                            <strong>6.4</strong> Desmayos o pérdida de conocimiento (pérdida total/parcial de conciencia) en los últimos 5 años.
                                             <span style="float: right; color: {% if customer.medical_questionnaire_answers.pregunta_6_4 %}#dc3545{% else %}#28a745{% endif %};">
                                                 {% if customer.medical_questionnaire_answers.pregunta_6_4 %}SÍ{% else %}NO{% endif %}
                                             </span>
                                         </div>
                                         <div style="margin-bottom: 8px; padding: 8px; background: {% if customer.medical_questionnaire_answers.pregunta_6_5 %}#ffe6e6{% else %}#f8f9fa{% endif %};">
-                                            <strong>6.5</strong> Diarrea frecuente o sangre en la orina
+                                            <strong>6.5</strong> Epilepsia, convulsiones o convulsiones, o tomo medicamentos para prevenirlas.
                                             <span style="float: right; color: {% if customer.medical_questionnaire_answers.pregunta_6_5 %}#dc3545{% else %}#28a745{% endif %};">
                                                 {% if customer.medical_questionnaire_answers.pregunta_6_5 %}SÍ{% else %}NO{% endif %}
                                             </span>
@@ -267,10 +269,10 @@
                                     {% endif %}
                                 </div>
 
-                                <!-- Pregunta 7: Otros problemas médicos -->
+                                <!-- Pregunta 7: Problemas psicológicos -->
                                 <div class="medical-section">
                                     <div class="question-header" style="background: {% if customer.medical_questionnaire_answers.pregunta_7 %}#ffe6e6{% else %}#e6f7e6{% endif %}; padding: 10px; margin-bottom: 10px; border-radius: 5px;">
-                                        <strong>7. He tenido otros problemas médicos importantes</strong>
+                                        <strong>7. He tenido problemas psicológicos o he recibido tratamiento psicológico en los últimos 5 años</strong>
                                         <span style="float: right; font-weight: bold; color: {% if customer.medical_questionnaire_answers.pregunta_7 %}#dc3545{% else %}#28a745{% endif %};">
                                             {% if customer.medical_questionnaire_answers.pregunta_7 %}SÍ{% else %}NO{% endif %}
                                         </span>
@@ -278,25 +280,25 @@
                                     {% if customer.medical_questionnaire_answers.pregunta_7 %}
                                     <div style="margin-left: 20px; margin-bottom: 15px;">
                                         <div style="margin-bottom: 8px; padding: 8px; background: {% if customer.medical_questionnaire_answers.pregunta_7_1 %}#ffe6e6{% else %}#f8f9fa{% endif %};">
-                                            <strong>7.1</strong> Embarazada, o intentando quedar embarazada
+                                            <strong>7.1</strong> Problemas de salud conductual, mental o psicológicos que requieren tratamiento médico/psiquiátrico.
                                             <span style="float: right; color: {% if customer.medical_questionnaire_answers.pregunta_7_1 %}#dc3545{% else %}#28a745{% endif %};">
                                                 {% if customer.medical_questionnaire_answers.pregunta_7_1 %}SÍ{% else %}NO{% endif %}
                                             </span>
                                         </div>
                                         <div style="margin-bottom: 8px; padding: 8px; background: {% if customer.medical_questionnaire_answers.pregunta_7_2 %}#ffe6e6{% else %}#f8f9fa{% endif %};">
-                                            <strong>7.2</strong> Más de 45 años de edad
+                                            <strong>7.2</strong> Depresión mayor, tendencia suicida, ataques de pánico, trastorno bipolar no controlado que requiere medicación/tratamiento psiquiátrico.
                                             <span style="float: right; color: {% if customer.medical_questionnaire_answers.pregunta_7_2 %}#dc3545{% else %}#28a745{% endif %};">
                                                 {% if customer.medical_questionnaire_answers.pregunta_7_2 %}SÍ{% else %}NO{% endif %}
                                             </span>
                                         </div>
                                         <div style="margin-bottom: 8px; padding: 8px; background: {% if customer.medical_questionnaire_answers.pregunta_7_3 %}#ffe6e6{% else %}#f8f9fa{% endif %};">
-                                            <strong>7.3</strong> Dificultad para igualar oídos o dolor de senos nasales
+                                            <strong>7.3</strong> Me han diagnosticado una condición de salud mental o un trastorno de aprendizaje/desarrollo que requiere atención continua.
                                             <span style="float: right; color: {% if customer.medical_questionnaire_answers.pregunta_7_3 %}#dc3545{% else %}#28a745{% endif %};">
                                                 {% if customer.medical_questionnaire_answers.pregunta_7_3 %}SÍ{% else %}NO{% endif %}
                                             </span>
                                         </div>
                                         <div style="margin-bottom: 8px; padding: 8px; background: {% if customer.medical_questionnaire_answers.pregunta_7_4 %}#ffe6e6{% else %}#f8f9fa{% endif %};">
-                                            <strong>7.4</strong> Cirugía de senos nasales en los últimos 12 meses
+                                            <strong>7.4</strong> Una adicción a drogas o alcohol que requiere tratamiento en los últimos 5 años.
                                             <span style="float: right; color: {% if customer.medical_questionnaire_answers.pregunta_7_4 %}#dc3545{% else %}#28a745{% endif %};">
                                                 {% if customer.medical_questionnaire_answers.pregunta_7_4 %}SÍ{% else %}NO{% endif %}
                                             </span>
@@ -305,114 +307,115 @@
                                     {% endif %}
                                 </div>
 
-                                <!-- Question 8: Regular Medications -->
+                                <!-- Pregunta 8: Problemas de espalda, hernia, úlceras o diabetes -->
                                 <div class="medical-section">
                                     <div class="question-header" style="background: {% if customer.medical_questionnaire_answers.pregunta_8 %}#ffe6e6{% else %}#e6f7e6{% endif %}; padding: 10px; margin-bottom: 10px; border-radius: 5px;">
-                                        <strong>8. I take medications on a regular basis (except birth control or malaria prevention)</strong>
+                                        <strong>8. He tenido problemas de espalda, hernia, úlceras o diabetes</strong>
                                         <span style="float: right; font-weight: bold; color: {% if customer.medical_questionnaire_answers.pregunta_8 %}#dc3545{% else %}#28a745{% endif %};">
-                                            {% if customer.medical_questionnaire_answers.pregunta_8 %}YES{% else %}NO{% endif %}
+                                            {% if customer.medical_questionnaire_answers.pregunta_8 %}SÍ{% else %}NO{% endif %}
                                         </span>
                                     </div>
                                     {% if customer.medical_questionnaire_answers.pregunta_8 %}
                                     <div style="margin-left: 20px; margin-bottom: 15px;">
                                         <div style="margin-bottom: 8px; padding: 8px; background: {% if customer.medical_questionnaire_answers.pregunta_8_1 %}#ffe6e6{% else %}#f8f9fa{% endif %};">
-                                            <strong>8.1</strong> Prescription or over-the-counter medications within the last 12 months
+                                            <strong>8.1</strong> Problemas de espalda recurrentes en los últimos 6 meses que limitan mi actividad diaria.
                                             <span style="float: right; color: {% if customer.medical_questionnaire_answers.pregunta_8_1 %}#dc3545{% else %}#28a745{% endif %};">
-                                                {% if customer.medical_questionnaire_answers.pregunta_8_1 %}YES{% else %}NO{% endif %}
+                                                {% if customer.medical_questionnaire_answers.pregunta_8_1 %}SÍ{% else %}NO{% endif %}
                                             </span>
                                         </div>
                                         <div style="margin-bottom: 8px; padding: 8px; background: {% if customer.medical_questionnaire_answers.pregunta_8_2 %}#ffe6e6{% else %}#f8f9fa{% endif %};">
-                                            <strong>8.2</strong> Previous adverse reaction to any medication
+                                            <strong>8.2</strong> Cirugía de espalda o espinal en los últimos 12 meses.
                                             <span style="float: right; color: {% if customer.medical_questionnaire_answers.pregunta_8_2 %}#dc3545{% else %}#28a745{% endif %};">
-                                                {% if customer.medical_questionnaire_answers.pregunta_8_2 %}YES{% else %}NO{% endif %}
+                                                {% if customer.medical_questionnaire_answers.pregunta_8_2 %}SÍ{% else %}NO{% endif %}
                                             </span>
                                         </div>
                                         <div style="margin-bottom: 8px; padding: 8px; background: {% if customer.medical_questionnaire_answers.pregunta_8_3 %}#ffe6e6{% else %}#f8f9fa{% endif %};">
-                                            <strong>8.3</strong> Currently under the care of a physician
+                                            <strong>8.3</strong> Diabetes, ya sea controlada por insulina o por dieta o diabetes gestacional en los últimos 12 meses.
                                             <span style="float: right; color: {% if customer.medical_questionnaire_answers.pregunta_8_3 %}#dc3545{% else %}#28a745{% endif %};">
-                                                {% if customer.medical_questionnaire_answers.pregunta_8_3 %}YES{% else %}NO{% endif %}
+                                                {% if customer.medical_questionnaire_answers.pregunta_8_3 %}SÍ{% else %}NO{% endif %}
                                             </span>
                                         </div>
                                         <div style="margin-bottom: 8px; padding: 8px; background: {% if customer.medical_questionnaire_answers.pregunta_8_4 %}#ffe6e6{% else %}#f8f9fa{% endif %};">
-                                            <strong>8.4</strong> Have been advised against participating in sports or exercise
+                                            <strong>8.4</strong> Una hernia no corregida que limita mis capacidades físicas.
                                             <span style="float: right; color: {% if customer.medical_questionnaire_answers.pregunta_8_4 %}#dc3545{% else %}#28a745{% endif %};">
-                                                {% if customer.medical_questionnaire_answers.pregunta_8_4 %}YES{% else %}NO{% endif %}
+                                                {% if customer.medical_questionnaire_answers.pregunta_8_4 %}SÍ{% else %}NO{% endif %}
                                             </span>
                                         </div>
                                         <div style="margin-bottom: 8px; padding: 8px; background: {% if customer.medical_questionnaire_answers.pregunta_8_5 %}#ffe6e6{% else %}#f8f9fa{% endif %};">
-                                            <strong>8.5</strong> Been a patient in a hospital, surgical or emergency facility within the last 12 months
+                                            <strong>8.5</strong> Úlceras activas o no tratadas, heridas problemáticas o cirugía de úlcera en los últimos 6 meses.
                                             <span style="float: right; color: {% if customer.medical_questionnaire_answers.pregunta_8_5 %}#dc3545{% else %}#28a745{% endif %};">
-                                                {% if customer.medical_questionnaire_answers.pregunta_8_5 %}YES{% else %}NO{% endif %}
+                                                {% if customer.medical_questionnaire_answers.pregunta_8_5 %}SÍ{% else %}NO{% endif %}
                                             </span>
                                         </div>
                                     </div>
                                     {% endif %}
                                 </div>
 
-                                <!-- Question 9: Recreational Drugs -->
+                                <!-- Pregunta 9: Problemas de estómago o intestinos -->
                                 <div class="medical-section">
                                     <div class="question-header" style="background: {% if customer.medical_questionnaire_answers.pregunta_9 %}#ffe6e6{% else %}#e6f7e6{% endif %}; padding: 10px; margin-bottom: 10px; border-radius: 5px;">
-                                        <strong>9. I have had problems with recreational drugs</strong>
+                                        <strong>9. He tenido problemas de estómago o intestinos, incluyendo diarrea reciente</strong>
                                         <span style="float: right; font-weight: bold; color: {% if customer.medical_questionnaire_answers.pregunta_9 %}#dc3545{% else %}#28a745{% endif %};">
-                                            {% if customer.medical_questionnaire_answers.pregunta_9 %}YES{% else %}NO{% endif %}
+                                            {% if customer.medical_questionnaire_answers.pregunta_9 %}SÍ{% else %}NO{% endif %}
                                         </span>
                                     </div>
                                     {% if customer.medical_questionnaire_answers.pregunta_9 %}
                                     <div style="margin-left: 20px; margin-bottom: 15px;">
                                         <div style="margin-bottom: 8px; padding: 8px; background: {% if customer.medical_questionnaire_answers.pregunta_9_1 %}#ffe6e6{% else %}#f8f9fa{% endif %};">
-                                            <strong>9.1</strong> Used tobacco products within the last 12 months
+                                            <strong>9.1</strong> Cirugía de ostomía y no tengo autorización médica para nadar o participar en actividad física.
                                             <span style="float: right; color: {% if customer.medical_questionnaire_answers.pregunta_9_1 %}#dc3545{% else %}#28a745{% endif %};">
-                                                {% if customer.medical_questionnaire_answers.pregunta_9_1 %}YES{% else %}NO{% endif %}
+                                                {% if customer.medical_questionnaire_answers.pregunta_9_1 %}SÍ{% else %}NO{% endif %}
                                             </span>
                                         </div>
                                         <div style="margin-bottom: 8px; padding: 8px; background: {% if customer.medical_questionnaire_answers.pregunta_9_2 %}#ffe6e6{% else %}#f8f9fa{% endif %};">
-                                            <strong>9.2</strong> Used alcohol, prescription or over-the-counter drugs within the last 12 months
+                                            <strong>9.2</strong> Deshidratación que requiere intervención médica en los últimos 7 días.
                                             <span style="float: right; color: {% if customer.medical_questionnaire_answers.pregunta_9_2 %}#dc3545{% else %}#28a745{% endif %};">
-                                                {% if customer.medical_questionnaire_answers.pregunta_9_2 %}YES{% else %}NO{% endif %}
+                                                {% if customer.medical_questionnaire_answers.pregunta_9_2 %}SÍ{% else %}NO{% endif %}
                                             </span>
                                         </div>
                                         <div style="margin-bottom: 8px; padding: 8px; background: {% if customer.medical_questionnaire_answers.pregunta_9_3 %}#ffe6e6{% else %}#f8f9fa{% endif %};">
-                                            <strong>9.3</strong> Been told I have a drinking problem
+                                            <strong>9.3</strong> Úlceras estomacales o intestinales activas o no tratadas o cirugía de úlcera en los últimos 6 meses.
                                             <span style="float: right; color: {% if customer.medical_questionnaire_answers.pregunta_9_3 %}#dc3545{% else %}#28a745{% endif %};">
-                                                {% if customer.medical_questionnaire_answers.pregunta_9_3 %}YES{% else %}NO{% endif %}
+                                                {% if customer.medical_questionnaire_answers.pregunta_9_3 %}SÍ{% else %}NO{% endif %}
                                             </span>
                                         </div>
                                         <div style="margin-bottom: 8px; padding: 8px; background: {% if customer.medical_questionnaire_answers.pregunta_9_4 %}#ffe6e6{% else %}#f8f9fa{% endif %};">
-                                            <strong>9.4</strong> Failed a drug or alcohol test required by an employer
+                                            <strong>9.4</strong> Acidez estomacal frecuente, regurgitación o enfermedad por reflujo gastroesofágico (ERGE).
                                             <span style="float: right; color: {% if customer.medical_questionnaire_answers.pregunta_9_4 %}#dc3545{% else %}#28a745{% endif %};">
-                                                {% if customer.medical_questionnaire_answers.pregunta_9_4 %}YES{% else %}NO{% endif %}
+                                                {% if customer.medical_questionnaire_answers.pregunta_9_4 %}SÍ{% else %}NO{% endif %}
                                             </span>
                                         </div>
                                         <div style="margin-bottom: 8px; padding: 8px; background: {% if customer.medical_questionnaire_answers.pregunta_9_5 %}#ffe6e6{% else %}#f8f9fa{% endif %};">
-                                            <strong>9.5</strong> Been arrested for driving while under the influence of alcohol or drugs
+                                            <strong>9.5</strong> Colitis ulcerosa activa o no controlada o enfermedad de Crohn.
                                             <span style="float: right; color: {% if customer.medical_questionnaire_answers.pregunta_9_5 %}#dc3545{% else %}#28a745{% endif %};">
-                                                {% if customer.medical_questionnaire_answers.pregunta_9_5 %}YES{% else %}NO{% endif %}
+                                                {% if customer.medical_questionnaire_answers.pregunta_9_5 %}SÍ{% else %}NO{% endif %}
                                             </span>
                                         </div>
                                         <div style="margin-bottom: 8px; padding: 8px; background: {% if customer.medical_questionnaire_answers.pregunta_9_6 %}#ffe6e6{% else %}#f8f9fa{% endif %};">
-                                            <strong>9.6</strong> Been in treatment for alcohol or drug use
+                                            <strong>9.6</strong> Cirugía bariátrica en los últimos 12 meses.
                                             <span style="float: right; color: {% if customer.medical_questionnaire_answers.pregunta_9_6 %}#dc3545{% else %}#28a745{% endif %};">
-                                                {% if customer.medical_questionnaire_answers.pregunta_9_6 %}YES{% else %}NO{% endif %}
+                                                {% if customer.medical_questionnaire_answers.pregunta_9_6 %}SÍ{% else %}NO{% endif %}
                                             </span>
                                         </div>
                                     </div>
                                     {% endif %}
                                 </div>
 
-                                <!-- Question 10: Marijuana/Cannabis -->
+                                <!-- Pregunta 10: Medicamentos recetados -->
                                 <div class="medical-section">
                                     <div class="question-header" style="background: {% if customer.medical_questionnaire_answers.pregunta_10 %}#ffe6e6{% else %}#e6f7e6{% endif %}; padding: 10px; margin-bottom: 10px; border-radius: 5px;">
-                                        <strong>10. I have used marijuana/cannabis in any form within the last 12 months</strong>
+                                        <strong>10. Estoy tomando medicamentos recetados (con excepción de anticonceptivos o medicamentos antipalúdicos que no sean Lariam-mefloquina)</strong>
                                         <span style="float: right; font-weight: bold; color: {% if customer.medical_questionnaire_answers.pregunta_10 %}#dc3545{% else %}#28a745{% endif %};">
-                                            {% if customer.medical_questionnaire_answers.pregunta_10 %}YES{% else %}NO{% endif %}
+                                            {% if customer.medical_questionnaire_answers.pregunta_10 %}SÍ{% else %}NO{% endif %}
                                         </span>
                                     </div>
                                 </div>
 
+                                <!-- Signature -->
                                 {% if customer.signature %}
                                 <div style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 5px;">
                                     <h6>Firma digital:</h6>
-                                    <img src="{{ customer.signature.url }}" alt="Customer Signature" style="max-width: 300px; border: 1px solid #ddd;">
+                                    <img src="{{ customer.signature.url }}" alt="Firma del Cliente" style="max-width: 300px; border: 1px solid #ddd;">
                                 </div>
                                 {% endif %}
                             </div>
@@ -420,7 +423,7 @@
                         {% endif %}
 
                         <div style="margin-top: 15px; font-size: 12px; color: #666;">
-                            <strong>Enviado:</strong> {{ customer.created_at|date:"F j, Y, g:i A" }}
+                            <strong>Enviado:</strong> {{ customer.created_at|date:"j F Y, G:i" }}
                         </div>
                     </div>
 
@@ -432,7 +435,8 @@
             </div>
             {% endfor %}
         </div>
-    <!-- Pagination -->
+        
+        <!-- Pagination -->
         {% if medical_forms.has_other_pages %}
         <div style="display: flex; justify-content: center; align-items: center; margin: 30px 0; gap: 10px;">
             {% if medical_forms.has_previous %}
@@ -453,11 +457,11 @@
     {% else %}
         <div style="text-align: center; padding: 40px; color: #666;">
             {% if search_query %}
-                <p>No medical forms found matching "{{ search_query }}".</p>
-                <a href="{% url 'users:medical_forms_list' %}" class="btn" style="background: #007bff; color: white;">Show All Forms</a>
+                <p>No se encontraron formularios médicos que coincidan con "{{ search_query }}".</p>
+                <a href="{% url 'users:medical_forms_list' %}" class="btn" style="background: #007bff; color: white;">Mostrar Todos los Formularios</a>
             {% else %}
-                <p>No medical forms have been submitted yet.</p>
-                <p>Share the medical form link with customers:</p>
+                <p>Aún no se han enviado formularios médicos.</p>
+                <p>Comparte el enlace del formulario médico con los clientes:</p>
                 <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin-top: 10px;">
                     <code>{{ request.build_absolute_uri }}{% url 'users:medical_form' %}</code>
                 </div>
@@ -466,7 +470,7 @@
     {% endif %}
 
     <div style="margin-top: 30px;">
-        <a href="{% url 'users:diving_center_dashboard' %}" class="btn btn-secondary">Volver</a>
+        <a href="{% url 'users:diving_center_dashboard' %}" class="btn btn-secondary">Volver al Panel</a>
     </div>
 </div>
 
@@ -481,3 +485,4 @@ function toggleMedicalAnswers(customerId) {
 }
 </script>
 {% endblock %}
+
