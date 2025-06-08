@@ -8,8 +8,8 @@
     <h2>Gestor de cursos</h2>
 
     <div class="mb-4 d-flex flex-column flex-md-row justify-content-md-between align-items-md-center">
-        <a href="{% url 'users:add_course' %}" class="btn">Crear nuevo curso</a>
-        <a href="{% url 'users:course_enrollments' %}" class="btn" style="background: #28a745;">Ver inscripciones</a>
+        <a href="{% url 'users:add_course' %}" class="btn btn-success">Crear nuevo curso</a>
+        <a href="{% url 'users:course_enrollments' %}" class="btn btn-info">Ver inscripciones</a>
     </div>
 
     {% if courses %}

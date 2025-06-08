@@ -11,101 +11,103 @@
         {% csrf_token %}
         <div class="form-row">
             <div class="form-group">
-                <label for="{{ form.name.id_for_label }}">Course Name:</label>
+                <label for="{{ form.name.id_for_label }}">Nombre del curso / actividad:</label>
                 {{ form.name }}
             </div>
             <div class="form-group">
-                <label for="{{ form.course_type.id_for_label }}">Course Type:</label>
+                <label for="{{ form.course_type.id_for_label }}">Tipo de curso:</label>
                 {{ form.course_type }}
             </div>
         </div>
 
         <div class="form-group">
-            <label for="{{ form.description.id_for_label }}">Description:</label>
+            <label for="{{ form.description.id_for_label }}">Descripción:</label>
             {{ form.description }}
         </div>
 
         <div class="form-row">
             <div class="form-group">
-                <label for="{{ form.total_dives.id_for_label }}">Total Dives:</label>
+                <label for="{{ form.total_dives.id_for_label }}">Número de inmersiones:</label>
                 {{ form.total_dives }}
             </div>
             <div class="form-group">
-                <label for="{{ form.duration_days.id_for_label }}">Duration (Days):</label>
+                <label for="{{ form.duration_days.id_for_label }}">Duración (Días):</label>
                 {{ form.duration_days }}
             </div>
         </div>
 
         <div class="form-row">
             <div class="form-group">
-                <label for="{{ form.price.id_for_label }}">Price (€):</label>
+                <label for="{{ form.price.id_for_label }}">Precio (€):</label>
                 {{ form.price }}
             </div>
         </div>
 
         <div class="form-group">
-            <label for="{{ form.prerequisites.id_for_label }}">Prerequisites:</label>
+            <label for="{{ form.prerequisites.id_for_label }}">Pre-requisitos:</label>
             {{ form.prerequisites }}
         </div>
 
         <div class="checkbox-group">
             <label>
-                {{ form.is_active }} Active Course
+                {{ form.is_active }} Curso activo
             </label>
         </div>
 
         <div class="checkbox-group">
             <label>
-                {{ form.just_one_dive }} Just One Dive
+                {{ form.just_one_dive }} Solo una inmersión
             </label>
         </div>
 
-        <h3 style="margin-top: 30px; margin-bottom: 15px;">Course Inclusions</h3>
-        <p style="color: #666; margin-bottom: 20px;">Select what is included in the course price by default:</p>
+        <h3 style="margin-top: 30px; margin-bottom: 15px;">Incluido en el curso / actividad</h3>
+        <p style="color: #666; margin-bottom: 20px;">Selecciona qué elementos están incluidos en el precio del curso.
+        </p>
 
         <div class="checkbox-group">
             <label>
-                {{ form.includes_material }} Material Included
-            </label>
-        </div>
-
-        <div class="checkbox-group">
-            <label>
-                {{ form.includes_instructor }} Instructor Included
+                {{ form.includes_material }} Material incluido
             </label>
         </div>
 
         <div class="checkbox-group">
             <label>
-                {{ form.includes_insurance }} Insurance Included
+                {{ form.includes_instructor }} Instructor incluido
+            </label>
+        </div>
+
+        <div class="checkbox-group">
+            <label>
+                {{ form.includes_insurance }} Seguro incluido
             </label>
         </div>
 
         <div style="margin-top: 20px;">
-            <button type="submit" class="btn">Update Course</button>
-            <a href="{% url 'users:courses_list' %}" class="btn" style="background: #6c757d;">Cancel</a>
+            <button type="submit" class="btn btn-primary">Actualizar curso</button>
+            <a href="{% url 'users:courses_list' %}" class="btn btn-secondary">Cancelar</a>
         </div>
     </form>
 
     <!-- Course Template Sessions Section -->
     <div class="sessions-section" style="margin-top: 40px;">
         <h3>Course Template Sessions</h3>
-        <p style="color: #666; margin-bottom: 20px;">These are the default sessions for this course. When a customer enrolls, these sessions will be automatically created for them.</p>
+        <p style="color: #666; margin-bottom: 20px;">Estas son las sesiones por defecto para este curso. Cuando un cliente se inscribe, estas sesiones se crearán automáticamente para él.
+            </p>
 
         <div class="sessions-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h4>Template Sessions ({{ template_sessions.count }})</h4>
-            <button type="button" onclick="showAddSessionModal()" class="btn" style="background: #28a745;">Add Session</button>
+            <h4>Plantilla de sesiones ({{ template_sessions.count }})</h4>
+            <button type="button" onclick="showAddSessionModal()" class="btn btn-success">Añadir sesión</button>
         </div>
 
         <div class="sessions-list">
             {% for session in template_sessions %}
                 <div class="session-card" data-session-id="{{ session.id }}">
                     <div class="session-header">
-                        <span class="session-number">Session {{ session.session_number }}</span>
+                        <span class="session-number">Sesión {{ session.session_number }}</span>
                         <span class="session-type-badge session-type-{{ session.session_type|lower }}">{{ session.get_session_type_display }}</span>
                         <div class="session-actions">
-                            <button type="button" onclick="editSession({{ session.id }})" class="btn-small" style="background: #ffc107;">Edit</button>
-                            <button type="button" onclick="deleteSession({{ session.id }})" class="btn-small" style="background: #dc3545;">Delete</button>
+                            <button type="button" onclick="editSession({{ session.id }})" class="btn btn-primary">Editar</button>
+                            <button type="button" onclick="deleteSession({{ session.id }})" class="btn btn-danger;">Eliminar</button>
                         </div>
                     </div>
                     <div class="session-details">
@@ -115,14 +117,14 @@
                         {% endif %}
                         {% if session.skills_covered %}
                             <div class="skills-covered">
-                                <strong>Skills:</strong> {{ session.skills_covered }}
+                                <strong>Habilidades:</strong> {{ session.skills_covered }}
                             </div>
                         {% endif %}
                     </div>
                 </div>
             {% empty %}
                 <div class="no-sessions">
-                    <p>No template sessions configured. Click "Add Session" to create the first session template.</p>
+                    <p>No hay sesiones configuradas. Haz click en "Añadir sesión" para crear la primera sesión.</p>
                 </div>
             {% endfor %}
         </div>
@@ -131,20 +133,20 @@
     <!-- Existing Enrollments Section -->
     {% if enrollments %}
     <div class="enrollments-section" style="margin-top: 40px;">
-        <h3>Current Enrollments</h3>
+        <h3>Inscripciones actuales</h3>
         <div class="enrollments-list">
             {% for enrollment in enrollments %}
                 <div class="enrollment-card">
                     <div class="enrollment-header">
                         <h4>{{ enrollment.customer.get_full_name }}</h4>
                         <span class="status-badge status-{{ enrollment.status|lower }}">{{ enrollment.get_status_display }}</span>
-                        <a href="{% url 'users:enrollment_detail' enrollment.id %}" class="btn-small">View Details</a>
+                        <a href="{% url 'users:enrollment_detail' enrollment.id %}" class="btn-small">Ver detalles</a>
                     </div>
                     <div class="enrollment-progress">
                         <div class="progress-bar">
                             <div class="progress-fill" style="width: {{ enrollment.get_progress_percentage }}%"></div>
                         </div>
-                        <span class="progress-text">{{ enrollment.get_completed_lessons }}/{{ enrollment.course_sessions.count }} lessons completed</span>
+                        <span class="progress-text">{{ enrollment.get_completed_lessons }}/{{ enrollment.course_sessions.count }} sesiones completadas</span>
                     </div>
                 </div>
             {% endfor %}
@@ -156,7 +158,7 @@
     <div id="sessionModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeSessionModal()">&times;</span>
-            <h3 id="modal-title">Add Session</h3>
+            <h3 id="modal-title">Añadir sesión</h3>
             <form id="session-form">
                 {% csrf_token %}
                 <input type="hidden" id="session-id" name="session_id">
@@ -164,39 +166,39 @@
 
                 <div class="form-row">
                     <div class="form-group">
-                        <label for="session_number">Session Number:</label>
+                        <label for="session_number">Número de sesión:</label>
                         <input type="number" id="session_number" name="session_number" min="1" required class="form-control">
                     </div>
                     <div class="form-group">
-                        <label for="session_type">Session Type:</label>
+                        <label for="session_type">Tipo de sesión:</label>
                         <select id="session_type" name="session_type" required class="form-control">
-                            <option value="THEORY">Theory Session</option>
-                            <option value="POOL">Pool Dive</option>
-                            <option value="OPEN_WATER">Open Water Dive</option>
-                            <option value="EXAM">Exam</option>
-                            <option value="PRACTICAL">Practical Skills</option>
+                            <option value="THEORY">Clase teórica</option>
+                            <option value="POOL">Piscina / Aguas confinadas</option>
+                            <option value="OPEN_WATER">Aguas abiertas</option>
+                            <option value="EXAM">Examen</option>
+                            <option value="PRACTICAL">Habilidades prácticas</option>
                         </select>
                     </div>
                 </div>
 
                 <div class="form-group">
-                    <label for="title">Session Title:</label>
+                    <label for="title">Nombre de la sesión:</label>
                     <input type="text" id="title" name="title" required class="form-control">
                 </div>
 
                 <div class="form-group">
-                    <label for="description">Description:</label>
+                    <label for="description">Descripción:</label>
                     <textarea id="description" name="description" rows="3" class="form-control"></textarea>
                 </div>
 
                 <div class="form-group">
-                    <label for="skills_covered">Skills Covered:</label>
+                    <label for="skills_covered">Habilidades cubiertas:</label>
                     <textarea id="skills_covered" name="skills_covered" rows="2" class="form-control"></textarea>
                 </div>
 
                 <div class="modal-actions">
-                    <button type="submit" class="btn">Save Session</button>
-                    <button type="button" onclick="closeSessionModal()" class="btn" style="background: #6c757d;">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Guardar sesión</button>
+                    <button type="button" onclick="closeSessionModal()" class="btn btn-secondary">Cancelar</button>
                 </div>
             </form>
         </div>
@@ -390,7 +392,7 @@
 
 <script>
 function showAddSessionModal() {
-    document.getElementById('modal-title').textContent = 'Add Session';
+    document.getElementById('modal-title').textContent = 'Añadir sesión';
     document.getElementById('session-form').reset();
     document.getElementById('session-id').value = '';
     
@@ -407,7 +409,7 @@ function showAddSessionModal() {
 }
 
 function editSession(sessionId) {
-    document.getElementById('modal-title').textContent = 'Edit Session';
+    document.getElementById('modal-title').textContent = 'Editar sesión';
     document.getElementById('session-id').value = sessionId;
     
     // Fetch session data via AJAX
