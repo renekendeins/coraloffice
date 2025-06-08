@@ -1,11 +1,11 @@
 
 {% extends 'users/base.html' %}
 
-{% block users_title %}Add Course - CoralOffice{% endblock %}
+{% block users_title %}Añadir curso - CoralOffice{% endblock %}
 
 {% block users_content %}
 <div class="p-3 container">
-    <h2>Añadir nuevo curso / Activiad</h2>
+    <h2>Añadir nuevo curso / activiad</h2>
 
     <form method="post">
         {% csrf_token %}
@@ -46,48 +46,42 @@
 
         <div class="checkbox-group">
             <label>
-                {{ form.just_one_dive }} Solo una inmersión
+                {{ form.just_one_dive }} Actividad de solo una inmersión
+            </label>
+        </div>
+        <div class="checkbox-group">
+            <label>
+                {{ form.is_active }} Curso / actividad activo
             </label>
         </div>
 
-        <h3 style="margin-top: 30px; margin-bottom: 15px;">Ítems incluidos</h3>
-        <p style="color: #666; margin-bottom: 20px;">Selecciona qué está incluido por defecto:</p>
+        <h3 style="margin-top: 30px;">Ítems incluidos</h3>
+        <p style="color: #666;">Selecciona qué está incluido por defecto:</p>
 
         <div class="checkbox-group">
             <label>
-                {{ form.includes_material }} Material Incluido
+                {{ form.includes_material }} Material 
             </label>
         </div>
 
         <div class="checkbox-group">
             <label>
-                {{ form.includes_instructor }} Instructor Incluido
-            </label>
-        </div>
-
-
-        <div class="checkbox-group">
-            <label>
-                {{ form.includes_instructor }} Instructor Incluido
+                {{ form.includes_instructor }} Instructor / Guía
             </label>
         </div>
 
 
         <div class="checkbox-group">
             <label>
-                {{ form.includes_insurance }} Seguro Incluido
+                {{ form.includes_insurance }} Seguro 
             </label>
         </div>
 
         
-        <div class="checkbox-group">
-            <label>
-                {{ form.is_active }} Curso o actividad activo
-            </label>
+        <div class="mt-3">
+            <button type="submit" class="btn btn-success">Crear curso</button>
+            <a href="{% url 'users:courses_list' %}" class="btn btn-secondary">Cancelar</a>
         </div>
-
-        <button type="submit" class="btn btn-primary">Crear curso</button>
-        <a href="{% url 'users:courses_list' %}" class="btn btn-secondary">Cancelar</a>
     </form>
 </div>
 {% endblock %}
