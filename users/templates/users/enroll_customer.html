@@ -233,6 +233,14 @@ document.addEventListener('click', function(e) {
 
 // Hide the original select field
 customerSelect.style.display = 'none';
+
+// Pre-populate customer if one is already selected
+if (customerSelect.value) {
+    const selectedCustomer = searchData.customers.find(c => c.id == customerSelect.value);
+    if (selectedCustomer) {
+        customerSearch.value = selectedCustomer.name;
+    }
+}
 </script>
 
 {% endblock %}

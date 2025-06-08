@@ -1694,6 +1694,15 @@ def enroll_customer(request, customer_id=None):
             except Course.DoesNotExist:
                 pass
         
+        # Auto-select customer if passed as parameter
+        customer_id = request.GET.get('customer')
+        if customer_id:
+            try:
+                customer_obj = Customer.objects.get(id=customer_id, diving_center=request.user)
+                initial_data['customer'] = customer_obj
+            except Customer.DoesNotExist:
+                pass
+        
         form = CourseEnrollmentForm(diving_center=request.user, initial=initial_data)
 
     return render(request, 'users/enroll_customer.html', {
