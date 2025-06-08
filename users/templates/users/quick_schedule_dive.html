@@ -1,11 +1,11 @@
 
 {% extends 'users/base.html' %}
 
-{% block users_title %}Quick Schedule - CoralOffice{% endblock %}
+{% block users_title %}Programar salida de buceo- CoralOffice{% endblock %}
 
 {% block users_content %}
-<div class="p-3">
-    <h2>Quick Schedule Dive{% if selected_date %} for {{ selected_date }}{% endif %}</h2>
+<div class="p-3 container">
+    <h2>Programar salida{% if selected_date %} para {{ selected_date }}{% endif %}</h2>
     <form method="post">
         {% csrf_token %}
         {% for field in form %}
@@ -20,8 +20,8 @@
                 {% endfor %}
             </div>
         {% endfor %}
-        <button type="submit" class="btn">Schedule Dive</button>
-        <a href="{% url 'users:calendar_view' %}" class="btn" style="background: #6c757d;">Cancel</a>
+        <button type="submit" class="btn btn-success">Programar inmersión</button>
+        <a href="{% url 'users:calendar_view' %}" class="btn btn-secondaru">Cancelar</a>
     </form>
 </div>
 {% endblock %}
