@@ -1,0 +1,48 @@
+
+{% extends 'users/base.html' %}
+
+{% block users_title %}Delete Diving Site - CoralOffice{% endblock %}
+
+{% block users_content %}
+<div class="p-3 container">
+    <h2>Eliminar lugar de buceo</h2>
+    
+    <div class="alert alert-warning" style="background-color: #fff3cd; border: 1px solid #ffeaa7; padding: 15px; border-radius: 5px; margin-bottom: 20px;">
+        <h4>¿Estás seguro de que quieres eliminar este lugar de buceo?</h4>
+        <p><strong>{{ site.name }}</strong></p>
+        <p><strong>Ubicación:</strong> {{ site.location }}</p>
+        <p><strong>Profundidad:</strong> {{ site.depth_min }}m - {{ site.depth_max }}m</p>
+        <p style="color: #856404; margin-top: 15px;">
+            <strong>⚠️ Esta acción no se puede deshacer.</strong>
+        </p>
+    </div>
+
+    <form method="post" style="display: inline;">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Sí, eliminar lugar de buceo</button>
+    </form>
+    <a href="{% url 'users:diving_sites_list' %}" class="btn btn-secondary" style="margin-left: 10px;">Cancelar</a>
+</div>
+
+<style>
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    text-decoration: none;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+</style>
+{% endblock %}

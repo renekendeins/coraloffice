@@ -846,6 +846,42 @@ def add_diving_site(request):
     return render(request, 'users/add_diving_site.html', {'form': form})
 
 
+@login_required
+def edit_diving_site(request, site_id):
+    if not request.user.userprofile.is_diving_center:
+        messages.error(request, 'Access denied.')
+        return redirect('users:profile')
+
+    site = get_object_or_404(DivingSite, id=site_id, diving_center=request.user)
+
+    if request.method == 'POST':
+        form = DivingSiteForm(request.POST, instance=site)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Diving site updated successfully!')
+            return redirect('users:diving_sites_list')
+    else:
+        form = DivingSiteForm(instance=site)
+    return render(request, 'users/edit_diving_site.html', {'form': form, 'site': site})
+
+
+@login_required
+def delete_diving_site(request, site_id):
+    if not request.user.userprofile.is_diving_center:
+        messages.error(request, 'Access denied.')
+        return redirect('users:profile')
+
+    site = get_object_or_404(DivingSite, id=site_id, diving_center=request.user)
+
+    if request.method == 'POST':
+        site_name = site.name
+        site.delete()
+        messages.success(request, f'Diving site "{site_name}" deleted successfully!')
+        return redirect('users:diving_sites_list')
+
+    return render(request, 'users/delete_diving_site.html', {'site': site})
+
+
 # Inventory Management
 @login_required
 def inventory_list(request):
@@ -1657,6 +1693,16 @@ def enroll_customer(request, customer_id=None):
         initial_data = {}
         if customer:
             initial_data['customer'] = customer
+        
+        # Auto-select course if passed as parameter
+        course_id = request.GET.get('course')
+        if course_id:
+            try:
+                course = Course.objects.get(id=course_id, diving_center=request.user)
+                initial_data['course'] = course
+            except Course.DoesNotExist:
+                pass
+        
         form = CourseEnrollmentForm(diving_center=request.user, initial=initial_data)
 
     return render(request, 'users/enroll_customer.html', {

@@ -38,6 +38,8 @@ urlpatterns = [
     # Diving Sites
     path('diving-sites/', views.diving_sites_list, name='diving_sites_list'),
     path('diving-sites/add/', views.add_diving_site, name='add_diving_site'),
+    path('diving-sites/<int:site_id>/edit/', views.edit_diving_site, name='edit_diving_site'),
+    path('diving-sites/<int:site_id>/delete/', views.delete_diving_site, name='delete_diving_site'),
 
     # Inventory
     path('inventory/', views.inventory_list, name='inventory_list'),

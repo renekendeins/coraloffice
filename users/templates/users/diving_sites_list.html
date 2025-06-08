@@ -30,6 +30,10 @@
                     <p><strong>Requerimientos especiales:</strong> {{ site.special_requirements|truncatewords:15 }}</p>
                 {% endif %}
                 <p><small>Creado el: {{ site.created_at|date:"F d, Y" }}</small></p>
+                <div class="site-actions" style="margin-top: 15px;">
+                    <a href="{% url 'users:edit_diving_site' site.id %}" class="btn-small">Editar</a>
+                    <a href="{% url 'users:delete_diving_site' site.id %}" class="btn-small btn-danger">Eliminar</a>
+                </div>
             </div>
             {% endfor %}
         </div>
@@ -50,5 +54,34 @@
 .status-intermediate { background-color: #ff9800; color: #fff; }
 .status-advanced { background-color: #f44336; color: #fff; }
 .status-expert { background-color: #9c27b0; color: #fff; }
+
+.site-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-small {
+    display: inline-block;
+    padding: 5px 10px;
+    background: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.btn-small:hover {
+    background: #0056b3;
+    color: white;
+    text-decoration: none;
+}
+
+.btn-danger {
+    background: #dc3545;
+}
+
+.btn-danger:hover {
+    background: #c82333;
+}
 </style>
 {% endblock %}

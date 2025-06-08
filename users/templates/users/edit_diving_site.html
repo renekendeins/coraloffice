@@ -1,0 +1,69 @@
+
+{% extends 'users/base.html' %}
+
+{% block users_title %}Edit Diving Site - CoralOffice{% endblock %}
+
+{% block users_content %}
+<div class="p-3 container">
+    <h2>Editar lugar de buceo - {{ site.name }}</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group" style="margin-bottom: 20px;">
+            <label for="{{ form.name.id_for_label }}">Nombre del lugar:</label>
+            {{ form.name }}
+        </div>
+
+        <div class="form-group" style="margin-bottom: 20px;">
+            <label for="{{ form.location.id_for_label }}">Ubicación:</label>
+            {{ form.location }}
+        </div>
+
+        <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+            <div class="form-group">
+                <label for="{{ form.depth_min.id_for_label }}">Profundidad mínima (m):</label>
+                {{ form.depth_min }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.depth_max.id_for_label }}">Profundidad máxima (m):</label>
+                {{ form.depth_max }}
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 20px;">
+            <label for="{{ form.difficulty_level.id_for_label }}">Nivel de dificultad:</label>
+            {{ form.difficulty_level }}
+        </div>
+
+        <div class="form-group" style="margin-bottom: 20px;">
+            <label for="{{ form.description.id_for_label }}">Descripción:</label>
+            {{ form.description }}
+        </div>
+
+        <div class="form-group" style="margin-bottom: 20px;">
+            <label for="{{ form.special_requirements.id_for_label }}">Requerimientos especiales:</label>
+            {{ form.special_requirements }}
+        </div>
+
+        <button type="submit" class="btn btn-success">Actualizar lugar de buceo</button>
+        <a href="{% url 'users:diving_sites_list' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+
+<style>
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+</style>
+{% endblock %}
