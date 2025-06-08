@@ -79,7 +79,7 @@ class CustomerForm(forms.ModelForm):
             'country': forms.Select(attrs={'class': 'form-control'}),
             'language': forms.Select(attrs={'class': 'form-control'}),
             'birthday': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'certification_level': forms.TextInput(attrs={'class': 'form-control'}),
+            'certification_level': forms.Select(attrs={'class': 'form-control'}),
             'emergency_contact': forms.TextInput(attrs={'class': 'form-control'}),
             'medical_conditions': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
             'weight': forms.NumberInput(attrs={'step': '0.1', 'placeholder': 'kg', 'class': 'form-control'}),
@@ -250,7 +250,11 @@ class QuickCustomerForm(forms.ModelForm):
 class StaffForm(forms.ModelForm):
     class Meta:
         model = Staff
-        fields = ('first_name', 'last_name', 'email', 'phone_number', 'certification_level', 'certification_number', 'languages', 'experience_years', 'specialties', 'hire_date', 'status', 'hourly_rate', 'profile_picture', 'notes')
+        fields = (
+            'first_name', 'last_name', 'email', 'phone_number', 'certification_level',
+            'certification_number', 'languages', 'experience_years', 'specialties',
+            'hire_date', 'status', 'hourly_rate', 'profile_picture', 'notes'
+        )
         widgets = {
             'hire_date': forms.DateInput(attrs={'type': 'date'}),
             'specialties': forms.Textarea(attrs={'rows': 3}),
@@ -259,6 +263,13 @@ class StaffForm(forms.ModelForm):
             'hourly_rate': forms.NumberInput(attrs={'step': '0.01', 'placeholder': '0.00'}),
             'profile_picture': forms.FileInput(attrs={'accept': 'image/*'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            existing_classes = field.widget.attrs.get('class', '')
+            field.widget.attrs['class'] = f'{existing_classes} form-control'.strip()
+
 
 class MedicalForm(forms.ModelForm):
     """Form for external users to fill medical information"""
@@ -417,7 +428,7 @@ class CourseEnrollmentForm(forms.ModelForm):
             self.fields['customer'].queryset = Customer.objects.filter(diving_center=diving_center)
             self.fields['course'].queryset = Course.objects.filter(diving_center=diving_center, is_active=True)
             self.fields['primary_instructor'].queryset = Staff.objects.filter(diving_center=diving_center, status='ACTIVE')
-            self.fields['primary_instructor'].empty_label = "Select instructor (optional)"
+            self.fields['primary_instructor'].empty_label = "Selecciona un instructor (opcional)"
 
 class CourseSessionForm(forms.ModelForm):
     class Meta:
@@ -434,7 +445,7 @@ class CourseSessionForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if diving_center:
             self.fields['instructor'].queryset = Staff.objects.filter(diving_center=diving_center, status='ACTIVE')
-            self.fields['instructor'].empty_label = "Select instructor (optional)"
+            self.fields['instructor'].empty_label = "Seleciona un instructor (opcional)"
 
 class CourseSessionScheduleForm(forms.Form):
     def __init__(self, diving_center, session, *args, **kwargs):

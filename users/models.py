@@ -427,8 +427,8 @@ class Staff(models.Model):
         ('MASTER_INSTRUCTOR', 'Master Instructor'),
         ('COURSE_DIRECTOR', 'Course Director'),        
         ('SKIPPER', 'Marinero'),        
-        ('DRIVER', 'Patrón'),        
-        ('DRIVER', 'Oficinista'),
+        ('CAPTAIN', 'Patrón'),        
+        ('OFFICE', 'Oficinista'),
 
 
 
@@ -458,7 +458,8 @@ class Staff(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name} ({self.certification_level})"
+        return f"{self.first_name} {self.last_name} ({self.get_certification_level_display()})"
+
     
     def get_full_name(self):
         return f"{self.first_name} {self.last_name}"

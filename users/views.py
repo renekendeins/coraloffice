@@ -1641,31 +1641,22 @@ def enroll_customer(request, customer_id=None):
     if not request.user.userprofile.is_diving_center:
         messages.error(request, 'Access denied.')
         return redirect('users:profile')
-    print('POST', request.POST)
     customer = None
     if customer_id:
         customer = get_object_or_404(Customer, id=request.POST.get('customer'), diving_center=request.user)
-        print(f'customer: {customer}')
-    print(f'customer: {customer} / customer_id: {customer_id} / request.POST.get(customer): {request.POST.get("customer")}')
-    
+       
     if request.method == 'POST':
         form = CourseEnrollmentForm(diving_center=request.user, data=request.POST)
         
         if form.is_valid():
-            print('form valid')
-            print('form', form)
             enrollment = form.save()
             # Create course sessions based on template sessions or fallback to default
             course = enrollment.course
-            print('course', enrollment)
             
             template_sessions = CourseSession.objects.filter(template_course=course).order_by('session_number')
-            print('template_sessions[0]', template_sessions.all())
             if template_sessions.exists():
-                print('template_sessions exists', template_sessions.all())
                 # Use template sessions
                 for template in template_sessions:
-                    print(template.title)
                     CourseSession.objects.create(
                         enrollment=enrollment,
                         session_number=template.session_number,
