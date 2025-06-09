@@ -206,6 +206,7 @@ document.getElementById('copyFormUrlBtn').addEventListener('click', function() {
         })
         .catch(error => {
             console.error('Error:', error);
+            alert(error)
             alert('Error al obtener el enlace');
         });
 });
