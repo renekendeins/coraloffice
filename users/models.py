@@ -246,7 +246,7 @@ class DiveSchedule(models.Model):
     #activity = models.ForeignKey(DiveActivity, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
-        return f"Inmersión en {self.dive_site} - {self.date} a la/s {self.time}"
+        return f"{self.dive_site} - {self.date} a la/s {self.time}"
 
     def get_participants(self):
         """Get all customers participating in this dive"""
@@ -271,8 +271,8 @@ class CustomerDiveActivity(models.Model):
     
     STATUS_CHOICES = [
         ('PENDING', 'Pendiente de llegar'),
-        ('ON_BOARD', 'A bordo'),
-        ('BACK_ON_BOAT', 'Back on Boat'),
+        ('ON_BOARD', 'Presente'),
+        ('BACK_ON_BOAT', 'De vuelta'),
         ('DEPARTED', 'En curso'),
         ('FINISHED', 'Finalizado'),
     ]
@@ -537,7 +537,7 @@ class CourseEnrollment(models.Model):
     completion_date = models.DateField(null=True, blank=True)
     certificate_number = models.CharField(max_length=100, blank=True)
     notes = models.TextField(blank=True)
-    price_paid = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
+    price_paid = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, null=True, blank=True)
     is_paid = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
