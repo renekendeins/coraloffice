@@ -32,7 +32,7 @@
                                 <p><strong>Alumno:</strong> {{ session.enrollment.customer.get_full_name }}</p>
                                 <p><strong>Sesión:</strong> {{ session.title }}</p>
                                 <p><strong>Ubicación:</strong> {{ session.get_location_name }}</p>
-                                <p><strong>Instructor:</strong> {{ session.instructor.get_full_name|default:"Not assigned" }}</p>
+                                <p><strong>Instructor:</strong> {{ session.instructor.get_full_name|default:"No asignado" }}</p>
                                 {% if session.assistant_instructors.exists %}
                                     <p><strong>Asistentes:</strong> 
                                         {% for assistant in session.assistant_instructors.all %}

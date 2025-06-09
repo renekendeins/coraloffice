@@ -522,7 +522,7 @@ class Course(models.Model):
 class CourseEnrollment(models.Model):
     STATUS_CHOICES = [
         ('ENROLLED', 'Inscrito'),
-        ('IN_PROGRESS', 'En progrso'),
+        ('IN_PROGRESS', 'En progreso'),
         ('COMPLETED', 'Completado'),
         ('CANCELLED', 'Cancelado'),
         ('ON_HOLD', 'En espera'),

@@ -642,7 +642,7 @@ def add_customer_to_dive(request, dive_id):
             participant = form.save(commit=False)
             participant.dive_schedule = dive
             participant.save()
-            messages.success(request, 'Customer added to the dive!')
+            messages.success(request, 'Cliente añadido a la salida!')
             return redirect('users:manage_dive_participants', dive_id=dive.id)
     else:
         form = CustomerDiveActivityForm(diving_center=request.user,
@@ -1623,7 +1623,7 @@ def course_enrollments(request):
 
     enrollments = CourseEnrollment.objects.filter(
         course__diving_center=request.user
-    ).select_related('customer', 'course', 'primary_instructor').order_by('-enrollment_date')
+    ).select_related('customer', 'course', 'primary_instructor').order_by('-created_at')
 
     # Filter by status if requested
     status_filter = request.GET.get('status')
@@ -1642,8 +1642,11 @@ def enroll_customer(request, customer_id=None):
         messages.error(request, 'Access denied.')
         return redirect('users:profile')
     customer = None
+    print('customer id', customer_id)
     if customer_id:
-        customer = get_object_or_404(Customer, id=request.POST.get('customer'), diving_center=request.user)
+        #customer = get_object_or_404(Customer, id=request.POST.get('customer'), diving_center=request.user)
+        customer = get_object_or_404(Customer, id=customer_id, diving_center=request.user)
+
        
     if request.method == 'POST':
         form = CourseEnrollmentForm(diving_center=request.user, data=request.POST)

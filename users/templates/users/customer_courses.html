@@ -17,7 +17,7 @@
             <div style="border: 1px solid #ddd; border-radius: 5px; padding: 15px; margin-bottom: 10px; background-color: #f9f9f9;">
                 <h4>{{ enrollment.course.name }}</h4>
                 <p><strong>Estado:</strong> <span class="status-badge status-{{ enrollment.status|lower }}">{{ enrollment.get_status_display }}</span></p>
-                <p><strong>Instructor:</strong> {{ enrollment.primary_instructor.get_full_name|default:"Not assigned" }}</p>
+                <p><strong>Instructor:</strong> {{ enrollment.primary_instructor.get_full_name|default:"No asignado" }}</p>
                 <p><strong>Fecha de inicio:</strong> {{ enrollment.start_date }}</p>
                 <p><strong>Precio:</strong> €{{ enrollment.price_paid }}</p>
                 {% if enrollment.is_paid %}<span style="background-color: #007bff; color: white; padding: 2px 6px; border-radius: 3px; font-size: 12px;">💰 Paid</span>{% endif %}if %}
@@ -34,7 +34,7 @@
             <div style="border: 1px solid #ddd; border-radius: 5px; padding: 15px; margin-bottom: 10px; background-color: #e8f5e8;">
                 <h4>{{ enrollment.course.name }}</h4>
                 <p><strong>Estado:</strong> <span class="status-badge status-completed">{{ enrollment.get_status_display }}</span></p>
-                <p><strong>Instructor:</strong> {{ enrollment.primary_instructor.get_full_name|default:"Not assigned" }}</p>
+                <p><strong>Instructor:</strong> {{ enrollment.primary_instructor.get_full_name|default:"No asignado" }}</p>
                 <p><strong>Fecha de finalización:</strong> {{ enrollment.completion_date|default:"Date not recorded" }}</p>
                 <div style="margin-top: 10px;">
                     <a href="{% url 'users:enrollment_detail' enrollment.id %}" class="btn" style="background-color: #17a2b8;">Ver certificado</a>
@@ -51,12 +51,12 @@
     {% endif %}
 
     {% if completed_enrollments %}
-        <h3>Completed Courses</h3>
+        <h3>Cursos y actividades completadas</h3>
         {% for enrollment in completed_enrollments %}
             <div style="border: 1px solid #ddd; border-radius: 5px; padding: 15px; margin-bottom: 10px; background-color: #f9f9f9;">
                 <h4>{{ enrollment.course.name }}</h4>
-                <p><strong>Status:</strong> <span class="status-badge status-{{ enrollment.status|lower }}">{{ enrollment.get_status_display }}</span></p>
-                <p><strong>Instructor:</strong> {{ enrollment.primary_instructor.get_full_name|default:"Not assigned" }}</p>
+                <p><strong>Estado:</strong> <span class="status-badge status-{{ enrollment.status|lower }}">{{ enrollment.get_status_display }}</span></p>
+                <p><strong>Instructor:</strong> {{ enrollment.primary_instructor.get_full_name|default:"No asignadod" }}</p>
                 <p><strong>Fecha de finalización:</strong> {{ enrollment.completion_date|date:"F d, Y" }}</p>
                 <p><strong>Número de certificación:</strong> {{ enrollment.certificate_number|default:"Not issued" }}</p>
                 <div style="margin-top: 10px;">

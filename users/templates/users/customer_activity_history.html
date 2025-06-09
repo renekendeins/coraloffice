@@ -5,28 +5,29 @@
 
 {% block users_content %}
 <div class="p-3 container">
-    <div style="margin-bottom: 20px;">
-        <h2>Historial de actividades - {{ customer.first_name }} {{ customer.last_name }}</h2>
-        <p><strong>Email:</strong> {{ customer.email }}</p>
-        <p><strong>Nivel de buceo:</strong> {{ customer.certification_level|default:"Not specified" }}</p>
+    <div class="d-flex justify-content-between align-items-center">
+        <div style="margin-bottom: 20px;">
+            <h2>Historial de <b>{{ customer.first_name }} {{ customer.last_name }}</b></h2>
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <a href="{% url 'users:customer_list' %}" class="btn btn-secondary">Volver</a>
+        </div>
     </div>
 
-    <div style="margin-bottom: 20px;">
-        <a href="{% url 'users:customer_list' %}" class="btn" style="background: #6c757d;">Volver</a>
-    </div>
-
-    <h3>Historial de actividades ({{ activities.count }} activities)</h3>
+    <h3 class="mb-0">{{ activities.count }} actividad/es</h3>
+    <small class="mb-3">Aquí aparecen todos los cursos y actividades que se han programado en el calendario.</small>
+    <br>
 
     {% if activities %}
-        <div class="row">
+        <div class="row mt-4">
             {% for activity in activities %}
                 <div class="col-md-6 mb-3">
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title">{{ activity.activity.name }}</h5>
+                            <h5 class="card-title"><b>{{ activity.course.name }}</b></h5>
                             <p class="card-text">
-                                <strong>Fecha:</strong> {{ activity.dive_schedule.date }}<br>
-                                <strong>Hora:</strong> {{ activity.dive_schedule.time }}<br>
+                                <strong>Fecha:</strong> {{ activity.dive_schedule.date }} - {{ activity.dive_schedule.time }}<br>
                                 <strong>Lugar de buceo:</strong> {{ activity.dive_schedule.dive_site }}<br>
                                 <strong>Botella:</strong> {{ activity.get_tank_size_display }}
                             </p>

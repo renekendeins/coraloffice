@@ -159,10 +159,10 @@ class CustomerDiveActivityForm(forms.ModelForm):
             self.fields['customer'].queryset = Customer.objects.filter(diving_center=diving_center)
             # Filter courses to show both regular courses and those marked as "just one dive"
             # Order with "just one dive" courses first
-            self.fields['course'].queryset = Course.objects.filter(diving_center=diving_center, is_active=True).order_by('-just_one_dive', 'name')
+            self.fields['course'].queryset = Course.objects.filter(diving_center=diving_center, is_active=True, just_one_dive=True).order_by('name')
             self.fields['selected_group'].queryset = DivingGroup.objects.filter(diving_center=diving_center)
             self.fields['assigned_staff'].queryset = Staff.objects.filter(diving_center=diving_center, status='ACTIVE')
-            self.fields['assigned_staff'].empty_label = "Select instructor (optional)"
+            self.fields['assigned_staff'].empty_label = "Selecciona un instructor (opcional)"
 
         if dive_schedule:
             # Exclude customers already participating in this dive
@@ -269,7 +269,6 @@ class StaffForm(forms.ModelForm):
         for field_name, field in self.fields.items():
             existing_classes = field.widget.attrs.get('class', '')
             field.widget.attrs['class'] = f'{existing_classes} form-control'.strip()
-
 
 class MedicalForm(forms.ModelForm):
     """Form for external users to fill medical information"""
@@ -383,10 +382,6 @@ class MedicalForm(forms.ModelForm):
             instance.save()
         return instance
 
-
-
-
-
 class CourseForm(forms.ModelForm):
     name = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
     course_type = forms.ChoiceField(choices=Course.COURSE_TYPE_CHOICES, widget=forms.Select(attrs={'class': 'form-control'}))
@@ -408,9 +403,6 @@ class CourseForm(forms.ModelForm):
             'price', 'prerequisites', 'is_active', 'just_one_dive',
             'includes_material', 'includes_instructor', 'includes_insurance'
         ]
-
-
-
 
 class CourseEnrollmentForm(forms.ModelForm):
     class Meta:
@@ -460,9 +452,9 @@ class CourseSessionScheduleForm(forms.Form):
 
         self.fields['dive_schedule'] = forms.ModelChoiceField(
             queryset=available_dives,
-            empty_label="Select a dive slot",
+            empty_label="Selecciona una salida",
             widget=forms.Select(attrs={'class': 'form-control'}),
-            help_text="Choose an available dive slot for this lesson"
+            help_text="Selecciona una salida para esta lección"
         )
 
         # Add primary instructor field
@@ -474,10 +466,10 @@ class CourseSessionScheduleForm(forms.Form):
         self.fields['instructor'] = forms.ModelChoiceField(
             queryset=instructors,
             required=False,
-            empty_label="Select primary instructor",
+            empty_label="Selecciona el instructor principal",
             widget=forms.Select(attrs={'class': 'form-control'}),
             initial=session.enrollment.primary_instructor,
-            help_text="Primary instructor responsible for this lesson"
+            help_text="Instructor principal para esta lección"
         )
 
         # Add assistant instructors field
@@ -485,25 +477,24 @@ class CourseSessionScheduleForm(forms.Form):
             queryset=instructors,
             required=False,
             widget=forms.CheckboxSelectMultiple(),
-            help_text="Additional staff members to assist with this lesson"
+            help_text="Miembros del personal que ayudarán en esta lección"
         )
 
         # Add session notes field
         self.fields['instructor_notes'] = forms.CharField(
             widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             required=False,
-            help_text="Notes about this lesson or special requirements"
+            help_text="Notas del instructor sobre esta lección"
         )
-
 
 class LessonCompletionForm(forms.Form):
     GRADE_CHOICES = [
-        ('PASS', 'Pass'),
-        ('FAIL', 'Fail'),
-        ('EXCELLENT', 'Excellent'),
-        ('GOOD', 'Good'),
-        ('SATISFACTORY', 'Satisfactory'),
-        ('NEEDS_IMPROVEMENT', 'Needs Improvement'),
+        ('PASS', 'Aprovado'),
+        ('FAIL', 'Suspendido'),
+        ('EXCELLENT', 'Excelente'),
+        ('GOOD', 'Bueno'),
+        ('SATISFACTORY', 'Satisfactorio'),
+        ('NEEDS_IMPROVEMENT', 'Necesita mejorar'),
     ]
 
     grade = forms.ChoiceField(

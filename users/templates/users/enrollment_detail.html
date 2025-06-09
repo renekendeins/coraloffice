@@ -12,13 +12,13 @@
             <h4>Información del curso</h4>
             <p><strong>Curso:</strong> {{ enrollment.course.get_course_type_display }}</p>
             <p><strong>Número de sesiones:</strong> {{ enrollment.course.total_dives }}</p>
-            <p><strong>Instructor:</strong> {{ enrollment.instructor.get_full_name|default:"Not assigned" }}</p>
+            <p><strong>Instructor:</strong> {{ enrollment.instructor.get_full_name|default:"No asignado" }}</p>
             <p><strong>Estado del curso:</strong> 
                 <span class="status-badge status-{{ enrollment.status|lower }}">
                     {{ enrollment.get_status_display }}
                 </span>
             </p>
-            <p><strong>Progreso:</strong> {{ enrollment.get_completed_dives }}/{{ enrollment.course.total_dives }} dives completed</p>
+            <p><strong>Progreso:</strong> {{ enrollment.get_completed_dives }}/{{ enrollment.course.total_dives }} inmersión/es completada/s</p>
             <p><strong>Fecha de inscripción:</strong> {{ enrollment.enrollment_date|date:"F d, Y" }}</p>
             {% if enrollment.completion_date %}
                 <p><strong>Fecha de finalización:</strong> {{ enrollment.completion_date|date:"F d, Y" }}</p>
@@ -83,7 +83,7 @@
 
                     {% if session.student_feedback %}
                         <div class="student-feedback">
-                            <strong>Student Feedback:</strong>
+                            <strong>Feedback del estudiante:</strong>
                             <p>{{ session.student_feedback }}</p>
                         </div>
                     {% endif %}
@@ -93,8 +93,8 @@
                     {% if session.status == 'NOT_SCHEDULED' %}
                         <a href="{% url 'users:schedule_course_session' session.id %}" class="btn-small" style="background: #007bff;">Programar sesión</a>
                     {% elif session.status == 'SCHEDULED' or session.status == 'IN_PROGRESS' %}
-                        <a href="{% url 'users:schedule_course_session' session.id %}" class="btn-small" style="background: #ffc107;">Reprogramar sesión</a>
-                        <a href="{% url 'users:complete_course_session' session.id %}" class="btn-small" style="background: #28a745;">Finalizado</a>
+                        <a href="{% url 'users:schedule_course_session' session.id %}" class="btn btn-warning">Reprogramar sesión</a>
+                        <a href="{% url 'users:complete_course_session' session.id %}" class="btn btn-success">Marcar como finalizado</a>
                     {% elif session.status == 'COMPLETED' %}
                         <a href="{% url 'users:complete_course_session' session.id %}" class="btn-small" style="background: #17a2b8;">View/Edit</a>
                     {% endif %}
@@ -103,19 +103,21 @@
         {% endfor %}
     </div>
 
-    <div class="enrollment-actions">
-        <a href="{% url 'users:course_enrollments' %}" class="btn" style="background: #6c757d;">← Back to Enrollments</a>
+    <div class="enrollment-actions mt-3">
+        <a href="{% url 'users:course_enrollments' %}" class="btn btn-secondary">← Volver a las inscripciones</a>
         {% if enrollment.status == 'ENROLLED' or enrollment.status == 'IN_PROGRESS' %}
-            <a href="{% url 'users:course_lesson_calendar' %}" class="btn">View Calendar</a>
-            <button type="button" onclick="showAddExtraSessionModal()" class="btn" style="background: #28a745;">Add Extra Session</button>
+            <a href="{% url 'users:course_lesson_calendar' %}" class="btn btn-primary">Ver calendario</a>
+            <button type="button" onclick="showAddExtraSessionModal()" class="btn btn-info">Añadir una sesión extra</button>
         {% endif %}
+            <a href="{% url 'users:customer_courses' enrollment.customer.id %}" class="btn btn-warning">Perfil del cliente</a>
+        </div>
     </div>
 
     <!-- Add Extra Session Modal -->
     <div id="extraSessionModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeExtraSessionModal()">&times;</span>
-            <h3>Add Extra Session</h3>
+            <h3>Añadir sesión extra</h3>
             <p>Add an additional session for {{ enrollment.customer.get_full_name }} in {{ enrollment.course.name }}</p>
             <form id="extra-session-form">
                 {% csrf_token %}
@@ -139,23 +141,23 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="extra_title">Session Title:</label>
+                    <label for="extra_title">Nombre de la sesión:</label>
                     <input type="text" id="extra_title" name="title" required class="form-control">
                 </div>
 
                 <div class="form-group">
-                    <label for="extra_description">Description:</label>
+                    <label for="extra_description">Descripción:</label>
                     <textarea id="extra_description" name="description" rows="3" class="form-control"></textarea>
                 </div>
 
                 <div class="form-group">
-                    <label for="extra_skills_covered">Skills Covered:</label>
+                    <label for="extra_skills_covered">Habilidades cubiertas:</label>
                     <textarea id="extra_skills_covered" name="skills_covered" rows="2" class="form-control"></textarea>
                 </div>
 
                 <div class="modal-actions">
-                    <button type="submit" class="btn">Add Session</button>
-                    <button type="button" onclick="closeExtraSessionModal()" class="btn" style="background: #6c757d;">Cancel</button>
+                    <button type="submit" class="btn btn-success">Añadir sesión</button>
+                    <button type="button" onclick="closeExtraSessionModal()" class="btn btn-secondary">Cancel</button>
                 </div>
             </form>
         </div>
@@ -216,10 +218,7 @@ window.onclick = function(event) {
 }
 </script>
 
-<div style="margin-top: 30px;">
-    <a href="{% url 'users:course_enrollments' %}" class="btn">Back to Enrollments</a>
-    <a href="{% url 'users:customer_courses' enrollment.customer.id %}" class="btn" style="background: #28a745;">Customer Profile</a>
-</div>
+
 
 <style>
 .enrollment-info {
