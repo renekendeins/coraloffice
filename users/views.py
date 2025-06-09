@@ -11,7 +11,7 @@ from datetime import datetime, timedelta
 import calendar
 import qrcode
 import io
-from .forms import SignUpForm, UserForm, UserProfileForm, CustomerForm, DiveScheduleForm, DiveActivityForm, CustomerDiveActivityForm, DivingSiteForm, InventoryItemForm, DivingGroupForm, MedicalForm, QuickCustomerForm, StaffForm, CourseForm, CourseEnrollmentForm, CourseSessionScheduleForm, LessonCompletionForm
+from .forms import SignUpForm, UserForm, UserProfileForm, CustomerForm, DiveScheduleForm, DiveActivityForm, CustomerDiveActivityForm, DivingSiteForm, InventoryItemForm, DivingGroupForm, MedicalForm, QuickCustomerForm, StaffForm, CourseForm, CourseEnrollmentForm, CourseSessionScheduleForm, LessonCompletionForm, MultipleCustomerEnrollmentForm, ScheduleMultipleSessionsForm
 from .models import UserProfile, Customer, DiveSchedule, DiveActivity, CustomerDiveActivity, DivingSite, InventoryItem, DivingGroup, DivingGroupMember, Staff, Course, CourseEnrollment, CourseSession
 from .utils import send_dive_reminder_email, send_welcome_email
 
@@ -491,7 +491,7 @@ def manage_dive_participants(request, dive_id):
                 participant = get_object_or_404(CustomerDiveActivity, id=int(participant_id))
                 participant.status = 'ON_BOARD'
                 participant.save()
-                messages.success(request, f'{participant.customer} is now on board!')
+                messages.success(request, f'{participant.customer} está presente!')
                 return redirect('users:manage_dive_participants', dive_id=dive.id)
 
         # Handle back on boat action
@@ -2080,6 +2080,93 @@ def customer_medical_detail(request, customer_id):
         'customer': customer
     })
 
+@login_required
+def enroll_multiple_customers(request):
+    if not request.user.userprofile.is_diving_center:
+        messages.error(request, 'Access denied.')
+        return redirect('users:profile')
+
+    if request.method == 'POST':
+        form = MultipleCustomerEnrollmentForm(diving_center=request.user, data=request.POST)
+        
+        if form.is_valid():
+            course = form.cleaned_data['course']
+            customers = form.cleaned_data['customers']
+            primary_instructor = form.cleaned_data.get('primary_instructor')
+            start_date = form.cleaned_data.get('start_date')
+            price_paid = form.cleaned_data.get('price_paid', 0.00)
+            is_paid = form.cleaned_data.get('is_paid', False)
+            notes = form.cleaned_data.get('notes', '')
+
+            enrolled_count = 0
+            skipped_count = 0
+            
+            for customer in customers:
+                # Check if customer is already enrolled in this course
+                if CourseEnrollment.objects.filter(customer=customer, course=course).exists():
+                    skipped_count += 1
+                    continue
+                print(customer, course, primary_instructor, start_date, price_paid, is_paid,notes)
+                # Create enrollment
+                enrollment = CourseEnrollment.objects.create(
+                    customer=customer,
+                    course=course,
+                    primary_instructor=primary_instructor,
+                    start_date=start_date,
+                    price_paid=price_paid,
+                    is_paid=is_paid,
+                    notes=notes
+                )
+                
+                # Create course sessions based on template sessions or fallback to default
+                template_sessions = CourseSession.objects.filter(template_course=course).order_by('session_number')
+                if template_sessions.exists():
+                    # Use template sessions
+                    for template in template_sessions:
+                        CourseSession.objects.create(
+                            enrollment=enrollment,
+                            session_number=template.session_number,
+                            session_type=template.session_type,
+                            title=template.title,
+                            description=template.description,
+                            skills_covered=template.skills_covered
+                        )
+                else:
+                    # Fallback to default sessions if no templates exist
+                    for i in range(1, course.total_dives + 1):
+                        CourseSession.objects.create(
+                            enrollment=enrollment,
+                            session_number=i,
+                            session_type='OPEN_WATER',
+                            title=f'Dive {i}',
+                            description=f'Dive session {i} of {course.name}'
+                        )
+                
+                enrolled_count += 1
+
+            success_msg = f'Successfully enrolled {enrolled_count} customers in {course.name}!'
+            if skipped_count > 0:
+                success_msg += f' {skipped_count} customers were already enrolled and were skipped.'
+            
+            messages.success(request, success_msg)
+            return redirect('users:course_enrollments')
+        else:
+            messages.error(request, 'Please correct the form errors.')
+    else:
+        form = MultipleCustomerEnrollmentForm(diving_center=request.user)
+
+    # Get available dive schedules for session scheduling
+    from datetime import date
+    available_dives = DiveSchedule.objects.filter(
+        diving_center=request.user,
+        date__gte=date.today()
+    ).order_by('date', 'time')
+
+    return render(request, 'users/enroll_multiple_customers.html', {
+        'form': form,
+        'available_dives': available_dives
+    })
+
 
 @login_required
 def download_medical_form_pdf(request, customer_id):
@@ -2278,3 +2365,182 @@ def get_medical_form_url(request):
     )
     
     return JsonResponse({'url': medical_form_url})
+
+@login_required
+def schedule_multiple_sessions(request):
+    if not request.user.userprofile.is_diving_center:
+        messages.error(request, 'Access denied.')
+        return redirect('users:profile')
+
+    if request.method == 'POST':
+        form = ScheduleMultipleSessionsForm(diving_center=request.user, data=request.POST)
+        
+        # Get the course and session number from the form data to set the proper queryset
+        course_id = request.POST.get('course')
+        session_number = request.POST.get('session_number')
+        
+        if course_id:
+            try:
+                course = Course.objects.get(id=course_id, diving_center=request.user)
+                pending_sessions = CourseSession.objects.filter(
+                    enrollment__course=course,
+                    status='NOT_SCHEDULED'
+                ).select_related('enrollment__customer')
+                
+                if session_number:
+                    pending_sessions = pending_sessions.filter(session_number=session_number)
+                
+                # Update the form's sessions queryset with the actual pending sessions
+                form.fields['sessions'].queryset = pending_sessions
+                
+            except Course.DoesNotExist:
+                pass
+        
+        if form.is_valid():
+            dive_schedule = form.cleaned_data['dive_schedule']
+            sessions = form.cleaned_data['sessions']
+            instructor = form.cleaned_data.get('instructor')
+
+            scheduled_count = 0
+            
+            for session in sessions:
+                # Update session details
+                session.dive_schedule = dive_schedule
+                session.scheduled_date = dive_schedule.date
+                session.scheduled_time = dive_schedule.time
+                if instructor:
+                    session.instructor = instructor
+                session.status = 'SCHEDULED'
+                session.save()
+
+                # Create CustomerDiveActivity for this course session
+                defaults = {
+                    'course': session.enrollment.course,
+                    'course_session': session,
+                    'assigned_staff': instructor,
+                    'tank_size': session.enrollment.customer.default_tank_size,
+                }
+                
+                # Auto-set equipment needs if course includes material
+                if session.enrollment.course.includes_material:
+                    defaults.update({
+                        'needs_wetsuit': True,
+                        'needs_bcd': True,
+                        'needs_regulator': True,
+                    })
+                
+                customer_dive_activity, created = CustomerDiveActivity.objects.get_or_create(
+                    customer=session.enrollment.customer,
+                    dive_schedule=dive_schedule,
+                    defaults=defaults
+                )
+
+                if not created:
+                    customer_dive_activity.course = session.enrollment.course
+                    customer_dive_activity.course_session = session
+                    if instructor:
+                        customer_dive_activity.assigned_staff = instructor
+                    
+                    if session.enrollment.course.includes_material:
+                        customer_dive_activity.needs_wetsuit = True
+                        customer_dive_activity.needs_bcd = True
+                        customer_dive_activity.needs_regulator = True
+                    
+                    customer_dive_activity.save()
+
+                # Update enrollment status if needed
+                session.enrollment.auto_update_status()
+                scheduled_count += 1
+
+            messages.success(request, f'¡{scheduled_count} sesiones programadas exitosamente!')
+            return redirect('users:schedule_multiple_sessions')
+        else:
+            messages.error(request, 'Por favor corrige los errores del formulario.')
+    else:
+        form = ScheduleMultipleSessionsForm(diving_center=request.user)
+
+    return render(request, 'users/schedule_multiple_sessions.html', {
+        'form': form
+    })
+
+@login_required
+def get_pending_sessions(request):
+    """AJAX endpoint to get pending sessions for a course and session number"""
+    if not request.user.userprofile.is_diving_center:
+        return JsonResponse({'error': 'Access denied'}, status=403)
+
+    course_id = request.GET.get('course_id')
+    session_number = request.GET.get('session_number')
+
+    if not course_id:
+        return JsonResponse({'sessions': []})
+
+    try:
+        course = Course.objects.get(id=course_id, diving_center=request.user)
+        
+        # Get pending sessions for this course
+        pending_sessions = CourseSession.objects.filter(
+            enrollment__course=course,
+            status='NOT_SCHEDULED'
+        ).select_related('enrollment__customer')
+
+        if session_number:
+            pending_sessions = pending_sessions.filter(session_number=session_number)
+
+        sessions_data = []
+        for session in pending_sessions:
+            sessions_data.append({
+                'id': session.id,
+                'session_number': session.session_number,
+                'title': session.title,
+                'customer_name': session.enrollment.customer.get_full_name(),
+                'enrollment_id': session.enrollment.id
+            })
+
+        return JsonResponse({'sessions': sessions_data})
+        
+    except Course.DoesNotExist:
+        return JsonResponse({'error': 'Course not found'}, status=404)
+
+@login_required
+def get_course_sessions(request, course_id):
+    if not request.user.userprofile.is_diving_center:
+        return JsonResponse({'error': 'Access denied'}, status=403)
+
+    try:
+        course = Course.objects.get(id=course_id, diving_center=request.user)
+        
+        # Get template sessions for this course
+        template_sessions = CourseSession.objects.filter(
+            template_course=course
+        ).order_by('session_number')
+        
+        sessions_data = []
+        if template_sessions.exists():
+            for session in template_sessions:
+                sessions_data.append({
+                    'session_number': session.session_number,
+                    'title': session.title,
+                    'session_type': session.get_session_type_display(),
+                    'description': session.description,
+                    'skills_covered': session.skills_covered
+                })
+        else:
+            # If no template sessions, create default ones based on total_dives
+            for i in range(1, course.total_dives + 1):
+                sessions_data.append({
+                    'session_number': i,
+                    'title': f'Inmersión {i}',
+                    'session_type': 'Aguas Abiertas',
+                    'description': f'Sesión de inmersión {i} de {course.name}',
+                    'skills_covered': ''
+                })
+        
+        return JsonResponse({
+            'course_name': course.name,
+            'total_dives': course.total_dives,
+            'sessions': sessions_data
+        })
+        
+    except Course.DoesNotExist:
+        return JsonResponse({'error': 'Course not found'}, status=404)
