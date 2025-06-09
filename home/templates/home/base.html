@@ -1,16 +1,19 @@
+{% if user.is_authenticated and user.userprofile.is_diving_center %}
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}CoralOffice - Gestor de centros de buceo{% endblock %}</title>
-    
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    
+
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-    
+
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; }
@@ -198,20 +201,15 @@
 <body>
     <header class="header">
         <nav class="nav-container">
-            <div class="logo">CoralOffice</div>
+            <a href="/">
+                <div class="logo text-white">CoralOffice</div>
+            </a>
             <ul class="nav-menu m-0 ms-0 p-0">
                 {% if user.is_authenticated and user.userprofile.is_diving_center %}
-                    
                     <li><a href="{% url 'users:customer_list' %}">Clientes</a></li>
                     <li><a href="{% url 'users:calendar_view' %}">Calendario</a></li>
-
-                <li><a href="{% url 'users:courses_list' %}">Cursos</a></li>
-<li><a href="{% url 'users:staff_planning' %}">Planning</a></li>
-                {% else %}
-                    <li><a href="{% url 'home:home' %}">Inicio</a></li>
-                    <li><a href="{% url 'home:services' %}">Servicios</a></li>
-                    <li><a href="{% url 'home:about' %}">Sobre nosotros</a></li>
-                    <li><a href="{% url 'home:contact' %}">Contacto</a></li>
+                    <li><a href="{% url 'users:courses_list' %}">Cursos</a></li>
+                    <li><a href="{% url 'users:staff_planning' %}">Planning</a></li>
                 {% endif %}
             </ul>
             <div class="user-menu ms-3">
@@ -375,8 +373,1334 @@
             });
         });
     </script>
-    
+
     <!-- Bootstrap JavaScript Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </body>
 </html>
+
+{% else %}
+
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <!-- Meta Title -->
+  <title>Buceo en el Cap de Creus | Inmersiones y Cursos</title>
+
+  <!-- Meta Description -->
+  <meta name="description" content="Explora las aguas del Parque Natural del Cap de Creus con nuestras salidas de buceo, cursos para todos los niveles y experiencias inolvidables.">
+
+  <!-- Meta Keywords (opcional, Google ya no lo usa, pero puede servir para otros motores) -->
+  <meta name="keywords" content="buceo Cap de Creus, inmersiones, cursos de buceo, centro de buceo Girona, diving Costa Brava, submarinismo">
+
+  <!-- Autor y otros -->
+  <meta name="author" content="Buceo Cap de Creus">
+  <meta name="robots" content="index, follow">
+
+  <!-- Open Graph (para compartir en redes sociales) -->
+  <meta property="og:title" content="Buceo en Cap de Creus | Inmersiones y Cursos">
+  <meta property="og:description" content="Descubre el fondo marino de Cap de Creus con nuestros cursos y salidas de buceo. Experiencia, seguridad y pasión por el mar.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.buceocapdecreus.com/">
+  <!--    <meta property="og:image" content="https://www.buceocapdecreus.com/img/portada-buceo.jpg">-->
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Buceo en Cap de Creus">
+  <meta name="twitter:description" content="Explora el fondo marino con nuestro centro de buceo en Cap de Creus. Cursos, inmersiones, alquiler de equipo.">
+  <!--    <meta name="twitter:image" content="https://www.buceocapdecreus.com/img/portada-buceo.jpg">-->
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://www.buceocapdecreus.com/" />
+
+  <!-- Favicon -->
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+  <!-- CSS y otras hojas de estilo -->
+  <!-- <link rel="stylesheet" href="/styles/main.css"> -->
+
+  <!-- Meta Viewport (para móviles) -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <title>Buceo Cap de Creus</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      scroll-behavior: smooth;
+      font-family: "Segoe UI", sans-serif;
+    }
+
+    body {
+      background-color: #f4f4f4;
+      color: #333;
+      padding-top: 0;
+      margin-top: 100px;
+    }
+
+    /* Menú superior horizontal */
+    .menu-top {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 56px;
+      background-color: #fff;
+      display: flex;
+      align-items: center;
+      padding: 0 24px;
+      box-shadow: 0 1px 6px rgba(0, 0, 0, 0.1);
+      z-index: 1000;
+      border-bottom: 1px solid #e0e0e0;
+      justify-content: start;
+    }
+
+    .menu-top a {
+      color: #222;
+      text-decoration: none;
+      margin-right: 24px;
+      font-weight: 600;
+      font-size: 16px;
+      transition: color 0.3s;
+      padding: 8px 0;
+      border-bottom: 2px solid transparent;
+    }
+
+    .menu-top a:hover {
+      color: #007BFF;
+    }
+
+    /* Botón menú hamburguesa */
+    .menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      color: #222;
+      font-size: 28px;
+      cursor: pointer;
+      padding: 4px 8px;
+      transition: color 0.3s;
+    }
+
+    .menu-btn:hover {
+      color: #007BFF;
+    }
+
+    .side-menu a {
+      white-space: nowrap
+    }
+
+    /* Menú lateral vertical para móvil */
+    .side-menu {
+      height: 100%;
+      width: 0;
+      position: fixed;
+      z-index: 1100;
+      top: 0;
+      left: 0;
+      background-color: #fff;
+      box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1);
+      overflow-x: hidden;
+      transition: width 0.3s ease;
+      padding-top: 56px;
+    }
+
+    .side-menu a {
+      padding: 20px 16px;
+      text-decoration: none;
+      font-size: 18px;
+      color: #222;
+      display: block;
+      border-bottom: 1px solid #eee;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    .side-menu a:hover {
+      background-color: #f0f8ff;
+      color: #007BFF;
+    }
+
+    .side-menu .close-btn {
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      font-size: 32px;
+      color: #222;
+      cursor: pointer;
+      padding: 4px 8px;
+      transition: color 0.3s;
+    }
+
+    .side-menu .close-btn:hover {
+      color: #007BFF;
+    }
+
+    /* Media queries para móviles */
+    @media (max-width: 767px) {
+
+      /* Ocultar menú horizontal en móvil */
+      .menu-top a {
+        display: none;
+      }
+
+      /* Mostrar botón menú hamburguesa */
+      .menu-btn {
+        display: block;
+      }
+
+      body {
+        padding-top: 0;
+      }
+    }
+
+    /* Menú abierto en móvil */
+    .side-menu.open {
+      width: 300px;
+    }
+
+    section {
+      padding: 40px 20px;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    h2 {
+      color: #004f6d;
+      margin-bottom: 20px;
+      text-align: center;
+      font-size: 2em;
+      margin-top: 20px;
+    }
+
+    .image-placeholder {
+      background-color: #ddd;
+      height: 200px;
+      margin: 20px 0;
+      border-radius: 10px;
+    }
+
+    footer {
+      background-color: #ffffff;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .footer-contacto {
+      padding: 20px;
+    }
+
+    .footer-contacto p {
+      font-size: 1.2rem;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .menu a {
+        font-size: 20px;
+      }
+    }
+  </style>
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "DivingCenter",
+      "name": "Buceo Cap de Creus",
+      "image": "https://buceocapdecreus.com/logo.jpg",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Carrer de l'Illa, 9",
+        "addressLocality": "Port de la Selva",
+        "postalCode": "17489",
+        "addressCountry": "ES"
+      },
+      "telephone": "+34 671 915 504",
+      "url": "https://buceocapdecreus.com"
+    }
+  </script>
+
+</head>
+
+<body>
+  <!-- Menú superior fijo -->
+  <nav class="menu-top">
+    <button class="menu-btn" aria-label="Abrir menú" onclick="openMenu()">☰</button>
+    <a href="#cursos">Cursos</a>
+    <a href="#precios">Precios</a>
+    <a href="#puntos-de-buceo">Puntos de Buceo</a>
+    <!--    <a href="#packs">Packs</a>-->
+    <a href="#grupos">Grupos</a>
+    <a href="#contacto">Contacto</a>
+  </nav>
+
+  <!-- Menú lateral para móvil -->
+  <div id="sideMenu" class="side-menu" aria-hidden="true">
+    <a href="javascript:void(0)" class="close-btn" aria-label="Cerrar menú" onclick="closeMenu()">&times;</a>
+    <a href="#cursos" onclick="closeMenu()">Cursos</a>
+    <a href="#precios" onclick="closeMenu()">Precios</a>
+    <a href="#puntos-de-buceo" onclick="closeMenu()">Puntos de Buceo</a>
+    <!--    <a href="#packs" onclick="closeMenu()">Packs</a>-->
+    <a href="#grupos" onclick="closeMenu()">Grupos</a>
+    <a href="#contacto" onclick="closeMenu()">Contacto</a>
+  </div>
+  <div style="margin:50px 0">
+    <h1 style="text-align: center">Buceo en el Cap de Creus</h1>
+    <p style="text-align: center; font-size: 1.1rem; color: #003d66; margin: 20px auto 40px; max-width: 700px">
+      <strong>Sencillo, fácil y divertido</strong>
+    </p>
+  </div>
+  <!-- Secciones -->
+  <section id="precios">
+    <style>
+      .price-table {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        padding: 20px;
+      }
+
+      .price-card {
+        background: #f0f8ff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 15px 20px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      }
+
+      .price-card h3 {
+        margin-top: 0;
+        font-size: 1.2rem;
+        color: #003d66;
+      }
+
+      .price-card ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .price-card ul li a {
+        font-size: 0.95rem;
+        padding: 16px 0;
+        color: #333;
+        display: flex;
+        width: 100%;
+        text-decoration: none;
+        justify-content: space-between;
+      }
+
+      .price-card ul li a:hover {
+        color: #007BFF !important
+      }
+
+      .price-card ul li.li-link {
+        padding: 0px
+      }
+
+      .price-card ul li {
+        padding: 16px 0;
+        border-bottom: 1px solid #e0e0e0;
+        font-size: 0.95rem;
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .price-card ul li:last-child {
+        border-bottom: none;
+      }
+
+      @media (max-width: 768px) {
+        .price-table {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+    <h2 style="text-align: center; font-size: 2rem; color: #003d66;">Precios</h2>
+    <div class="price-table">
+      <div class="price-card">
+        <h3>🐠 Inmersiones Recreativas</h3>
+        <br>
+        <ul>
+          <li><span>1 inmersión</span><b>39 €</b></li>
+          <li><span>2 inmersiones (mismo día)</span><b>79 €</b></li>
+          <li><span>Bono 6 inmersiones</span><b>222 €</b></li>
+          <li><span>Inmersión nocturna</span><b>70 €</b></li>
+          <li><span>Clase de buceo/ refresco</span><b>80 €</b></li>
+          <li><span>Guía subacuático</span><b>+9 €</b></li>
+        </ul>
+        <h3 style="margin-top: 20px;">🎉 Experiencias</h3>
+        <br>
+        <ul>
+          <li class="li-link"><a href="#curso-bautizo"><span>Bautizo</span><b>72 €</b></a></li>
+          <li class="li-link"><a href="#curso-iniciacion"><span>Iniciación al buceo</span><b>150
+                €</b></a></li>
+        </ul>
+      </div>
+
+      <div class="price-card">
+        <h3>🎓 Cursos PADI</h3>
+        <br>
+        <ul>
+          <li class="li-link"><a href="#curso-scuba"><span>Scuba Diver</span><b>385 €</b></a></li>
+          <li class="li-link"><a href="#curso-open"><span>Open Water Diver</span><b>580 €</b></a></li>
+          <li class="li-link"><a href="#curso-advanced"><span>Advanced Open Water</span><b>460 €</b></a>
+          </li>
+          <li class="li-link"><a href="#curso-flota"><span>Flotabilidad Perfecta</span><b>210 €</b></a>
+          </li>
+          <li class="li-link"><a href="#curso-orienta"><span>Orientación</span><b>295 €</b></a></li>
+          <li class="li-link"><a href="#curso-profunda"><span>Buceo Profundo (40 metros)</span><b>380
+                €</b></a></li>
+          <li class="li-link"><a href="#curso-nitrox"><span>Nitrox</span><b>220 €</b></a></li>
+          <li class="li-link"><a href="#curso-react"><span>Primeros auxilios (Medic First Aid)</span><b>190
+                €</b></a></li>
+          <li class="li-link"><a href="#curso-rescue"><span>Rescue Diver</span><b>530 €</b></a></li>
+          <li class="li-link"><a href="#curso-dm"><span>Diver Master</span><b>800 €</b></a></li>
+        </ul>
+      </div>
+
+      <div class="price-card">
+        <h3>🎒 Alquiler Material</h3>
+        <br>
+        <ul>
+          <li><span>Neopreno</span><b>8 €</b></li>
+          <li><span>Jacket (BCD)</span><b>8 €</b></li>
+          <li><span>Regulador</span><b>8 €</b></li>
+          <li><span>Ordenador buceo</span><b>8 €</b></li>
+        </ul>
+        <br>
+        <h3>🩵 Seguros de buceo</h3>
+        <br>
+        <ul>
+          <li><span>Diario</span><b>9 €</b></li>
+          <li><span>Semanal</span><b>18 €</b></li>
+          <li><span>Mensual</span><b>25 €</b></li>
+          <li><span>Anual</span><b>45 €</b></li>
+        </ul>
+      </div>
+
+      <div class="price-card">
+        <h3>🍻 Grupos</h3>
+        <br>
+        <h3>De 10 a 19 Buceadores</h3>
+        <ul>
+          <li><span>2 a 4 inmersiones</span><b>33 €/ inmersión</b></li>
+          <li><span>+4 inmersiones</span><b>31 €/ inmersión</b></li>
+        </ul>
+        <br>
+        <h3>De 20 a 35 Buceadores</h3>
+        <ul>
+          <li><span>2 a 4 inmersiones</span><b>32 €/ inmersión</b></li>
+          <li><span>+4 inmersiones</span><b>30 €/ inmersión</b></li>
+        </ul>
+        <br>
+        <h3>+36 Buceadores</h3>
+        <ul>
+          <li><span>2 a 4 inmersiones</span><b>31 €/ inmersión</b></li>
+          <li><span>+4 inmersiones</span><b>29 €/ inmersión</b></li>
+        </ul>
+      </div>
+    </div>
+    <div style="padding:20px">
+      <br>
+      <ul style="list-style:none">
+        <li style="margin-bottom: 10px">
+          <span>*<b>Las inmersiones recreativas</b> incluyen botella (10/12/15), plomos y acceso al Parc Natural del Cap de Creus.</span>
+        </li>
+        <li style="margin-bottom: 10px"><span>*Las <b>Experiencias</b> y los cursos iniciales <b>Scuba Diver y Open Water Diver</b> incluyen todo el equipo, seguro y tasas.</span>
+        </li>
+        <li><span>*Para la <b>reserva de grupos</b> se aconseja contactar con mínimo un mes de anticipación.</span>
+        </li>
+      </ul>
+
+    </div>
+  </section>
+  <br><br>
+  <section id="cursos" style="padding: 60px 40px;">
+    <div style="max-width: 1000px; margin: 0 auto;">
+      <h2 style="text-align: center; font-size: 2rem; color: #003d66;">Cursos de Buceo</h2>
+      <p style="text-align: center; margin-top: 50px; font-size: 1.1rem; color: #003d66; margin: 20px auto 40px; max-width: 700px">
+        <strong>¿Quieres descubrir un nuevo mundo bajo el mar?</strong>
+        <br><br>
+        Nuestros cursos están pensados para todos los niveles, desde curiosos hasta futuros profesionales.
+        Aprende a bucear con seguridad, conoce la vida marina de cerca y vive experiencias inolvidables.
+        <br><br>
+        <strong>¡Empieza hoy tu aventura submarina con nosotros!</strong>
+      </p>
+
+      <style>
+        /* Contenedor flex para cursos */
+        .cursos-container {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 20px;
+          /* espacio entre cursos */
+          margin-top: 40px;
+        }
+
+        /* Cada curso ocupa 100% ancho en móvil */
+        .curso {
+          background-color: #ffffff;
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+          padding: 20px;
+          flex: 1 1 100%;
+          box-sizing: border-box;
+          border-radius: 8px;
+        }
+
+        /* En pantallas grandes, cada curso ocupa la mitad del ancho */
+        @media (min-width: 768px) {
+          .curso {
+            flex: 1 1 calc(50% - 10px);
+          }
+        }
+
+        /* Imagen simulada dentro del curso */
+        .curso-imagen {
+          /*height: 180px;*/
+          background-color: #d9eefe;
+          display: flex;
+          align-items: flex-start;
+          justify-content: center;
+          font-style: italic;
+          color: #555;
+          overflow: hidden;
+          border-radius: 10px;
+        }
+
+        .curso-imagen img {
+          width: 100%;
+        }
+      </style>
+
+      <div class="cursos-container">
+        <!-- CURSO -->
+        <div id="curso-bautizo" class="curso">
+          <div class="curso-imagen">
+            <img loading="lazy" src="https://res.cloudinary.com/all4dive/image/upload/ar_6:3,c_fill,g_east,h_300/buceocapdecreus.com/discover-local-diving" alt="Bautizo buceo cap de creus">
+          </div>
+          <h3 style="margin-top: 15px;">🤿 Bautizo de Buceo</h3>
+          <p><b>Duración:</b> 2-3 horas</p>
+          <p><b>Inmersiones:</b> 1 inmersión</p>
+          <p><b>Precio:</b> 72 €</p>
+          <p>Ideal para quienes quieren probar el buceo por primera vez sin compromiso. Una experiencia guiada en
+            aguas poco profundas para descubrir la magia del mundo submarino.</p>
+          <br>
+          <a href="https://wa.me/34671915504?text=Hola%2C+quiero+reservar+un+bautizo+de+buceo" target="_blank">
+            <button style="padding: 12px 24px; background-color: #25D366; color: #000; border: none; border-radius: 8px; font-size: 16px; cursor: pointer;">
+              Reservar Bautizo
+            </button>
+          </a>
+
+        </div>
+        <!-- CURSO -->
+        <div id="curso-iniciacion" class="curso">
+          <div class="curso-imagen">
+            <img loading="lazy" src="https://res.cloudinary.com/all4dive/image/upload/ar_6:3,c_fill,g_east,h_300/buceocapdecreus.com/boat-diver-2" alt="Curso buceo buceo cap de creus">
+          </div>
+          <h3 style="margin-top: 15px;">🤿 Iniciación al buceo</h3>
+          <p><b>Duración:</b> 1 día</p>
+          <p><b>Inmersiones:</b> 2 inmersiones</p>
+          <p><b>Precio:</b> 150 €</p>
+          <p>Enfocado a aquellos que quieren vivir una experiencia completa y sentirse como verdaderos buceadores.
+            Junto a un instructor, bucea de forma autónoma con total seguridad.</p>
+          <br>
+          <a href="https://wa.me/34671915504?text=Hola%2C+quiero+reservar+el+curso+de+Iniciacion+al+Buceo" target="_blank">
+            <button style="padding: 12px 24px; background-color: #25D366; color: #000; border: none; border-radius: 8px; font-size: 16px; cursor: pointer;">
+              Reservar curso Iniciación al Buceo
+            </button>
+          </a>
+        </div>
+        <!-- CURSO -->
+        <div id="curso-scuba" class="curso">
+          <div class="curso-imagen">
+            <img loading="lazy" src="https://res.cloudinary.com/all4dive/image/upload/ar_6:3,c_fill,g_east,h_300/buceocapdecreus.com/60550-1B2C-1" alt="scuba diver buceo cap de creus">
+          </div>
+          <h3 style="margin-top: 15px;">🎓 Scuba Diver</h3>
+          <p><b>Duración:</b> 1 día</p>
+          <p><b>Inmersiones:</b> 2 inmersiones</p>
+          <p><b>Precio:</b> 230 €</p>
+          <p>Una certificación intermedia para quienes no tienen mucho tiempo pero quieren bucear de forma segura
+            hasta 12 metros. ¡Tu puerta de entrada al mundo del buceo!</p>
+          <br>
+          <a href="https://wa.me/34671915504?text=Hola%2C+quiero+reservar+el+curso+de+Scuba+Diver" target="_blank">
+            <button style="padding: 12px 24px; background-color: #25D366; color: #000; border: none; border-radius: 8px; font-size: 16px; cursor: pointer;">
+              Reservar curso Scuba Diver
+            </button>
+          </a>
+        </div>
+
+        <!-- CURSO -->
+        <div id="curso-open" class="curso">
+          <div class="curso-imagen">
+            <img loading="lazy" src="https://res.cloudinary.com/all4dive/image/upload/ar_6:3,c_fill,g_east,h_300/buceocapdecreus.com/60462-1B2C" alt="open water cap de creus">
+          </div>
+          <h3 style="margin-top: 15px;">🌍 Open Water Diver</h3>
+          <p><b>Duración:</b> 3 - 4 días</p>
+          <p><b>Inmersiones:</b> 6 inmersiones</p>
+          <p><b>Precio:</b> 580 €</p>
+          <p>El curso más popular del mundo. Aprende teoría, técnicas y seguridad para convertirte en buceador
+            certificado hasta 18 metros. ¡Abre las puertas a bucear por todo el planeta!</p>
+          <br>
+          <a href="https://wa.me/34671915504?text=Hola%2C+quiero+reservar+una+plaza+para+el+curso+Open+Water" target="_blank">
+            <button style="padding: 12px 24px; background-color: #25D366; color: #000; border: none; border-radius: 8px; font-size: 16px; cursor: pointer;">
+              Reservar curso Open Water
+            </button>
+          </a>
+
+        </div>
+
+        <!-- CURSO -->
+        <div id="curso-advanced" class="curso">
+          <div class="curso-imagen">
+            <img loading="lazy" src="https://res.cloudinary.com/all4dive/image/upload/ar_6:3,c_fill,g_east,h_300/buceocapdecreus.com/delayed-surface-marker-buoy-dsmb-diver" alt="curso advanced buceo buceo cap de creus">
+          </div>
+          <h3 style="margin-top: 15px;">😎 Advanced Open Water</h3>
+          <p><b>Inmersiones:</b> 5 inmersiones</p>
+          <p><b>Precio:</b> 460 €</p>
+          <p>Mejora tus habilidades de orientación, profundidad y flotabilidad. Explora nuevos entornos como
+            barcos hundidos o buceo nocturno. Ideal para llevar tu experiencia al siguiente nivel.</p>
+          <br>
+          <a href="https://wa.me/34671915504?text=Hola%2C+quiero+reservar+una+plaza+para+el+curso+Advanced" target="_blank">
+            <button style="padding: 12px 24px; background-color: #25D366; color: #000; border: none; border-radius: 8px; font-size: 16px; cursor: pointer;">
+              Reservar curso Advanced
+            </button>
+          </a>
+
+        </div>
+        <!-- CURSO -->
+        <div id="curso-flota" class="curso">
+          <div class="curso-imagen">
+            <img loading="lazy" src="https://res.cloudinary.com/all4dive/image/upload/ar_6:3,c_fill,g_center,h_300/buceocapdecreus.com/peak-performance-buoyancy" alt="curso flotabilidad buceo cap de creus">
+          </div>
+          <h3 style="margin-top: 15px;">🧤 Curso Flotabilidad Perfecta</h3>
+          <p><strong>Inmersiones:</strong> 2 inmersiones</p>
+          <p><strong>Precio:</strong> 160 €</p>
+          <p>Especialízate en bucear en aguas frías sin pasar frío. Aprende el control del traje seco, sus riesgos
+            y cómo maximizar la seguridad y el confort durante tus inmersiones.</p>
+          <br>
+          <a href="https://wa.me/34671915504?text=Hola%2C+quiero+reservar+el+curso+de+Flotabilidad+Perfecta" target="_blank">
+            <button style="padding: 12px 24px; background-color: #25D366; color: #000; border: none; border-radius: 8px; font-size: 16px; cursor: pointer;">
+              Reservar curso Flotabilidad
+            </button>
+          </a>
+
+        </div>
+        <!-- CURSO -->
+        <div id="curso-orienta" class="curso">
+          <div class="curso-imagen">
+            <img loading="lazy" src="https://res.cloudinary.com/all4dive/image/upload/ar_6:3,c_fill,g_center,h_300/buceocapdecreus.com/underwater-navigator-2_1" alt="curso orientacion buceo buceo cap de creus">
+          </div>
+          <h3 style="margin-top: 15px;">🧭 Curso Orientación</h3>
+          <p><b>Inmersiones:</b> 3 inmersiones</p>
+          <p><b>Precio:</b> 295 €</p>
+          <p>Domina la orientación bajo el agua. Al final del curso serás capaz de bucear sin guía en cualquier
+            lugar del mundo, con el uso de la brújula y tablillas para crear mapas de inmersión.</p>
+          <br>
+          <a href="https://wa.me/34671915504?text=Hola%2C+quiero+reservar+el+curso+de+Orientaci%C3%B3n+Subacu%C3%A1tica" target="_blank">
+            <button style="padding: 12px 24px; background-color: #25D366; color: #000; border: none; border-radius: 8px; font-size: 16px; cursor: pointer;">
+              Reservar curso Orientación
+            </button>
+          </a>
+
+        </div>
+        <!-- CURSO -->
+        <div id="curso-profunda" class="curso">
+          <div class="curso-imagen">
+            <img loading="lazy" src="https://res.cloudinary.com/all4dive/image/upload/ar_6:3,c_fill,g_center,h_300/buceocapdecreus.com/advanced-open-water-1" alt="curso buceo profundo buceo cap de creus">
+          </div>
+          <h3 style="margin-top: 15px;">🧤 Curso Buceo Profundo ( 40 metros )</h3>
+          <p><strong>Inmersiones:</strong> 4 inmersiones</p>
+          <p><strong>Precio:</strong> 380 €</p>
+          <p>Especialízate en bucear en aguas frías sin pasar frío. Aprende el control del traje seco, sus riesgos
+            y cómo maximizar la seguridad y el confort durante tus inmersiones.</p>
+          <br>
+          <a href="https://wa.me/34671915504?text=Hola%2C+quiero+reservar+el+curso+de+Buceo+Profundo" target="_blank">
+            <button style="padding: 12px 24px; background-color: #25D366; color: #000; border: none; border-radius: 8px; font-size: 16px; cursor: pointer;">
+              Reservar curso Buceo Profundo
+            </button>
+          </a>
+
+        </div>
+
+        <!-- CURSO -->
+        <div id="curso-nitrox" class="curso">
+          <div class="curso-imagen">
+            <img loading="lazy" src="https://res.cloudinary.com/all4dive/image/upload/ar_6:3,c_fill,h_300/buceocapdecreus.com/enriched-air-diver-3" alt="curso nitrox buceo cap de creus">
+          </div>
+          <h3 style="margin-top: 15px;">⚡ Especialidad Nitrox</h3>
+          <p><b>Inmersiones:</b> 2</p>
+          <p><b>Precio:</b> 220 €</p>
+          <p>Aprende a bucear con aire enriquecido (Nitrox), ideal para prolongar tus tiempos de fondo y reducir
+            tu fatiga. Una especialidad imprescindible para buceadores frecuentes.</p>
+          <br>
+          <a href="https://wa.me/34671915504?text=Hola%2C+quiero+reservar+el+curso+de+Nitrox" target="_blank">
+            <button style="padding: 12px 24px; background-color: #25D366; color: #000; border: none; border-radius: 8px; font-size: 16px; cursor: pointer;">
+              Reservar curso Nitrox
+            </button>
+          </a>
+        </div>
+        <!-- CURSO -->
+        <div id="curso-react" class="curso">
+          <div class="curso-imagen">
+            <img loading="lazy" src="https://res.cloudinary.com/all4dive/image/upload/ar_6:3,c_fill,h_300/buceocapdecreus.com/emergency-oxygen-provider-2" alt="curso react right buceo cap de creus">
+          </div>
+          <h3 style="margin-top: 15px;">❤ Especialidad Primeros Auxilios</h3>
+          <p><b>Prácticas en el aula</b></p>
+          <p><b>Precio:</b> 220 €</p>
+          <p>Aprende a bucear con aire enriquecido (Nitrox), ideal para prolongar tus tiempos de fondo y reducir
+            tu fatiga. Una especialidad imprescindible para buceadores frecuentes.</p>
+          <br>
+          <a href="https://wa.me/34671915504?text=Hola%2C+quiero+reservar+el+curso+de+Primeros+Auxilios+%28EFR%29" target="_blank">
+            <button style="padding: 12px 24px; background-color: #25D366; color: #000; border: none; border-radius: 8px; font-size: 16px; cursor: pointer;">
+              Reservar curso EFR
+            </button>
+          </a>
+
+        </div>
+        <!-- CURSO -->
+        <div id="curso-rescue" class="curso">
+          <div class="curso-imagen">
+            <img loading="lazy" src="https://res.cloudinary.com/all4dive/image/upload/ar_6:3,c_fill,h_300/buceocapdecreus.com/60464-1B2C-3" alt="curso rescue buceo buceo cap de creus">
+          </div>
+          <h3 style="margin-top: 15px;">🌟 Rescue Diver</h3>
+          <p><b>Duración:</b> 3 - 4 días</p>
+          <p><b>Inmersiones:</b> 6</p>
+          <p><b>Precio:</b> 390 €</p>
+          <p>Desarrolla habilidades avanzadas de seguridad y prevención. Aprende a reaccionar ante emergencias
+            reales. Es un curso desafiante, pero increíblemente gratificante.</p>
+          <br>
+          <a href="https://wa.me/34671915504?text=Hola%2C+quiero+reservar+una+plaza+para+el+curso+Rescue+diver" target="_blank">
+            <button style="padding: 12px 24px; background-color: #25D366; color: #000; border: none; border-radius: 8px; font-size: 16px; cursor: pointer;">
+              Reservar curso Rescue
+            </button>
+          </a>
+
+        </div>
+
+        <!-- CURSO -->
+        <div id="curso-dm" class="curso">
+          <div class="curso-imagen">
+            <img loading="lazy" src="https://res.cloudinary.com/all4dive/image/upload/ar_6:3,c_fill,h_300/buceocapdecreus.com/60550-1B2C-2" alt="curso divemaster buceo cap de creus">
+          </div>
+          <h3 style="margin-top: 15px;">🏅 Divemaster</h3>
+          <p><strong>Duración:</strong> 2 a 4 semanas</p>
+          <p><strong>Inmersiones:</strong> ilimitadas</p>
+          <p><strong>Precio:</strong> 800 €</p>
+          <p>Tu primer paso hacia una carrera profesional como buceador. Aprende a guiar, enseñar y liderar. Vive
+            el estilo de vida del buceo y forma parte del equipo de instructores.</p>
+          <br>
+          <a href="https://wa.me/34671915504?text=Hola%2C+me+interesa+hacer+el+curso+Divemaster%2C+%C2%BFme+puedes+dar+m%C3%A1s+info%3F" target="_blank">
+            <button style="padding: 12px 24px; background-color: #25D366; color: #000; border: none; border-radius: 8px; font-size: 16px; cursor: pointer;">
+              Reservar curso Divemaster
+            </button>
+          </a>
+
+        </div>
+      </div>
+
+      <p style="text-align: center; margin-top: 40px; font-size: 1.05rem;">
+        <strong>¡No dejes pasar la oportunidad de cambiar tu vida debajo del agua!</strong> 🌊🐠
+      </p>
+    </div>
+  </section>
+  <br><br>
+
+  <section id="puntos-de-buceo" class="section">
+    <h2>Puntos de Buceo en el Cap de Creus</h2>
+    <style>
+      .cap-creus-section {
+        color: #00303f;
+      }
+
+      .cap-creus-section h2 {
+        text-align: center;
+        color: #0077b6;
+        font-size: 2.2rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .cap-creus-section p {
+        font-size: 1.1rem;
+        line-height: 1.7;
+        margin-bottom: 1.2rem;
+      }
+
+      .cap-creus-section ul {
+        margin: 0.5rem 0 1.5rem 1.5rem;
+        padding-left: 1rem;
+        list-style: square;
+      }
+
+      .cap-creus-section li {
+        margin-bottom: 0.4rem;
+      }
+
+      .highlight {
+        font-weight: bold;
+        color: #005f73;
+      }
+
+      .cta {
+        font-size: 1.2rem;
+        font-weight: bold;
+        text-align: center;
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+        padding: 1rem;
+        background-color: #caf0f8;
+        border-left: 5px solid #0077b6;
+        border-radius: 8px;
+      }
+    </style>
+
+    <div class="cap-creus-section">
+      <h4>¡Explora el fascinante mundo submarino del Cap de Creus!</h4>
+
+      <p>
+        En el extremo noreste de la península ibérica, donde nacen los <span class="highlight">Pirineos</span> y se
+        sumergen en el mar, se encuentra el <span class="highlight">Cap de Creus</span>, un rincón mágico donde la
+        geología y la biodiversidad marina se dan la mano para ofrecer una experiencia de buceo sin igual.
+      </p>
+
+      <p>
+        Este parque natural, el primero marítimo-terrestre de Cataluña, es un <span class="highlight">refugio de vida submarina</span>
+        con aguas transparentes, fondos rocosos y paredes verticales que parecen sacadas de un sueño. Aquí, la <span class="highlight">gorgonia blanca</span> (<em>Eunicella singularis</em>) se balancea suavemente en las
+        corrientes y el <span class="highlight">coral rojo</span> (<em>Corallium rubrum</em>) tiñe las rocas con
+        tonos intensos.
+      </p>
+
+      <p>
+        A lo largo del año, es posible observar:
+      <ul>
+        <li><span class="highlight">Meros</span> imponentes custodiando sus cuevas rocosas</li>
+        <li><span class="highlight">Langostas</span> y <span class="highlight">bogavantes</span> bien escondidos en
+          grietas y agujeros
+        </li>
+        <li><span class="highlight">Escórporas</span> perfectamente camufladas</li>
+        <li><span class="highlight">Congrios</span> y <span class="highlight">morenas</span> enroscados en pasajes
+          estrechos
+        </li>
+        <li><span class="highlight">Nudibranquios</span> de colores fluorescentes paseando sobre las algas</li>
+        <li>Y en mar abierto... <span class="highlight">delfines</span>, <span class="highlight">atunes</span>, e
+          incluso algún <span class="highlight">pez luna</span> curioso
+        </li>
+      </ul>
+      </p>
+
+      <p>
+        Su <span class="highlight">orografía caprichosa</span>, esculpida por el viento de tramontana y la erosión
+        marina, genera laberintos de rocas, pináculos y pasillos submarinos que encantan tanto a fotógrafos como a
+        buceadores técnicos y recreativos.
+      </p>
+
+      <p>
+        Las <span class="highlight">condiciones climáticas</span> son estables durante buena parte del año. Las
+        aguas varían entre <strong>13°C en invierno</strong> y <strong>23°C en verano</strong>, con excelente
+        visibilidad y corrientes suaves en muchas zonas. La tramontana, ese viento del norte característico de la
+        región, puede sorprender... ¡pero también es parte del encanto!
+      </p>
+
+      <div class="cta">
+        ¿A qué esperas? ¡Ven a descubrir el Cap de Creus, uno de los mejores destinos de buceo en España! Aquí la
+        aventura, la naturaleza salvaje y la vida marina te esperan bajo cada ola 🌊🐠
+      </div>
+    </div>
+
+    <style>
+      .mapa-image {
+        width: 100%;
+        border-radius: 10px;
+      }
+    </style>
+    <div>
+      <img class="mapa-image" loading="lazy" src="https://res.cloudinary.com/all4dive/image/upload/c_scale,w_920/buceocapdecreus.com/mapa" alt="puntos de buceo cap de creus">
+    </div>
+    <style>
+      .buceo-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        padding: 1rem 0;
+      }
+
+      .buceo-item {
+        background-color: #e0f7fa;
+        /* azul celeste claro */
+        padding: 1rem;
+        text-align: center;
+        border-radius: 8px;
+        font-family: sans-serif;
+        font-weight: bold;
+      }
+    </style>
+
+    <div class="buceo-grid">
+      <div class="buceo-item">1. Far de S'Arnella</div>
+      <div class="buceo-item">2. La Meda</div>
+      <div class="buceo-item">3. Aiguadolç</div>
+      <div class="buceo-item">4. Boc i la Cabra</div>
+      <div class="buceo-item">5. Cap Gros</div>
+      <div class="buceo-item">6. La Ferrera</div>
+      <div class="buceo-item">7. La Galera</div>
+      <div class="buceo-item">8. Taballera</div>
+      <div class="buceo-item">9. Cap Roig</div>
+      <div class="buceo-item">10. Punta dels Farallons</div>
+      <div class="buceo-item">11. El Racó d'en Sapé</div>
+      <div class="buceo-item">12. El Bau del Moli</div>
+      <div class="buceo-item">13. Cala Múla</div>
+      <div class="buceo-item">14. Els 3 Frares</div>
+      <div class="buceo-item">15. Guillosa</div>
+      <div class="buceo-item">16. El Portaló</div>
+      <div class="buceo-item">17. Sa Fullola</div>
+      <div class="buceo-item">18. Farallons de Culip</div>
+      <div class="buceo-item">19. L'Encalladora</div>
+      <div class="buceo-item">20. Massa d'Or</div>
+    </div>
+
+    <!--    <div class="dive-site">-->
+    <!--        <h3>Massa d’Or</h3>-->
+    <!--        <div class="img-placeholder">[Imagen]</div>-->
+    <!--        <p>Isla remota con paredes verticales tapizadas de gorgonias rojas. Muy frecuentada por meros, barracudas y-->
+    <!--            langostas.</p>-->
+    <!--        <p><strong>Profundidad:</strong> hasta 50 m</p>-->
+    <!--        <p><strong>Nivel recomendado:</strong> Avanzado</p>-->
+    <!--    </div>-->
+  </section>
+  <style>
+    #puntos-de-buceo {
+      padding: 60px 40px;
+      background-color: #f2f9fb;
+    }
+
+    #puntos-de-buceo h2 {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .dive-site {
+      margin-bottom: 40px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .dive-site p {
+      font-size: 1.1rem;
+      color: #003d66;
+      "
+
+    }
+
+    .dive-site h3 {
+      color: #003d66;
+      font-size: 1.3rem;
+      margin-bottom: 20px;
+    }
+
+    .img-placeholder {
+      width: 100%;
+      height: 200px;
+      background-color: #ddd;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #777;
+      font-style: italic;
+    }
+
+    @media (min-width: 768px) {
+      .img-placeholder {
+        height: 300px;
+      }
+    }
+  </style>
+  <br><br>
+  <!--<section id="packs" style="padding: 60px 40px; background-color: #f7fcff;">-->
+  <!--    <div style="max-width: 1000px; margin: 0 auto;">-->
+  <!--        <h2 style="text-align: center; font-size: 2rem; color: #003d66;">Packs de Buceo Todo Incluido</h2>-->
+  <!--        <p style="text-align: center; margin-top: 50px; font-size: 1.1rem; color: #003d66; margin: 20px auto 40px; max-width: 700px">-->
+  <!--            Disfruta del Cap de Creus sin preocuparte de nada. Hemos diseñado estos packs para que solo te ocupes de-->
+  <!--            bucear... y de disfrutar. 🐟-->
+  <!--        </p>-->
+
+  <!--        <div class="pack-lista" style="-->
+  <!--      display: grid;-->
+  <!--      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));-->
+  <!--      gap: 25px;-->
+  <!--    ">-->
+  <!--            <div class="pack" style="-->
+  <!--        background: #ffffff;-->
+  <!--        padding: 25px 20px;-->
+  <!--        border-radius: 12px;-->
+  <!--        box-shadow: 0 6px 15px rgba(0, 61, 102, 0.3);-->
+  <!--        transition: transform 0.3s ease, box-shadow 0.3s ease;-->
+  <!--      ">-->
+  <!--                <h3 style="margin-top: 0; color: #004f6e;">🌊 Pack 1 - Buceo + Comida</h3>-->
+  <!--                <p style="color: #555;">1 inmersión por la mañana + comida en restaurante local.</p>-->
+  <!--                <p class="precio-pack" style="font-weight: 700; font-size: 1.4rem; color: #d10000; margin-top: 15px;">65-->
+  <!--                    €</p>-->
+  <!--            </div>-->
+
+  <!--            <div class="pack" style="-->
+  <!--        background: #ffffff;-->
+  <!--        padding: 25px 20px;-->
+  <!--        border-radius: 12px;-->
+  <!--        box-shadow: 0 6px 15px rgba(0, 61, 102, 0.3);-->
+  <!--        transition: transform 0.3s ease, box-shadow 0.3s ease;-->
+  <!--      ">-->
+  <!--                <h3 style="margin-top: 0; color: #004f6e;">🌊 Pack 2 - 2 Buceos + Comida</h3>-->
+  <!--                <p style="color: #555;">2 inmersiones en barco + menú completo en el puerto.</p>-->
+  <!--                <p class="precio-pack" style="font-weight: 700; font-size: 1.4rem; color: #d10000; margin-top: 15px;">-->
+  <!--                    110 €</p>-->
+  <!--            </div>-->
+
+  <!--            <div class="pack" style="-->
+  <!--        background: #ffffff;-->
+  <!--        padding: 25px 20px;-->
+  <!--        border-radius: 12px;-->
+  <!--        box-shadow: 0 6px 15px rgba(0, 61, 102, 0.3);-->
+  <!--        transition: transform 0.3s ease, box-shadow 0.3s ease;-->
+  <!--      ">-->
+  <!--                <h3 style="margin-top: 0; color: #004f6e;">🌊 Pack 3 - 4 Buceos + 1 Noche</h3>-->
+  <!--                <p style="color: #555;">4 inmersiones repartidas en 2 días + 1 noche de alojamiento.</p>-->
+  <!--                <p class="precio-pack" style="font-weight: 700; font-size: 1.4rem; color: #d10000; margin-top: 15px;">-->
+  <!--                    220 €</p>-->
+  <!--            </div>-->
+
+  <!--            <div class="pack" style="-->
+  <!--        background: #ffffff;-->
+  <!--        padding: 25px 20px;-->
+  <!--        border-radius: 12px;-->
+  <!--        box-shadow: 0 6px 15px rgba(0, 61, 102, 0.3);-->
+  <!--        transition: transform 0.3s ease, box-shadow 0.3s ease;-->
+  <!--      ">-->
+  <!--                <h3 style="margin-top: 0; color: #004f6e;">🌊 Pack 4 - Fin de Semana de Buceo</h3>-->
+  <!--                <p style="color: #555;">6 inmersiones + 2 noches de alojamiento + desayunos incluidos.</p>-->
+  <!--                <p class="precio-pack" style="font-weight: 700; font-size: 1.4rem; color: #d10000; margin-top: 15px;">-->
+  <!--                    320 €</p>-->
+  <!--            </div>-->
+
+  <!--            <div class="pack" style="-->
+  <!--        background: #ffffff;-->
+  <!--        padding: 25px 20px;-->
+  <!--        border-radius: 12px;-->
+  <!--        box-shadow: 0 6px 15px rgba(0, 61, 102, 0.3);-->
+  <!--        transition: transform 0.3s ease, box-shadow 0.3s ease;-->
+  <!--      ">-->
+  <!--                <h3 style="margin-top: 0; color: #004f6e;">🌊 Pack 5 - Buceo + Yoga + Comida</h3>-->
+  <!--                <p style="color: #555;">1 sesión de yoga matinal + 1 buceo relajado + comida vegetariana.</p>-->
+  <!--                <p class="precio-pack" style="font-weight: 700; font-size: 1.4rem; color: #d10000; margin-top: 15px;">85-->
+  <!--                    €</p>-->
+  <!--            </div>-->
+
+  <!--            <div class="pack" style="-->
+  <!--        background: #ffffff;-->
+  <!--        padding: 25px 20px;-->
+  <!--        border-radius: 12px;-->
+  <!--        box-shadow: 0 6px 15px rgba(0, 61, 102, 0.3);-->
+  <!--        transition: transform 0.3s ease, box-shadow 0.3s ease;-->
+  <!--      ">-->
+  <!--                <h3 style="margin-top: 0; color: #004f6e;">🌊 Pack 6 - Día Completo VIP</h3>-->
+  <!--                <p style="color: #555;">2 inmersiones + comida + sesión de fotos bajo el agua + regalo sorpresa.</p>-->
+  <!--                <p class="precio-pack" style="font-weight: 700; font-size: 1.4rem; color: #d10000; margin-top: 15px;">-->
+  <!--                    150 €</p>-->
+  <!--            </div>-->
+  <!--        </div>-->
+
+  <!--        <p style="text-align: center; margin-top: 50px; font-size: 1.1rem; color: #003d66;">-->
+  <!--            Todos los packs incluyen equipo completo, seguro y la mejor atención para que solo te preocupes por-->
+  <!--            disfrutar. <br>-->
+  <!--            <strong>¡Reserva ya y vive la experiencia completa!</strong> 🐠🌊-->
+  <!--        </p>-->
+  <!--    </div>-->
+  <!--</section>-->
+  <br><br>
+  <section id="grupos" style="padding: 60px 40px">
+    <h2>💥 Ofertas para grupos (4 personas o más) 💥</h2>
+    <p style="text-align: center; margin-top: 50px; font-size: 1.1rem; color: #003d66;">¡Ven con tus amigos, tu familia
+      o tu club de buceo y aprovecha hasta un <strong>10 % de descuento</strong> en todos nuestros cursos! 🎉</p>
+    <br>
+    <div class="lista-precios">
+
+      <div class="oferta">
+        <p class="oferta-titulo">Bautizo de Buceo 🤿</p>
+        <p>¡Luces, cámara y al agua!. Primera experiencia bajo el agua con instructor dedicado.</p>
+        <p class="precio">
+          <span class="tachado">72 €</span>
+          <span class="descuento">68 €</span>
+          <span class="destacado">🎯 ¡Ideal para grupos curiosos!</span>
+        </p>
+      </div>
+
+      <div class="oferta">
+        <p class="oferta-titulo">Curso Open Water Diver 🌍</p>
+        <p>Certificación internacional hasta 18 metros y para toda la vida, como tus amigos</p>
+        <p class="precio">
+          <span class="tachado">580 €</span>
+          <span class="descuento">540 €</span>
+          <span class="destacado">🔥 ¡Empieza tu aventura juntos!</span>
+        </p>
+      </div>
+
+      <div class="oferta">
+        <p class="oferta-titulo">Advanced Open Water 🚀</p>
+        <p>Explora más profundo. Mejora tus habilidades. Siéntete como un profesional</p>
+        <p class="precio">
+          <span class="tachado">460 €</span>
+          <span class="descuento">429 €</span>
+          <span class="destacado">🎁 ¡Aprende más por menos desbloquea tu siguiente nivel!</span>
+        </p>
+      </div>
+
+      <div class="oferta">
+        <p class="oferta-titulo">Rescue Diver 🚑</p>
+        <p>Prepárate para actuar en emergencias y bucear con más confianza que nunca</p>
+        <p class="precio">
+          <span class="tachado">530 €</span>
+          <span class="descuento">499 €</span>
+          <span class="destacado">🚨 ¡Descuento para los héroes del mar!</span>
+        </p>
+      </div>
+      <div class="oferta">
+        <p class="oferta-titulo">Especialidad de Nitrox ⚡️</p>
+        <p>Prolonga tu tiempo de fondo y pasa más tiempo bajo el agua con tus colegas</p>
+        <p class="precio">
+          <span class="tachado">220 €</span>
+          <span class="descuento">204 €</span>
+          <span class="destacado">⚡️️ ¡Evita entrar en deco con esta ofertaza!</span>
+        </p>
+      </div>
+      <div class="oferta">
+        <p class="oferta-titulo">Inmersión doble 📍</p>
+        <p>De toda la vida bucear dos veces ha sido mejor que bucear solo una</p>
+        <p class="precio">
+          <span class="tachado">72 €</span>
+          <span class="descuento">67 €</span>
+          <span class="destacado">🌟 Pasa un día alucinante con amigos o en familia en el Cap de Creus</span>
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+  <style>
+    .lista-precios {
+      display: flex;
+      flex-direction: column;
+      gap: 25px;
+      margin: auto;
+    }
+
+    .curso,
+    .oferta {
+      border: 1px solid #ddd;
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    .curso {
+      background-color: #f0f8ff
+    }
+
+    .oferta {
+      background-color: #fff8f6
+    }
+    .oferta-titulo{
+      margin: 0 0 10px;
+    color: #004f6e;
+      font-size: 1.17em;
+      font-weight:bold;
+    }
+
+    .curso h3,
+    .oferta h3 {
+      margin: 0 0 10px;
+      color: #004f6e;
+    }
+
+    .curso p,
+    .oferta p {
+      margin: 5px 0;
+    }
+
+    .precio {
+      font-weight: bold;
+      font-size: 1.1em;
+      color: #0073a8;
+    }
+
+    .tachado {
+      text-decoration: line-through;
+      color: #273e51;
+      margin-right: 10px;
+    }
+
+    .descuento {
+      color: #d10000;
+      font-size: 1.3em;
+      font-weight: bold;
+    }
+
+    .destacado {
+      display: block;
+      font-size: 0.9em;
+      color: #007700;
+      margin-top: 5px;
+    }
+
+    @media (max-width: 600px) {
+      .curso {
+        padding: 15px;
+      }
+    }
+  </style>
+  <section id="contacto" style="margin-top: 50px">
+    <h2>Contacto</h2>
+    <div style="display:flex">
+      <div class="footer-contacto">
+        <p>📍 Carrer de l'Illa 9, Port de la Selva, Girona 17489</p>
+        <p>📞 +34 671 91 55 04</p>
+        <p>✉️ info@cips-dive.com</p>
+        <p>🌐 www.buceocapdecreus.com</p>
+        <p>⏰ Lun - Dom: 8:00 - 20:00</p>
+      </div>
+    </div>
+    <div class="footer-container">
+      <div class="footer-map">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3498.319357814232!2d3.2013961764774304!3d42.338538436460375!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x12ba64f2892f82c1%3A0x120fdd39684369d4!2sCIPS%20-%20Centre%20d&#39;Immersi%C3%B3%20Port%20de%20la%20Selva!5e1!3m2!1sfr!2ses!4v1747678748651!5m2!1sfr!2ses" width="100%" height="450" style="border:0; border-radius:8px" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" title="Mapa Cap de Creus"></iframe>
+      </div>
+    </div>
+  </section>
+
+  <style>
+    #contacto,
+    #grupos,
+    #packs,
+    #puntos-de-buceo,
+    #cursos,
+    #precios {
+      background: #ffffff !important;
+      border-radius: 10px
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+    }
+
+    label {
+      font-weight: bold;
+      color: # #007BFF;
+    }
+
+    input,
+    select,
+    textarea {
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 16px;
+    }
+
+    #button-contacto {
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      padding: 12px;
+      font-size: 18px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    #button-contacto:hover {
+      background-color: #007399;
+    }
+
+    @media (max-width: 600px) {
+      form {
+        padding: 15px;
+      }
+    }
+  </style>
+
+  <br><br>
+  <footer id="footer">
+    <div class="footer-logo">
+      <!-- Placeholder para logo -->
+      <img loading="lazy" src="data:image/png;base64,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" alt="Logo Centro de Buceo" />
+      <br>
+      <a href="https://www.padi.com">
+        <img src="https://res.cloudinary.com/all4dive/image/upload/t_padi-small/buceocapdecreus.com/sfoujvfdoujtt73odara" alt="Logo Padi">
+      </a>
+      <br>
+    </div>
+    <p style="text-align:center; margin: 20px; color: #000">
+      <span>&copy; 2025 CIPS SL. Todos los derechos reservados.</span>
+    </p>
+  </footer>
+
+  <!-- Scripts -->
+  <script>
+    const sideMenu = document.getElementById('sideMenu');
+
+    function openMenu() {
+      sideMenu.classList.add('open');
+      sideMenu.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeMenu() {
+      sideMenu.classList.remove('open');
+      sideMenu.setAttribute('aria-hidden', 'true');
+    }
+  </script>
+  <a href="https://wa.me/34671915504" class="whatsapp-icon" target="_blank" aria-label="Contáctanos por WhatsApp">
+    <img src="https://res.cloudinary.com/all4dive/image/upload/ar_1:1,c_scale,w_80/f_webp/buceocapdecreus.com/pnj86qqldvk0xsxptxxe" alt="WhatsApp" />
+  </a>
+
+  <style>
+    .whatsapp-icon {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 999;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background-color: #25d366;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: transform 0.2s ease;
+    }
+
+    .whatsapp-icon img {
+      width: 35px;
+      height: 35px;
+    }
+
+    .whatsapp-icon:hover {
+      transform: scale(1.1);
+    }
+  </style>
+</body>
+
+</html>
+
+{% endif %}
+
+
+
+
