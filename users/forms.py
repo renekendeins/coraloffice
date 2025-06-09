@@ -520,3 +520,133 @@ class LessonCompletionForm(forms.Form):
         required=False,
         help_text="Leave blank to use current date/time"
     )
+
+class ScheduleMultipleSessionsForm(forms.Form):
+    course = forms.ModelChoiceField(
+        queryset=Course.objects.none(),
+        widget=forms.Select(attrs={'class': 'form-control', 'id': 'course-filter'}),
+        label='Curso',
+        help_text='Selecciona el curso para filtrar las sesiones'
+    )
+
+    session_number = forms.IntegerField(
+        widget=forms.Select(attrs={'class': 'form-control', 'id': 'session-filter'}),
+        label='Número de Sesión',
+        help_text='Selecciona el número de sesión',
+        required=False
+    )
+
+    sessions = forms.ModelMultipleChoiceField(
+        queryset=CourseSession.objects.none(),
+        widget=forms.CheckboxSelectMultiple(attrs={'class': 'session-checkbox'}),
+        label='Sesiones Pendientes',
+        help_text='Selecciona las sesiones que quieres programar'
+    )
+
+    dive_schedule = forms.ModelChoiceField(
+        queryset=DiveSchedule.objects.none(),
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        label='Salida',
+        help_text='Selecciona la salida donde programar las sesiones'
+    )
+
+    instructor = forms.ModelChoiceField(
+        queryset=Staff.objects.none(),
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        label='Instructor',
+        help_text='Instructor para las sesiones (opcional)'
+    )
+
+    def __init__(self, diving_center=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if diving_center:
+            self.fields['course'].queryset = Course.objects.filter(
+                diving_center=diving_center, 
+                is_active=True
+            ).order_by('name')
+            
+            # Get future dive schedules
+            from datetime import date
+            self.fields['dive_schedule'].queryset = DiveSchedule.objects.filter(
+                diving_center=diving_center,
+                date__gte=date.today()
+            ).order_by('date', 'time')
+            
+            self.fields['instructor'].queryset = Staff.objects.filter(
+                diving_center=diving_center, 
+                status='ACTIVE'
+            )
+            self.fields['instructor'].empty_label = "Selecciona un instructor (opcional)"
+
+        # Initialize session_number choices
+        self.fields['session_number'].widget = forms.Select(
+            choices=[(i, f'Sesión {i}') for i in range(1, 11)],
+            attrs={'class': 'form-control', 'id': 'session-filter'}
+        )
+
+class MultipleCustomerEnrollmentForm(forms.Form):
+    course = forms.ModelChoiceField(
+        queryset=Course.objects.none(),
+        widget=forms.Select(attrs={'class': 'form-control', 'id': 'course-select'}),
+        label='Curso/Actividad',
+        help_text='Selecciona el curso o actividad'
+    )
+
+    customers = forms.ModelMultipleChoiceField(
+        queryset=Customer.objects.none(),
+        widget=forms.CheckboxSelectMultiple(attrs={'class': 'customer-checkbox'}),
+        label='Clientes',
+        help_text='Selecciona los clientes para inscribir'
+    )
+
+    # primary_instructor = forms.ModelChoiceField(
+    #     queryset=Staff.objects.none(),
+    #     required=False,
+    #     widget=forms.Select(attrs={'class': 'form-control'}),
+    #     label='Instructor Principal',
+    #     help_text='Instructor principal para este curso (opcional)'
+    # )
+
+    # start_date = forms.DateField(
+    #     widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+    #     required=False,
+    #     label='Fecha de Inicio',
+    #     help_text='Fecha de inicio del curso (opcional)'
+    # )
+
+    # price_paid = forms.DecimalField(
+    #     widget=forms.NumberInput(attrs={'step': '0.01', 'class': 'form-control'}),
+    #     required=False,
+    #     label='Precio Pagado',
+    #     help_text='Precio pagado por cada cliente (opcional)'
+    # )
+
+    # is_paid = forms.BooleanField(
+    #     required=False,
+    #     widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+    #     label='Marcado como Pagado'
+    # )
+
+    notes = forms.CharField(
+        widget=forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
+        required=False,
+        label='Notas',
+        help_text='Notas adicionales para la inscripción'
+    )
+
+    def __init__(self, diving_center=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if diving_center:
+            self.fields['course'].queryset = Course.objects.filter(
+                diving_center=diving_center, 
+                is_active=True
+            ).order_by('name')
+            self.fields['customers'].queryset = Customer.objects.filter(
+                diving_center=diving_center
+            ).order_by('first_name', 'last_name')
+            # self.fields['primary_instructor'].queryset = Staff.objects.filter(
+            #     diving_center=diving_center, 
+            #     status='ACTIVE'
+            # )
+            # self.fields['primary_instructor'].empty_label = "Selecciona un instructor (opcional)"
