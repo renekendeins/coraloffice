@@ -206,10 +206,10 @@
             </a>
             <ul class="nav-menu m-0 ms-0 p-0">
                 {% if user.is_authenticated and user.userprofile.is_diving_center %}
-                    <li><a href="{% url 'users:customer_list' %}">Clientes</a></li>
-                    <li><a href="{% url 'users:calendar_view' %}">Calendario</a></li>
-                    <li><a href="{% url 'users:courses_list' %}">Cursos</a></li>
-                    <li><a href="{% url 'users:staff_planning' %}">Planning</a></li>
+                    <li><a href="{% url 'users:customer_list' %}" class="px-2">Clientes</a></li>
+                    <li><a href="{% url 'users:calendar_view' %}" class="px-2">Calendario</a></li>
+                    <li><a href="{% url 'users:course_enrollments' %}" class="px-2">Cursos</a></li>
+                    <li><a href="{% url 'users:staff_planning' %}" class="px-2">Planning</a></li>
                 {% endif %}
             </ul>
             <div class="user-menu ms-3">
@@ -218,7 +218,7 @@
                     {% if user.userprofile.is_diving_center %}
                         <a href="{% url 'users:diving_center_dashboard' %}">Dashboard</a>
                     {% endif %}
-                    <a href="{% url 'users:logout' %}">Salir</a>
+                    
                 {% else %}
                     <a href="{% url 'users:login' %}">Acceder</a>
                 {% endif %}
@@ -249,7 +249,6 @@
                     {% if user.userprofile.is_diving_center %}
                         <!-- <a href="{% url 'users:diving_center_dashboard' %}">Dashboard</a> -->
                     {% endif %}
-                    <a href="{% url 'users:logout' %}">Salir</a>
                 {% else %}
                     <a href="{% url 'users:login' %}">Login</a>
                 {% endif %}

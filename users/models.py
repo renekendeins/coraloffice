@@ -222,7 +222,7 @@ class DivingSite(models.Model):
     depth_min = models.FloatField(help_text="Profundidad mínima en metros")
     depth_max = models.FloatField(help_text="Profundidad máxima en metros")
     difficulty_level = models.CharField(max_length=20, choices=[
-        ('BEGINNER', 'Principiente'),
+        ('BEGINNER', 'Principiante'),
         ('INTERMEDIATE', 'Intermedio'),
         ('ADVANCED', 'Avanzado'),
         ('EXPERT', 'Experto'),

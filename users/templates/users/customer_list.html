@@ -77,12 +77,12 @@
                         <span style="white-space: pre-line;">{{ customer.medical_conditions }}</span>
                     </div>
                     {% endif %}
-                    <div class="customer-actions mt-4">
-                        <a href="{% url 'users:enroll_customer' customer.id %}" class="btn btn-success me-2">+ Inscripción</a>
-                        <a href="{% url 'users:edit_customer' customer.id %}" class="btn btn-info me-2">Editar</a>
-                        <a href="{% url 'users:customer_activity_history' customer.id %}" class="btn btn-secondary me-2">Historial de actividades</a>
-                        <a href="{% url 'users:customer_medical_detail' customer.id %}" class="btn btn-warning me-2">Formulario Médico</a>
-                        <a href="{% url 'users:delete_customer' customer.id %}" class="btn btn-danger">Eliminar</a>                        
+                    <div class="customer-actions mt-4 d-flex flex-column d-md-inline-block">
+                        <a href="{% url 'users:enroll_customer' customer.id %}" class="btn btn-success me-md-2 mb-2">+ Inscripción</a>
+                        <a href="{% url 'users:edit_customer' customer.id %}" class="btn btn-info me-md-2 mb-2">Editar</a>
+                        <a href="{% url 'users:customer_activity_history' customer.id %}" class="btn btn-secondary me-md-2 mb-2">Historial de actividades</a>
+                        <a href="{% url 'users:customer_medical_detail' customer.id %}" class="btn btn-warning me-md-2 mb-2">Formulario Médico</a>
+                        <a href="{% url 'users:delete_customer' customer.id %}" class="btn btn-danger mb-2">Eliminar</a>                        
 
                     </div>
                 </div>
