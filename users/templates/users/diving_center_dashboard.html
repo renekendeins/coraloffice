@@ -65,9 +65,11 @@
 
         <!-- Courses Management -->
         <section class="card">
-            <h3 style="color: #8fbc8f; border-bottom: 2px solid #8fbc8f; padding-bottom: 10px;">🏊 Cursos</h3>
+            <h3 style="color: #8fbc8f; border-bottom: 2px solid #8fbc8f; padding-bottom: 10px;">🏊 Cursos y actividades</h3>
             <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
                 <a href="{% url 'users:enroll_customer_general' %}" class="btn text-white" style="background: #2d892d;">Nueva inscripción</a>
+                <a href="{% url 'users:enroll_multiple_customers' %}" class="btn text-white" style="background: #1f5f1f;">Programar múltiples inscripciones</a>
+                <a href="{% url 'users:schedule_multiple_sessions' %}" class="btn text-white" style="background: #4a7c59;">Programar múltiples sesiones</a>
                 <a href="{% url 'users:course_enrollments' %}" class="btn text-white" style="background: #86b386;">Inscripciones</a>
             </div>
         </section>
