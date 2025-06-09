@@ -81,7 +81,10 @@ urlpatterns = [
     path('course-enrollments/', views.course_enrollments, name='course_enrollments'),
     # Vista que controla el formulario
     path('customers/<int:customer_id>/enroll/', views.enroll_customer, name='enroll_customer'),
-    path('enroll/', views.enroll_customer, name='enroll_customer_general'),
+    path('enroll-customer/', views.enroll_customer, name='enroll_customer_general'),
+    path('enroll-multiple-customers/', views.enroll_multiple_customers, name='enroll_multiple_customers'),
+    path('schedule-multiple-sessions/', views.schedule_multiple_sessions, name='schedule_multiple_sessions'),
+    path('get-pending-sessions/', views.get_pending_sessions, name='get_pending_sessions'),
     path('enrollments/<int:enrollment_id>/', views.enrollment_detail, name='enrollment_detail'),
     path('course-sessions/<int:session_id>/schedule/', views.schedule_course_session, name='schedule_course_session'),
     path('course-sessions/<int:session_id>/complete/', views.complete_course_session, name='complete_course_session'),
