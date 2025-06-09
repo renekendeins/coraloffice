@@ -148,8 +148,10 @@
             <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
                 <a href="{% url 'users:medical_forms_list' %}" class="btn text-white" style="background: #e91e63;">Formularios recibidos</a>
                 <a href="{% url 'users:generate_qr_code' %}" class="btn text-white" style="background: #f06292;">Descargar código QR</a>
-                <button id="copyFormUrlBtn" class="btn text-white" style="background: #ad1457;">Copiar enlace del formulario</button>
-                <div id="formUrlDisplay" style="background: #f5f5f5; padding: 10px; border-radius: 4px; margin-top: 10px; font-size: 12px; word-break: break-all; display: none;"></div>
+                <button id="copyFormUrlBtn" class="btn text-white" style="background: #ad1457;">Mostrar enlace del formulario</button>
+                <div id="formUrlDisplay" style="background: #f5f5f5; padding: 10px; border-radius: 4px; margin-top: 10px; font-size: 12px; word-break: break-all; display: none;">
+                    {% url "users:get_medical_form_url" %}
+                </div>
             </div>
         </section>
 
@@ -183,30 +185,14 @@ document.getElementById('copyFormUrlBtn').addEventListener('click', function() {
         .then(response => response.json())
         .then(data => {
             if (data.url) {
-                navigator.clipboard.writeText(data.url).then(function() {
-                    // Show success message
-                    const btn = document.getElementById('copyFormUrlBtn');
-                    const originalText = btn.textContent;
-                    btn.textContent = '¡Copiado!';
-                    btn.style.background = '#4caf50';
-                    
-                    // Show the URL
-                    const urlDisplay = document.getElementById('formUrlDisplay');
-                    urlDisplay.textContent = data.url;
-                    urlDisplay.style.display = 'block';
-                    
-                    setTimeout(() => {
-                        btn.textContent = originalText;
-                        btn.style.background = '#ad1457';
-                    }, 2000);
-                }).catch(function() {
-                    alert('Error al copiar el enlace');
-                });
+                // Show the URL
+                const urlDisplay = document.getElementById('formUrlDisplay');
+                urlDisplay.textContent = data.url;
+                urlDisplay.style.display = 'block';
             }
         })
         .catch(error => {
             console.error('Error:', error);
-            alert(error)
             alert('Error al obtener el enlace');
         });
 });
