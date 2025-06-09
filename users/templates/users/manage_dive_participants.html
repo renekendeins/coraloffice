@@ -174,14 +174,14 @@ function toggleDetails(participantId) {
         <div class="d-flex flex-column">
             <div class="form-group" style="position: relative;">
                 <label for="customer-search">Buscar clientes o grupos:</label>
-                <input type="text" id="customer-search" placeholder="Start typing customer or group name..." autocomplete="off" class="form-control">
+                <input type="text" id="customer-search" placeholder="Empieza a escribir el nombre del cliente o grupo..." autocomplete="off" class="form-control">
                 <div id="search-suggestions" class="search-suggestions"></div>
                 {{ form.customer }}
                 {{ form.selected_group }}
             </div>
             <div class="d-flex flex-column flex-md-row">
                 <div class="form-group me-md-4">
-                    <label for="{{ form.course.id_for_label }}">Curso:</label>
+                    <label for="{{ form.course.id_for_label }}">Curso / Actividad:</label>
                     {{ form.course }}
                 </div>
                 <div class="form-group">
@@ -220,8 +220,8 @@ function toggleDetails(participantId) {
                         
 
                         <div id="details-{{ participant.id }}" class="participant-details" style="display:none; margin-top: 10px;">
-                            <p class="mb-0"><strong>Nivel de buceo:</strong> {{ participant.customer.get_certification_level|default:"Not specified" }}</p>
-                            <p class="mb-0"><strong>Pais:</strong> {{ participant.customer.get_country_name|default:"Not specified" }} </p>
+                            <p class="mb-0"><strong>Nivel de buceo:</strong> {{ participant.customer.get_certification_level|default:"No especificado" }}</p>
+                            <p class="mb-0"><strong>Pais:</strong> {{ participant.customer.get_country_name|default:"No especificado" }} </p>
                             <p><strong>Idioma:</strong> {{ participant.customer.get_language_display }}</p>
 
 
@@ -323,13 +323,13 @@ function toggleDetails(participantId) {
             <form method="post" class="mb-2">
                 {% csrf_token %}
                 <input type="hidden" name="participant_id" value="{{ participant.id }}">
-                <button type="submit" name="on_board" class="btn btn-warning w-100 text-dark">On Board</button>
+                <button type="submit" name="on_board" class="btn btn-warning w-100 text-dark">Presente</button>
             </form>
         {% elif participant.status == 'ON_BOARD' %}
             <form method="post" class="mb-2">
                 {% csrf_token %}
                 <input type="hidden" name="participant_id" value="{{ participant.id }}">
-                <button type="submit" name="back_on_boat" class="btn btn-info w-100">Back on Boat</button>
+                <button type="submit" name="back_on_boat" class="btn btn-info w-100">De vuelta</button>
             </form>
         {% endif %}
         <button onclick="showQuickEdit({{ participant.id }})" class="btn btn-info mb-2 text-white">Edición rápida</button>
