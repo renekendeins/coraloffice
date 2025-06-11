@@ -6,22 +6,22 @@ def home(request):
         'page_title': 'Welcome to CoralOffice',
         'featured_services': [
             {
-                'title': 'Dive Course Management',
+                'title': 'Cursos',
                 'description': 'Manage PADI, SSI, and other certification courses with ease.',
                 'icon': '🤿'
             },
             {
-                'title': 'Equipment Rental',
+                'title': 'Precios',
                 'description': 'Track and manage diving equipment rentals and maintenance.',
                 'icon': '⚙️'
             },
             {
-                'title': 'Trip Planning',
+                'title': 'Puntos de buceo',
                 'description': 'Organize diving trips and boat schedules efficiently.',
                 'icon': '🚤'
             },
             {
-                'title': 'Customer Management',
+                'title': 'Grupos',
                 'description': 'Keep track of customer certifications and diving history.',
                 'icon': '👥'
             }

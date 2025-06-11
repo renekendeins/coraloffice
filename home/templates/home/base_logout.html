@@ -1,8 +1,51 @@
+<!doctype html>
+<html lang="es">
 
-{% extends 'home/base.html' %}
+<head>
+  <meta charset="UTF-8" />
+  <!-- Meta Title -->
+  <title>Buceo en el Cap de Creus | Inmersiones y Cursos</title>
 
-{% block content %}
-<style>
+  <!-- Meta Description -->
+  <meta name="description" content="Explora las aguas del Parque Natural del Cap de Creus con nuestras salidas de buceo, cursos para todos los niveles y experiencias inolvidables.">
+
+  <!-- Meta Keywords (opcional, Google ya no lo usa, pero puede servir para otros motores) -->
+  <meta name="keywords" content="buceo Cap de Creus, inmersiones, cursos de buceo, centro de buceo Girona, diving Costa Brava, submarinismo">
+
+  <!-- Autor y otros -->
+  <meta name="author" content="Buceo Cap de Creus">
+  <meta name="robots" content="index, follow">
+
+  <!-- Open Graph (para compartir en redes sociales) -->
+  <meta property="og:title" content="Buceo en Cap de Creus | Inmersiones y Cursos">
+  <meta property="og:description" content="Descubre el fondo marino de Cap de Creus con nuestros cursos y salidas de buceo. Experiencia, seguridad y pasión por el mar.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://www.buceocapdecreus.com/">
+  <!--    <meta property="og:image" content="https://www.buceocapdecreus.com/img/portada-buceo.jpg">-->
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Buceo en Cap de Creus">
+  <meta name="twitter:description" content="Explora el fondo marino con nuestro centro de buceo en Cap de Creus. Cursos, inmersiones, alquiler de equipo.">
+  <!--    <meta name="twitter:image" content="https://www.buceocapdecreus.com/img/portada-buceo.jpg">-->
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href="https://www.buceocapdecreus.com/" />
+
+  <!-- Favicon -->
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+  <!-- CSS y otras hojas de estilo -->
+  <!-- <link rel="stylesheet" href="/styles/main.css"> -->
+
+  <!-- Meta Viewport (para móviles) -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <title>Buceo Cap de Creus</title>
+  <style>
     * {
       margin: 0;
       padding: 0;
@@ -15,6 +58,7 @@
       background-color: #f4f4f4;
       color: #333;
       padding-top: 0;
+      margin-top: 100px;
     }
 
     /* Menú superior horizontal */
@@ -202,6 +246,27 @@
 </head>
 
 <body>
+  <!-- Menú superior fijo -->
+  <nav class="menu-top">
+    <button class="menu-btn" aria-label="Abrir menú" onclick="openMenu()">☰</button>
+    <a href="#cursos">Cursos</a>
+    <a href="#precios">Precios</a>
+    <a href="#puntos-de-buceo">Puntos de Buceo</a>
+    <!--    <a href="#packs">Packs</a>-->
+    <a href="#grupos">Grupos</a>
+    <a href="#contacto">Contacto</a>
+  </nav>
+
+  <!-- Menú lateral para móvil -->
+  <div id="sideMenu" class="side-menu" aria-hidden="true">
+    <a href="javascript:void(0)" class="close-btn" aria-label="Cerrar menú" onclick="closeMenu()">&times;</a>
+    <a href="#cursos" onclick="closeMenu()">Cursos</a>
+    <a href="#precios" onclick="closeMenu()">Precios</a>
+    <a href="#puntos-de-buceo" onclick="closeMenu()">Puntos de Buceo</a>
+    <!--    <a href="#packs" onclick="closeMenu()">Packs</a>-->
+    <a href="#grupos" onclick="closeMenu()">Grupos</a>
+    <a href="#contacto" onclick="closeMenu()">Contacto</a>
+  </div>
   <div style="margin:50px 0">
     <h1 style="text-align: center">Buceo en el Cap de Creus</h1>
     <p style="text-align: center; font-size: 1.1rem; color: #003d66; margin: 20px auto 40px; max-width: 700px">
@@ -974,7 +1039,7 @@
   <!--        </p>-->
   <!--    </div>-->
   <!--</section>-->
-  <!-- <br><br>
+  <br><br>
   <section id="grupos" style="padding: 60px 40px">
     <h2>💥 Ofertas para grupos (4 personas o más) 💥</h2>
     <p style="text-align: center; margin-top: 50px; font-size: 1.1rem; color: #003d66;">¡Ven con tus amigos, tu familia
@@ -1041,7 +1106,7 @@
       </div>
 
     </div>
-  </section> -->
+  </section>
 
   <style>
     .lista-precios {
@@ -1188,5 +1253,65 @@
   </style>
 
   <br><br>
+  <footer id="footer">
+    <div class="footer-logo">
+      <!-- Placeholder para logo -->
+      <img loading="lazy" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADgCAMAAADCMfHtAAABIFBMVEX///8AAAAAneD7+/vKysorKyv39/fOzs7///0ODg4GBgarq6v//v9JSUnBwcEAnuC8vLxmZmbl5eXr6+vx8fFeXl6mpqZTU1OysrKSkpJGRkZYWFiMjIw8PDzT09ODg4M4ODh5eXmfn59sbGzb29t1dXWGhoYmJiYwMDDi9PUAneUdHR05OTkAldkXFxcAl9UAmuYAm8/c8vP///Zntd+o3eqk1u2R1O89rNSHyOLx/P0Antmf3eoAkM93v9/H4+55t9JfssoAlcfV7/Ehoc2g1em94OvO6PWIwd0oncMAkNrJ6u2RzdhhstmHu8bP5PExrtYAlOUxqchRt99st9iGxeY2q+FdvtKLzN6z6fOe0u3P5eREn8Jqs9Kgy9y32+MgcTomAAASN0lEQVR4nO1dCXvaSLatQkLIlhFCElpYJEsIA7LFYuKMgbGdbi/JS8avZyYeP3f36+T//4t3r8QiMHHSG+L1VydfMAgh1eHeukvVrYIQBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBoZdAAeYP8LfrJvzR0Mr5/P5zgKHh8njHCeHJycnjRVUN6C4ArM2QyWNcgJ/2wwrdNtwt0uQ29s6w85fnmF7uz09Zig5CQop8GuQN0DZBCsFaQEjgQt3y2fA0Nna7QoZMSxs7XY8Y/jH45sYCrJlafPnAGwiJwjzp6mz1K9caTcZqonLzFvxq0N4asDf2swy7ttCfDwoxi970ovX2kmGzsLM1/ElEkEW5cXhKlIsrJ71JWTJ8OCAiOKGE4T80pPxZBNDejQ7q9eM5fjS95WpDA9E8eBg9OwECxtt6wFqZ4WsMnT1wERmoKN4FnTV+leEmClDEOBkgxSxE5okUcM9ssqwPtNhLfmDIg4c5yVrkx1DoCaSs+FrEZ8dpHnmZ5ZFcF0XpbPKkJsJT016ZNPmX75ddgyhE47+Fg2i8/F4ctZNM+zNGM2xxvAImQnpbqm8dLvsGI4Ouq+icFoKc9HfL86+lWGngr2TluGlvszC5Bdul6GWTvq5MJcLPw7DYXiZZng8Z6gCyEZbmnS8gj1zkZUXbpehlnb7OSDY7171B7n+h9QJyMiDv3FPIxsYFoPlyVoTDhy/cLssGO4vGZbCsSi+npaG3dQJNrIAEpj3NMgqw4qiyAk/v32YRzuEFrf9wu2yZBiVSmF/Ih6IPw0no9h3JEispHmCjzjEsuYtUi2nLUVCy9t64XbZMsxFY1EAkby5At+/7Ir2or/F4Vma4dHyOuayWwbPbrJEplpaCkE7FWjfaMKB91jCn7XcjEPsxsw/ou1MjSkJc1vafjGdzlSGudwttr+nksmbDyKCzCJVTWpWyvVZyy3f91FKMvxdce+ODWe5L7kKkjHDcDiBILTey+ti97u3kzhQFcmmYPx3IFMtHXwiZK/B8bQxEk+/n374maR1VSR/CNtMZQgi9DHkkmn5QLweDm5u78goUdX44epqgpR/H83sGIrd6EzUe9STdaDYIuLb/iC6TXojaOu7d927Ye7ml+vfK8jsGI66/zURY6PZ9niJ2kQ8e/9IRiC6yR2ID1xlWMqFg6cVI/sbkCHD08+EnMwNfhv8gXh7j15x9PT+1RjsbKkE//ufEi0Ff/kbZZkdQzL5LIpCfem2LUI+dwkwGYYhhOQxwv7drE+i7v4maWappd9fgsSCxoIiuL83pyL5eZhbICz9JCIvkWgfTsnzAY9vQJaWpp8b3kHb5wEM3Q/I5G4CJqe0pFjq/0MAW3Mwuru4GL+FT4sHv1JZs2BIF1FbqX8/EYk6HwjF4Oa/iTjOpRDddifoQt6Uprn+/cMP/x8Yxjl8kj1BcjE8AzFaM4qHgtj9xxPoZkpPpxevf3h6N34MS3B2+DQSf6Wubp8hRzhpL2EY5kqghuddkejePNQWu0M8mhbj/d3FIDasQPH89adJbFQPVr0IjvVjmC48u9/2GTZbKhGOwJZ2+zhIk8sNhk/QZrkdU2wSch1nximGw6do8XwK+VYSvI5W1NXtqKRZEUjRWyezfYaQ7bVwmEXsXoThFMhMc+/PwYYI8RgapEfiXTSdpmUYDlN8S/+8fBxCSnK1FuvYexwxa0QwvbX7bZ9hFXlUIBs6OB1P0bFDB8tFl5BZBPFbGNz08dhSboMlYQhz8N/j+fs7kaSHWfk2pFkdQrxm5gxn/s9DOZ6Oh9EgDl6iIbSY82ee/2mV4hritwZ//+VMTA2YSybIEdg11usuts6QyzeSHkfLPPaos/P+YICi6T+AxYmn1WQiXkYvUUxsbBjdvF0y1A5P5CDfCfjj4uqYxtYZ6vuuNh9+OLEE6EzX90P0D6UBdi8CdhaCm4OHKPdFhhDTgVlFg/s4SV3ZoByp10BPq9ky1HAwaRHG9OLJzutxH1o9HUTfdbFiiu5rZHIeYod7jkEYfTzvowhLg9LFVerKMvRCH3S0YmfLUKXYAHU5UNZ0QNW425twAC7iYoxtalNNnNx8QYAQIpCrm0FuGv7z5i5tTqVjh9RBRU1zRU23zjCgezXX4AN3mVTUcCxpcnf/fhri8D4vCO6hLp4Oc9PniloajDHVmFxGuejq0yjNkJP2W8SmvuBSK0uGgu3FTuGYptCBDknEq4f+v25Fh+75pACO+3q6QYSl6DPhXWjw3f3tswCVp6CnYFOb3srB7cel0NcCy/YqaZJ7dRWSwO4ThDdNoK9wGhE/9DcYm+hW5GhbTjLGNRiVxGO0M5UhIJiVkQh6INeb1TnRMuSHIieKHM6f1YAhuYueyzA3nBCFHrsCeZ5k8NTVZerpdVDV1MEssqf9w5QxEFVHtpsN8BJVJW6JislHPI7/uj9Yi8JLgz4EppWqXFyODQvGfKxfczvgUvPEaS/tacbVJqfdpUcDifpePIDtgEBPaA2c5d0QnV+aYRieT0SNGsT2CpZx5JXNebkNQmlAEA566i6LZrNiyMdqdNB9iG5evbv9AHlw0LIVR09Oseixc0T3HAjPz6N0tgixz/T9v9G7B1IvbatmWmlDT6yYOqktY7cs+uGsvjRfD8Be3ObCQRRdnM6z4P2Ka8iaR/M6BOKoa0/9RIpxGBeG/eHHp8kBOaT7ZsV1fTnQBKFQns8Cg5+1OPAWTu9wXp+RAUNl+c23BHF0FoLmDT4RUTfQjfRMMzE9JscZtKqS0fVjLqZYCgeDm6e3yYC4tlqdUKHzjhegx4A8w5wr7vYZ2indoocaDsuANZniNLdYaIGnaMmao9jxZCiKBNz7QxQr6sXDXdxSvVAorOXy3Mncy6vAMGhBkjavk9o6wzr4d1/CsSdbAs/XFsjkEfWvf36LJSe6BRnyoa8RGa0pB/lUGXzLd4Owf/OEM+GC1UyUvF1fmVXTjmc1J8iQt2RBmpPaNsMCCAm//3JcJexh3Yj4Oooj6sH04QfUwKCFzrGgoMHlQKd7mtj9/jweGQ7gA00p0DTN8Ru0l9bUYFFzInUsNfDnpZtbZwgSMgPbJFYVLDtXiP3GJA7PcCQNBIneQ5M64Byr9FjlBKBogkmFo6JSpB1JA8EKAscRTlk6CQQI3bRiRprGK7ytZ8OQT7qfQlwTOqSOBVwgxMu5K4A8uP8QJwyBh8rY1oCiFRNRXUxDFmW0AKI2aFNfXhuzTjjhuFJteHa9dqxlwjDJKMDUVWuQJMYMe3qipnN/N4jOf5rEPbJBaQUERlr0SKrEkeuSXlwsrJfh6KLxoMFURVEmkZFT0bNgiIM0e21aI8ox6GLiOBzxNMUQB0X70eUVCrJQAYMqcBp8ypT0WD3TBEHSe0k9SuBLjgO+poiWrEU4L7COiGxkwRCLX1xieTgnqnOF2PPxZLIaYaNr6E8/Yd9rgUJDp9OFdfFxRHfsuHrWSHlYE3UVnL/nAD1DyoIhDkLtQbQhmMsU8RnDJP7MTR+6RDjO66vcEiujKW4nUXgwoPweNZMRvGMwZebhUQDnaFZSqrJthnFhIa2U0zGlQ7rPGSLCG0yUbJImB03V5PpyDMRQj1AveCN5GZBjj5PMaq0JAR3JgiGW2RWb1Mt7RZvaDQutgzb6cRND6JLRf0RwnPK8eZyu8oZ3QtNYW0Pl1XCNk4A9VtEzYYg9xgqoXOBNnrcL2JPA2403Daoh+tdE3acNs+l5XsWcDbT2zNoLa8PaIHTVtVrqPFDdMkMuT3uyUVVUUmxw4N/4uMD38QsEc6Vzkeh+pbNP9/MnsYa3DZWLRxy/AAu+RJ/ovHqUVW5hUU9zLNnkzGOV1n2VVrnRXR9dxKYx7lL/TTyHJujYRF2B/rdXtlQBJ2Kg4TXHMHurDOE0iRbrbnGxQGHrkXetmKc1c89s71do1W2DbRA/DgaDf61Mi84xHfTP4xrwpBhMJKqE0jssu/a8nE+fWdWZYcbOp9qusYx1tj9vUVv5zuGrvn0/fBif3W8aO0SDGvWHjw8PD/fn5+NrvIBQsKuzD8+7mmrTtm7Or7eGDDLgoyW/RiCKb4c/xWM142i6YaoCdDeMi0/QGPXvP51iQAf+MOCturvIHwh4xP34isaz22U4ikEblkhGb89PR9jXfn76T3+Toq7IM8xFbzZeEpMUP8Dk+tnikqxGomwlSdPPbp6Sgc+JODp/mV8s0Oh6c2kU5wjJQqFnK9OzYugkdU6vx+KsZlY8mHzXXyeENjZ+Bt5/Gqvqxw1D3QsgmWf1tFmOl4ri+FNcHhMXrh2Q/1k1NqVwXv0VTqOo9P7x1eXjxfglhiatPi8YznLd09+m70bcXOlEIjxNw1WG/SFOxeCTH68waRQn3RdqorgKNTcwyZBh9+KBiKmiGKH7Ed3+coy7dDm5iT7eTuHg+Wi+VPHLEizPCt/XkCXDm8lqc08vMGcaLn3GtHtw9bP4IQpzD18t9gI/W93II8Pqy+7/dleWV4qT8cPDL93r5Zza+8d4ocm/w/c/bl5tmrpoLVmbgU/5laqhDGsT8fnzZouTYZjMN5UGl58maFg+DEqPr+7PP78gRlzHphJdVwtK/bBZTlecZCjDL0C4Ht/ERVCl3HcTEatmu9/3B6VwcPblPojrSffngVJRJ8VUaLN7DEGKkw/xMP70XdJRxcnZq8couvqyCJOZgk613LIly+vZan45P7l7DHH5wefL6aCU+yURYbLy4vbpha6olZuyqs9p6M1OpbNILnaPIZ4hitfT6IwsSy0ORiNcovCttwgqy0WXO8kQRCdefZ+OQEVR3FSa8GXw1fks+E4yTPRyVSt/Db0V7CjDPxB/OYbPuOwMw8Bz9fRrbfVtziMyMV7eqaUOn5F2InvaxFDtBE5eIIKGUoAHtQgHgbKWhGIa1yBVgoNs+F58JPnLxd+EHn8Q51yfbz6wKwwNaJqi87WWTbyyZxL/WNHyruB6NZwzbLbKRSIRXy006sWmawp88chsehUSmG6T+EWj0LRbpCyoRbeynl/sCkM3XhFb49UeVw5IkxcqRK0Rraop4Nj4Mglw2bqt8japK6Spyj5pyaSseZZuOnDE9klATAGO1a21K+8KQ9y/Q+AanutC+4kr68AQeOVdrG5SbKJj4S8w9IktkyNVNsgRT1paq+W6al0mnG0eEZOrBMSy1668Kwz5JiGHWisgBinHDE2iVgg8amA6nCqnHBJkKNszhj6cA98FiM8SjmQia+RQMIW6wTXXTc2uMCS2WVSIVqlZ5EgjvkOavl4H6dUqaE/8ooslo5JWsIhUwP6o4Dm2JjQrNjEKJKiVDeIJXNNcF+HuMPzTsJM7Ya1BX5hHfUNLuU0HU9glhp12L12ErrozB48FCDEKy00j3MUGEoUNI/lp7BJDulene8Sp2yoxJEv2KNgc4vg8rZGCbaNLpzaxfJxXsmjdpxKxXAkOSpJBFF+QfV/bcNWdYtgmRRrQ/H5PgFOODum+gwXFPVrRqJnvcMhQoRUgTCRas2Ti0zK1A2q1qNDOO/BOY8NVd4rhvkkbBpUN6rT3sYxLxqkIT6Nln9YOaYAMBdtv4/5frWNKFZM2aZunlkIV6gu+ke9tuOpOMdxr1TWfKj4wPMY5fwsZtgJalqhv1XEDM7tO7XYPNwHRFCxLkH2jQCWBNmjg03pn015DO8UQRaCCVh5zOF1dwPmbeNGwqdNOr6fDEfuIFvE9mfbyVJbghRuApanRDqhs/M4z7BJDJQ5HVANMiYxPHQUTCCuQC8lBoisBJyl8/F68oUvBV+CgSgIlIJxlOZs2ctklhn8OdpuhGm9bqsf/OUwVVSJgLhgf/trGpTPsNEPFgiRJUAwItyVfslTiK0pdUmxZUwSjLn/bXsQ7zdDH7dgUGRhC0mT4qgDRy5FfqEuawhmKr3/9CmTHGUqO7Du2BSbFLthSoHOYPhUKQNUuWLzz8t6zc+w0Q45XNaJjr1N5ToMcUJd1eAh4QeVJwH9bszOsVNgSstrP2/Ofw1hCSiG94/raZuypzdrX9nNfbPTuGBkx3C6y2Nvkr82w/vUm/cFY30niT4fUStBMoVwuz39VZPkbI/GvjpgpzH+SZPlTJfOfMTk5OUl+4mTx2yf5BVrf5jkZGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGBgYGLaA/wOai8iwGkQRCwAAAABJRU5ErkJggg==" alt="Logo Centro de Buceo" />
+      <br>
+      <a href="https://www.padi.com">
+        <img src="https://res.cloudinary.com/all4dive/image/upload/t_padi-small/buceocapdecreus.com/sfoujvfdoujtt73odara" alt="Logo Padi">
+      </a>
+      <br>
+    </div>
+    <p style="text-align:center; margin: 20px; color: #000">
+      <span>&copy; 2025 CIPS SL. Todos los derechos reservados.</span>
+    </p>
+  </footer>
 
-{% endblock %}
+  <!-- Scripts -->
+  <script>
+    const sideMenu = document.getElementById('sideMenu');
+
+    function openMenu() {
+      sideMenu.classList.add('open');
+      sideMenu.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeMenu() {
+      sideMenu.classList.remove('open');
+      sideMenu.setAttribute('aria-hidden', 'true');
+    }
+  </script>
+  <a href="https://wa.me/34671915504" class="whatsapp-icon" target="_blank" aria-label="Contáctanos por WhatsApp">
+    <img src="https://res.cloudinary.com/all4dive/image/upload/ar_1:1,c_scale,w_80/f_webp/buceocapdecreus.com/pnj86qqldvk0xsxptxxe" alt="WhatsApp" />
+  </a>
+
+  <style>
+    .whatsapp-icon {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 999;
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background-color: #25d366;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: transform 0.2s ease;
+    }
+
+    .whatsapp-icon img {
+      width: 35px;
+      height: 35px;
+    }
+
+    .whatsapp-icon:hover {
+      transform: scale(1.1);
+    }
+  </style>
+</body>
+
+</html>

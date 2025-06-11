@@ -1,0 +1,70 @@
+ {% if user.is_authenticated and user.userprofile.is_diving_center %}
+<header class="header">
+    <nav class="nav-container">
+        <a href="/">
+            <div class="logo text-white">CoralOffice</div>
+        </a>
+        <ul class="nav-menu m-0 ms-0 p-0">
+                <li><a href="{% url 'users:customer_list' %}" class="px-2">Clientes</a></li>
+                <li><a href="{% url 'users:calendar_view' %}" class="px-2">Calendario</a></li>
+                <li><a href="{% url 'users:course_enrollments' %}" class="px-2">Cursos</a></li>
+                <li><a href="{% url 'users:staff_planning' %}" class="px-2">Planning</a></li>
+        </ul>
+        <div class="user-menu ms-3">
+                <a href="{% url 'users:profile' %}">{{ user.username }}</a>
+                    <a href="{% url 'users:diving_center_dashboard' %}">Dashboard</a>
+        </div>
+        <button class="mobile-menu-toggle" id="mobileMenuToggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay" id="mobileMenuOverlay">
+        <div class="mobile-menu">
+                <a href="{% url 'users:diving_center_dashboard' %}">Dashboard</a>
+                <a href="{% url 'users:customer_list' %}">Clientes</a>
+                <a href="{% url 'users:calendar_view' %}">Calendario</a>
+                <!-- <a href="{% url 'home:home' %}">Inicio</a> -->
+                <!-- <a href="{% url 'home:services' %}">Servicios</a> -->
+                <!-- <a href="{% url 'home:about' %}">Sobrre nosotros</a> -->
+                <!-- <a href="{% url 'home:contact' %}">Contacto</a> -->
+            <div style="border-top: 1px solid rgba(255,255,255,0.3); margin: 20px 0; width: 200px;"></div>
+                <a href="{% url 'users:profile' %}">{{ user.username }}</a>
+                    <!-- <a href="{% url 'users:diving_center_dashboard' %}">Dashboard</a> -->
+        </div>
+    </div>
+</header>
+
+
+ {% else %}
+<header class="header">
+    <nav class="nav-container">
+        <ul class="nav-menu m-0 ms-0 p-0">
+                <li><a href="/#precios" class="px-2">Precios</a></li>
+                <li><a href=/"#cursos" class="px-2">Cursos</a></li>
+                <li><a href="/#puntos-de-buceo" class="px-2">Puntos de buceo</a></li>
+                <li><a href="/#grupos}" class="px-2">Grupos</a></li>
+        </ul>
+        <button class="mobile-menu-toggle" id="mobileMenuToggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+  <div class="mobile-menu-overlay" id="mobileMenuOverlay">
+    <div class="mobile-menu">
+      <a href="/#precios">Precios</a>
+      <a href="/#cursos">Cursos</a>
+      <a href="/#puntos-de-buceo">Puntos de buceo</a>
+      <a href="/#grupos}">Grupos</a>
+
+    </div>
+    </div>
+</header>
+
+{% endif %}
