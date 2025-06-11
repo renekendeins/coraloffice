@@ -28,6 +28,7 @@ SECRET_KEY = settings.SECRET_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
+DATABASES = settings.DATABASES
 
 ALLOWED_HOSTS = [".replit.dev", ".replit.app", ".buceocapdecreus.com"]
 CSRF_TRUSTED_ORIGINS = ["https://*.replit.dev", "https://*.replit.app", "https://*.buceocapdecreus.com"]
