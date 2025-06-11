@@ -4,7 +4,7 @@
 
 {% block users_content %}
 <div class="p-3 container">
-    <h2>Lista de clientes</h2>
+    <h2>Lista de clientes ({{ total_customers }})</h2>
 
     <div class="mb-4 d-flex flex-column flex-md-row justify-content-md-between align-items-md-center">
         <a href="{% url 'users:add_customer' %}" class="btn btn-success mb-4 mb-md-0">Añadir cliente</a>
@@ -17,7 +17,7 @@
                 <i class="fas fa-search"></i> Buscar
             </button>
             {% if search_query %}
-            <a href="{% url 'users:customer_list' %}" class="btn btn-secondary mb-2 mb-md-0">
+            <a href="{% url 'users:customer_list' %}" class="btn btn-secondary mb-2 mb-md-0 ms-md-2">
                 <i class="fas fa-times"></i> Limpiar
             </a>
             {% endif %}
@@ -27,7 +27,12 @@
     {% if search_query %}
     <div class="alert alert-info" style="background-color: #d1ecf1; padding: 10px; border-radius: 4px; margin-bottom: 20px;">
         <i class="fas fa-info-circle"></i> 
-        Mostradno {{ customers.count }} resultados {{ customers.count|pluralize }} para "{{ search_query }}"
+        Mostrando {{ total_customers }} resultado/s para "{{ search_query }}"
+    </div>
+    {% else %}
+    <div class="alert alert-info" style="background-color: #d1ecf1; padding: 10px; border-radius: 4px; margin-bottom: 20px;">
+        <i class="fas fa-info-circle"></i> 
+        Mostrando {{ total_customers }} resultado/s
     </div>
     {% endif %}
 

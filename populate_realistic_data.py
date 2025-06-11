@@ -1,4 +1,10 @@
+import os
+import django
 
+
+# Inicializar Django
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'django_project.settings')  # Cambia 'tu_proyecto'
+django.setup()
 import random
 import string
 from datetime import date, time, datetime, timedelta
@@ -669,3 +675,7 @@ class Command(BaseCommand):
         
         self.stdout.write(f'Created {len(all_memberships)} group memberships')
         return all_memberships
+
+
+if __name__ == '__main__':
+    Command().handle()

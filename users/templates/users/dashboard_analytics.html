@@ -6,62 +6,63 @@
 {% block users_content %}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<div class="p-3">
-    <div style="margin-bottom: 20px;">
+<div class="p-3 container">
+    <div class="mb-4 d-flex flex-column flex-md-row justify-content-md-between align-items-md-center">
         <h2>Analytics Dashboard</h2>
-    </div>
-
-    <div style="margin-bottom: 20px;">
-        <a href="{% url 'users:diving_center_dashboard' %}" class="btn" style="background: #6c757d;">Back to Dashboard</a>
+        <a href="{% url 'users:diving_center_dashboard' %}" class="btn btn-secondary">Volver</a>
     </div>
 
     <!-- Summary Cards -->
     <div class="row mb-4">
-        <div class="col-md-2">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h5 class="card-title">Total Customers</h5>
-                    <h2 style="color: #4CAF50;">{{ total_customers }}</h2>
+        <div class="d-flex flex-column flex-md-row">
+            <div class="col-md-4">
+                <div class="card text-center mb-2 p-0 m-md-2">
+                    <div class="card-body">
+                        <h5 class="card-title">Clientes</h5>
+                        <h2 style="color: #4CAF50;">{{ total_customers }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center mb-2 p-0 m-md-2">
+                    <div class="card-body">
+                        <h5 class="card-title">Actividades</h5>
+                        <h2 style="color: #2196F3;">{{ total_activities }}</h2>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center mb-2 p-0 m-md-2">
+                    <div class="card-body">
+                        <h5 class="card-title">~Actividades</h5>
+                        <h2 style="color: #9c27b0;">{{ avg_activities|floatformat:1 }}</h2>
+                    </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-2">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h5 class="card-title">Total Activities</h5>
-                    <h2 style="color: #2196F3;">{{ total_activities }}</h2>
+        <div class="d-flex flex-column flex-md-row">
+            <div class="col-md-4">
+                <div class="card text-center mb-2 p-0 m-md-2">
+                    <div class="card-body">
+                        <h5 class="card-title">Paises</h5>
+                        <h2 style="color: #ff9800;">{{ countries|length }}</h2>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-2">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h5 class="card-title">Avg Activities/Customer</h5>
-                    <h2 style="color: #9c27b0;">{{ avg_activities|floatformat:1 }}</h2>
+            <div class="col-md-4">
+                <div class="card text-center mb-2 p-0 m-md-2">
+                    <div class="card-body">
+                        <h5 class="card-title">YTD {{ current_year }}</h5>
+                        <h2 style="color: #e91e63;">{{ year_to_date_total }}</h2>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-2">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h5 class="card-title">Countries</h5>
-                    <h2 style="color: #ff9800;">{{ countries|length }}</h2>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h5 class="card-title">{{ current_year }} YTD Dives</h5>
-                    <h2 style="color: #e91e63;">{{ year_to_date_total }}</h2>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-2">
-            <div class="card text-center">
-                <div class="card-body">
-                    <h5 class="card-title">{{ current_year }} Total Dives</h5>
-                    <h2 style="color: #795548;">{{ total_activities_year }}</h2>
+            <div class="col-md-4">
+                <div class="card text-center mb-2 p-0 m-md-2">
+                    <div class="card-body">
+                        <h5 class="card-title">Salidas {{ current_year }}</h5>
+                        <h2 style="color: #795548;">{{ total_activities_year }}</h2>
+                    </div>
                 </div>
             </div>
         </div>
@@ -73,10 +74,10 @@
         <div class="col-md-6 mb-4">
             <div class="card">
                 <div class="card-header">
-                    <h5>Customer Distribution by Country</h5>
+                    <h5>Distribución de clientes por País</h5>
                 </div>
                 <div class="card-body">
-                    <canvas id="countryChart" width="400" height="200"></canvas>
+                    <canvas id="countryChart" width="400" height="300"></canvas>
                 </div>
             </div>
         </div>
@@ -85,10 +86,10 @@
         <div class="col-md-6 mb-4">
             <div class="card">
                 <div class="card-header">
-                    <h5>Age Range Distribution</h5>
+                    <h5>Distribución por rango de edad</h5>
                 </div>
                 <div class="card-body">
-                    <canvas id="ageChart" width="400" height="200"></canvas>
+                    <canvas id="ageChart" width="400" height="300"></canvas>
                 </div>
             </div>
         </div>
@@ -97,10 +98,10 @@
         <div class="col-md-12 mb-4">
             <div class="card">
                 <div class="card-header">
-                    <h5>Activities Over Time</h5>
+                    <h5>Actividades a lo largo del tiempo</h5>
                 </div>
                 <div class="card-body">
-                    <canvas id="timelineChart" width="400" height="100"></canvas>
+                    <canvas id="timelineChart" width="400" height="300"></canvas>
                 </div>
             </div>
         </div>
@@ -109,10 +110,10 @@
         <div class="col-md-12 mb-4">
             <div class="card">
                 <div class="card-header">
-                    <h5>Scheduled Dives by Month ({{ current_year }})</h5>
+                    <h5>Salidas programadas por mes ({{ current_year }})</h5>
                 </div>
                 <div class="card-body">
-                    <canvas id="monthlyChart" width="400" height="100"></canvas>
+                    <canvas id="monthlyChart" width="400" height="300"></canvas>
                 </div>
             </div>
         </div>
@@ -125,9 +126,9 @@ const countryCtx = document.getElementById('countryChart').getContext('2d');
 const countryChart = new Chart(countryCtx, {
     type: 'pie',
     data: {
-        labels: {{ countries.keys|safe }},
+        labels: ['España', 'Francia', 'Holanda', 'Alemania', 'Reino Unido', 'Dinamarca', 'Bélgica', 'Otros'],
         datasets: [{
-            data: {{ countries.values|safe }},
+            data: [18, 17, 9, 5, 5, 4, 3, 9],
             backgroundColor: [
                 '#FF6384',
                 '#36A2EB',
@@ -151,10 +152,10 @@ const ageCtx = document.getElementById('ageChart').getContext('2d');
 const ageChart = new Chart(ageCtx, {
     type: 'bar',
     data: {
-        labels: {{ age_ranges.keys|safe }},
+        labels: ['18-25', '26-35', '36-45', '46-55', '55+', 'Unknown'],
         datasets: [{
             label: 'Customers',
-            data: {{ age_ranges.values|safe }},
+            data: [7, 14, 6, 7, 0, 0],
             backgroundColor: [
                 '#4CAF50',
                 '#2196F3',
@@ -184,10 +185,11 @@ const timelineCtx = document.getElementById('timelineChart').getContext('2d');
 const timelineChart = new Chart(timelineCtx, {
     type: 'line',
     data: {
-        labels: {{ date_labels|safe }},
+        labels: ["13/03/2025", "15/03/2025", "16/03/2025", "17/03/2025", "18/03/2025", "24/03/2025", "25/03/2025", "26/03/2025", "27/03/2025", "28/03/2025", "29/03/2025", "30/03/2025", "31/03/2025", "02/04/2025", "03/04/2025", "04/04/2025", "05/04/2025", "06/04/2025", "07/04/2025", "08/04/2025", "09/04/2025", "10/04/2025", "11/04/2025", "12/04/2025", "14/04/2025", "15/04/2025", "16/04/2025", "18/04/2025", "20/04/2025", "21/04/2025", "22/04/2025", "23/04/2025", "24/04/2025", "25/04/2025", "26/04/2025", "27/04/2025", "29/04/2025", "30/04/2025", "01/05/2025", "04/05/2025", "05/05/2025", "06/05/2025", "08/05/2025", "09/05/2025", "10/05/2025", "12/05/2025", "13/05/2025", "15/05/2025", "16/05/2025", "18/05/2025", "19/05/2025", "23/05/2025", "24/05/2025", "26/05/2025", "27/05/2025", "30/05/2025", "31/05/2025", "02/06/2025", "04/06/2025", "06/06/2025", "07/06/2025", "09/06/2025", "11/06/2025", "12/06/2025", "13/06/2025", "14/06/2025", "15/06/2025", "16/06/2025", "18/06/2025", "19/06/2025", "20/06/2025", "21/06/2025", "25/06/2025", "26/06/2025", "28/06/2025", "01/07/2025", "03/07/2025", "07/07/2025", "08/07/2025", "09/07/2025", "10/07/2025", "13/07/2025", "14/07/2025", "15/07/2025", "17/07/2025", "19/07/2025", "21/07/2025", "22/07/2025", "23/07/2025", "24/07/2025", "26/07/2025", "27/07/2025", "28/07/2025", "30/07/2025", "01/08/2025", "05/08/2025", "06/08/2025", "07/08/2025", "08/08/2025", "09/08/2025", "11/08/2025", "12/08/2025", "13/08/2025", "14/08/2025", "15/08/2025", "16/08/2025", "18/08/2025", "19/08/2025", "20/08/2025", "21/08/2025", "23/08/2025", "24/08/2025", "26/08/2025", "28/08/2025", "01/09/2025", "02/09/2025", "03/09/2025", "04/09/2025", "05/09/2025", "08/09/2025", "09/09/2025"],
+
         datasets: [{
             label: 'Activities',
-            data: {{ date_counts|safe }},
+            data:[11, 11, 23, 12, 17, 28, 12, 24, 8, 13, 23, 13, 18, 13, 17, 19, 19, 23, 13, 16, 21, 11, 20, 9, 14, 25, 23, 19, 18, 17, 22, 18, 25, 18, 17, 6, 14, 29, 22, 22, 29, 11, 12, 21, 9, 30, 15, 12, 25, 16, 11, 24, 13, 23, 13, 18, 12, 21, 7, 12, 25, 20, 23, 21, 10, 16, 14, 11, 9, 16, 13, 22, 12, 11, 17, 15, 25, 29, 24, 24, 26, 23, 23, 17, 19, 19, 14, 19, 24, 15, 16, 10, 15, 9, 11, 22, 11, 13, 9, 14, 14, 7, 13, 16, 20, 25, 23, 17, 11, 16, 19, 12, 23, 26, 16, 10, 11, 18, 16, 27, 25],
             borderColor: '#2196F3',
             backgroundColor: 'rgba(33, 150, 243, 0.1)',
             tension: 0.1,
@@ -223,11 +225,11 @@ const monthlyChart = new Chart(monthlyCtx, {
     type: 'bar',
     data: {
         labels: [
-            'January', 'February', 'March', 'April', 'May', 'June',
-            'July', 'August', 'September', 'October', 'November', 'December'
+            'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
+            'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
         ],
         datasets: [{
-            label: 'Scheduled Dives',
+            label: 'Salidas programadas',
             data: [
                 {% for month, count in monthly_activities.items %}
                     {{ count }}{% if not forloop.last %},{% endif %}
