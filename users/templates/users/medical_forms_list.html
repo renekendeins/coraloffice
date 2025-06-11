@@ -2,12 +2,12 @@
 
 {% extends 'users/base.html' %}
 
-{% block users_title %}Medical Forms - CoralOffice{% endblock %}
+{% block users_title %}Formularios Recibidos - CoralOffice{% endblock %}
 
 {% block users_content %}
 <div class="p-3 container">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h2>Formularios Médicos Enviados</h2>
+        <h2>Formularios Recibidos</h2>
         <div style="display: flex; align-items: center; gap: 10px;">
             <span style="color: #666; font-size: 14px;">Total: {{ total_forms }} formularios</span>
         </div>
@@ -460,11 +460,12 @@
                 <p>No se encontraron formularios médicos que coincidan con "{{ search_query }}".</p>
                 <a href="{% url 'users:medical_forms_list' %}" class="btn" style="background: #007bff; color: white;">Mostrar Todos los Formularios</a>
             {% else %}
-                <p>Aún no se han enviado formularios médicos.</p>
+                <p>Aún no se han recibido formularios médicos.</p>
                 <p>Comparte el enlace del formulario médico con los clientes:</p>
-                <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; margin-top: 10px;">
-                    <code>{{ request.build_absolute_uri }}{% url 'users:medical_form' %}</code>
-                </div>
+            <button id="copyFormUrlBtn" class="btn text-white" style="background: #ad1457;">Mostrar enlace del formulario</button>
+            <div id="formUrlDisplay" style="background: #f5f5f5; padding: 10px; border-radius: 4px; margin-top: 10px; font-size: 12px; word-break: break-all; display: none;">
+                {% url "users:get_medical_form_url" %}
+            </div>
             {% endif %}
         </div>
     {% endif %}
@@ -483,6 +484,32 @@ function toggleMedicalAnswers(customerId) {
         answersDiv.style.display = 'none';
     }
 }
+
+
+    document.getElementById('copyFormUrlBtn').addEventListener('click', function() {
+        fetch('{% url "users:get_medical_form_url" %}')
+            .then(response => response.json())
+            .then(data => {
+                if (data.url) {
+                    // Show the URL
+                    const urlDisplay = document.getElementById('formUrlDisplay');
+                    urlDisplay.textContent = data.url;
+                    urlDisplay.style.display = 'block';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Error al obtener el enlace');
+            });
+    });
+
+
+    
 </script>
+
+
+
+
+
 {% endblock %}
 

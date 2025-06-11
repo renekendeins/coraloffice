@@ -2318,7 +2318,7 @@ def download_medical_form_pdf(request, customer_id):
 @login_required
 def generate_qr_code(request, dive_center_uuid=None):
     if not request.user.userprofile.is_diving_center:
-        messages.error(request, 'Access denied.')
+        messages.error(request, 'Acceso denegado.')
         return redirect('users:profile')
 
     # Use the current user's UUID if not specified
@@ -2350,19 +2350,22 @@ def generate_qr_code(request, dive_center_uuid=None):
 
     # Return as downloadable file
     response = HttpResponse(buffer.getvalue(), content_type='image/png')
-    response['Content-Disposition'] = f'attachment; filename="medical_form_qr_{request.user.userprofile.business_name or request.user.username}.png"'
+    response['Content-Disposition'] = f'attachment; filename="qr_formulario_alta_{request.user.userprofile.business_name or request.user.username}.png"'
     
     return response
 
 
 @login_required
 def get_medical_form_url(request):
+    print(111)
     if not request.user.userprofile.is_diving_center:
         return JsonResponse({'error': 'Access denied'}, status=403)
 
     medical_form_url = request.build_absolute_uri(
         reverse('users:medical_form_with_uuid', kwargs={'dive_center_uuid': request.user.userprofile.uuid})
     )
+
+    print(medical_form_url)
     
     return JsonResponse({'url': medical_form_url})
 
