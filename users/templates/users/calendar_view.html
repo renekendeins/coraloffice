@@ -236,7 +236,7 @@
                             </a>
                             {% endfor %}
                         {% endif %}
-                        <a href="{% url 'users:quick_schedule_dive' %}?date={{ year }}-{{ month|stringformat:'02d' }}-{{ day|stringformat:'02d' }}" class="add-dive-link text-center mb-4">+ Añadir</a>
+                        <a style="font-size: 12px !important;" href="{% url 'users:quick_schedule_dive' %}?date={{ year }}-{{ month|stringformat:'02d' }}-{{ day|stringformat:'02d' }}" class="add-dive-link text-center mb-4">+</a>
                     {% endif %}
                 </td>
                 {% endfor %}
