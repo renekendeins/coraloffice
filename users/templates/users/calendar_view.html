@@ -73,8 +73,12 @@
         }
 
     .calendar-today {
-        background-color: #e3f2fd !important;
+        /* background-color: #e3f2fd !important; */
+        font-weight: bold;
     }
+        .calendar-today .calendar-day {
+            background: #f1c67c;
+        }
 
     .dive-item {
         background-color: #f4f4f4;
@@ -202,20 +206,21 @@
     <table class="table">
         <thead class="thead-dark">
             <tr>
-                <th scope="col">Lun.</th>
-                <th scope="col">Mar.</th>
-                <th scope="col">Mie.</th>
-                <th scope="col">Jue.</th>
-                <th scope="col">Vie.</th>
-                <th scope="col">Sab.</th>
-                <th scope="col">Dom.</th>
+                <th scope="col">L</th>
+                <th scope="col">M</th>
+                <th scope="col">X</th>
+                <th scope="col">J</th>
+                <th scope="col">V</th>
+                <th scope="col">S</th>
+                <th scope="col">D</th>
             </tr>
         </thead>
         <tbody>
             {% for week in calendar %}
             <tr>
                 {% for day in week %}
-                <td scope="row" class="p-0" {% if day == today %}class="calendar-today"{% endif %} >
+                
+                <td scope="row" class="p-0 {% if day == today %}calendar-today{% endif %}" >
                     {% if day != 0 %}
                         <div class="calendar-day">
                             <a href="?year={{ year }}&month={{ month }}&day={{ day }}&view=day">{{ day }}</a>
