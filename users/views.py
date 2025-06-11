@@ -1263,7 +1263,7 @@ def medical_form(request, dive_center_uuid=None):
                 customer.save()
                 
                 # Send welcome email
-                email_sent = False #send_welcome_email(customer)
+                email_sent = send_welcome_email(customer)
                 if email_sent:
                     messages.success(request, 'Formulario médico enviado con éxito! Se te ha enviado un correo electrónico de bienvenida.')
                 else:
