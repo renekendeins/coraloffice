@@ -8,10 +8,10 @@ from datetime import datetime
 class EmailTranslations:
     TRANSLATIONS = {
         'EN': {
-            'dive_reminder_subject': 'Dive Activity Reminder - {course_name}',
+            'dive_reminder_subject': 'Dive Activity Reminder',
             'welcome_subject': 'Welcome to CIPS!',
             'dive_reminder': {
-                'greeting': 'Hello {customer_name}!',
+                'greeting': 'Hello!',
                 'reminder_text': 'This is a friendly reminder about your upcoming dive activity:',
                 'activity': 'Activity',
                 'date': 'Date',
@@ -33,7 +33,7 @@ class EmailTranslations:
                 'team': 'The CIPS Team'
             },
             'welcome': {
-                'greeting': ' Hello {customer_name} and welcome to CIPS!',
+                'greeting': ' Hello and welcome to CIPS!',
                 'thank_you': 'Thank you for completing your medical form. We have received your information and our team will review it shortly.',
                 'next_steps': 'What happens next?',
                 'review_process': 'Our certified diving professionals will review your medical form to ensure your safety.',
@@ -46,10 +46,10 @@ class EmailTranslations:
             }
         },
         'ES': {
-            'dive_reminder_subject': 'Recordatorio de Actividad de Buceo - {course_name}',
+            'dive_reminder_subject': 'Recordatorio de Actividad de Buceo',
             'welcome_subject': '¡Bienvenido a CIPS!',
             'dive_reminder': {
-                'greeting': '¡Hola {customer_name}!',
+                'greeting': '¡Hola!',
                 'reminder_text': 'Este es un recordatorio amistoso sobre tu próxima actividad de buceo:',
                 'activity': 'Actividad',
                 'date': 'Fecha',
@@ -84,10 +84,10 @@ class EmailTranslations:
             }
         },
         'FR': {
-            'dive_reminder_subject': 'Rappel d\'Activité de Plongée - {course_name}',
+            'dive_reminder_subject': 'Rappel d\'Activité de Plongée',
             'welcome_subject': 'Bienvenue chez CIPS!',
             'dive_reminder': {
-                'greeting': 'Bonjour {customer_name}!',
+                'greeting': 'Bonjour!',
                 'reminder_text': 'Ceci est un rappel amical concernant votre prochaine activité de plongée:',
                 'activity': 'Activité',
                 'date': 'Date',
@@ -122,10 +122,10 @@ class EmailTranslations:
             }
         },
         'CAT': {
-            'dive_reminder_subject': 'Recordatori d\'Activitat de Busseig - {course_name}',
+            'dive_reminder_subject': 'Recordatori d\'Activitat de Busseig',
             'welcome_subject': 'Benvingut a CIPS!',
             'dive_reminder': {
-                'greeting': 'Hola {customer_name}!',
+                'greeting': 'Hola!',
                 'reminder_text': 'Aquest és un recordatori amistós sobre la teva propera activitat de busseig:',
                 'activity': 'Activitat',
                 'date': 'Data',
@@ -160,10 +160,10 @@ class EmailTranslations:
             }
         },
         'DE': {
-            'dive_reminder_subject': 'Tauchaktivitäts-Erinnerung - {course_name}',
+            'dive_reminder_subject': 'Tauchaktivitäts-Erinnerung',
             'welcome_subject': 'Willkommen bei CIPS!',
             'dive_reminder': {
-                'greeting': 'Hallo {customer_name}!',
+                'greeting': 'Hallo!',
                 'reminder_text': 'Dies ist eine freundliche Erinnerung an Ihre bevorstehende Tauchaktivität:',
                 'activity': 'Aktivität',
                 'date': 'Datum',

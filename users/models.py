@@ -29,7 +29,7 @@ class Customer(models.Model):
         ('ADVANCED_OPEN_WATER', 'Advanced'),
         ('RESCUE_DIVER', 'Rescue.'),
         ('DIVEMASTER', 'Divemaster'),
-        ('INSTRUCTOR', 'Istructor'),
+        ('INSTRUCTOR', 'Instructor'),
     ]
     
     LANGUAGE_CHOICES = [
