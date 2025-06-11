@@ -1263,15 +1263,15 @@ def medical_form(request, dive_center_uuid=None):
                 customer.save()
                 
                 # Send welcome email
-                email_sent = send_welcome_email(customer)
+                email_sent = False #send_welcome_email(customer)
                 if email_sent:
-                    messages.success(request, 'Medical form submitted successfully! A welcome email has been sent to your email address.')
+                    messages.success(request, 'Formulario médico enviado con éxito! Se te ha enviado un correo electrónico de bienvenida.')
                 else:
-                    messages.success(request, 'Medical form submitted successfully! A diving center will contact you soon.')
+                    messages.success(request, 'Formulario médico enviado con éxito!')
                     
                 return redirect('users:medical_form')
             else:
-                messages.error(request, 'No diving center available. Please contact us directly.')
+                messages.error(request, 'Hubo un problema al enviar el formulario. Por favor, inténtalo de nuevo.')
     else:
         form = MedicalForm()
 
