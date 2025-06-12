@@ -21,11 +21,13 @@ class EmailTranslations:
                 'what_to_bring': 'What to Bring',
                 'bring_items': [
                     'Valid diving certification (if applicable)',
-                    'Swimming suit',
-                    'Towel',
-                    'Sunscreen',
+                    'Diving insurance (if applicable)',
+                    'Medical clearance (if applicable)',
+                    'Swimsuit and towel (recommended)',
+                    'Sunscreen (recommended)',
                     'Any personal diving equipment you prefer to use'
                 ],
+
                 'boat_info': [
                     '📍 The meeting point is at the Timba dock',
                     '🛥 Boat: Catamaran - Maca III',
@@ -110,11 +112,13 @@ class EmailTranslations:
                 'what_to_bring': 'Quoi Apporter',
                 'bring_items': [
                     'Certification de plongée valide (si applicable)',
-                    'Maillot de bain',
-                    'Serviette',
-                    'Crème solaire',
+                    'Assurance plongée (si applicable)',
+                    'Examen médical (si applicable)',
+                    'Maillot de bain et serviette (recommandé)',
+                    'Crème solaire (recommandée)',
                     'Tout équipement de plongée personnel que vous préférez utiliser'
                 ],
+
                 'boat_info': [
                     '📍 Le point de rendez-vous est au quai de la Timba',
                     '🛥 Bateau : Catamaran - Maca III',
@@ -154,11 +158,12 @@ class EmailTranslations:
                 'important_notes': 'Notes Importants',
                 'what_to_bring': 'Què Portar',
                 'bring_items': [
-                    'Certificació de busseig vàlida (si escau)',
-                    'Banyador',
-                    'Tovallola',
-                    'Protector solar',
-                    'Qualsevol equip de busseig personal que prefereixis usar'
+                    'Certificat de busseig vàlid (si escau)',
+                    'Assegurança de busseig (si escau)',
+                    'Autorització mèdica (si escau)',
+                    'Banyador i tovallola (recomanat)',
+                    'Crema solar (recomanada)',
+                    'Qualsevol equip de busseig personal que prefereixis utilitzar'
                 ],
                 'boat_info': [
                     '📍 El punt de trobada és al moll de la Timba',
@@ -200,11 +205,13 @@ class EmailTranslations:
                 'what_to_bring': 'Was mitbringen',
                 'bring_items': [
                     'Gültige Tauchzertifizierung (falls zutreffend)',
-                    'Badeanzug',
-                    'Handtuch',
-                    'Sonnencreme',
-                    'Jede persönliche Tauchausrüstung, die Sie bevorzugen'
+                    'Tauchversicherung (falls zutreffend)',
+                    'Ärztliche Untersuchung (falls zutreffend)',
+                    'Badebekleidung und Handtuch (empfohlen)',
+                    'Sonnenschutzmittel (empfohlen)',
+                    'Persönliche Tauchausrüstung, die du bevorzugst zu benutzen'
                 ],
+
                 'boat_info': [
                     '📍 Treffpunkt ist am Steg von Timba',
                     '🛥 Boot: Katamaran - Maca III',
@@ -245,11 +252,13 @@ class EmailTranslations:
                 'what_to_bring': 'Wat mee te nemen',
                 'bring_items': [
                     'Geldige duikbrevet (indien van toepassing)',
-                    'Zwemkleding',
-                    'Handdoek',
-                    'Zonnebrandcrème',
-                    'Eigen duikmateriaal (indien gewenst)'
+                    'Duikverzekering (indien van toepassing)',
+                    'Medische keuring (indien van toepassing)',
+                    'Zwemkleding en handdoek (aanbevolen)',
+                    'Zonnebrandcrème (aanbevolen)',
+                    'Eigen duikmateriaal dat je liever gebruikt'
                 ],
+
                 'boat_info': [
                     '📍 De ontmoetingsplek is bij de Timba steiger',
                     '🛥 Boot: Catamaran - Maca III',
