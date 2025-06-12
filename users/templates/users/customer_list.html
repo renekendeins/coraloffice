@@ -82,6 +82,10 @@
                         <span style="white-space: pre-line;">{{ customer.medical_conditions }}</span>
                     </div>
                     {% endif %}
+                    <div>
+                        <small style="font-style: italic; font-size: 12px; color:#666;">Usuario creado el: {{ customer.created_at|date:"d/m/Y" }} a las {{ customer.created_at|time:"H:i" }}
+                        </small>
+                    </div>
                     <div class="customer-actions mt-4 d-flex flex-column d-md-inline-block">
                         <a href="{% url 'users:enroll_customer' customer.id %}" class="btn btn-success me-md-2 mb-2">+ Inscripción</a>
                         <a href="{% url 'users:edit_customer' customer.id %}" class="btn btn-info me-md-2 mb-2">Editar</a>
