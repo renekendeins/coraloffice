@@ -31,7 +31,13 @@
         {% endfor %}
     </ul>
 </div>
-
+<div class="boat_info">
+    <ul class="bring-list">
+        {% for item in translations.boat_items %}
+        <li>{{ item }}</li>
+        {% endfor %}
+    </ul>
+</div>
 <div class="important-note">
     <strong>⏰ {{ translations.arrival_info }}</strong>
 </div>
