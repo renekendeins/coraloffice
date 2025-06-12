@@ -31,23 +31,23 @@
 
         <!-- File Uploads Section -->
         <div style="border-top: 2px solid #e0e0e0; padding-top: 20px; margin-top: 30px;">
-            <h3 style="margin-bottom: 20px; color: #333;">Profile & Documents</h3>
+            <h3 style="margin-bottom: 20px; color: #333;">Perfil y Documentos</h3>
 
 
 
             <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
                 <div class="form-group">
-                    <label for="{{ form.profile_picture.id_for_label }}">Profile Picture:</label>
+                    <label for="{{ form.profile_picture.id_for_label }}">Imagen de perfil:</label>
                     {% if customer.profile_picture %}
-                        <small style="color: #666;">Current: <a href="{{ customer.profile_picture.url }}" target="_blank">View</a></small>
+                        <small style="color: #666;">Actual: <a href="{{ customer.profile_picture.url }}" target="_blank">View</a></small>
                     {% else %}
                     <small style="color: #666;">No hay imagen</small>
                     {% endif %}
                 </div>
                 <div class="form-group">
-                    <label for="{{ form.diving_licence.id_for_label }}">Diving Licence:</label>
+                    <label for="{{ form.diving_licence.id_for_label }}">Titulación de buceo:</label>
                     {% if customer.diving_licence %}
-                        <small style="color: #666;">Current: <a href="{{ customer.diving_licence.url }}" target="_blank">View</a></small>
+                        <small style="color: #666;">Actual: <a href="{{ customer.diving_licence.url }}" target="_blank">View</a></small>
                     {% else %}
                     <small style="color: #666;">No hay licencia</small>
                     {% endif %}
@@ -56,25 +56,25 @@
 
             <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
                 <div class="form-group">
-                    <label for="{{ form.diving_insurance.id_for_label }}">Diving Insurance:</label>
+                    <label for="{{ form.diving_insurance.id_for_label }}">Seguro de buceo:</label>
                     {% if customer.diving_insurance %}
-                        <small style="color: #666;">Current: <a href="{{ customer.diving_insurance.url }}" target="_blank">View</a></small>
+                        <small style="color: #666;">Actual: <a href="{{ customer.diving_insurance.url }}" target="_blank">View</a></small>
                     {% else %}
                     <small style="color: #666;">No hay seguro</small>
                     {% endif %}
                 </div>
                 <div class="form-group">
-                    <label for="{{ form.medical_check.id_for_label }}">Medical Check:</label>
+                    <label for="{{ form.medical_check.id_for_label }}">Revisión médica:</label>
                     {% if customer.medical_check %}
-                        <small style="color: #666;">Current: <a href="{{ customer.medical_check.url }}" target="_blank">View</a></small>
+                        <small style="color: #666;">Actual: <a href="{{ customer.medical_check.url }}" target="_blank">View</a></small>
                     {% else %}
                     <small style="color: #666;">No hay certificado méidoc</small>
                     {% endif %}
                 </div>
             </div>
         </div>
-        <button type="submit" class="btn">Update Customer</button>
-        <a href="{% url 'users:customer_list' %}" class="btn" style="background: #6c757d;">Cancel</a>
+        <button type="submit" class="btn btn-success">Actualizar Cliente</button>
+        <a href="{% url 'users:customer_list' %}" class="btn btn-secondary">Cancelar</a>
     </form>
 </div>
 {% endblock %}

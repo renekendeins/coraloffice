@@ -6,7 +6,7 @@
 
 {% block users_content %}
 <div class="p-3 container">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
         <h2>Formularios Recibidos</h2>
         <div style="display: flex; align-items: center; gap: 10px;">
             <span style="color: #666; font-size: 14px;">Total: {{ total_forms }} formularios</span>
@@ -41,7 +41,7 @@
         <div style="margin-top: 20px;">
             {% for customer in medical_forms %}
             <div style="border: 1px solid #ddd; padding: 20px; margin-bottom: 15px; border-radius: 8px; background: white;">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <div class="d-flex align-items-start justify-content-start flex-column flex-md-row">
                     <div style="flex: 1;">
                         <h4>{{ customer.first_name }} {{ customer.last_name }}</h4>
                         
@@ -427,9 +427,9 @@
                         </div>
                     </div>
 
-                    <div style="margin-left: 20px; display: flex; flex-direction: column; gap: 5px;">
-                        <a href="{% url 'users:edit_customer' customer.id %}" class="btn btn-success" style="padding: 5px 10px; font-size: 12px; text-align: center;">Editar</a>
-                        <a href="{% url 'users:customer_activity_history' customer.id %}" class="btn btn-info" style="padding: 5px 10px; font-size: 12px; text-align: center;">Historial</a>
+                    <div class="d-flex flex-column col-12 col-md-auto mt-2">
+                        <a href="{% url 'users:edit_customer' customer.id %}" class="btn col-12 col-md-auto mb-2 col-md-auto btn-success text-center">Editar</a>
+                        <a href="{% url 'users:customer_activity_history' customer.id %}" class="btn col-12 col-md-auto col-md-auto btn-info text-center">Historial</a>
                     </div>
                 </div>
             </div>

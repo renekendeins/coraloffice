@@ -25,8 +25,8 @@ urlpatterns = [
     path('activities/add/', views.add_activity, name='add_activity'),
     path('activities/<int:activity_id>/edit/', views.edit_activity, name='edit_activity'),
     path('activities/<int:activity_id>/delete/', views.delete_activity, name='delete_activity'),
-    path('calendar/', views.dive_calendar, name='dive_calendar'),
-    path('calendar-view/', views.calendar_view, name='calendar_view'),
+    # path('calendar/', views.dive_calendar, name='dive_calendar'),
+    path('calendar/', views.calendar_view, name='calendar_view'),
     path('schedule-dive/', views.schedule_dive, name='schedule_dive'),
     path('quick-schedule/', views.quick_schedule_dive, name='quick_schedule_dive'),
     path('dive/<int:dive_id>/participants/', views.manage_dive_participants, name='manage_dive_participants'),
@@ -55,12 +55,12 @@ urlpatterns = [
     path('dives/<int:dive_id>/delete/', views.delete_dive, name='delete_dive'),
 
     # Medical Form (public access)
-    path('medical-form/', views.medical_form, name='medical_form'),
-    path('medical-form/<uuid:dive_center_uuid>/', views.medical_form, name='medical_form_with_uuid'),
-    path('medical-forms/', views.medical_forms_list, name='medical_forms_list'),
+    path('form/', views.medical_form, name='medical_form'),
+    path('form/<uuid:dive_center_uuid>/', views.medical_form, name='medical_form_with_uuid'),
+    path('form-list/', views.medical_forms_list, name='medical_forms_list'),
     path('qr-code/', views.generate_qr_code, name='generate_qr_code'),
     path('qr-code/<uuid:dive_center_uuid>/', views.generate_qr_code, name='generate_qr_code_with_uuid'),
-    path('get-medical-form-url/', views.get_medical_form_url, name='get_medical_form_url'),
+    path('get-form-url/', views.get_medical_form_url, name='get_medical_form_url'),
     path('quick-edit-customer/<int:customer_id>/', views.quick_edit_customer, name='quick_edit_customer'),
     path('dive/<int:dive_id>/print/', views.print_participants, name='print_participants'),
 

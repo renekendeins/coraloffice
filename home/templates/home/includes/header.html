@@ -1,4 +1,40 @@
  {% if user.is_authenticated and user.userprofile.is_diving_center %}
+<style>
+    /* Estilos básicos del dropdown */
+    .nav-menu li {
+        position: relative;
+        list-style: none;
+        display: inline-block;
+    }
+
+    .nav-menu .dropdown-menu {
+        display: none;
+        position: absolute;
+        background-color: #fff;
+        border: 1px solid #ccc;
+        min-width: 160px;
+        z-index: 1000;
+        margin-top: 5px;
+        padding: 0;
+    }
+
+    .nav-menu .dropdown-menu li {
+        display: block;
+    }
+
+    .nav-menu .dropdown-menu li a {
+        display: block;
+        padding: 8px 16px;
+        color: #333;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+
+    .nav-menu .dropdown:hover .dropdown-menu {
+        display: block;
+    }
+
+</style>
 <header class="header">
     <nav class="nav-container">
         <a href="/">
@@ -7,7 +43,21 @@
         <ul class="nav-menu m-0 ms-0 p-0">
                 <li><a href="{% url 'users:customer_list' %}" class="px-2">Clientes</a></li>
                 <li><a href="{% url 'users:calendar_view' %}" class="px-2">Calendario</a></li>
-                <li><a href="{% url 'users:course_enrollments' %}" class="px-2">Cursos</a></li>
+            <li class="dropdown">
+                <a href="{% url 'users:course_enrollments' %}" class="px-2">Inscripciones</a>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a href="/users/enroll-customer/">+ Inscripción individual</a>
+                    </li>
+                    <div class="dropdown-divider"></div>
+                   <li>
+                       <a href="/users/enroll-multiple-customers/">+ Inscripciones múltiples</a>
+                   </li>
+                    <li>
+                        <a href="/users/schedule-multiple-sessions/">+ Sesiones múltiples</a>
+                    </li>
+                </ul>
+            </li>
                 <li><a href="{% url 'users:staff_planning' %}" class="px-2">Planning</a></li>
         </ul>
         <div class="user-menu ms-3">
@@ -27,6 +77,7 @@
                 <a href="{% url 'users:diving_center_dashboard' %}">Dashboard</a>
                 <a href="{% url 'users:customer_list' %}">Clientes</a>
                 <a href="{% url 'users:calendar_view' %}">Calendario</a>
+                <a href="{% url 'users:course_enrollments' %}">Inscripciones</a>
                 <!-- <a href="{% url 'home:home' %}">Inicio</a> -->
                 <!-- <a href="{% url 'home:services' %}">Servicios</a> -->
                 <!-- <a href="{% url 'home:about' %}">Sobrre nosotros</a> -->

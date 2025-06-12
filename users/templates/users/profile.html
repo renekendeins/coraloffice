@@ -33,9 +33,9 @@
         {% if user.userprofile.is_diving_center %}
             <a href="{% url 'users:diving_center_dashboard' %}" class="mb-2 btn btn-primary">Dashboard</a>
             <a href="{% url 'users:customer_list' %}" class="mb-2 btn btn-success">Gestionar Clientes</a>
-            <a href="{% url 'users:dive_calendar' %}" class="mb-2 btn btn-warning">Calendario</a>
+            <a href="{% url 'users:calendar_view' %}" class="mb-2 btn btn-warning">Calendario</a>
             <a href="{% url 'users:courses_list' %}" class="mb-2 btn btn-info text-white" >Cursos</a>
-            <a href="{% url 'users:course_enrollments' %}" class="mb-2 btn text-white" style="background: #e83e8c;">Matriculaciones</a>
+            <a href="{% url 'users:course_enrollments' %}" class="mb-2 btn text-white" style="background: #e83e8c;">Inscripciones</a>
             <a href="{% url 'users:logout' %}" class="btn btn-danger mb-2">Cerrar sesión</a>
         {% endif %}
 

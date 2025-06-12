@@ -28,7 +28,14 @@ class UserProfileForm(forms.ModelForm):
             'birth_date': forms.DateInput(attrs={'type': 'date'}),
             'bio': forms.Textarea(attrs={'rows': 4}),
         }
+
 class CustomerForm(forms.ModelForm):
+    birthday = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+        input_formats=['%Y-%m-%d'],
+        required=True
+    )
+
     class Meta:
         model = Customer
         fields = (
@@ -78,7 +85,6 @@ class CustomerForm(forms.ModelForm):
             'phone_number': forms.TextInput(attrs={'class': 'form-control'}),
             'country': forms.Select(attrs={'class': 'form-control'}),
             'language': forms.Select(attrs={'class': 'form-control'}),
-            'birthday': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'certification_level': forms.Select(attrs={'class': 'form-control'}),
             'emergency_contact': forms.TextInput(attrs={'class': 'form-control'}),
             'medical_conditions': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
@@ -91,6 +97,13 @@ class CustomerForm(forms.ModelForm):
             'diving_insurance': forms.FileInput(attrs={'accept': '.pdf,.jpg,.jpeg,.png', 'class': 'form-control'}),
             'medical_check': forms.FileInput(attrs={'accept': '.pdf,.jpg,.jpeg,.png', 'class': 'form-control'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        birthday = self.initial.get('birthday') or self.instance.birthday
+        if birthday:
+            self.initial['birthday'] = birthday.strftime('%Y-%m-%d')
+
 
 
 class DiveActivityForm(forms.ModelForm):

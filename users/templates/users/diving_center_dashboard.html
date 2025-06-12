@@ -48,7 +48,7 @@
             <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
                 <a href="{% url 'users:calendar_view' %}" class="btn text-white" style="background: #4caf50;">Calendario</a>
                 <a href="{% url 'users:schedule_dive' %}" class="btn text-white" style="background: #a5d6a7;">Crear nueva salida</a>
-                <!-- <a href="{% url 'users:dive_calendar' %}" class="btn" style="background: #81c784;">Listado de salidas</a> -->
+              
 
 
             </div>
@@ -176,7 +176,7 @@
         <div class="card" style="background: #e8f5e8; border-left: 5px solid #4caf50;">
             <h3>Próximas salidas</h3>
             <p style="font-size: 2rem; font-weight: bold; color: #4caf50;">{{ upcoming_dives.count }}</p>
-            <a href="{% url 'users:dive_calendar' %}" style="color: #4caf50;">Ver calendario →</a>
+            <a href="{% url 'users:calendar_view' %}" style="color: #4caf50;">Ver calendario →</a>
         </div>
     </div>
 </div>

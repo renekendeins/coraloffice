@@ -158,15 +158,15 @@ def add_customer(request):
     return render(request, 'users/add_customer.html', {'form': form})
 
 
-@login_required
-def dive_calendar(request):
-    if not request.user.userprofile.is_diving_center:
-        messages.error(request, 'Access denied.')
-        return redirect('users:profile')
+# @login_required
+# def dive_calendar(request):
+#     if not request.user.userprofile.is_diving_center:
+#         messages.error(request, 'Access denied.')
+#         return redirect('users:profile')
 
-    dives = DiveSchedule.objects.filter(diving_center=request.user).order_by(
-        'date', 'time')
-    return render(request, 'users/dive_calendar.html', {'dives': dives})
+#     dives = DiveSchedule.objects.filter(diving_center=request.user).order_by(
+#         'date', 'time')
+#     return render(request, 'users/dive_calendar.html', {'dives': dives})
 
 
 @login_required
