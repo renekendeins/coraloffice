@@ -1085,12 +1085,22 @@ def manage_group_members(request, group_id):
                 course = get_object_or_404(Course, id=course_id, diving_center=request.user)
                 scheduled_count = 0
                 emails_sent = 0
+                skipped_dives = []
 
                 for dive_id in dive_ids:
                     dive = get_object_or_404(DiveSchedule, id=dive_id, diving_center=request.user)
 
-                    # Add all group members to this dive
+                    # Check if dive can accommodate the entire group size
+                    if not dive.can_accommodate_group(group.group_size):
+                        skipped_dives.append(f"{dive.dive_site.name} ({dive.date} {dive.time}) - Solo {dive.get_available_spots()} plazas disponibles, pero el grupo necesita {group.group_size}")
+                        continue
+
+                    # Add group members to this dive (up to the group size)
+                    members_added = 0
                     for member in members:
+                        if members_added >= group.group_size:
+                            break
+                            
                         # Check if member not already in this dive
                         if not CustomerDiveActivity.objects.filter(
                             dive_schedule=dive, 
@@ -1121,15 +1131,25 @@ def manage_group_members(request, group_id):
                                 needs_insurance=needs_insurance,
                             )
                             scheduled_count += 1
+                            members_added += 1
                             
                             # Send reminder email
                             if send_dive_reminder_email(member.customer, dive, course):
                                 emails_sent += 1
 
+                    # If group doesn't have enough actual members, create placeholder entries
+                    remaining_spots = group.group_size - members_added
+                    if remaining_spots > 0:
+                        messages.warning(request, f'El grupo {group.name} tiene {group.group_size} personas esperadas pero solo {members_added} miembros añadidos. Considera añadir más miembros al grupo.')
+
+                success_msg = f'Programado {group.name} para {len(dive_ids) - len(skipped_dives)} inmersión(es)! Añadidos {scheduled_count} espacios.'
                 if emails_sent > 0:
-                    messages.success(request, f'Successfully scheduled {group.name} for {len(dive_ids)} dive(s)! Added {scheduled_count} participant slots. {emails_sent} reminder emails sent.')
-                else:
-                    messages.success(request, f'Successfully scheduled {group.name} for {len(dive_ids)} dive(s)! Added {scheduled_count} participant slots.')
+                    success_msg += f' {emails_sent} emails de recordatorio enviados.'
+                
+                if skipped_dives:
+                    messages.warning(request, f'Algunas inmersiones fueron omitidas por falta de capacidad: {"; ".join(skipped_dives)}')
+                
+                messages.success(request, success_msg)
                 return redirect('users:manage_group_members', group_id=group.id)
             else:
                 messages.error(request, 'Please select at least one dive and an activity.')

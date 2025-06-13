@@ -256,6 +256,14 @@ class DiveSchedule(models.Model):
         """Get the count of participants for this dive"""
         return self.customer_activities.count()
     
+    def get_available_spots(self):
+        """Get the number of available spots for this dive"""
+        return self.max_participants - self.get_participant_count()
+    
+    def can_accommodate_group(self, group_size):
+        """Check if this dive can accommodate a group of given size"""
+        return self.get_available_spots() >= group_size
+    
     def has_special_notes(self):
         """Check if this dive has special notes"""
         return bool(self.special_notes.strip())
@@ -402,10 +410,23 @@ class DivingGroup(models.Model):
     description = models.TextField(blank=True)
     arrival_date = models.DateField(null=True, blank=True)
     departure_date = models.DateField(null=True, blank=True)
+    group_size = models.PositiveIntegerField(default=1, help_text="Número de personas en este grupo")
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.name
+        return f"{self.name} ({self.group_size} personas)"
+    
+    def get_member_count(self):
+        """Get the actual number of members added to this group"""
+        return self.members.count()
+    
+    def get_expected_size(self):
+        """Get the expected group size"""
+        return self.group_size
+    
+    def is_fully_populated(self):
+        """Check if the group has all expected members"""
+        return self.get_member_count() >= self.group_size
 
 class DivingGroupMember(models.Model):
     group = models.ForeignKey(DivingGroup, on_delete=models.CASCADE, related_name='members')

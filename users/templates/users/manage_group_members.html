@@ -190,15 +190,31 @@
             <form method="post" style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
                 {% csrf_token %}
 
+                <div class="alert alert-info mb-3">
+                    <strong>Información del grupo:</strong> {{ group.name }} - {{ group.group_size }} personas esperadas, {{ members.count }} miembros añadidos
+                    {% if group.group_size > members.count %}
+                        <br><small class="text-warning">⚠️ El grupo tiene menos miembros de los esperados. Considera añadir más miembros.</small>
+                    {% endif %}
+                </div>
+
                 <div class="d-flex flex-column">
                     <div class="mb-4">
                         <label for="selected_dives"><strong>Seleccionar salidas:</strong></label>
                         <select name="selected_dives" id="selected_dives" multiple class="form-control" style="height: 400px;" required>
                             {% for dive in available_dives %}
-                                <option value="{{ dive.id }}">{{ dive.date }} {{ dive.time }} - {{ dive.dive_site.name }}</option>
+                                <option value="{{ dive.id }}" 
+                                    {% if dive.get_available_spots < group.group_size %}style="color: #dc3545; background-color: #f8d7da;"{% endif %}>
+                                    {{ dive.date }} {{ dive.time }} - {{ dive.dive_site.name }} 
+                                    ({{ dive.get_participant_count }}/{{ dive.max_participants }} - 
+                                    {% if dive.get_available_spots >= group.group_size %}
+                                        ✓ Disponible
+                                    {% else %}
+                                        ⚠️ Solo {{ dive.get_available_spots }} plazas
+                                    {% endif %})
+                                </option>
                             {% endfor %}
                         </select>
-                        <small class="text-muted">Mantén presionado CTRL/CMD y haz click para seleccionar múltiples inmersiones</small>
+                        <small class="text-muted">Mantén presionado CTRL/CMD y haz click para seleccionar múltiples inmersiones. Las inmersiones en rojo no tienen suficiente capacidad para todo el grupo.</small>
                     </div>
 
                     <div>
