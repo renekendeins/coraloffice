@@ -48,7 +48,9 @@ urlpatterns = [
     # Diving Groups
     path('diving-groups/', views.diving_groups_list, name='diving_groups_list'),
     path('diving-groups/add/', views.add_diving_group, name='add_diving_group'),
-    path('diving-groups/<int:group_id>/members/', views.manage_group_members, name='manage_group_members'),
+    path('diving-groups/<int:group_id>/', views.manage_group_members, name='manage_group_members'),
+    path('diving-groups/<int:group_id>/edit/', views.edit_diving_group, name='edit_diving_group'),
+    path('diving-groups/<int:group_id>/delete/', views.delete_diving_group, name='delete_diving_group'),
 
     # Edit/Delete Dives
     path('dives/<int:dive_id>/edit/', views.edit_dive, name='edit_dive'),

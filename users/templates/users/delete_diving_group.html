@@ -1,0 +1,38 @@
+
+{% extends 'users/base.html' %}
+
+{% block users_title %}Eliminar grupo - {{ group.name }}{% endblock %}
+
+{% block users_content %}
+<div class="p-3">
+    <h2>Eliminar grupo: {{ group.name }}</h2>
+    
+    <div class="alert alert-danger">
+        <strong>¿Estás seguro de que quieres eliminar este grupo?</strong>
+        <br>Esta acción no se puede deshacer. Se eliminarán todos los miembros del grupo y las reservas asociadas.
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">{{ group.name }}</h5>
+            <p class="card-text">
+                <strong>País:</strong> {{ group.get_country_display }}<br>
+                <strong>Persona de contacto:</strong> {{ group.contact_person }}<br>
+                <strong>Email:</strong> {{ group.email }}<br>
+                <strong>Tamaño del grupo:</strong> {{ group.group_size }} personas<br>
+                <strong>Miembros actuales:</strong> {{ group.get_member_count }}<br>
+                {% if group.arrival_date %}<strong>Fecha de llegada:</strong> {{ group.arrival_date }}<br>{% endif %}
+                {% if group.departure_date %}<strong>Fecha de salida:</strong> {{ group.departure_date }}<br>{% endif %}
+            </p>
+        </div>
+    </div>
+
+    <div style="margin-top: 20px;">
+        <form method="post" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Sí, eliminar grupo</button>
+        </form>
+        <a href="{% url 'users:manage_group_members' group.id %}" class="btn btn-secondary">Cancelar</a>
+    </div>
+</div>
+{% endblock %}

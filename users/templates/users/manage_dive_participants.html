@@ -230,6 +230,9 @@ function toggleDetails(participantId) {
 
                         <div style="margin-bottom: 10px;">
                             
+                            {% if participant.group %}
+                                <span class="group-badge">Grupo: {{ participant.group.name }}</span>
+                            {% endif %}
                             {% if participant.is_paid %}<span style="background-color: #007bff; color: white; padding: 2px 6px; border-radius: 3px; font-size: 12px; margin-left: 5px;">💰 Paid</span>{% endif %}
                         </div>
                         <div class="equipment-list d-inline-block">

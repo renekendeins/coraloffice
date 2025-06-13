@@ -18,7 +18,9 @@
     <h2>Administrar miembros - {{ group.name }}</h2>
 
     <div style="margin-bottom: 20px;">
-        <a href="{% url 'users:diving_groups_list' %}" class="btn btn-secondary">Volvera a Grupos</a>
+        <a href="{% url 'users:diving_groups_list' %}" class="btn btn-secondary">Volver a Grupos</a>
+        <a href="{% url 'users:edit_diving_group' group.id %}" class="btn btn-primary">Editar grupo</a>
+        <a href="{% url 'users:delete_diving_group' group.id %}" class="btn btn-danger">Eliminar grupo</a>
     </div>
 
     <div class="d-flex flex-column flex-lg-row justify-content-lg-between">
@@ -184,7 +186,7 @@
         </div>
     </div>
 
-        {% if members and available_dives %}
+        {% if available_dives %}
         <div style="margin-top: 40px; border-top: 2px solid #e0e0e0; padding-top: 20px;">
             <h3>Programar inmersiones</h3>
             <form method="post" style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
@@ -239,7 +241,7 @@
                 </button>
             </form>
         </div>
-        {% elif members %}
+        {% else %}
         <p style="margin-top: 20px;">No upcoming dives available. <a href="{% url 'users:schedule_dive' %}">Schedule a new dive</a> to be able to assign this group.</p>
         {% endif %}
 </div>

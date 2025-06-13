@@ -1,0 +1,65 @@
+
+{% extends 'users/base.html' %}
+
+{% block users_title %}Editar grupo - {{ group.name }}{% endblock %}
+
+{% block users_content %}
+<div class="p-3">
+    <h2>Editar grupo: {{ group.name }}</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+            <div class="form-group">
+                <label for="{{ form.name.id_for_label }}">Nombre del grupo:</label>
+                {{ form.name }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.country.id_for_label }}">País:</label>
+                {{ form.country }}
+            </div>
+        </div>
+
+        <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+            <div class="form-group">
+                <label for="{{ form.contact_person.id_for_label }}">Persona de contacto:</label>
+                {{ form.contact_person }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.group_size.id_for_label }}">Tamaño del grupo:</label>
+                {{ form.group_size }}
+            </div>
+        </div>
+
+        <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+            <div class="form-group">
+                <label for="{{ form.email.id_for_label }}">Email:</label>
+                {{ form.email }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.phone.id_for_label }}">Teléfono:</label>
+                {{ form.phone }}
+            </div>
+        </div>
+
+        <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+            <div class="form-group">
+                <label for="{{ form.arrival_date.id_for_label }}">Fecha de llegada:</label>
+                {{ form.arrival_date }}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.departure_date.id_for_label }}">Fecha de salida:</label>
+                {{ form.departure_date }}
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 20px;">
+            <label for="{{ form.description.id_for_label }}">Descripción:</label>
+            {{ form.description }}
+        </div>
+
+        <button type="submit" class="btn btn-primary">Actualizar grupo</button>
+        <a href="{% url 'users:manage_group_members' group.id %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

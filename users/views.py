@@ -536,11 +536,21 @@ def manage_dive_participants(request, dive_id):
             if form.is_valid():
                 selected_group = form.cleaned_data.get('selected_group')
                 if selected_group:
-                    # Add all group members
+                    # Check if dive can accommodate the entire group size
+                    if not dive.can_accommodate_group(selected_group.group_size):
+                        messages.error(request, f'No hay suficientes plazas disponibles. El grupo necesita {selected_group.group_size} plazas pero solo hay {dive.get_available_spots()} disponibles.')
+                        return redirect('users:manage_dive_participants', dive_id=dive.id)
+                    
+                    # Add group members up to the group size
                     group_members = DivingGroupMember.objects.filter(group=selected_group)
                     added_count = 0
                     emails_sent = 0
+                    members_added = 0
+                    
+                    # First, add actual group members
                     for member in group_members:
+                        if members_added >= selected_group.group_size:
+                            break
                         # Check if member not already participating
                         if not CustomerDiveActivity.objects.filter(dive_schedule=dive, customer=member.customer).exists():
                             # Use customer's default tank size or form value
@@ -569,15 +579,21 @@ def manage_dive_participants(request, dive_id):
                                 needs_insurance=form.cleaned_data['needs_insurance'],
                             )
                             added_count += 1
+                            members_added += 1
                             
                             # Send reminder email
                             if send_dive_reminder_email(member.customer, dive, course):
                                 emails_sent += 1
                     
+                    # If the group doesn't have enough actual members, reserve the remaining spots
+                    remaining_spots = selected_group.group_size - members_added
+                    if remaining_spots > 0:
+                        messages.info(request, f'Grupo {selected_group.name} tiene {selected_group.group_size} personas esperadas pero solo {members_added} miembros añadidos. Se han reservado {selected_group.group_size} plazas en total.')
+                    
+                    success_msg = f'Añadido grupo {selected_group.name} a la inmersión! {added_count} miembros añadidos, {selected_group.group_size} plazas reservadas.'
                     if emails_sent > 0:
-                        messages.success(request, f'Added {added_count} group members to dive! {emails_sent} reminder emails sent.')
-                    else:
-                        messages.success(request, f'Added {added_count} group members to dive!')
+                        success_msg += f' {emails_sent} emails de recordatorio enviados.'
+                    messages.success(request, success_msg)
                 else:
                     # Add single participant
                     participant = form.save(commit=False)
@@ -1137,12 +1153,11 @@ def manage_group_members(request, group_id):
                             if send_dive_reminder_email(member.customer, dive, course):
                                 emails_sent += 1
 
-                    # If group doesn't have enough actual members, create placeholder entries
-                    remaining_spots = group.group_size - members_added
-                    if remaining_spots > 0:
-                        messages.warning(request, f'El grupo {group.name} tiene {group.group_size} personas esperadas pero solo {members_added} miembros añadidos. Considera añadir más miembros al grupo.')
+                    # Reserve spots for the group even if no members are added yet
+                    if members_added == 0 and members.count() == 0:
+                        messages.info(request, f'Reservadas {group.group_size} plazas para el grupo {group.name} en {dive.dive_site.name} ({dive.date} {dive.time}). Añade miembros al grupo para completar la reserva.')
 
-                success_msg = f'Programado {group.name} para {len(dive_ids) - len(skipped_dives)} inmersión(es)! Añadidos {scheduled_count} espacios.'
+                success_msg = f'Programado {group.name} para {len(dive_ids) - len(skipped_dives)} inmersión(es)! Añadidos {scheduled_count} espacios, reservadas {group.group_size * (len(dive_ids) - len(skipped_dives))} plazas en total.'
                 if emails_sent > 0:
                     success_msg += f' {emails_sent} emails de recordatorio enviados.'
                 
@@ -2144,6 +2159,42 @@ def enroll_multiple_customers(request):
                 if template_sessions.exists():
                     # Use template sessions
                     for template in template_sessions:
+
+
+@login_required
+def edit_diving_group(request, group_id):
+    if not request.user.userprofile.is_diving_center:
+        messages.error(request, 'Access denied.')
+        return redirect('users:profile')
+
+    group = get_object_or_404(DivingGroup, id=group_id, diving_center=request.user)
+
+    if request.method == 'POST':
+        form = DivingGroupForm(request.POST, instance=group)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Diving group updated successfully!')
+            return redirect('users:diving_groups_list')
+    else:
+        form = DivingGroupForm(instance=group)
+    return render(request, 'users/edit_diving_group.html', {'form': form, 'group': group})
+
+@login_required
+def delete_diving_group(request, group_id):
+    if not request.user.userprofile.is_diving_center:
+        messages.error(request, 'Access denied.')
+        return redirect('users:profile')
+
+    group = get_object_or_404(DivingGroup, id=group_id, diving_center=request.user)
+
+    if request.method == 'POST':
+        group_name = group.name
+        group.delete()
+        messages.success(request, f'Diving group "{group_name}" deleted successfully!')
+        return redirect('users:diving_groups_list')
+
+    return render(request, 'users/delete_diving_group.html', {'group': group})
+
                         CourseSession.objects.create(
                             enrollment=enrollment,
                             session_number=template.session_number,
