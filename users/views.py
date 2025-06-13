@@ -666,7 +666,8 @@ def dive_detail(request, dive_id):
     equipment_counts = {
         'wetsuits': participants.filter(needs_wetsuit=True).count(),
         'bcds': participants.filter(needs_bcd=True).count(),
-        'regulators': participants.filter(needs_regulator=True).count(),
+        'regulators': participants.filter(needs_regulator=True).count(),        
+        'fins': participants.filter(needs_fins=True).count(),
         'guides': participants.filter(needs_guide=True).count(),
         'insurance': participants.filter(needs_insurance=True).count(),
     }

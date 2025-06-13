@@ -64,6 +64,7 @@ body {
 
 .equipment-item {
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
     padding: 5px 0;
     border-bottom: 1px solid #eee;
@@ -182,9 +183,6 @@ body {
             </div>
             <div class="col-lg-2">
                 <div>{{ participant.course.name }}</div>
-                {% if participant.course.just_one_dive %}
-                    <span class="badge bg-info mt-1">Just One Dive</span>
-                {% endif %}
                 <div class="mt-1">
                     {% if participant.course.includes_material %}
                         <span class="badge bg-success me-1" style="font-size: 10px;">Material</span>
@@ -193,7 +191,7 @@ body {
                         <span class="badge bg-success me-1" style="font-size: 10px;">Instructor</span>
                     {% endif %}
                     {% if participant.course.includes_insurance %}
-                        <span class="badge bg-success me-1" style="font-size: 10px;">Insurance</span>
+                        <span class="badge bg-success me-1" style="font-size: 10px;">Seguro</span>
                     {% endif %}
                 </div>
             </div>
@@ -201,11 +199,14 @@ body {
                 {{ participant.get_tank_size_display }}
             </div>
             <div class="col-lg-2">
-                {% if participant.needs_wetsuit %}<span class="badge bg-secondary me-1 mb-1">Wetsuit ({{ participant.customer.get_wetsuit_size }})</span>{% endif %}
-                {% if participant.needs_bcd %}<span class="badge bg-secondary me-1 mb-1">BCD ({{ participant.customer.get_bcd_size }})</span>{% endif %}
-                {% if participant.needs_regulator %}<span class="badge bg-secondary me-1 mb-1">Regulator + Fins ({{ participant.customer.get_fins_size }})</span>{% endif %}
-                {% if participant.needs_guide %}<span class="badge bg-info me-1 mb-1">Guide</span>{% endif %}
-                {% if participant.needs_insurance %}<span class="badge bg-warning me-1 mb-1">Insurance</span>{% endif %}
+                {% if participant.needs_wetsuit %}<span class="badge bg-secondary me-1 mb-1">Traje ({{ participant.customer.get_wetsuit_size }})</span>{% endif %}
+                {% if participant.needs_bcd %}<span class="badge bg-secondary me-1 mb-1">Jacket ({{ participant.customer.get_bcd_size }})</span>{% endif %}
+                
+                {% if participant.needs_regulator %}<span class="badge bg-secondary me-1 mb-1">Regulador</span>{% endif %}
+                {% if participant.needs_fins %}<span class="badge bg-secondary me-1 mb-1">Aletas ({{ participant.customer.get_fins_size }})</span>{% endif %}
+                
+                {% if participant.needs_guide %}<span class="badge bg-info me-1 mb-1">Guía</span>{% endif %}
+                {% if participant.needs_insurance %}<span class="badge bg-warning me-1 mb-1">Seguro</span>{% endif %}
                 {% if not participant.needs_wetsuit and not participant.needs_bcd and not participant.needs_regulator and not participant.needs_guide and not participant.needs_insurance %}-{% endif %}
             </div>
             <div class="col-lg-1">
@@ -265,7 +266,7 @@ body {
 
             <div class="row">
                 <div class="col-12">
-                    <strong class="small">Activity:</strong>
+                    <strong class="small">Actividad:</strong>
                     <span class="small">{{ participant.course.name }}</span>
                     {% if participant.course.includes_material %}
                         <span class="badge bg-success me-1" style="font-size: 9px;">Material</span>
@@ -290,12 +291,11 @@ body {
 
             <div class="mt-2">
                 <strong class="small">Equipo necesario:</strong>
-                
                     {% if participant.needs_wetsuit %}<span class="badge bg-secondary me-1 mb-1" style="font-size: 10px;">Traje ({{ participant.customer.get_wetsuit_size }})</span>{% endif %}
-                    {% if participant.needs_bcd %}<span class="badge bg-secondary me-1 mb-1" style="font-size: 10px;">BCD ({{ participant.customer.get_bcd_size }})</span>{% endif %}
-                {% if participant.needs_regulator %}<span class="badge bg-secondary me-1 mb-1" style="font-size: 10px;">Regulador</span>{% endif %}
-                {% if participant.needs_fins %}<span class="badge bg-secondary me-1 mb-1" style="font-size: 10px;">Aletas ({{ participant.customer.get_fins_size }})</span>{% endif %}
-{% if participant.needs_guide %}<span class="badge bg-info me-1 mb-1" style="font-size: 10px;">Guide</span>{% endif %}
+                    {% if participant.needs_bcd %}<span class="badge bg-secondary me-1 mb-1" style="font-size: 10px;">Jacket ({{ participant.customer.get_bcd_size }})</span>{% endif %}
+                    {% if participant.needs_regulator %}<span class="badge bg-secondary me-1 mb-1" style="font-size: 10px;">Regulador</span>{% endif %}
+                    {% if participant.needs_fins %}<span class="badge bg-secondary me-1 mb-1" style="font-size: 10px;">Aletas ({{ participant.customer.get_fins_size }})</span>{% endif %}
+                    {% if participant.needs_guide %}<span class="badge bg-info me-1 mb-1" style="font-size: 10px;">Guía</span>{% endif %}
                     {% if participant.needs_insurance %}<span class="badge bg-warning me-1 mb-1" style="font-size: 10px;">Seguro</span>{% endif %}
                     {% if not participant.needs_wetsuit and not participant.needs_bcd and not participant.needs_regulator and not participant.needs_guide and not participant.needs_insurance %}<span class="text-muted">Nada</span>{% endif %}
                
@@ -303,7 +303,7 @@ body {
 
             {% if participant.assigned_staff %}
             <div class="mt-2">
-                <strong class="small">Assigned Staff:</strong>
+                <strong class="small">Personal asignado:</strong>
                         <span class="small">{{ participant.assigned_staff.get_full_name }}</span>
                    
             </div>
@@ -311,7 +311,7 @@ body {
 
             <div class="mt-2">
                 {% if participant.customer.group_memberships.all|length > 0 %}
-                <strong class="small">Group:</strong>
+                <strong class="small">Grupo:</strong>
                 {% endif %}
                 {% for membership in participant.customer.group_memberships.all %}
                     {% if membership.group.diving_center == dive.diving_center %}
@@ -323,7 +323,7 @@ body {
                 
             </div>
             <div class="mt-2">
-                <strong class="small">Certification:</strong>
+                <strong class="small">Certificación:</strong>
                 <span class="small">{{ participant.customer.get_certification_level_display|default:"-" }}</span>
             </div>
         </div>
@@ -335,57 +335,106 @@ body {
     <div class="equipment-summary">
         <!-- Tank Summary -->
         <div class="equipment-card">
-            <h4>🛢️ Tanks Required</h4>
+            <h4>🛢️ Botellas necesarias</h4>
             {% if tank_counts %}
                 {% for tank in tank_counts %}
                 <div class="equipment-item">
-                    <span>{{ tank.tank_size }} Tank</span>
-                    <span><strong>{{ tank.count }}</strong></span>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>{{ tank.tank_size }}</span>
+                        <span><strong>{{ tank.count }}</strong></span>
+                    </div>
                 </div>
                 {% endfor %}
                 <div class="equipment-item" style="border-top: 2px solid #333; margin-top: 10px; padding-top: 10px; font-weight: bold;">
-                    <span>Total Tanks</span>
-                    <span>{{ participants.count }}</span>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>Total botellas</span>
+                        <span>{{ participants.count }}</span>
+                    </div>
                 </div>
             {% else %}
-                <p>No tanks required yet</p>
+                <p>No se necesitan botellas</p>
             {% endif %}
         </div>
 
         <!-- Equipment Summary -->
         <div class="equipment-card">
-            <h4>🎽 Equipment Needed</h4>
+            <h4>🎽 Equipo necesario</h4>
             <div class="equipment-item">
-                <span>Wetsuits</span>
-                <span><strong>{{ equipment_counts.wetsuits }}</strong></span>
+                <div class="d-flex justify-content-between align-items-center">
+                    <span>Trajes</span>
+                    <span><strong>{{ equipment_counts.wetsuits }}</strong></span>
+                </div>
+                <div>
+                    {% for participant in participants %}
+                        {% if participant.needs_wetsuit %}
+                            <span style="margin-right: 5px; font-size: 12px;">
+                                {{ participant.customer.get_wetsuit_size }}
+                            </span>
+                        {% endif %}
+                    {% endfor %}
+                </div>
             </div>
             <div class="equipment-item">
-                <span>BCDs</span>
-                <span><strong>{{ equipment_counts.bcds }}</strong></span>
+                <div class="d-flex justify-content-between align-items-center">
+                    <span>Jackets</span>
+                    <span><strong>{{ equipment_counts.bcds }}</strong></span>
+                </div>
+                <div>
+                    {% for participant in participants %}
+                        {% if participant.needs_bcd %}
+                            <span style="margin-right: 5px; font-size: 12px;">
+                                {{ participant.customer.get_bcd_size }}
+                            </span>
+                        {% endif %}
+                    {% endfor %}
+                </div>
             </div>
             <div class="equipment-item">
-                <span>Regulators</span>
-                <span><strong>{{ equipment_counts.regulators }}</strong></span>
+                <div class="d-flex justify-content-between align-items-center">
+                    <span>Aletas</span>
+                    <span><strong>{{ equipment_counts.fins }}</strong></span>
+                </div>
+                <div>
+                    {% for participant in participants %}
+                        {% if participant.needs_fins %}
+                            <span style="margin-right: 5px; font-size: 12px;">
+                                {{ participant.customer.get_fins_size }}
+                            </span>
+                        {% endif %}
+                    {% endfor %}
+                </div>
             </div>
             <div class="equipment-item">
-                <span>Guides</span>
-                <span><strong>{{ equipment_counts.guides }}</strong></span>
+                 <div class="d-flex justify-content-between align-items-center">
+                     <span>Reguladores</span>
+                     <span><strong>{{ equipment_counts.regulators }}</strong></span>
+                 </div>
             </div>
             <div class="equipment-item">
-                <span>Insurance</span>
-                <span><strong>{{ equipment_counts.insurance }}</strong></span>
+                <div class="d-flex justify-content-between align-items-center">
+                    <span>Guías</span>
+                    <span><strong>{{ equipment_counts.guides }}</strong></span>
+                </div>
+            </div>
+            <div class="equipment-item">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span>Seguros</span>
+                    <span><strong>{{ equipment_counts.insurance }}</strong></span>
+                </div>
             </div>
         </div>
 
         <!-- Courses Summary -->
         <div class="equipment-card">
-            <h4>📊 Courses Summary</h4>
+            <h4>📊 Resumen de cursos</h4>
             {% if participants %}
                 {% regroup participants by course.name as course_groups %}
                 {% for course_group in course_groups %}
                 <div class="equipment-item">
+                    <div class="d-flex justify-content-between align-items-center">
                     <span>{{ course_group.grouper }}</span>
                     <span><strong>{{ course_group.list|length }}</strong></span>
+                    </div>
                 </div>
                 {% endfor %}
             {% else %}
@@ -395,111 +444,35 @@ body {
 
         <!-- Staff Summary -->
         <div class="equipment-card">
-            <h4>👨‍🏫 Staff Assignments</h4>
+            <h4>👨‍🏫 Asignación de personal</h4>
             {% if participants %}
                 {% regroup participants by assigned_staff as staff_groups %}
                 {% for staff_group in staff_groups %}
                 <div class="equipment-item">
-                    <span>
-                        {% if staff_group.grouper %}
-                            {{ staff_group.grouper.get_full_name }}
-                        {% else %}
-                            <em>Unassigned</em>
-                        {% endif %}
-                    </span>
-                    <span><strong>{{ staff_group.list|length }}</strong></span>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span>
+                            {% if staff_group.grouper %}
+                                {{ staff_group.grouper.get_full_name }}
+                            {% else %}
+                                <em>Sin asignar</em>
+                            {% endif %}
+                        </span>
+                        <span><strong>{{ staff_group.list|length }}</strong></span>
+                    </div>
                 </div>
                 {% endfor %}
             {% else %}
-                <p>No staff assignments</p>
+                <p>No hay personal asignado 
+                </p>
             {% endif %}
         </div>
-
-        <!-- Size Requirements -->
-        {% if participants %}
-        <div class="equipment-card">
-            <h4>📏 Size Requirements</h4>
-            {% for participant in participants %}
-                {% if participant.needs_wetsuit or participant.needs_bcd or participant.needs_regulator %}
-                <div style="padding: 8px 0; border-bottom: 1px solid #eee;">
-                    <strong>{{ participant.customer.first_name }} {{ participant.customer.last_name }}</strong><br>
-                    <small style="color: #666;">
-                        {% if participant.needs_wetsuit %}
-                            <span style="background: #e9ecef; padding: 2px 6px; border-radius: 3px; margin-right: 5px;">
-                                Wetsuit: {{ participant.customer.get_wetsuit_size }}
-                            </span>
-                        {% endif %}
-                        {% if participant.needs_bcd %}
-                            <span style="background: #e9ecef; padding: 2px 6px; border-radius: 3px; margin-right: 5px;">
-                                BCD: {{ participant.customer.get_bcd_size }}
-                            </span>
-                        {% endif %}
-                        {% if participant.needs_regulator %}
-                            <span style="background: #e9ecef; padding: 2px 6px; border-radius: 3px; margin-right: 5px;">
-                                Fins: {{ participant.customer.get_fins_size }}
-                            </span>
-                        {% endif %}
-                    </small>
-                </div>
-                {% endif %}
-            {% endfor %}
-            {% if not participants|length %}
-                <p>No equipment size requirements</p>
-            {% endif %}
-        </div>
-
-        <!-- Equipment Summary by Size -->
-        <div class="equipment-card">
-            <h4>📦 Equipment by Size</h4>
-            {% regroup participants by needs_wetsuit as wetsuit_groups %}
-            {% if participants|length %}
-                <!-- Wetsuit sizes -->
-                {% for participant in participants %}
-                    {% if participant.needs_wetsuit %}
-                        {% if forloop.first %}<strong>Wetsuits needed:</strong><br>{% endif %}
-                    {% endif %}
-                {% endfor %}
-                {% for participant in participants %}
-                    {% if participant.needs_wetsuit %}
-                        <span style="font-size: 12px; margin-right: 10px;">{{ participant.customer.get_wetsuit_size }}</span>
-                    {% endif %}
-                {% endfor %}
-                
-                <!-- BCD sizes -->
-                {% for participant in participants %}
-                    {% if participant.needs_bcd %}
-                        {% if forloop.first %}<br><strong>BCDs needed:</strong><br>{% endif %}
-                    {% endif %}
-                {% endfor %}
-                {% for participant in participants %}
-                    {% if participant.needs_bcd %}
-                        <span style="font-size: 12px; margin-right: 10px;">{{ participant.customer.get_bcd_size }}</span>
-                    {% endif %}
-                {% endfor %}
-                
-                <!-- Fins sizes -->
-                {% for participant in participants %}
-                    {% if participant.needs_regulator %}
-                        {% if forloop.first %}<br><strong>Fins needed:</strong><br>{% endif %}
-                    {% endif %}
-                {% endfor %}
-                {% for participant in participants %}
-                    {% if participant.needs_regulator %}
-                        <span style="font-size: 12px; margin-right: 10px;">{{ participant.customer.get_fins_size }}</span>
-                    {% endif %}
-                {% endfor %}
-            {% else %}
-                <p>No equipment sizes to display</p>
-            {% endif %}
-        </div>
-        {% endif %}
     </div>
 
     {% if not participants %}
     <div style="text-align: center; padding: 40px; background: #f8f9fa; border-radius: 8px; margin: 20px 0;">
-        <h3>No participants yet</h3>
-        <p>This dive doesn't have any participants registered.</p>
-        <a href="{% url 'users:manage_dive_participants' dive.id %}" class="btn btn-primary">Add Participants</a>
+        <h3>No hay participantes</h3>
+        <p>Esta inmersión no tiene ningún participante registrado.</p>
+        <a href="{% url 'users:manage_dive_participants' dive.id %}" class="btn btn-primary">Añadir participantes</a>
     </div>
     {% endif %}
 </div>
