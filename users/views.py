@@ -1049,12 +1049,7 @@ def manage_group_members(request, group_id):
         id__in=members.values_list('customer_id', flat=True)
     )
 
-    # Get available dives for scheduling
-    from datetime import date
-    available_dives = DiveSchedule.objects.filter(
-        diving_center=request.user,
-        date__gte=date.today()
-    ).order_by('date', 'time')
+    # Available dives are now loaded via AJAX for better performance
 
     if request.method == 'POST':
         if 'add_member' in request.POST:
@@ -1098,7 +1093,13 @@ def manage_group_members(request, group_id):
                 messages.error(request, 'Please correct the form errors.')
 
         elif 'schedule_group' in request.POST:
-            dive_ids = request.POST.getlist('selected_dives')
+            # Handle both old format (getlist) and new format (comma-separated string)
+            dive_ids_str = request.POST.get('selected_dives', '')
+            if dive_ids_str:
+                dive_ids = dive_ids_str.split(',')
+            else:
+                dive_ids = request.POST.getlist('selected_dives')
+            
             course_id = request.POST.get('course_id')
             needs_wetsuit = 'needs_wetsuit' in request.POST
             needs_bcd = 'needs_bcd' in request.POST
@@ -1181,7 +1182,6 @@ def manage_group_members(request, group_id):
         'members': members,
         'courses': courses,
         'available_customers': available_customers,
-        'available_dives': available_dives,
         'group_courses': group_courses,
         'tank_choices': tank_choices,
         'quick_customer_form': quick_customer_form,
@@ -2619,3 +2619,55 @@ def get_course_sessions(request, course_id):
 
     except Course.DoesNotExist:
         return JsonResponse({'error': 'Course not found'}, status=404)
+
+@login_required
+def ajax_search_dives(request):
+    """AJAX endpoint to search for available dives"""
+    if not request.user.userprofile.is_diving_center:
+        return JsonResponse({'error': 'Access denied'}, status=403)
+
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+    group_size = request.GET.get('group_size', 1)
+
+    try:
+        group_size = int(group_size)
+    except (ValueError, TypeError):
+        group_size = 1
+
+    if not start_date or not end_date:
+        return JsonResponse({'error': 'Start date and end date are required'}, status=400)
+
+    try:
+        from datetime import datetime
+        start_date_obj = datetime.strptime(start_date, '%Y-%m-%d').date()
+        end_date_obj = datetime.strptime(end_date, '%Y-%m-%d').date()
+    except ValueError:
+        return JsonResponse({'error': 'Invalid date format'}, status=400)
+
+    # Get dives in the specified date range
+    dives = DiveSchedule.objects.filter(
+        diving_center=request.user,
+        date__gte=start_date_obj,
+        date__lte=end_date_obj
+    ).select_related('dive_site').order_by('date', 'time')
+
+    dives_data = []
+    for dive in dives:
+        participant_count = dive.get_participant_count()
+        available_spots = dive.get_available_spots()
+        
+        dives_data.append({
+            'id': dive.id,
+            'date': dive.date.strftime('%Y-%m-%d'),
+            'time': dive.time.strftime('%H:%M'),
+            'dive_site_name': dive.dive_site.name,
+            'description': dive.description,
+            'participant_count': participant_count,
+            'max_participants': dive.max_participants,
+            'available_spots': available_spots,
+            'can_accommodate_group': available_spots >= group_size,
+            'special_notes': dive.special_notes
+        })
+
+    return JsonResponse({'dives': dives_data})
