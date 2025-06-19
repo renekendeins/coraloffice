@@ -253,8 +253,29 @@ class DiveSchedule(models.Model):
         return Customer.objects.filter(customerdiveactivity__dive_schedule=self)
 
     def get_participant_count(self):
-        """Get the count of participants for this dive"""
-        return self.customer_activities.count()
+        """Get the count of participants for this dive, considering group sizes"""
+        total_count = 0
+        
+        for activity in self.customer_activities.all():
+            # Check if this is a group placeholder customer
+            if activity.customer.first_name.startswith("GRUPO-"):
+                # Find the corresponding group and use its group_size
+                group_name = activity.customer.first_name[6:]  # Remove "GRUPO-" prefix
+                try:
+                    from users.models import DivingGroup
+                    group = DivingGroup.objects.get(
+                        name=group_name,
+                        diving_center=self.diving_center
+                    )
+                    total_count += group.group_size
+                except DivingGroup.DoesNotExist:
+                    # Fallback to counting as 1 if group not found
+                    total_count += 1
+            else:
+                # Regular individual customer
+                total_count += 1
+                
+        return total_count
     
     def get_available_spots(self):
         """Get the number of available spots for this dive"""

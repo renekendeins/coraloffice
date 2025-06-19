@@ -328,7 +328,7 @@ def calendar_view(request):
             date=selected_date.date()
         ).order_by('-time')
 
-        # Add participant count to dive objects
+        # Add participant count to dive objects (already handled by model method)
         for dive in dives:
             dive.participant_count = dive.get_participant_count()
 
@@ -705,7 +705,9 @@ def dive_detail(request, dive_id):
                              id=dive_id,
                              diving_center=request.user)
     participants = CustomerDiveActivity.objects.filter(dive_schedule=dive)
-    print(participants)
+    
+    # Calculate actual participant count considering group sizes
+    actual_participant_count = dive.get_participant_count()
 
     # Calculate equipment counts
     equipment_counts = {
@@ -734,6 +736,7 @@ def dive_detail(request, dive_id):
         'participants': participants,
         'equipment_counts': equipment_counts,
         'tank_counts': tank_counts,
+        'actual_participant_count': actual_participant_count,
     })
 
 

@@ -117,7 +117,7 @@ body {
     <div class="header">
         <h1>{{ dive.dive_site.name }}</h1>
         <h2>{{ dive.date|date:"F d, Y" }} at {{ dive.time|time:"g:i A" }}</h2>
-        <p><strong>Participantes:</strong> {{ participants.count }}/{{ dive.max_participants }}</p>
+        <p><strong>Participantes:</strong> {{ actual_participant_count }}/{{ dive.max_participants }}</p>
     </div>
 
     <!-- Dive Information -->
