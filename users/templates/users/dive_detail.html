@@ -115,15 +115,14 @@ body {
 <div class="container mt-4 pb-5">
     <!-- Header Section -->
     <div class="header">
-        <h1>{{ dive.dive_site.name }}</h1>
-        <h2>{{ dive.date|date:"F d, Y" }} at {{ dive.time|time:"g:i A" }}</h2>
+        <h3>{{ dive.dive_site.name }}</h1>
+        <h4>{{ dive.date|date:"d F Y" }} - {{ dive.time|time:"g:i A" }}</h2>
         <p><strong>Participantes:</strong> {{ actual_participant_count }}/{{ dive.max_participants }}</p>
     </div>
 
     <!-- Dive Information -->
     <div class="dive-info">
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-            <div><strong>Ubicacion:</strong> {{ dive.dive_site.location }}</div>
             <div><strong>Rango de profundidad:</strong> {{ dive.dive_site.depth_min }}m - {{ dive.dive_site.depth_max }}m</div>
             <div><strong>Dificultad:</strong> {{ dive.dive_site.get_difficulty_level_display }}</div>
         </div>
@@ -165,10 +164,9 @@ body {
             <div class="col-lg-2">Actividad</div>
             <div class="col-lg-1">Botella</div>
             <div class="col-lg-2">Equipo</div>
-            <div class="col-lg-1">Estado</div>
             <div class="col-lg-1">Instructor</div>
             <div class="col-lg-2">Grupo</div>
-            <div class="col-lg-1">Nivel</div>
+            <div class="col-lg-2">Nivel</div>
         </div>
     </div>
 
@@ -183,20 +181,11 @@ body {
             </div>
             <div class="col-lg-2">
                 <div>{{ participant.course.name }}</div>
-                <div class="mt-1">
-                    {% if participant.course.includes_material %}
-                        <span class="badge bg-success me-1" style="font-size: 10px;">Material</span>
-                    {% endif %}
-                    {% if participant.course.includes_instructor %}
-                        <span class="badge bg-success me-1" style="font-size: 10px;">Instructor</span>
-                    {% endif %}
-                    {% if participant.course.includes_insurance %}
-                        <span class="badge bg-success me-1" style="font-size: 10px;">Seguro</span>
-                    {% endif %}
-                </div>
+                {% if participant.needs_guide %}<span class="badge bg-info me-1 mb-1">Guía</span>{% endif %}
+                {% if participant.needs_insurance %}<span class="badge bg-warning me-1 mb-1">Seguro</span>{% endif %}
             </div>
             <div class="col-lg-1">
-                {{ participant.get_tank_size_display }}
+                <small>{{ participant.get_tank_size_display }}</small>
             </div>
             <div class="col-lg-2">
                 {% if participant.needs_wetsuit %}<span class="badge bg-secondary me-1 mb-1">Traje ({{ participant.customer.get_wetsuit_size }})</span>{% endif %}
@@ -205,14 +194,9 @@ body {
                 {% if participant.needs_regulator %}<span class="badge bg-secondary me-1 mb-1">Regulador</span>{% endif %}
                 {% if participant.needs_fins %}<span class="badge bg-secondary me-1 mb-1">Aletas ({{ participant.customer.get_fins_size }})</span>{% endif %}
                 
-                {% if participant.needs_guide %}<span class="badge bg-info me-1 mb-1">Guía</span>{% endif %}
-                {% if participant.needs_insurance %}<span class="badge bg-warning me-1 mb-1">Seguro</span>{% endif %}
+                
+               
                 {% if not participant.needs_wetsuit and not participant.needs_bcd and not participant.needs_regulator and not participant.needs_guide and not participant.needs_insurance %}-{% endif %}
-            </div>
-            <div class="col-lg-1">
-                <span class="badge {% if participant.status == 'PAID' %}bg-success{% elif participant.status == 'PENDING' %}bg-warning{% else %}bg-danger{% endif %}">
-                    {{ participant.status }}
-                </span>
             </div>
             <div class="col-lg-1">
                 {% if participant.assigned_staff %}
@@ -236,7 +220,7 @@ body {
                     {% endfor %}
                 {% endif %}
             </div>
-            <div class="col-lg-1">
+            <div class="col-lg-2">
                 {{ participant.customer.get_certification_level_display|default:"-" }}
             </div>
         </div>
@@ -300,7 +284,6 @@ body {
                     {% if participant.needs_regulator %}<span class="badge bg-secondary me-1 mb-1" style="font-size: 10px;">Regulador</span>{% endif %}
                     {% if participant.needs_fins %}<span class="badge bg-secondary me-1 mb-1" style="font-size: 10px;">Aletas ({{ participant.customer.get_fins_size }})</span>{% endif %}
                     {% if participant.needs_guide %}<span class="badge bg-info me-1 mb-1" style="font-size: 10px;">Guía</span>{% endif %}
-                    {% if participant.needs_insurance %}<span class="badge bg-warning me-1 mb-1" style="font-size: 10px;">Seguro</span>{% endif %}
                     {% if not participant.needs_wetsuit and not participant.needs_bcd and not participant.needs_regulator and not participant.needs_guide and not participant.needs_insurance %}<span class="text-muted">Nada</span>{% endif %}
                
             </div>

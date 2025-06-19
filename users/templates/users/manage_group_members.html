@@ -220,7 +220,7 @@
                 <!-- Loading indicator -->
                 <div id="loading_dives" style="display: none;" class="text-center mb-3">
                     <div class="spinner-border text-primary" role="status">
-                        <span class="sr-only">Cargando...</span>
+                        <span class="sr-only"></span>
                     </div>
                     <p>Buscando inmersiones...</p>
                 </div>
@@ -228,7 +228,7 @@
                 <!-- Search Results -->
                 <div id="dive_results" style="display: none;">
                     <h5>Inmersiones disponibles:</h5>
-                    <div id="dive_list" class="mb-3" style="max-height: 300px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; background: white; border-radius: 4px;">
+                    <div id="dive_list" class="mb-3" style="max-height: 600px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; background: white; border-radius: 4px;">
                         <!-- AJAX results will be loaded here -->
                     </div>
                 </div>
@@ -343,10 +343,10 @@
     let selectedDives = [];
     const groupSize = {{ group.group_size }};
 
-    // Set default date range (today to 30 days from now)
+    // Set default date range (today to 15 days from now)
     const today = new Date();
     const endDate = new Date();
-    endDate.setDate(today.getDate() + 30);
+    endDate.setDate(today.getDate() + 15);
     
     document.getElementById('start_date').value = today.toISOString().split('T')[0];
     document.getElementById('end_date').value = endDate.toISOString().split('T')[0];
@@ -419,7 +419,6 @@
                             <span class="${statusClass}">
                                 ${statusIcon} ${statusText}
                             </span>
-                            <br>
                             <small>(${dive.participant_count}/${dive.max_participants})</small>
                         </div>
                     </div>

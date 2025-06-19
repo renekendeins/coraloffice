@@ -41,20 +41,30 @@
             <div class="logo text-white">CoralOffice</div>
         </a>
         <ul class="nav-menu m-0 ms-0 p-0">
-                <li><a href="{% url 'users:customer_list' %}" class="px-2">Clientes</a></li>
-                <li><a href="{% url 'users:calendar_view' %}" class="px-2">Calendario</a></li>
+            <li class="dropdown">
+                <a href="{% url 'users:customer_list' %}" class="px-2">Clientes</a>
+                <ul class="dropdown-menu">
+                   <li>
+                       <a href="{% url 'users:customer_list' %}">Clientes</a>
+                   </li>
+                    <li>
+                        <a href="{% url 'users:diving_groups_list' %}">Grupos</a>
+                    </li>
+                </ul>
+            </li>
+            <li><a href="{% url 'users:calendar_view' %}" class="px-2">Calendario</a></li>
             <li class="dropdown">
                 <a href="{% url 'users:course_enrollments' %}" class="px-2">Inscripciones</a>
                 <ul class="dropdown-menu">
                     <li>
-                        <a href="/users/enroll-customer/">+ Inscripción individual</a>
+                        <a href="{% url 'users:enroll_customer_general' %}">+ Inscripción individual</a>
                     </li>
                     <div class="dropdown-divider"></div>
                    <li>
-                       <a href="/users/enroll-multiple-customers/">+ Inscripciones múltiples</a>
+                       <a href="{% url 'users:enroll_multiple_customers' %}">+ Inscripciones múltiples</a>
                    </li>
                     <li>
-                        <a href="/users/schedule-multiple-sessions/">+ Sesiones múltiples</a>
+                        <a href="{% url 'users:schedule_multiple_sessions' %}">+ Sesiones múltiples</a>
                     </li>
                 </ul>
             </li>

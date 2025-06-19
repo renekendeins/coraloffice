@@ -253,54 +253,54 @@ class DiveSchedule(models.Model):
         return Customer.objects.filter(customerdiveactivity__dive_schedule=self)
 
     def get_participant_count(self):
-        """Get the count of participants for this dive, considering group sizes"""
+        """
+        Efficiently compute total participant count for this dive.
+        Counts group placeholders using group_size, and adds individual participants not in those groups.
+        """
+        from users.models import DivingGroup, DivingGroupMember
+
+        activities = list(self.customer_activities.select_related('customer'))
+        group_names = set()
+        individual_customers = []
+
+        # Separate group placeholders and individuals
+        for activity in activities:
+            first_name = activity.customer.first_name
+            if first_name.startswith("GRUPO-"):
+                group_names.add(first_name[6:])  # Remove "GRUPO-" prefix
+            else:
+                individual_customers.append(activity.customer_id)
+
+        # Bulk fetch group sizes
+        groups = DivingGroup.objects.filter(
+            name__in=group_names,
+            diving_center=self.diving_center
+        ).only("name", "group_size")
+        group_size_map = {g.name: g.group_size for g in groups}
+
+        # Total from group placeholders
         total_count = 0
-        group_placeholders = []
+        for group_name in group_names:
+            total_count += group_size_map.get(group_name, 1)  # Default to 1 if not found
 
-        # First pass: identify group placeholders and collect group names
-        for activity in self.customer_activities.all():
-            if activity.customer.first_name.startswith("GRUPO-"):
-                group_name = activity.customer.first_name[6:]  # Remove "GRUPO-" prefix
-                group_placeholders.append(group_name)
+        # Bulk fetch group memberships
+        if individual_customers and group_names:
+            group_objs = list(groups)
+            memberships = DivingGroupMember.objects.filter(
+                group__in=group_objs,
+                customer_id__in=individual_customers
+            ).values_list('customer_id', flat=True)
+            member_ids = set(memberships)
+        else:
+            member_ids = set()
 
-                # Find the corresponding group and use its group_size
-                try:
-                    from users.models import DivingGroup
-                    group = DivingGroup.objects.get(
-                        name=group_name,
-                        diving_center=self.diving_center
-                    )
-                    total_count += group.group_size
-                except DivingGroup.DoesNotExist:
-                    # Fallback to counting as 1 if group not found
-                    total_count += 1
-
-        # Second pass: count individual customers who are NOT part of any group
-        for activity in self.customer_activities.all():
-            if not activity.customer.first_name.startswith("GRUPO-"):
-                # Check if this customer is a member of any of the groups with placeholders
-                is_group_member = False
-                for group_name in group_placeholders:
-                    try:
-                        from users.models import DivingGroup, DivingGroupMember
-                        group = DivingGroup.objects.get(
-                            name=group_name,
-                            diving_center=self.diving_center
-                        )
-                        if DivingGroupMember.objects.filter(
-                            group=group,
-                            customer=activity.customer
-                        ).exists():
-                            is_group_member = True
-                            break
-                    except DivingGroup.DoesNotExist:
-                        continue
-
-                # Only count if not a group member
-                if not is_group_member:
-                    total_count += 1
+        # Count individuals not in any group
+        for customer_id in individual_customers:
+            if customer_id not in member_ids:
+                total_count += 1
 
         return total_count
+
 
     def get_available_spots(self):
         """Get the number of available spots for this dive"""

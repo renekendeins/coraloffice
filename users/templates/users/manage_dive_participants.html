@@ -224,27 +224,24 @@ function toggleDetails(participantId) {
                             <p class="mb-0"><strong>Pais:</strong> {{ participant.customer.get_country_name|default:"No especificado" }} </p>
                             <p><strong>Idioma:</strong> {{ participant.customer.get_language_display }}</p>
 
+                            <div style="margin-bottom: 10px;">
 
-                            </p>
-                        </div>
-
-                        <div style="margin-bottom: 10px;">
-                            
-                            {% if participant.group %}
-                                <span class="group-badge">Grupo: {{ participant.group.name }}</span>
-                            {% endif %}
-                            {% if participant.is_paid %}<span style="background-color: #007bff; color: white; padding: 2px 6px; border-radius: 3px; font-size: 12px; margin-left: 5px;">💰 Paid</span>{% endif %}
-                        </div>
-                        <div class="equipment-list d-inline-block">
-                            {% if participant.needs_wetsuit or participant.needs_bcd or participant.needs_regulator or participant.needs_guide or participant.needs_insurance %}
-                                <span style="color: #666;">Necesario:</span>
-                            {% endif %}
-                            {% if participant.needs_wetsuit %}<span class="equipment-item">Traje ({{ participant.customer.get_wetsuit_size }})</span>{% endif %}
-                            {% if participant.needs_bcd %}<span class="equipment-item">Jacket ({{ participant.customer.get_bcd_size }})</span>{% endif %}                            
-                            {% if participant.needs_fins %}<span class="equipment-item">Aletas ({{ participant.customer.get_fins_size }})</span>{% endif %}
-                            {% if participant.needs_regulator %}<span class="equipment-item">Regulador</span>{% endif %}
-                            {% if participant.needs_guide %}<span class="equipment-item">Instructor</span>{% endif %}
-                            {% if participant.needs_insurance %}<span class="equipment-item">Seguro</span>{% endif %}
+                                {% if participant.group %}
+                                    <span class="group-badge">Grupo: {{ participant.group.name }}</span>
+                                {% endif %}
+                                {% if participant.is_paid %}<span style="background-color: #007bff; color: white; padding: 2px 6px; border-radius: 3px; font-size: 12px; margin-left: 5px;">💰 Paid</span>{% endif %}
+                            </div>
+                            <div class="equipment-list d-inline-block">
+                                {% if participant.needs_wetsuit or participant.needs_bcd or participant.needs_regulator or participant.needs_guide or participant.needs_insurance %}
+                                    <span style="color: #666;">Necesario:</span>
+                                {% endif %}
+                                {% if participant.needs_wetsuit %}<span class="equipment-item">Traje ({{ participant.customer.get_wetsuit_size }})</span>{% endif %}
+                                {% if participant.needs_bcd %}<span class="equipment-item">Jacket ({{ participant.customer.get_bcd_size }})</span>{% endif %}                            
+                                {% if participant.needs_fins %}<span class="equipment-item">Aletas ({{ participant.customer.get_fins_size }})</span>{% endif %}
+                                {% if participant.needs_regulator %}<span class="equipment-item">Regulador</span>{% endif %}
+                                {% if participant.needs_guide %}<span class="equipment-item">Instructor</span>{% endif %}
+                                {% if participant.needs_insurance %}<span class="equipment-item">Seguro</span>{% endif %}
+                            </div>
                         </div>
 
                         <!-- Quick edit form -->
@@ -322,21 +319,26 @@ function toggleDetails(participantId) {
                         </div>
                       </div>
                     <div class="mt-4 d-flex flex-column flex-lg-row col-12 col-lg-auto flex-lg-column mt-lg-0 justify-content-lg-start">
-        {% if participant.status == 'PENDING' %}
-            <form method="post" class="mb-2">
-                {% csrf_token %}
-                <input type="hidden" name="participant_id" value="{{ participant.id }}">
-                <button type="submit" name="on_board" class="btn btn-warning w-100 text-dark">Presente</button>
-            </form>
-        {% elif participant.status == 'ON_BOARD' %}
-            <form method="post" class="mb-2">
-                {% csrf_token %}
-                <input type="hidden" name="participant_id" value="{{ participant.id }}">
-                <button type="submit" name="back_on_boat" class="btn btn-info w-100">De vuelta</button>
-            </form>
-        {% endif %}
-        <button onclick="showQuickEdit({{ participant.id }})" class="btn btn-info mb-2 text-white">Edición rápida</button>
-                        <button class="btn btn-primary" onclick="toggleDetails({{ participant.id }})">Mostrar detalles</button>
+        
+            {% if participant.status == 'PENDING' %}
+                <form method="post" class="mb-2 col-12">
+                    {% csrf_token %}
+                    <input type="hidden" name="participant_id" value="{{ participant.id }}">
+                    <button type="submit" name="on_board" class="btn btn-success w-100">Presente</button>
+                </form>
+            {% elif participant.status == 'ON_BOARD' %}
+                <form method="post" class="mb-2 col-12">
+                    {% csrf_token %}
+                    <input type="hidden" name="participant_id" value="{{ participant.id }}">
+                    <button type="submit" name="back_on_boat" class="btn btn-custom-primary w-100">De vuelta</button>
+                </form>
+            {% endif %}
+                <div class="d-flex flex-lg-column justify-content-between mb-2">
+                    <div class="mb-lg-2 pe-2 pe-lg-0 col-6 col-lg-12">
+                        <button type="button" onclick="showQuickEdit({{ participant.id }})" class="btn w-100 btn-info text-white">Edición rápida</button>
+                    </div>
+                    <button type="button" class="btn btn-primary col-6 col-lg-12" onclick="toggleDetails({{ participant.id }})">Mostrar detalles</button>
+                </div>
         
     </div>
                 </div>

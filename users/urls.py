@@ -91,4 +91,3 @@ urlpatterns = [
     path('ajax/get-course-sessions/<int:course_id>/', views.get_course_sessions, name='get_course_sessions'),
     path('ajax/search-dives/', views.ajax_search_dives, name='ajax_search_dives'),
 ]
-```
