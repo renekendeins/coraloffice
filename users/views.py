@@ -182,7 +182,7 @@ def schedule_dive(request):
             dive.diving_center = request.user
             dive.save()
             messages.success(request, 'Dive scheduled successfully!')
-            return redirect('users:dive_calendar')
+            return redirect('users:calendar_view')
     else:
         form = DiveScheduleForm(diving_center=request.user)
     return render(request, 'users/schedule_dive.html', {'form': form})
@@ -1100,7 +1100,7 @@ def manage_group_members(request, group_id):
             if dive_ids and course_id:
                 course = get_object_or_404(Course, id=course_id, diving_center=request.user)
                 scheduled_count = 0
-                emails_sent = 0
+                # emails_sent = 0
                 skipped_dives = []
 
                 for dive_id in dive_ids:
@@ -1150,16 +1150,16 @@ def manage_group_members(request, group_id):
                             members_added += 1
                             
                             # Send reminder email
-                            if send_dive_reminder_email(member.customer, dive, course):
-                                emails_sent += 1
+                            # if send_dive_reminder_email(member.customer, dive, course):
+                            #     emails_sent += 1
 
                     # Reserve spots for the group even if no members are added yet
                     if members_added == 0 and members.count() == 0:
                         messages.info(request, f'Reservadas {group.group_size} plazas para el grupo {group.name} en {dive.dive_site.name} ({dive.date} {dive.time}). Añade miembros al grupo para completar la reserva.')
 
                 success_msg = f'Programado {group.name} para {len(dive_ids) - len(skipped_dives)} inmersión(es)! Añadidos {scheduled_count} espacios, reservadas {group.group_size * (len(dive_ids) - len(skipped_dives))} plazas en total.'
-                if emails_sent > 0:
-                    success_msg += f' {emails_sent} emails de recordatorio enviados.'
+                # if emails_sent > 0:
+                #     success_msg += f' {emails_sent} emails de recordatorio enviados.'
                 
                 if skipped_dives:
                     messages.warning(request, f'Algunas inmersiones fueron omitidas por falta de capacidad: {"; ".join(skipped_dives)}')
@@ -1219,7 +1219,7 @@ def delete_dive(request, dive_id):
         dive_info = f"{dive.dive_site} on {dive.date}"
         dive.delete()
         messages.success(request, f'Dive "{dive_info}" deleted successfully!')
-        return redirect('users:dive_calendar')
+        return redirect('users:calendar_view')
 
     return render(request, 'users/delete_dive.html', {'dive': dive})
 
@@ -2124,7 +2124,7 @@ def enroll_multiple_customers(request):
 
     if request.method == 'POST':
         form = MultipleCustomerEnrollmentForm(diving_center=request.user, data=request.POST)
-        
+
         if form.is_valid():
             course = form.cleaned_data['course']
             customers = form.cleaned_data['customers']
@@ -2136,7 +2136,7 @@ def enroll_multiple_customers(request):
 
             enrolled_count = 0
             skipped_count = 0
-            
+
             for customer in customers:
                 # Check if customer is already enrolled in this course
                 if CourseEnrollment.objects.filter(customer=customer, course=course).exists():
@@ -2153,12 +2153,55 @@ def enroll_multiple_customers(request):
                     is_paid=is_paid,
                     notes=notes
                 )
-                
+
                 # Create course sessions based on template sessions or fallback to default
                 template_sessions = CourseSession.objects.filter(template_course=course).order_by('session_number')
                 if template_sessions.exists():
                     # Use template sessions
                     for template in template_sessions:
+                        CourseSession.objects.create(
+                            enrollment=enrollment,
+                            session_number=template.session_number,
+                            session_type=template.session_type,
+                            title=template.title,
+                            description=template.description,
+                            skills_covered=template.skills_covered
+                        )
+                else:
+                    # Fallback to default sessions if no templates exist
+                    for i in range(1, course.total_dives + 1):
+                        CourseSession.objects.create(
+                            enrollment=enrollment,
+                            session_number=i,
+                            session_type='OPEN_WATER',
+                            title=f'Dive {i}',
+                            description=f'Dive session {i} of {course.name}'
+                        )
+
+                enrolled_count += 1
+
+            success_msg = f'Successfully enrolled {enrolled_count} customers in {course.name}!'
+            if skipped_count > 0:
+                success_msg += f' {skipped_count} customers were already enrolled and were skipped.'
+
+            messages.success(request, success_msg)
+            return redirect('users:course_enrollments')
+        else:
+            messages.error(request, 'Please correct the form errors.')
+    else:
+        form = MultipleCustomerEnrollmentForm(diving_center=request.user)
+
+    # Get available dive schedules for session scheduling
+    from datetime import date
+    available_dives = DiveSchedule.objects.filter(
+        diving_center=request.user,
+        date__gte=date.today()
+    ).order_by('date', 'time')
+
+    return render(request, 'users/enroll_multiple_customers.html', {
+        'form': form,
+        'available_dives': available_dives
+    })
 
 
 @login_required
@@ -2194,51 +2237,6 @@ def delete_diving_group(request, group_id):
         return redirect('users:diving_groups_list')
 
     return render(request, 'users/delete_diving_group.html', {'group': group})
-
-                        CourseSession.objects.create(
-                            enrollment=enrollment,
-                            session_number=template.session_number,
-                            session_type=template.session_type,
-                            title=template.title,
-                            description=template.description,
-                            skills_covered=template.skills_covered
-                        )
-                else:
-                    # Fallback to default sessions if no templates exist
-                    for i in range(1, course.total_dives + 1):
-                        CourseSession.objects.create(
-                            enrollment=enrollment,
-                            session_number=i,
-                            session_type='OPEN_WATER',
-                            title=f'Dive {i}',
-                            description=f'Dive session {i} of {course.name}'
-                        )
-                
-                enrolled_count += 1
-
-            success_msg = f'Successfully enrolled {enrolled_count} customers in {course.name}!'
-            if skipped_count > 0:
-                success_msg += f' {skipped_count} customers were already enrolled and were skipped.'
-            
-            messages.success(request, success_msg)
-            return redirect('users:course_enrollments')
-        else:
-            messages.error(request, 'Please correct the form errors.')
-    else:
-        form = MultipleCustomerEnrollmentForm(diving_center=request.user)
-
-    # Get available dive schedules for session scheduling
-    from datetime import date
-    available_dives = DiveSchedule.objects.filter(
-        diving_center=request.user,
-        date__gte=date.today()
-    ).order_by('date', 'time')
-
-    return render(request, 'users/enroll_multiple_customers.html', {
-        'form': form,
-        'available_dives': available_dives
-    })
-
 
 @login_required
 def download_medical_form_pdf(request, customer_id):

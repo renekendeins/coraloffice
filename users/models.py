@@ -354,8 +354,6 @@ def create_user_profile(sender, instance, created, **kwargs):
     if created:
         UserProfile.objects.create(user=instance)
 
-
-
 class InventoryItem(models.Model):
     CATEGORY_CHOICES = [
         ('WETSUIT', 'Traje'),
@@ -494,7 +492,6 @@ class Staff(models.Model):
         from datetime import date
         return self.assigned_activities.filter(dive_schedule__date__gte=date.today()).order_by('dive_schedule__date', 'dive_schedule__time')
 
-
 class Course(models.Model):
     COURSE_TYPE_CHOICES = [
         ('OPEN_WATER', 'Open Water Diver'),
@@ -538,7 +535,6 @@ class Course(models.Model):
     
     class Meta:
         ordering = ['name']
-
 
 class CourseEnrollment(models.Model):
     STATUS_CHOICES = [
@@ -635,7 +631,6 @@ class CourseEnrollment(models.Model):
                     self.start_date = date.today()
         
         self.save()
-
 
 class CourseSession(models.Model):
     SESSION_TYPE_CHOICES = [

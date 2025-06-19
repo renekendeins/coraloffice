@@ -115,6 +115,11 @@ class DiveActivityForm(forms.ModelForm):
         }
 
 class DiveScheduleForm(forms.ModelForm):
+    date = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+        input_formats=['%Y-%m-%d'],
+        required=True
+    )
     dive_site = forms.ModelChoiceField(
         queryset=DivingSite.objects.none(),
         empty_label="Select a diving site",
@@ -126,7 +131,6 @@ class DiveScheduleForm(forms.ModelForm):
         model = DiveSchedule
         fields = ('date', 'time', 'dive_site', 'max_participants', 'description', 'special_notes')
         widgets = {
-            'date': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
             'time': forms.TimeInput(attrs={'type': 'time', 'class': 'form-control'}),
             'max_participants': forms.NumberInput(attrs={'class': 'form-control', 'min': '1'}),
             'description': forms.Textarea(attrs={'rows': 3, 'class': 'form-control'}),
@@ -137,6 +141,10 @@ class DiveScheduleForm(forms.ModelForm):
         super().__init__(*args, **kwargs)
         if diving_center:
             self.fields['dive_site'].queryset = DivingSite.objects.filter(diving_center=diving_center).order_by('name')
+        
+        date = self.initial.get('date') or self.instance.date
+        if date:
+            self.initial['date'] = date.strftime('%Y-%m-%d')
 
 class CustomerDiveActivityForm(forms.ModelForm):
     customer_search = forms.CharField(

@@ -61,8 +61,9 @@
                 <li><a href="{% url 'users:staff_planning' %}" class="px-2">Planning</a></li>
         </ul>
         <div class="user-menu ms-3">
+             <a href="{% url 'users:diving_center_dashboard' %}">Dashboard</a>
                 <a href="{% url 'users:profile' %}">{{ user.username }}</a>
-                    <a href="{% url 'users:diving_center_dashboard' %}">Dashboard</a>
+                   
         </div>
         <button class="mobile-menu-toggle" id="mobileMenuToggle">
             <span></span>
