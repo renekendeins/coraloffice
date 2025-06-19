@@ -540,6 +540,9 @@ def manage_dive_participants(request, dive_id):
                     if not dive.can_accommodate_group(selected_group.group_size):
                         messages.error(request, f'No hay suficientes plazas disponibles. El grupo necesita {selected_group.group_size} plazas pero solo hay {dive.get_available_spots()} disponibles.')
                         return redirect('users:manage_dive_participants', dive_id=dive.id)
+                    
+                    # Initialize variables
+                    emails_sent = 0
 
                     # Create or get a placeholder customer for this group
                     placeholder_customer, created = Customer.objects.get_or_create(
@@ -583,32 +586,17 @@ def manage_dive_participants(request, dive_id):
                             needs_insurance=form.cleaned_data['needs_insurance'],
                             status='PENDING'
                         )
-                        added_count += 1
 
-                    # Add individual group members for reference (but they won't count as extra spots)
-                    for member in group_members:
-                        # Check if member not already participating
-                        if not CustomerDiveActivity.objects.filter(dive_schedule=dive, customer=member.customer).exists():
-                            # Use customer's default tank size or form value
-                            tank_size = member.customer.default_tank_size or form.cleaned_data['tank_size']
-
-                            CustomerDiveActivity.objects.create(
-                                customer=member.customer,
-                                dive_schedule=dive,
-                                course=course,
-                                tank_size=tank_size,
-                                needs_wetsuit=needs_wetsuit,
-                                needs_bcd=needs_bcd,
-                                needs_regulator=needs_regulator,
-                                needs_guide=form.cleaned_data['needs_guide'],
-                                needs_insurance=form.cleaned_data['needs_insurance'],
-                            )
-
-                            # Send reminder email
+                        # Get group members for sending emails only
+                        group_members = DivingGroupMember.objects.filter(group=selected_group)
+                        
+                        # Send reminder emails to group members (but don't add them as separate participants)
+                        emails_sent = 0
+                        for member in group_members:
                             if send_dive_reminder_email(member.customer, dive, course):
                                 emails_sent += 1
 
-                    success_msg = f'Añadido grupo {selected_group.name} a la inmersión! {added_count} miembros añadidos, {selected_group.group_size} plazas reservadas en total.'
+                    success_msg = f'Añadido grupo {selected_group.name} a la inmersión! {selected_group.group_size} plazas reservadas.'
                     if emails_sent > 0:
                         success_msg += f' {emails_sent} emails de recordatorio enviados.'
                     messages.success(request, success_msg)
@@ -1164,45 +1152,12 @@ def manage_group_members(request, group_id):
                             needs_insurance=needs_insurance,
                             status='PENDING'
                         )
+                        scheduled_count += 1
 
-                    # Add individual group members for reference (but they won't count as extra spots)
-                    members_added = 0
-                    for member in members:
-                        # Check if member not already in this dive
-                        if not CustomerDiveActivity.objects.filter(
-                            dive_schedule=dive, 
-                            customer=member.customer
-                        ).exists():
-                            # Use customer's default tank size
-                            member_tank_size = member.customer.default_tank_size
-
-                            # Auto-set equipment needs if course includes material
-                            final_needs_wetsuit = needs_wetsuit
-                            final_needs_bcd = needs_bcd
-                            final_needs_regulator = needs_regulator
-
-                            if course and course.includes_material:
-                                final_needs_wetsuit = True
-                                final_needs_bcd = True
-                                final_needs_regulator = True
-
-                            CustomerDiveActivity.objects.create(
-                                customer=member.customer,
-                                dive_schedule=dive,
-                                course=course,
-                                tank_size=member_tank_size,
-                                needs_wetsuit=final_needs_wetsuit,
-                                needs_bcd=final_needs_bcd,
-                                needs_regulator=final_needs_regulator,
-                                needs_guide=needs_guide,
-                                needs_insurance=needs_insurance,
-                            )
-                            scheduled_count += 1
-                            members_added += 1
-
-                            # Send reminder email
-                            # if send_dive_reminder_email(member.customer, dive, course):
-                            #     emails_sent += 1
+                    # Send reminder emails to group members (but don't add them as separate participants)
+                    # for member in members:
+                    #     if send_dive_reminder_email(member.customer, dive, course):
+                    #         emails_sent += 1
 
                 success_msg = f'Programado {group.name} para {len(dive_ids) - len(skipped_dives)} inmersión(es)! Añadidos {scheduled_count} espacios, reservadas {group.group_size * (len(dive_ids) - len(skipped_dives))} plazas en total.'
                 # if emails_sent > 0:
@@ -1614,12 +1569,11 @@ def quick_edit_customer(request, customer_id):
 
             height = request.POST.get('height')
             if height:
-                customer.height = float```python
-(height)
+                customer.height = float(height)
 
             foot_size = request.POST.get('foot_size')
             if foot_size:
-                customer.foot_size = float(foot_size)
+                customer.foot_size = float(foot_size)(foot_size)
 
             customer.save()
 

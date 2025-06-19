@@ -1,3 +1,7 @@
+Updated DiveSchedule.get_participant_count to correctly count participants considering group sizes and avoiding double-counting.
+```
+
+```python
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
@@ -31,7 +35,7 @@ class Customer(models.Model):
         ('DIVEMASTER', 'Divemaster'),
         ('INSTRUCTOR', 'Instructor'),
     ]
-    
+
     LANGUAGE_CHOICES = [
         ('CAT', 'Català'),
         ('ES', 'Español'),
@@ -40,7 +44,7 @@ class Customer(models.Model):
         ('NL', 'Nederlands'),
         ('DE', 'Deutsch'),
     ]
-    
+
     COUNTRY_CHOICES = [
         ('ES', 'España'),
         ('FR', 'Francia'),
@@ -62,7 +66,7 @@ class Customer(models.Model):
         ('OTHER', 'Otro'),
 
     ]
-    
+
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     diving_center = models.ForeignKey(User, on_delete=models.CASCADE, related_name='customers')
     first_name = models.CharField(max_length=50)
@@ -84,31 +88,31 @@ class Customer(models.Model):
         ('15L', '15 Litros'),
         ('18L', '18 Litros'),
     ], default='12L', help_text="Botella por defecto del cliente")
-    
+
     # File uploads
     profile_picture = models.ImageField(upload_to='customer_profiles/', null=True, blank=True)
     diving_licence = models.FileField(upload_to='customer_documents/licences/', null=True, blank=True)
     diving_insurance = models.FileField(upload_to='customer_documents/insurance/', null=True, blank=True)
     medical_check = models.FileField(upload_to='customer_documents/medical/', null=True, blank=True)
     signature = models.ImageField(upload_to='customer_signatures/', null=True, blank=True)
-    
+
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
-    
+
     def get_age(self):
         if self.birthday:
             from datetime import date
             today = date.today()
             return today.year - self.birthday.year - ((today.month, today.day) < (self.birthday.month, self.birthday.day))
         return None
-    
+
     def get_wetsuit_size(self):
         """Calculate wetsuit size based on height and weight"""
         if not self.height or not self.weight:
             return "No calculado"
-        
+
         # Basic wetsuit sizing logic
         if self.height < 160:
             if self.weight < 50: return "XS"
@@ -129,12 +133,12 @@ class Customer(models.Model):
             if self.weight < 70: return "L"
             elif self.weight < 80: return "XL"
             else: return "XXL"
-    
+
     def get_bcd_size(self):
         """Calculate BCD size based on chest measurement approximated from height/weight"""
         if not self.height or not self.weight:
             return "No calculado"
-        
+
         # Approximate BCD sizing
         if self.weight < 55: return "XS"
         elif self.weight < 65: return "S"
@@ -142,12 +146,12 @@ class Customer(models.Model):
         elif self.weight < 85: return "L"
         elif self.weight < 95: return "XL"
         else: return "XXL"
-    
+
     def get_fins_size(self):
         """Calculate fin size based on foot size"""
         if not self.foot_size:
             return "No calculado"
-        
+
         # EU to fin size conversion
         if self.foot_size <= 36: return "XS"
         elif self.foot_size <= 38: return "S"
@@ -155,26 +159,26 @@ class Customer(models.Model):
         elif self.foot_size <= 43: return "L"
         elif self.foot_size <= 45: return "XL"
         else: return "XXL"
-    
+
     def get_boots_size(self):
         """Calculate boots size based on foot size"""
         if not self.foot_size:
             return "No calculado"
-        
+
         # Direct EU size mapping for boots
         return f"EU {int(self.foot_size)}"
 
     def get_country_name(self):
         """Get the full country name from the country code"""
         return dict(self.COUNTRY_CHOICES).get(self.country, self.country)
-    
+
     def get_full_name(self):
         return f"{self.first_name} {self.last_name}"
 
     def get_certification_level(self):
         """Get the full certification name from the certification level code"""
         return dict(self.DIVING_LEVEL_CHOICES).get(self.certification_level, self.certification_level)
-    
+
     # Medical questionnaire fields - storing as JSON for flexibility
     medical_questionnaire_answers = models.JSONField(default=dict, blank=True, help_text="Guarda las respuestas del cuestionario médico")
     swimming_ability = models.CharField(max_length=20, choices=[
@@ -183,17 +187,17 @@ class Customer(models.Model):
         ('fair', 'Suficiente'),
         ('poor', 'Insuficiente'),
     ], blank=True)
-    
+
     def get_medical_answer(self, question_key):
         """Get answer to a specific medical question"""
         return self.medical_questionnaire_answers.get(question_key, False)
-    
+
     def set_medical_answer(self, question_key, answer):
         """Set answer to a specific medical question"""
         if not self.medical_questionnaire_answers:
             self.medical_questionnaire_answers = {}
         self.medical_questionnaire_answers[question_key] = answer
-    
+
     def get_swimming_ability_display(self):
         """Get the display value for swimming ability"""
         swimming_choices = {
@@ -203,7 +207,7 @@ class Customer(models.Model):
             'poor': 'Insuficiente',
         }
         return swimming_choices.get(self.swimming_ability, self.swimming_ability)
-        
+
 class DiveActivity(models.Model):
     diving_center = models.ForeignKey(User, on_delete=models.CASCADE, related_name='dive_activities')
     name = models.CharField(max_length=100)
@@ -255,18 +259,15 @@ class DiveSchedule(models.Model):
     def get_participant_count(self):
         """Get the count of participants for this dive, considering group sizes"""
         total_count = 0
-        group_placeholders = set()  # Track processed groups to avoid double counting
-        
+        group_placeholders = []
+
+        # First pass: identify group placeholders and collect group names
         for activity in self.customer_activities.all():
-            # Check if this is a group placeholder customer
             if activity.customer.first_name.startswith("GRUPO-"):
-                # Find the corresponding group and use its group_size
                 group_name = activity.customer.first_name[6:]  # Remove "GRUPO-" prefix
-                
-                # Skip if we've already counted this group
-                if group_name in group_placeholders:
-                    continue
-                    
+                group_placeholders.append(group_name)
+
+                # Find the corresponding group and use its group_size
                 try:
                     from users.models import DivingGroup
                     group = DivingGroup.objects.get(
@@ -274,32 +275,45 @@ class DiveSchedule(models.Model):
                         diving_center=self.diving_center
                     )
                     total_count += group.group_size
-                    group_placeholders.add(group_name)
                 except DivingGroup.DoesNotExist:
                     # Fallback to counting as 1 if group not found
                     total_count += 1
-            else:
-                # Check if this customer is part of a group that already has a placeholder
-                customer_groups = activity.customer.group_memberships.filter(
-                    group__diving_center=self.diving_center
-                ).values_list('group__name', flat=True)
-                
-                # Only count individual customers if they're not part of a group with placeholder
-                is_part_of_counted_group = any(group_name in group_placeholders for group_name in customer_groups)
-                
-                if not is_part_of_counted_group:
+
+        # Second pass: count individual customers who are NOT part of any group
+        for activity in self.customer_activities.all():
+            if not activity.customer.first_name.startswith("GRUPO-"):
+                # Check if this customer is a member of any of the groups with placeholders
+                is_group_member = False
+                for group_name in group_placeholders:
+                    try:
+                        from users.models import DivingGroup, DivingGroupMember
+                        group = DivingGroup.objects.get(
+                            name=group_name,
+                            diving_center=self.diving_center
+                        )
+                        if DivingGroupMember.objects.filter(
+                            group=group,
+                            customer=activity.customer
+                        ).exists():
+                            is_group_member = True
+                            break
+                    except DivingGroup.DoesNotExist:
+                        continue
+
+                # Only count if not a group member
+                if not is_group_member:
                     total_count += 1
-                
+
         return total_count
-    
+
     def get_available_spots(self):
         """Get the number of available spots for this dive"""
         return self.max_participants - self.get_participant_count()
-    
+
     def can_accommodate_group(self, group_size):
         """Check if this dive can accommodate a group of given size"""
         return self.get_available_spots() >= group_size
-    
+
     def has_special_notes(self):
         """Check if this dive has special notes"""
         return bool(self.special_notes.strip())
@@ -312,7 +326,7 @@ class CustomerDiveActivity(models.Model):
         ('EAN12L', 'NITROX 12L'),
         ('EAN15L', 'NITROX 15L'),
     ]
-    
+
     STATUS_CHOICES = [
         ('PENDING', 'Pendiente de llegar'),
         ('ON_BOARD', 'Presente'),
@@ -320,7 +334,7 @@ class CustomerDiveActivity(models.Model):
         ('DEPARTED', 'En curso'),
         ('FINISHED', 'Finalizado'),
     ]
-    
+
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='dive_activities')
     dive_schedule = models.ForeignKey(DiveSchedule, on_delete=models.CASCADE, related_name='customer_activities')
     course = models.ForeignKey('Course', on_delete=models.CASCADE, related_name='customer_bookings', help_text="Curso/ Actividad que el cliente está realizando")
@@ -345,7 +359,7 @@ class CustomerDiveActivity(models.Model):
 
     def __str__(self):
         return f"{self.customer} - {self.course.name}"
-    
+
     def get_activity_name(self):
         """Get the activity name from course or fallback to deprecated activity field"""
         if self.course:
@@ -353,7 +367,7 @@ class CustomerDiveActivity(models.Model):
         elif self.activity:
             return self.activity.name
         return "Actividad desconocida"
-    
+
     def get_activity_price(self):
         """Get the activity price from course or fallback to deprecated activity field"""
         if self.course:
@@ -361,7 +375,7 @@ class CustomerDiveActivity(models.Model):
         elif self.activity:
             return self.activity.price
         return 0.00
-    
+
     def get_activity_duration(self):
         """Get the activity duration from course or fallback to deprecated activity field"""
         if self.course:
@@ -369,11 +383,11 @@ class CustomerDiveActivity(models.Model):
         elif self.activity:
             return self.activity.duration_minutes
         return 60
-    
+
     def is_course_dive(self):
         """Check if this dive is part of a course"""
         return self.course_session is not None
-    
+
     def get_course_info(self):
         """Get course information if this is a course dive"""
         if self.course_session:
@@ -402,7 +416,7 @@ class InventoryItem(models.Model):
         ('WEIGHT', 'Plomos'),
         ('OTHER', 'Otros'),
     ]
-    
+
     SIZE_CHOICES = [
         ('XS', 'Extra pequeño'),
         ('S', 'Pequeño'),
@@ -412,7 +426,7 @@ class InventoryItem(models.Model):
         ('XXL', 'Extra Extra Largo'),
         ('N/A', 'No Aplicable'),
     ]
-    
+
     diving_center = models.ForeignKey(User, on_delete=models.CASCADE, related_name='inventory_items')
     name = models.CharField(max_length=100)
     category = models.CharField(max_length=20, choices=CATEGORY_CHOICES)
@@ -449,15 +463,15 @@ class DivingGroup(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.group_size} personas)"
-    
+
     def get_member_count(self):
         """Get the actual number of members added to this group"""
         return self.members.count()
-    
+
     def get_expected_size(self):
         """Get the expected group size"""
         return self.group_size
-    
+
     def is_fully_populated(self):
         """Check if the group has all expected members"""
         return self.get_member_count() >= self.group_size
@@ -488,13 +502,13 @@ class Staff(models.Model):
 
 
     ]
-    
+
     STATUS_CHOICES = [
         ('ACTIVE', 'Activo'),
         ('INACTIVE', 'Inactivo'),
         ('ON_LEAVE', 'Ausente'),
     ]
-    
+
     diving_center = models.ForeignKey(User, on_delete=models.CASCADE, related_name='staff_members')
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
@@ -515,14 +529,14 @@ class Staff(models.Model):
     def __str__(self):
         return f"{self.first_name} {self.last_name} ({self.get_certification_level_display()})"
 
-    
+
     def get_full_name(self):
         return f"{self.first_name} {self.last_name}"
-    
+
     def get_activities_count(self):
         """Get total number of activities this staff member has been assigned to"""
         return self.assigned_activities.count()
-    
+
     def get_upcoming_activities(self):
         """Get upcoming activities for this staff member"""
         from datetime import date
@@ -549,7 +563,7 @@ class Course(models.Model):
         ('CUSTOM', 'Curso Personalizado'),
 
     ]
-    
+
     diving_center = models.ForeignKey(User, on_delete=models.CASCADE, related_name='courses')
     name = models.CharField(max_length=100)
     course_type = models.CharField(max_length=30, choices=COURSE_TYPE_CHOICES, default='CUSTOM')
@@ -568,7 +582,7 @@ class Course(models.Model):
 
     def __str__(self):
         return f"{self.name} ({self.total_dives} dives)"
-    
+
     class Meta:
         ordering = ['name']
 
@@ -580,7 +594,7 @@ class CourseEnrollment(models.Model):
         ('CANCELLED', 'Cancelado'),
         ('ON_HOLD', 'En espera'),
     ]
-    
+
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='course_enrollments')
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name='enrollments')
     primary_instructor = models.ForeignKey(Staff, on_delete=models.SET_NULL, null=True, blank=True, related_name='primary_course_enrollments', help_text="Instructor principal para este curso")
@@ -600,7 +614,7 @@ class CourseEnrollment(models.Model):
 
     def __str__(self):
         return f"{self.customer} - {self.course.name} ({self.status})"
-    
+
     def get_progress_percentage(self):
         """Calculate completion percentage based on completed course sessions"""
         total_sessions = self.course_sessions.count()
@@ -608,52 +622,52 @@ class CourseEnrollment(models.Model):
         if total_sessions == 0:
             return 0
         return round((completed_sessions / total_sessions) * 100)
-    
+
     def get_completed_lessons(self):
         """Get number of completed lessons"""
         return self.course_sessions.filter(status='COMPLETED').count()
-    
+
     def get_completed_dives(self):
         """Get number of completed dives (alias for get_completed_lessons)"""
         return self.get_completed_lessons()
-    
+
     def get_scheduled_lessons(self):
         """Get number of scheduled lessons"""
         return self.course_sessions.filter(status__in=['SCHEDULED', 'IN_PROGRESS']).count()
-    
+
     def get_unscheduled_lessons(self):
         """Get number of unscheduled lessons"""
         return self.course_sessions.filter(status='NOT_SCHEDULED').count()
-    
+
     def is_active(self):
         """Check if enrollment is active (enrolled or in progress)"""
         return self.status in ['ENROLLED', 'IN_PROGRESS']
-    
+
     def get_next_lesson(self):
         """Get the next lesson to be completed"""
         return self.course_sessions.filter(
             status__in=['NOT_SCHEDULED', 'SCHEDULED']
         ).order_by('session_number').first()
-    
+
     def get_all_instructors(self):
         """Get all instructors involved in this course"""
         instructors = set()
         if self.primary_instructor:
             instructors.add(self.primary_instructor)
-        
+
         for session in self.course_sessions.all():
             if session.instructor:
                 instructors.add(session.instructor)
             instructors.update(session.assistant_instructors.all())
-        
+
         return list(instructors)
-    
+
     def auto_update_status(self):
         """Automatically update enrollment status based on lesson progress"""
         total_lessons = self.course_sessions.count()
         completed_lessons = self.get_completed_lessons()
         scheduled_lessons = self.get_scheduled_lessons()
-        
+
         if completed_lessons == total_lessons and total_lessons > 0:
             self.status = 'COMPLETED'
             if not self.completion_date:
@@ -665,7 +679,7 @@ class CourseEnrollment(models.Model):
                 if not self.start_date:
                     from datetime import date
                     self.start_date = date.today()
-        
+
         self.save()
 
 class CourseSession(models.Model):
@@ -676,160 +690,7 @@ class CourseSession(models.Model):
         ('EXAM', 'Examen'),
         ('PRACTICAL', 'Habilidades'),
     ]
-    
+
     STATUS_CHOICES = [
         ('NOT_SCHEDULED', 'Sin pogramar'),
         ('SCHEDULED', 'Programado'),
-        ('IN_PROGRESS', 'En progrso'),
-        ('COMPLETED', 'Completado'),
-        ('CANCELLED', 'Cancelado'),
-        ('RESCHEDULED', 'Reprogramado'),
-    ]
-    
-    enrollment = models.ForeignKey(
-        CourseEnrollment,
-        on_delete=models.CASCADE,
-        related_name='course_sessions',
-        null=True,
-        blank=True
-    )
-
-    template_course = models.ForeignKey(
-        Course,
-        on_delete=models.CASCADE,
-        related_name='template_sessions',
-        null=True,
-        blank=True,
-        help_text="Curso al que pertenece esta sesión plantilla"
-    )
-
-    dive_schedule = models.ForeignKey(
-        DiveSchedule,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='course_sessions',
-        help_text="Franja de inmersión en la que está programada esta lección"
-    )
-
-    session_number = models.IntegerField(
-        help_text="Número de lección en el curso (1, 2, 3, etc.)"
-    )
-
-    session_type = models.CharField(
-        max_length=20,
-        choices=SESSION_TYPE_CHOICES,
-        default='OPEN_WATER'
-    )
-
-    title = models.CharField(
-        max_length=100,
-        help_text="Título de la lección (p. ej. 'Habilidades en piscina', 'Inmersión de navegación')"
-    )
-
-    description = models.TextField(
-        blank=True
-    )
-
-    skills_covered = models.TextField(
-        blank=True,
-        help_text="Habilidades que se practicarán en esta lección"
-    )
-
-    status = models.CharField(
-        max_length=20,
-        choices=STATUS_CHOICES,
-        default='NOT_SCHEDULED'
-    )
-
-    instructor = models.ForeignKey(
-        Staff,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='course_sessions',
-        help_text="Instructor principal de esta lección específica"
-    )
-
-    assistant_instructors = models.ManyToManyField(
-        Staff,
-        blank=True,
-        related_name='assisting_sessions',
-        help_text="Miembros del personal que ayudan en esta lección"
-    )
-
-    scheduled_date = models.DateField(
-        null=True,
-        blank=True
-    )
-
-    scheduled_time = models.TimeField(
-        null=True,
-        blank=True
-    )
-
-    completion_date = models.DateTimeField(
-        null=True,
-        blank=True
-    )
-
-    grade = models.CharField(
-        max_length=10,
-        blank=True,
-        help_text="Nota o resultado (aprobado/suspenso)"
-    )
-
-    instructor_notes = models.TextField(
-        blank=True
-    )
-
-    student_feedback = models.TextField(
-        blank=True,
-        help_text="Comentarios del estudiante sobre esta lección"
-    )
-
-    created_at = models.DateTimeField(
-        auto_now_add=True
-    )
-
-
-    class Meta:
-        ordering = ['enrollment', 'session_number']
-        unique_together = ['enrollment', 'session_number']
-
-    def __str__(self):
-        return f"{self.enrollment} - Lesson {self.session_number}: {self.title}"
-    
-    def is_dive_session(self):
-        """Check if this session involves diving"""
-        return self.session_type in ['POOL', 'OPEN_WATER']
-    
-    def get_location_name(self):
-        """Get the location name for this session"""
-        if self.dive_schedule and self.dive_schedule.dive_site:
-            return self.dive_schedule.dive_site.name
-        elif self.session_type == 'POOL':
-            return 'Pool'
-        elif self.session_type == 'THEORY':
-            return 'Classroom'
-        return 'Not Scheduled'
-    
-    def is_scheduled(self):
-        """Check if this lesson is scheduled"""
-        return self.dive_schedule is not None and self.status != 'NOT_SCHEDULED'
-    
-    def get_all_staff(self):
-        """Get all staff members involved in this lesson"""
-        staff_list = []
-        if self.instructor:
-            staff_list.append(self.instructor)
-        staff_list.extend(self.assistant_instructors.all())
-        return staff_list
-    
-    def can_be_completed(self):
-        """Check if this lesson can be marked as completed"""
-        return self.status in ['SCHEDULED', 'IN_PROGRESS'] and self.dive_schedule is not None
-
-@receiver(post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
-    instance.userprofile.save()
