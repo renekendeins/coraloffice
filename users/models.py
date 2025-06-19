@@ -1,7 +1,3 @@
-Updated DiveSchedule.get_participant_count to correctly count participants considering group sizes and avoiding double-counting.
-```
-
-```python
 from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
@@ -694,3 +690,156 @@ class CourseSession(models.Model):
     STATUS_CHOICES = [
         ('NOT_SCHEDULED', 'Sin pogramar'),
         ('SCHEDULED', 'Programado'),
+    ('IN_PROGRESS', 'En progrso'),
+    ('COMPLETED', 'Completado'),
+    ('CANCELLED', 'Cancelado'),
+    ('RESCHEDULED', 'Reprogramado'),
+    ]
+
+    enrollment = models.ForeignKey(
+    CourseEnrollment,
+    on_delete=models.CASCADE,
+    related_name='course_sessions',
+    null=True,
+    blank=True
+    )
+
+    template_course = models.ForeignKey(
+    Course,
+    on_delete=models.CASCADE,
+    related_name='template_sessions',
+    null=True,
+    blank=True,
+    help_text="Curso al que pertenece esta sesión plantilla"
+    )
+
+    dive_schedule = models.ForeignKey(
+    DiveSchedule,
+    on_delete=models.SET_NULL,
+    null=True,
+    blank=True,
+    related_name='course_sessions',
+    help_text="Franja de inmersión en la que está programada esta lección"
+    )
+
+    session_number = models.IntegerField(
+    help_text="Número de lección en el curso (1, 2, 3, etc.)"
+    )
+
+    session_type = models.CharField(
+    max_length=20,
+    choices=SESSION_TYPE_CHOICES,
+    default='OPEN_WATER'
+    )
+
+    title = models.CharField(
+    max_length=100,
+    help_text="Título de la lección (p. ej. 'Habilidades en piscina', 'Inmersión de navegación')"
+    )
+
+    description = models.TextField(
+    blank=True
+    )
+
+    skills_covered = models.TextField(
+    blank=True,
+    help_text="Habilidades que se practicarán en esta lección"
+    )
+
+    status = models.CharField(
+    max_length=20,
+    choices=STATUS_CHOICES,
+    default='NOT_SCHEDULED'
+    )
+
+    instructor = models.ForeignKey(
+    Staff,
+    on_delete=models.SET_NULL,
+    null=True,
+    blank=True,
+    related_name='course_sessions',
+    help_text="Instructor principal de esta lección específica"
+    )
+
+    assistant_instructors = models.ManyToManyField(
+    Staff,
+    blank=True,
+    related_name='assisting_sessions',
+    help_text="Miembros del personal que ayudan en esta lección"
+    )
+
+    scheduled_date = models.DateField(
+    null=True,
+    blank=True
+    )
+
+    scheduled_time = models.TimeField(
+    null=True,
+    blank=True
+    )
+
+    completion_date = models.DateTimeField(
+    null=True,
+    blank=True
+    )
+
+    grade = models.CharField(
+    max_length=10,
+    blank=True,
+    help_text="Nota o resultado (aprobado/suspenso)"
+    )
+
+    instructor_notes = models.TextField(
+    blank=True
+    )
+
+    student_feedback = models.TextField(
+    blank=True,
+    help_text="Comentarios del estudiante sobre esta lección"
+    )
+
+    created_at = models.DateTimeField(
+    auto_now_add=True
+    )
+
+
+    class Meta:
+        ordering = ['enrollment', 'session_number']
+        unique_together = ['enrollment', 'session_number']
+    
+    def __str__(self):
+        return f"{self.enrollment} - Lesson {self.session_number}: {self.title}"
+
+    def is_dive_session(self):
+        """Check if this session involves diving"""
+        return self.session_type in ['POOL', 'OPEN_WATER']
+
+    def get_location_name(self):
+        """Get the location name for this session"""
+        if self.dive_schedule and self.dive_schedule.dive_site:
+            return self.dive_schedule.dive_site.name
+        elif self.session_type == 'POOL':
+            return 'Pool'
+        elif self.session_type == 'THEORY':
+            return 'Classroom'
+        return 'Not Scheduled'
+
+    def is_scheduled(self):
+        """Check if this lesson is scheduled"""
+        return self.dive_schedule is not None and self.status != 'NOT_SCHEDULED'
+    
+    def get_all_staff(self):
+        """Get all staff members involved in this lesson"""
+        staff_list = []
+        if self.instructor:
+            staff_list.append(self.instructor)
+        staff_list.extend(self.assistant_instructors.all())
+        return staff_list
+
+    def can_be_completed(self):
+        """Check if this lesson can be marked as completed"""
+        return self.status in ['SCHEDULED', 'IN_PROGRESS'] and self.dive_schedule is not None
+
+    @receiver(post_save, sender=User)
+    def save_user_profile(sender, instance, **kwargs):
+        instance.userprofile.save()

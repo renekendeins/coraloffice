@@ -247,8 +247,22 @@ class DivingGroupForm(forms.ModelForm):
     email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control'}))
     phone = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
     description = forms.CharField(widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3}), required=False)
-    arrival_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}))
-    departure_date = forms.DateField(widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}))
+
+
+    
+    arrival_date = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+        input_formats=['%Y-%m-%d'],
+        required=True
+    )
+    departure_date = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+        input_formats=['%Y-%m-%d'],
+        required=True
+    )
+
+
+    
     group_size = forms.IntegerField(
         widget=forms.NumberInput(attrs={'class': 'form-control', 'min': '1', 'max': '50'}),
         help_text='Número de personas en este grupo'
@@ -260,6 +274,17 @@ class DivingGroupForm(forms.ModelForm):
             'name', 'country', 'contact_person', 'email',
             'phone', 'description', 'arrival_date', 'departure_date', 'group_size'
         )
+
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        arrival_date = self.initial.get('arrival_date') or self.instance.arrival_date
+        if arrival_date:
+            self.initial['arrival_date'] = arrival_date.strftime('%Y-%m-%d')
+
+        departure_date = self.initial.get('departure_date') or self.instance.departure_date
+        if departure_date:
+            self.initial['departure_date'] = departure_date.strftime('%Y-%m-%d')
 
 class QuickCustomerForm(forms.ModelForm):
     """Simplified form for quickly adding customers in group management"""
