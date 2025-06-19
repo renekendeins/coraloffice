@@ -1510,7 +1510,7 @@ def quick_edit_customer(request, customer_id):
 
             foot_size = request.POST.get('foot_size')
             if foot_size:
-                customer.foot_size = float(foot_size)(foot_size)
+                customer.foot_size = float(foot_size)
 
             customer.save()
 

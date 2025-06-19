@@ -1,0 +1,261 @@
+
+{% extends 'users/base.html' %}
+
+{% block users_title %}Enroll Multiple Customers - CoralOffice{% endblock %}
+
+{% block users_content %}
+<div class="p-3">
+    <h2>Inscripciones múltiples</h2>
+
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'users:course_enrollments' %}" class="btn btn-secondary">← Volver a inscripciones</a>
+    </div>
+
+    <form method="post" class="enrollment-form">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="{{ form.course.id_for_label }}">Curso / Actividad:</label>
+            {{ form.course }}
+            <small class="help-text">Selecciona el curso o actividad para inscribir a múltiples clientes</small>
+        </div>
+
+        <div class="form-group">
+            <label>Clientes a inscribir:</label>
+            <div class="customer-search-container">
+                <input type="text" id="customer-search" placeholder="Buscar clientes..." class="form-control" style="margin-bottom: 10px;">
+                <div class="customer-selection-grid">
+                    {% for customer in form.customers.field.queryset %}
+                    <div class="customer-item" data-name="{{ customer.first_name }} {{ customer.last_name }}" data-country="{{ customer.get_country_display }}" data-certification="{{ customer.get_certification_level_display }}">
+                        <label class="customer-checkbox-label">
+                            <input type="checkbox" name="customers" value="{{ customer.id }}" class="customer-checkbox">
+                            <div class="customer-info">
+                                <strong>{{ customer.first_name }} {{ customer.last_name }}</strong>
+                                <small>{{ customer.get_country_display }} • {{ customer.get_certification_level_display }}</small>
+                            </div>
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="selection-summary">
+                <span id="selected-count">0</span> clientes seleccionados
+                <button type="button" id="select-all" class="btn btn-sm btn-outline-primary">Seleccionar todos</button>
+                <button type="button" id="deselect-all" class="btn btn-sm btn-outline-secondary">Deseleccionar todos</button>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.primary_instructor.id_for_label }}">Instructor principal:</label>
+            {{ form.primary_instructor }}
+            <small class="help-text">Instructor principal para todos los cursos (opcional)</small>
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.start_date.id_for_label }}">Fecha de inicio:</label>
+            {{ form.start_date }}
+            <small class="help-text">Fecha de inicio del curso (opcional)</small>
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.price_paid.id_for_label }}">Precio pagado por cliente:</label>
+            {{ form.price_paid }}
+        </div>
+
+        <div class="form-group">
+            <label>
+                {{ form.is_paid }} Pago completado para todos
+            </label>
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.notes.id_for_label }}">Notas:</label>
+            {{ form.notes }}
+            <small class="help-text">Notas que se aplicarán a todas las inscripciones</small>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-success" id="submit-btn" disabled>
+                Inscribir clientes seleccionados
+            </button>
+            <a href="{% url 'users:course_enrollments' %}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+<style>
+.enrollment-form .form-group {
+    margin-bottom: 20px;
+}
+
+.enrollment-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.enrollment-form input,
+.enrollment-form select,
+.enrollment-form textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.enrollment-form input[type="checkbox"] {
+    width: auto;
+    margin-right: 10px;
+}
+
+.help-text {
+    color: #666;
+    font-size: 12px;
+    margin-top: 5px;
+    display: block;
+}
+
+.customer-selection-grid {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 10px;
+    background: #f9f9f9;
+}
+
+.customer-item {
+    margin-bottom: 8px;
+    display: block;
+}
+
+.customer-item.hidden {
+    display: none;
+}
+
+.customer-checkbox-label {
+    display: flex;
+    align-items: center;
+    padding: 8px;
+    background: white;
+    border: 1px solid #e0e0e0;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.customer-checkbox-label:hover {
+    background-color: #f5f5f5;
+}
+
+.customer-checkbox-label input[type="checkbox"]:checked + .customer-info {
+    color: #007bff;
+    font-weight: bold;
+}
+
+.customer-info {
+    flex: 1;
+}
+
+.customer-info strong {
+    display: block;
+}
+
+.customer-info small {
+    color: #666;
+    font-size: 11px;
+}
+
+.selection-summary {
+    margin-top: 10px;
+    padding: 10px;
+    background: #e9ecef;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.form-actions {
+    margin-top: 30px;
+}
+
+.form-actions .btn {
+    display: inline-block;
+    padding: 10px 20px;
+    margin-right: 10px;
+    color: white;
+    text-decoration: none;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn:disabled {
+    background-color: #6c757d !important;
+    cursor: not-allowed;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const customerSearch = document.getElementById('customer-search');
+    const customerItems = document.querySelectorAll('.customer-item');
+    const selectedCountSpan = document.getElementById('selected-count');
+    const submitBtn = document.getElementById('submit-btn');
+    const selectAllBtn = document.getElementById('select-all');
+    const deselectAllBtn = document.getElementById('deselect-all');
+
+    // Search functionality
+    customerSearch.addEventListener('input', function() {
+        const query = this.value.toLowerCase();
+        
+        customerItems.forEach(item => {
+            const name = item.dataset.name.toLowerCase();
+            const country = item.dataset.country.toLowerCase();
+            const certification = item.dataset.certification.toLowerCase();
+            
+            if (name.includes(query) || country.includes(query) || certification.includes(query)) {
+                item.classList.remove('hidden');
+            } else {
+                item.classList.add('hidden');
+            }
+        });
+    });
+
+    // Update selected count and submit button state
+    function updateSelection() {
+        const selectedCheckboxes = document.querySelectorAll('.customer-checkbox:checked');
+        const count = selectedCheckboxes.length;
+        
+        selectedCountSpan.textContent = count;
+        submitBtn.disabled = count === 0;
+    }
+
+    // Add event listeners to all checkboxes
+    document.querySelectorAll('.customer-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', updateSelection);
+    });
+
+    // Select all functionality
+    selectAllBtn.addEventListener('click', function() {
+        const visibleCheckboxes = document.querySelectorAll('.customer-item:not(.hidden) .customer-checkbox');
+        visibleCheckboxes.forEach(checkbox => {
+            checkbox.checked = true;
+        });
+        updateSelection();
+    });
+
+    // Deselect all functionality
+    deselectAllBtn.addEventListener('click', function() {
+        document.querySelectorAll('.customer-checkbox').forEach(checkbox => {
+            checkbox.checked = false;
+        });
+        updateSelection();
+    });
+
+    // Initial update
+    updateSelection();
+});
+</script>
+{% endblock %}

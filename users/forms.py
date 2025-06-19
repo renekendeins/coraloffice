@@ -650,25 +650,50 @@ class MultipleCustomerEnrollmentForm(forms.Form):
         help_text='Selecciona los clientes para inscribir'
     )
 
-    # primary_instructor = forms.ModelChoiceField(
-    #     queryset=Staff.objects.none(),
-    #     required=False,
-    #     widget=forms.Select(attrs={'class': 'form-control'}),
-    #     label='Instructor Principal',
-    #     help_text='Instructor principal para este curso (opcional)'
-    # )
+    primary_instructor = forms.ModelChoiceField(
+        queryset=Staff.objects.none(),
+        required=False,
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        label='Instructor Principal',
+        help_text='Instructor principal para este curso (opcional)'
+    )
 
-    # start_date = forms.DateField(
-    #     widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-    #     required=False,
-    #     label='Fecha de Inicio',
-    #     help_text='Fecha de inicio del curso (opcional)'
-    # )
+    start_date = forms.DateField(
+        widget=forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+        required=False,
+        label='Fecha de Inicio',
+        help_text='Fecha de inicio del curso (opcional)'
+    )
 
-    # price_paid = forms.DecimalField(
-    #     widget=forms.NumberInput(attrs={'step': '0.01', 'class': 'form-control'}),
-    #     required=False,
-    #     label='Precio Pagado',
+    price_paid = forms.DecimalField(
+        widget=forms.NumberInput(attrs={'step': '0.01', 'class': 'form-control'}),
+        required=False,
+        label='Precio Pagado',
+        initial=0.00
+    )
+
+    is_paid = forms.BooleanField(
+        required=False,
+        widget=forms.CheckboxInput(attrs={'class': 'form-check-input'}),
+        label='Pago completado'
+    )
+
+    notes = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
+        required=False,
+        label='Notas',
+        help_text='Notas adicionales para las inscripciones'
+    )
+
+    def __init__(self, diving_center=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if diving_center:
+            self.fields['course'].queryset = Course.objects.filter(diving_center=diving_center, is_active=True)
+            self.fields['customers'].queryset = Customer.objects.filter(diving_center=diving_center)
+            self.fields['primary_instructor'].queryset = Staff.objects.filter(
+                diving_center=diving_center, 
+                certification_level__in=['INSTRUCTOR', 'SENIOR_INSTRUCTOR', 'MASTER_INSTRUCTOR']
+            )
     #     help_text='Precio pagado por cada cliente (opcional)'
     # )
 

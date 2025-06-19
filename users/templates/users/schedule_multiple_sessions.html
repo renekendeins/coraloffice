@@ -1,0 +1,336 @@
+
+{% extends 'users/base.html' %}
+
+{% block users_title %}Schedule Multiple Sessions - CoralOffice{% endblock %}
+
+{% block users_content %}
+<div class="p-3">
+    <h2>Programar sesiones múltiples</h2>
+
+    <div style="margin-bottom: 20px;">
+        <a href="{% url 'users:course_enrollments' %}" class="btn btn-secondary">← Volver a inscripciones</a>
+    </div>
+
+    <div class="alert alert-info">
+        <h4>¿Cómo funciona?</h4>
+        <p>Esta herramienta te permite programar múltiples sesiones de curso para una inmersión específica. Selecciona un curso y número de sesión, luego elige una inmersión programada y las sesiones pendientes se asignarán automáticamente.</p>
+    </div>
+
+    <form method="post" class="scheduling-form" id="scheduling-form">
+        {% csrf_token %}
+
+        <div class="form-row">
+            <div class="form-group col-md-6">
+                <label for="{{ form.course.id_for_label }}">Curso:</label>
+                {{ form.course }}
+                <small class="help-text">Selecciona el curso para ver las sesiones pendientes</small>
+            </div>
+
+            <div class="form-group col-md-6">
+                <label for="{{ form.session_number.id_for_label }}">Número de sesión:</label>
+                {{ form.session_number }}
+                <small class="help-text">Filtra por número de sesión específico (opcional)</small>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.dive_schedule.id_for_label }}">Inmersión programada:</label>
+            {{ form.dive_schedule }}
+            <small class="help-text">Selecciona la inmersión donde se realizarán las sesiones</small>
+        </div>
+
+        <div class="form-group">
+            <label for="{{ form.instructor.id_for_label }}">Instructor:</label>
+            {{ form.instructor }}
+            <small class="help-text">Instructor que dirigirá las sesiones (opcional)</small>
+        </div>
+
+        <!-- Pending Sessions Section -->
+        <div class="pending-sessions-section" id="pending-sessions-section" style="display: none;">
+            <h3>Sesiones pendientes</h3>
+            <div class="alert alert-warning">
+                <p><strong>Nota:</strong> Las siguientes sesiones serán programadas para la inmersión seleccionada.</p>
+            </div>
+            
+            <div id="pending-sessions-list" class="sessions-grid">
+                <!-- Sessions will be loaded here via AJAX -->
+            </div>
+
+            <div class="session-summary">
+                <p><strong>Total sesiones a programar:</strong> <span id="total-sessions">0</span></p>
+            </div>
+        </div>
+
+        <!-- Hidden field to store selected sessions -->
+        {{ form.sessions }}
+
+        <div class="form-actions">
+            <button type="submit" class="btn btn-success" id="submit-btn" disabled>
+                Programar sesiones seleccionadas
+            </button>
+            <a href="{% url 'users:course_enrollments' %}" class="btn btn-secondary">Cancelar</a>
+        </div>
+    </form>
+</div>
+
+<style>
+.scheduling-form .form-group {
+    margin-bottom: 20px;
+}
+
+.scheduling-form label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.scheduling-form input,
+.scheduling-form select,
+.scheduling-form textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.form-row {
+    display: flex;
+    gap: 20px;
+}
+
+.form-row .form-group {
+    flex: 1;
+}
+
+.help-text {
+    color: #666;
+    font-size: 12px;
+    margin-top: 5px;
+    display: block;
+}
+
+.pending-sessions-section {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+    border: 1px solid #dee2e6;
+}
+
+.sessions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.session-card {
+    background: white;
+    border: 1px solid #dee2e6;
+    border-radius: 6px;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.session-card:hover {
+    border-color: #007bff;
+    box-shadow: 0 2px 5px rgba(0,123,255,0.1);
+}
+
+.session-card.selected {
+    background-color: #e3f2fd;
+    border-color: #007bff;
+}
+
+.session-card h4 {
+    margin: 0 0 8px 0;
+    color: #007bff;
+    font-size: 16px;
+}
+
+.session-card .session-info {
+    margin-bottom: 8px;
+}
+
+.session-card .customer-name {
+    font-weight: bold;
+    color: #495057;
+}
+
+.session-card .session-details {
+    font-size: 13px;
+    color: #666;
+}
+
+.session-summary {
+    background: #e8f5e8;
+    padding: 15px;
+    border-radius: 4px;
+    margin-top: 20px;
+}
+
+.form-actions {
+    margin-top: 30px;
+}
+
+.form-actions .btn {
+    display: inline-block;
+    padding: 10px 20px;
+    margin-right: 10px;
+    color: white;
+    text-decoration: none;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn:disabled {
+    background-color: #6c757d !important;
+    cursor: not-allowed;
+}
+
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.alert-info {
+    color: #0c5460;
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+}
+
+.alert-warning {
+    color: #856404;
+    background-color: #fff3cd;
+    border-color: #ffeaa7;
+}
+
+@media (max-width: 768px) {
+    .form-row {
+        flex-direction: column;
+        gap: 0;
+    }
+    
+    .sessions-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const courseSelect = document.getElementById('{{ form.course.id_for_label }}');
+    const sessionNumberSelect = document.getElementById('{{ form.session_number.id_for_label }}');
+    const pendingSectionsSection = document.getElementById('pending-sessions-section');
+    const pendingSessionsList = document.getElementById('pending-sessions-list');
+    const totalSessionsSpan = document.getElementById('total-sessions');
+    const submitBtn = document.getElementById('submit-btn');
+    const sessionsInput = document.getElementById('{{ form.sessions.id_for_label }}');
+
+    let selectedSessions = [];
+
+    // Load pending sessions when course or session number changes
+    function loadPendingSessions() {
+        const courseId = courseSelect.value;
+        const sessionNumber = sessionNumberSelect.value;
+
+        if (!courseId) {
+            pendingSectionsSection.style.display = 'none';
+            return;
+        }
+
+        // Build URL for AJAX request
+        let url = `/users/ajax/get-pending-sessions/?course_id=${courseId}`;
+        if (sessionNumber) {
+            url += `&session_number=${sessionNumber}`;
+        }
+
+        fetch(url, {
+            method: 'GET',
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.sessions && data.sessions.length > 0) {
+                displayPendingSessions(data.sessions);
+                pendingSectionsSection.style.display = 'block';
+            } else {
+                pendingSectionsSection.style.display = 'none';
+                alert('No hay sesiones pendientes para este curso y número de sesión.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('Error al cargar las sesiones pendientes');
+        });
+    }
+
+    function displayPendingSessions(sessions) {
+        pendingSessionsList.innerHTML = sessions.map(session => `
+            <div class="session-card" data-session-id="${session.id}">
+                <h4>Sesión ${session.session_number}: ${session.title}</h4>
+                <div class="session-info">
+                    <div class="customer-name">${session.customer_name}</div>
+                    <div class="session-details">ID Inscripción: ${session.enrollment_id}</div>
+                </div>
+                <input type="checkbox" class="session-checkbox" value="${session.id}" style="display: none;">
+            </div>
+        `).join('');
+
+        // Add click handlers to session cards
+        document.querySelectorAll('.session-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const checkbox = this.querySelector('.session-checkbox');
+                const sessionId = this.dataset.sessionId;
+                
+                if (this.classList.contains('selected')) {
+                    this.classList.remove('selected');
+                    checkbox.checked = false;
+                    selectedSessions = selectedSessions.filter(id => id !== sessionId);
+                } else {
+                    this.classList.add('selected');
+                    checkbox.checked = true;
+                    selectedSessions.push(sessionId);
+                }
+                
+                updateSelection();
+            });
+        });
+
+        // Select all sessions by default
+        document.querySelectorAll('.session-card').forEach(card => {
+            card.click();
+        });
+    }
+
+    function updateSelection() {
+        totalSessionsSpan.textContent = selectedSessions.length;
+        submitBtn.disabled = selectedSessions.length === 0;
+        
+        // Update the hidden sessions input
+        sessionsInput.value = selectedSessions.join(',');
+    }
+
+    // Event listeners
+    courseSelect.addEventListener('change', loadPendingSessions);
+    sessionNumberSelect.addEventListener('change', loadPendingSessions);
+
+    // Hide the original sessions select field since we're using the custom interface
+    sessionsInput.style.display = 'none';
+    if (sessionsInput.parentElement.querySelector('label')) {
+        sessionsInput.parentElement.style.display = 'none';
+    }
+
+    // Initial load if course is pre-selected
+    if (courseSelect.value) {
+        loadPendingSessions();
+    }
+});
+</script>
+{% endblock %}
