@@ -12,17 +12,15 @@
     <section style="margin-top: 40px; margin-bottom: 30px; padding: 1rem; background-color: #ffffff; border-radius: 15px;box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);">
         <h3 style="color: #333; border-bottom: 2px solid #ddd; padding-bottom: 10px;">🏊‍♂️ Salidas de hoy y mañana</h3>
         {% if upcoming_dives %}
-            <div class="mt-4">
+            <div class="mt-4" id="dive-list">
                 {% for dive in upcoming_dives %}
-                <div style="border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; {% if dive.has_special_notes %}border-left: 5px solid #ff5722;{% endif %}" class="d-flex flex-column flex-md-row align-items-start align-items-md-center">
+                <div class="dive-item {% if forloop.counter > 2 %}dive-hidden{% endif %}" style="border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; {% if dive.has_special_notes %}border-left: 5px solid #ff5722;{% endif %} flex-direction: column; flex-direction: row;">
                     <div style="flex: 1;">
                         {% if dive.has_special_notes %}
                             <span style="color: #ff5722; font-size: 18px; margin-right: 10px;" title="Special notes available">⚠️</span>
                         {% endif %}
-                        <strong>{{ dive.dive_site }}</strong>
-                        <br>
-                        <small style="color: #666;">{{ dive.date|date:"l, F j, Y" }} a las {{ dive.time|time:"H:i" }}</small>
-                        <br>
+                        <strong>{{ dive.dive_site }}</strong><br>
+                        <small style="color: #666;">{{ dive.date|date:"l, F j, Y" }} a las {{ dive.time|time:"H:i" }}</small><br>
                         <small style="color: #666;">{{ dive.get_participant_count }}/{{ dive.max_participants }} participantes</small>
                         {% if dive.special_notes %}
                             <br>
@@ -36,10 +34,39 @@
                 </div>
                 {% endfor %}
             </div>
+            {% if upcoming_dives|length > 2 %}
+            <div style="text-align: center; margin-top: 10px;">
+                <button id="toggle-button" class="btn btn-secondary" style="background-color: #eee; color: #333; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer;">
+                    Mostrar todo
+                </button>
+            </div>
+            {% endif %}
         {% else %}
             <p style="color: #666; margin-top: 20px;">No hay inmersiones para hoy o mañana.</p>
         {% endif %}
     </section>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const toggleBtn = document.getElementById("toggle-button");
+            const hiddenItems = document.querySelectorAll(".dive-hidden");
+            let expanded = false;
+
+            if (toggleBtn) {
+                toggleBtn.addEventListener("click", function () {
+                    expanded = !expanded;
+                    hiddenItems.forEach(item => {
+                        item.style.display = expanded ? "flex" : "none";
+                    });
+                    toggleBtn.textContent = expanded ? "Ocultar" : "Mostrar todo";
+                });
+
+                // Ocultar al inicio
+                hiddenItems.forEach(item => item.style.display = "none");
+            }
+        });
+    </script>
+
     <h2 class="mb-4 mt-5">Gestión diaria</h2>
     <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-bottom: 40px;">
         <!-- Calendar & Scheduling -->
