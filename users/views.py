@@ -541,16 +541,13 @@ def manage_dive_participants(request, dive_id):
                         messages.error(request, f'No hay suficientes plazas disponibles. El grupo necesita {selected_group.group_size} plazas pero solo hay {dive.get_available_spots()} disponibles.')
                         return redirect('users:manage_dive_participants', dive_id=dive.id)
                     
-                    # Add group members up to the group size
+                    # Add group members and reserve spots based on group_size
                     group_members = DivingGroupMember.objects.filter(group=selected_group)
                     added_count = 0
                     emails_sent = 0
-                    members_added = 0
                     
-                    # First, add actual group members
+                    # Add actual group members first
                     for member in group_members:
-                        if members_added >= selected_group.group_size:
-                            break
                         # Check if member not already participating
                         if not CustomerDiveActivity.objects.filter(dive_schedule=dive, customer=member.customer).exists():
                             # Use customer's default tank size or form value
@@ -579,18 +576,50 @@ def manage_dive_participants(request, dive_id):
                                 needs_insurance=form.cleaned_data['needs_insurance'],
                             )
                             added_count += 1
-                            members_added += 1
                             
                             # Send reminder email
                             if send_dive_reminder_email(member.customer, dive, course):
                                 emails_sent += 1
                     
-                    # If the group doesn't have enough actual members, reserve the remaining spots
-                    remaining_spots = selected_group.group_size - members_added
-                    if remaining_spots > 0:
-                        messages.info(request, f'Grupo {selected_group.name} tiene {selected_group.group_size} personas esperadas pero solo {members_added} miembros añadidos. Se han reservado {selected_group.group_size} plazas en total.')
+                    # Create placeholder entries for remaining spots to match group_size
+                    remaining_spots_needed = selected_group.group_size - added_count
                     
-                    success_msg = f'Añadido grupo {selected_group.name} a la inmersión! {added_count} miembros añadidos, {selected_group.group_size} plazas reservadas.'
+                    # Create a temporary placeholder customer for the group if needed
+                    if remaining_spots_needed > 0:
+                        # Create or get a placeholder customer for this group
+                        placeholder_customer, created = Customer.objects.get_or_create(
+                            diving_center=request.user,
+                            first_name=f"GRUPO-{selected_group.name}",
+                            last_name="PLACEHOLDER",
+                            defaults={
+                                'email': f"placeholder-{selected_group.id}@grupo.temp",
+                                'phone_number': "000000000",
+                                'country': selected_group.country,
+                                'language': 'ES',
+                                'certification_level': 'NONE',
+                                'default_tank_size': form.cleaned_data['tank_size']
+                            }
+                        )
+                        
+                        # Create entries for remaining spots
+                        for i in range(remaining_spots_needed):
+                            # Check if placeholder not already participating
+                            if not CustomerDiveActivity.objects.filter(dive_schedule=dive, customer=placeholder_customer).exists():
+                                CustomerDiveActivity.objects.create(
+                                    customer=placeholder_customer,
+                                    dive_schedule=dive,
+                                    course=course,
+                                    tank_size=form.cleaned_data['tank_size'],
+                                    needs_wetsuit=form.cleaned_data['needs_wetsuit'],
+                                    needs_bcd=form.cleaned_data['needs_bcd'],
+                                    needs_regulator=form.cleaned_data['needs_regulator'],
+                                    needs_guide=form.cleaned_data['needs_guide'],
+                                    needs_insurance=form.cleaned_data['needs_insurance'],
+                                    status='PENDING'
+                                )
+                                break  # Only create one placeholder entry per group per dive
+                    
+                    success_msg = f'Añadido grupo {selected_group.name} a la inmersión! {added_count} miembros añadidos, {selected_group.group_size} plazas reservadas en total.'
                     if emails_sent > 0:
                         success_msg += f' {emails_sent} emails de recordatorio enviados.'
                     messages.success(request, success_msg)
@@ -1111,12 +1140,9 @@ def manage_group_members(request, group_id):
                         skipped_dives.append(f"{dive.dive_site.name} ({dive.date} {dive.time}) - Solo {dive.get_available_spots()} plazas disponibles, pero el grupo necesita {group.group_size}")
                         continue
 
-                    # Add group members to this dive (up to the group size)
+                    # Add actual group members first
                     members_added = 0
                     for member in members:
-                        if members_added >= group.group_size:
-                            break
-                            
                         # Check if member not already in this dive
                         if not CustomerDiveActivity.objects.filter(
                             dive_schedule=dive, 
@@ -1153,9 +1179,42 @@ def manage_group_members(request, group_id):
                             # if send_dive_reminder_email(member.customer, dive, course):
                             #     emails_sent += 1
 
-                    # Reserve spots for the group even if no members are added yet
-                    if members_added == 0 and members.count() == 0:
-                        messages.info(request, f'Reservadas {group.group_size} plazas para el grupo {group.name} en {dive.dive_site.name} ({dive.date} {dive.time}). Añade miembros al grupo para completar la reserva.')
+                    # Create placeholder entries for remaining spots to match group_size
+                    remaining_spots_needed = group.group_size - members_added
+                    
+                    if remaining_spots_needed > 0:
+                        # Create or get a placeholder customer for this group
+                        placeholder_customer, created = Customer.objects.get_or_create(
+                            diving_center=request.user,
+                            first_name=f"GRUPO-{group.name}",
+                            last_name="PLACEHOLDER",
+                            defaults={
+                                'email': f"placeholder-{group.id}@grupo.temp",
+                                'phone_number': "000000000",
+                                'country': group.country,
+                                'language': 'ES',
+                                'certification_level': 'NONE',
+                                'default_tank_size': '12L'
+                            }
+                        )
+                        
+                        # Check if placeholder not already in this dive
+                        if not CustomerDiveActivity.objects.filter(
+                            dive_schedule=dive, 
+                            customer=placeholder_customer
+                        ).exists():
+                            CustomerDiveActivity.objects.create(
+                                customer=placeholder_customer,
+                                dive_schedule=dive,
+                                course=course,
+                                tank_size='12L',
+                                needs_wetsuit=final_needs_wetsuit,
+                                needs_bcd=final_needs_bcd,
+                                needs_regulator=final_needs_regulator,
+                                needs_guide=needs_guide,
+                                needs_insurance=needs_insurance,
+                                status='PENDING'
+                            )
 
                 success_msg = f'Programado {group.name} para {len(dive_ids) - len(skipped_dives)} inmersión(es)! Añadidos {scheduled_count} espacios, reservadas {group.group_size * (len(dive_ids) - len(skipped_dives))} plazas en total.'
                 # if emails_sent > 0:
