@@ -540,30 +540,58 @@ def manage_dive_participants(request, dive_id):
                     if not dive.can_accommodate_group(selected_group.group_size):
                         messages.error(request, f'No hay suficientes plazas disponibles. El grupo necesita {selected_group.group_size} plazas pero solo hay {dive.get_available_spots()} disponibles.')
                         return redirect('users:manage_dive_participants', dive_id=dive.id)
-                    
-                    # Add group members and reserve spots based on group_size
-                    group_members = DivingGroupMember.objects.filter(group=selected_group)
-                    added_count = 0
-                    emails_sent = 0
-                    
-                    # Add actual group members first
+
+                    # Create or get a placeholder customer for this group
+                    placeholder_customer, created = Customer.objects.get_or_create(
+                        diving_center=request.user,
+                        first_name=f"GRUPO-{selected_group.name}",
+                        last_name="PLACEHOLDER",
+                        defaults={
+                            'email': f"placeholder-{selected_group.id}@grupo.temp",
+                            'phone_number': "000000000",
+                            'country': selected_group.country,
+                            'language': 'ES',
+                            'certification_level': 'NONE',
+                            'default_tank_size': form.cleaned_data['tank_size']
+                        }
+                    )
+
+                    # Check if placeholder not already participating
+                    if not CustomerDiveActivity.objects.filter(dive_schedule=dive, customer=placeholder_customer).exists():
+                        # Create ONE placeholder entry that represents the entire group
+                        course = form.cleaned_data['course']
+
+                        # Auto-set equipment needs if course includes material
+                        needs_wetsuit = form.cleaned_data['needs_wetsuit']
+                        needs_bcd = form.cleaned_data['needs_bcd']
+                        needs_regulator = form.cleaned_data['needs_regulator']
+
+                        if course and course.includes_material:
+                            needs_wetsuit = True
+                            needs_bcd = True
+                            needs_regulator = True
+
+                        CustomerDiveActivity.objects.create(
+                            customer=placeholder_customer,
+                            dive_schedule=dive,
+                            course=course,
+                            tank_size=form.cleaned_data['tank_size'],
+                            needs_wetsuit=needs_wetsuit,
+                            needs_bcd=needs_bcd,
+                            needs_regulator=needs_regulator,
+                            needs_guide=form.cleaned_data['needs_guide'],
+                            needs_insurance=form.cleaned_data['needs_insurance'],
+                            status='PENDING'
+                        )
+                        added_count += 1
+
+                    # Add individual group members for reference (but they won't count as extra spots)
                     for member in group_members:
                         # Check if member not already participating
                         if not CustomerDiveActivity.objects.filter(dive_schedule=dive, customer=member.customer).exists():
                             # Use customer's default tank size or form value
                             tank_size = member.customer.default_tank_size or form.cleaned_data['tank_size']
-                            
-                            # Auto-set equipment needs if course includes material
-                            course = form.cleaned_data['course']
-                            needs_wetsuit = form.cleaned_data['needs_wetsuit']
-                            needs_bcd = form.cleaned_data['needs_bcd']
-                            needs_regulator = form.cleaned_data['needs_regulator']
-                            
-                            if course and course.includes_material:
-                                needs_wetsuit = True
-                                needs_bcd = True
-                                needs_regulator = True
-                            
+
                             CustomerDiveActivity.objects.create(
                                 customer=member.customer,
                                 dive_schedule=dive,
@@ -575,50 +603,11 @@ def manage_dive_participants(request, dive_id):
                                 needs_guide=form.cleaned_data['needs_guide'],
                                 needs_insurance=form.cleaned_data['needs_insurance'],
                             )
-                            added_count += 1
-                            
+
                             # Send reminder email
                             if send_dive_reminder_email(member.customer, dive, course):
                                 emails_sent += 1
-                    
-                    # Create placeholder entries for remaining spots to match group_size
-                    remaining_spots_needed = selected_group.group_size - added_count
-                    
-                    # Create a temporary placeholder customer for the group if needed
-                    if remaining_spots_needed > 0:
-                        # Create or get a placeholder customer for this group
-                        placeholder_customer, created = Customer.objects.get_or_create(
-                            diving_center=request.user,
-                            first_name=f"GRUPO-{selected_group.name}",
-                            last_name="PLACEHOLDER",
-                            defaults={
-                                'email': f"placeholder-{selected_group.id}@grupo.temp",
-                                'phone_number': "000000000",
-                                'country': selected_group.country,
-                                'language': 'ES',
-                                'certification_level': 'NONE',
-                                'default_tank_size': form.cleaned_data['tank_size']
-                            }
-                        )
-                        
-                        # Create entries for remaining spots
-                        for i in range(remaining_spots_needed):
-                            # Check if placeholder not already participating
-                            if not CustomerDiveActivity.objects.filter(dive_schedule=dive, customer=placeholder_customer).exists():
-                                CustomerDiveActivity.objects.create(
-                                    customer=placeholder_customer,
-                                    dive_schedule=dive,
-                                    course=course,
-                                    tank_size=form.cleaned_data['tank_size'],
-                                    needs_wetsuit=form.cleaned_data['needs_wetsuit'],
-                                    needs_bcd=form.cleaned_data['needs_bcd'],
-                                    needs_regulator=form.cleaned_data['needs_regulator'],
-                                    needs_guide=form.cleaned_data['needs_guide'],
-                                    needs_insurance=form.cleaned_data['needs_insurance'],
-                                    status='PENDING'
-                                )
-                                break  # Only create one placeholder entry per group per dive
-                    
+
                     success_msg = f'Añadido grupo {selected_group.name} a la inmersión! {added_count} miembros añadidos, {selected_group.group_size} plazas reservadas en total.'
                     if emails_sent > 0:
                         success_msg += f' {emails_sent} emails de recordatorio enviados.'
@@ -630,15 +619,15 @@ def manage_dive_participants(request, dive_id):
                     # Use customer's default tank size if not specified
                     if not participant.tank_size and participant.customer.default_tank_size:
                         participant.tank_size = participant.customer.default_tank_size
-                    
+
                     # Auto-set equipment needs if course includes material
                     if participant.course and participant.course.includes_material:
                         participant.needs_wetsuit = True
                         participant.needs_bcd = True
                         participant.needs_regulator = True
-                    
+
                     participant.save()
-                    
+
                     # Send reminder email
                     email_sent = send_dive_reminder_email(participant.customer, dive, participant.course)
                     if email_sent:
@@ -705,7 +694,7 @@ def dive_detail(request, dive_id):
                              id=dive_id,
                              diving_center=request.user)
     participants = CustomerDiveActivity.objects.filter(dive_schedule=dive)
-    
+
     # Calculate actual participant count considering group sizes
     actual_participant_count = dive.get_participant_count()
 
@@ -970,9 +959,9 @@ def diving_groups_list(request):
 
     from datetime import date, timedelta
     from django.db.models import Q
-    
+
     groups = DivingGroup.objects.filter(diving_center=request.user)
-    
+
     # Search functionality
     search_query = request.GET.get('search', '').strip()
     if search_query:
@@ -982,16 +971,16 @@ def diving_groups_list(request):
             Q(email__icontains=search_query) |
             Q(description__icontains=search_query)
         )
-    
+
     # Country filter
     country_filter = request.GET.get('country', '').strip()
     if country_filter:
         groups = groups.filter(country=country_filter)
-    
+
     # Date filters
     date_filter = request.GET.get('date_filter', '').strip()
     today = date.today()
-    
+
     if date_filter == 'arriving_soon':
         # Groups arriving in the next 7 days
         next_week = today + timedelta(days=7)
@@ -1015,28 +1004,28 @@ def diving_groups_list(request):
     elif date_filter == 'past_groups':
         # Groups that have already departed
         groups = groups.filter(departure_date__lt=today)
-    
+
     # Sorting
     sort_by = request.GET.get('sort_by', '-created_at')
     valid_sort_fields = [
         'name', '-name', 'created_at', '-created_at', 
         'arrival_date', '-arrival_date', 'country', '-country'
     ]
-    
+
     if sort_by in valid_sort_fields:
         groups = groups.order_by(sort_by)
     else:
         groups = groups.order_by('-created_at')
-    
+
     # Get country choices for the filter dropdown
     country_choices = Customer.COUNTRY_CHOICES
-    
+
     context = {
         'groups': groups,
         'country_choices': country_choices,
         'search_query': search_query,
     }
-    
+
     return render(request, 'users/diving_groups_list.html', context)
 
 
@@ -1143,7 +1132,40 @@ def manage_group_members(request, group_id):
                         skipped_dives.append(f"{dive.dive_site.name} ({dive.date} {dive.time}) - Solo {dive.get_available_spots()} plazas disponibles, pero el grupo necesita {group.group_size}")
                         continue
 
-                    # Add actual group members first
+                    # Create or get a placeholder customer for this group
+                    placeholder_customer, created = Customer.objects.get_or_create(
+                        diving_center=request.user,
+                        first_name=f"GRUPO-{group.name}",
+                        last_name="PLACEHOLDER",
+                        defaults={
+                            'email': f"placeholder-{group.id}@grupo.temp",
+                            'phone_number': "000000000",
+                            'country': group.country,
+                            'language': 'ES',
+                            'certification_level': 'NONE',
+                            'default_tank_size': '12L'
+                        }
+                    )
+
+                    # Check if placeholder not already in this dive
+                    if not CustomerDiveActivity.objects.filter(
+                        dive_schedule=dive, 
+                        customer=placeholder_customer
+                    ).exists():
+                        CustomerDiveActivity.objects.create(
+                            customer=placeholder_customer,
+                            dive_schedule=dive,
+                            course=course,
+                            tank_size='12L',
+                            needs_wetsuit=needs_wetsuit,
+                            needs_bcd=needs_bcd,
+                            needs_regulator=needs_regulator,
+                            needs_guide=needs_guide,
+                            needs_insurance=needs_insurance,
+                            status='PENDING'
+                        )
+
+                    # Add individual group members for reference (but they won't count as extra spots)
                     members_added = 0
                     for member in members:
                         # Check if member not already in this dive
@@ -1153,17 +1175,17 @@ def manage_group_members(request, group_id):
                         ).exists():
                             # Use customer's default tank size
                             member_tank_size = member.customer.default_tank_size
-                            
+
                             # Auto-set equipment needs if course includes material
                             final_needs_wetsuit = needs_wetsuit
                             final_needs_bcd = needs_bcd
                             final_needs_regulator = needs_regulator
-                            
+
                             if course and course.includes_material:
                                 final_needs_wetsuit = True
                                 final_needs_bcd = True
                                 final_needs_regulator = True
-                            
+
                             CustomerDiveActivity.objects.create(
                                 customer=member.customer,
                                 dive_schedule=dive,
@@ -1177,55 +1199,18 @@ def manage_group_members(request, group_id):
                             )
                             scheduled_count += 1
                             members_added += 1
-                            
+
                             # Send reminder email
                             # if send_dive_reminder_email(member.customer, dive, course):
                             #     emails_sent += 1
 
-                    # Create placeholder entries for remaining spots to match group_size
-                    remaining_spots_needed = group.group_size - members_added
-                    
-                    if remaining_spots_needed > 0:
-                        # Create or get a placeholder customer for this group
-                        placeholder_customer, created = Customer.objects.get_or_create(
-                            diving_center=request.user,
-                            first_name=f"GRUPO-{group.name}",
-                            last_name="PLACEHOLDER",
-                            defaults={
-                                'email': f"placeholder-{group.id}@grupo.temp",
-                                'phone_number': "000000000",
-                                'country': group.country,
-                                'language': 'ES',
-                                'certification_level': 'NONE',
-                                'default_tank_size': '12L'
-                            }
-                        )
-                        
-                        # Check if placeholder not already in this dive
-                        if not CustomerDiveActivity.objects.filter(
-                            dive_schedule=dive, 
-                            customer=placeholder_customer
-                        ).exists():
-                            CustomerDiveActivity.objects.create(
-                                customer=placeholder_customer,
-                                dive_schedule=dive,
-                                course=course,
-                                tank_size='12L',
-                                needs_wetsuit=final_needs_wetsuit,
-                                needs_bcd=final_needs_bcd,
-                                needs_regulator=final_needs_regulator,
-                                needs_guide=needs_guide,
-                                needs_insurance=needs_insurance,
-                                status='PENDING'
-                            )
-
                 success_msg = f'Programado {group.name} para {len(dive_ids) - len(skipped_dives)} inmersión(es)! Añadidos {scheduled_count} espacios, reservadas {group.group_size * (len(dive_ids) - len(skipped_dives))} plazas en total.'
                 # if emails_sent > 0:
                 #     success_msg += f' {emails_sent} emails de recordatorio enviados.'
-                
+
                 if skipped_dives:
                     messages.warning(request, f'Algunas inmersiones fueron omitidas por falta de capacidad: {"; ".join(skipped_dives)}')
-                
+
                 messages.success(request, success_msg)
                 return redirect('users:manage_group_members', group_id=group.id)
             else:
@@ -1330,43 +1315,43 @@ def medical_form(request, dive_center_uuid=None):
     else:
         # Fallback to first diving center for backward compatibility
         diving_center = User.objects.filter(userprofile__is_diving_center=True).first()
-    
+
     if request.method == 'POST':
         form = MedicalForm(request.POST)
         if form.is_valid():
             if diving_center:
                 customer = form.save(commit=False)
                 customer.diving_center = diving_center
-                
+
                 # Handle signature data
                 signature_data = request.POST.get('signature')
                 if signature_data and signature_data.startswith('data:image/png;base64,'):
                     import base64
                     from django.core.files.base import ContentFile
                     import uuid
-                    
+
                     # Remove the data URL prefix
                     format, imgstr = signature_data.split(';base64,')
                     ext = format.split('/')[-1]
-                    
+
                     # Decode the base64 image
                     data = ContentFile(base64.b64decode(imgstr))
-                    
+
                     # Generate a unique filename
                     filename = f"signature_{uuid.uuid4().hex}.{ext}"
-                    
+
                     # Save the signature
                     customer.signature.save(filename, data, save=False)
-                
+
                 customer.save()
-                
+
                 # Send welcome email
                 email_sent = send_welcome_email(customer)
                 if email_sent:
                     messages.success(request, 'Formulario médico enviado con éxito! Se te ha enviado un correo electrónico de bienvenida.')
                 else:
                     messages.success(request, 'Formulario médico enviado con éxito!')
-                    
+
                 return redirect('users:medical_form')
             else:
                 messages.error(request, 'Hubo un problema al enviar el formulario. Por favor, inténtalo de nuevo.')
@@ -1629,7 +1614,8 @@ def quick_edit_customer(request, customer_id):
 
             height = request.POST.get('height')
             if height:
-                customer.height = float(height)
+                customer.height = float```python
+(height)
 
             foot_size = request.POST.get('foot_size')
             if foot_size:
@@ -1745,15 +1731,15 @@ def enroll_customer(request, customer_id=None):
         #customer = get_object_or_404(Customer, id=request.POST.get('customer'), diving_center=request.user)
         customer = get_object_or_404(Customer, id=customer_id, diving_center=request.user)
 
-       
+
     if request.method == 'POST':
         form = CourseEnrollmentForm(diving_center=request.user, data=request.POST)
-        
+
         if form.is_valid():
             enrollment = form.save()
             # Create course sessions based on template sessions or fallback to default
             course = enrollment.course
-            
+
             template_sessions = CourseSession.objects.filter(template_course=course).order_by('session_number')
             if template_sessions.exists():
                 # Use template sessions
@@ -1785,7 +1771,7 @@ def enroll_customer(request, customer_id=None):
         initial_data = {}
         if customer:
             initial_data['customer'] = customer
-        
+
         # Auto-select course if passed as parameter
         course_id = request.GET.get('course')
         if course_id:
@@ -1794,7 +1780,7 @@ def enroll_customer(request, customer_id=None):
                 initial_data['course'] = course
             except Course.DoesNotExist:
                 pass
-        
+
         # Auto-select customer if passed as parameter
         customer_id = request.GET.get('customer')
         if customer_id:
@@ -1803,7 +1789,7 @@ def enroll_customer(request, customer_id=None):
                 initial_data['customer'] = customer_obj
             except Customer.DoesNotExist:
                 pass
-        
+
         form = CourseEnrollmentForm(diving_center=request.user, initial=initial_data)
 
     return render(request, 'users/enroll_customer.html', {
@@ -1900,7 +1886,7 @@ def schedule_course_session(request, session_id):
                 'assigned_staff': instructor,
                 'tank_size': session.enrollment.customer.default_tank_size,
             }
-            
+
             # Auto-set equipment needs if course includes material
             if session.enrollment.course.includes_material:
                 defaults.update({
@@ -1908,7 +1894,7 @@ def schedule_course_session(request, session_id):
                     'needs_bcd': True,
                     'needs_regulator': True,
                 })
-            
+
             customer_dive_activity, created = CustomerDiveActivity.objects.get_or_create(
                 customer=session.enrollment.customer,
                 dive_schedule=dive_schedule,
@@ -1919,13 +1905,13 @@ def schedule_course_session(request, session_id):
                 customer_dive_activity.course = session.enrollment.course  # Update to use enrollment course
                 customer_dive_activity.course_session = session
                 customer_dive_activity.assigned_staff = instructor
-                
+
                 # Auto-set equipment needs if course includes material
                 if session.enrollment.course.includes_material:
                     customer_dive_activity.needs_wetsuit = True
                     customer_dive_activity.needs_bcd = True
                     customer_dive_activity.needs_regulator = True
-                
+
                 customer_dive_activity.save()
 
             # Update enrollment status if needed
@@ -2307,10 +2293,10 @@ def download_medical_form_pdf(request, customer_id):
         return redirect('users:profile')
 
     customer = get_object_or_404(Customer, id=customer_id, diving_center=request.user)
-    
+
     from django.http import HttpResponse
     from django.template.loader import get_template
-    
+
     # Try to import reportlab for PDF generation
     try:
         from reportlab.lib.pagesizes import letter, A4
@@ -2319,16 +2305,16 @@ def download_medical_form_pdf(request, customer_id):
         from reportlab.lib.units import inch
         from reportlab.lib import colors
         import io
-        
+
         # Create PDF response
         response = HttpResponse(content_type='application/pdf')
         response['Content-Disposition'] = f'attachment; filename="formulario_medico_{customer.first_name}_{customer.last_name}.pdf"'
-        
+
         # Create PDF document
         buffer = io.BytesIO()
         doc = SimpleDocTemplate(buffer, pagesize=A4)
         styles = getSampleStyleSheet()
-        
+
         # Custom styles
         title_style = ParagraphStyle(
             'CustomTitle',
@@ -2337,7 +2323,7 @@ def download_medical_form_pdf(request, customer_id):
             spaceAfter=30,
             textColor=colors.HexColor('#007bff')
         )
-        
+
         section_style = ParagraphStyle(
             'CustomSection',
             parent=styles['Heading2'],
@@ -2345,16 +2331,16 @@ def download_medical_form_pdf(request, customer_id):
             spaceAfter=12,
             textColor=colors.HexColor('#007bff')
         )
-        
+
         normal_style = styles['Normal']
-        
+
         # Build PDF content
         content = []
-        
+
         # Title
         content.append(Paragraph(f"Formulario Médico - {customer.get_full_name()}", title_style))
         content.append(Spacer(1, 20))
-        
+
         # Personal Information
         content.append(Paragraph("Información Personal", section_style))
         personal_info = f"""
@@ -2369,7 +2355,7 @@ def download_medical_form_pdf(request, customer_id):
         """
         content.append(Paragraph(personal_info, normal_style))
         content.append(Spacer(1, 20))
-        
+
         # Physical Information
         content.append(Paragraph("Información Física", section_style))
         physical_info = f"""
@@ -2384,17 +2370,17 @@ def download_medical_form_pdf(request, customer_id):
             physical_info += f"<br/><b>Habilidad para nadar:</b> {customer.get_swimming_ability_display()}"
         content.append(Paragraph(physical_info, normal_style))
         content.append(Spacer(1, 20))
-        
+
         # Emergency Contact
         if customer.emergency_contact:
             content.append(Paragraph("Contacto de Emergencia", section_style))
             content.append(Paragraph(customer.emergency_contact, normal_style))
             content.append(Spacer(1, 20))
-        
+
         # Medical Questionnaire
         if customer.medical_questionnaire_answers:
             content.append(Paragraph("Cuestionario Médico", section_style))
-            
+
             questions_text = {
                 'pregunta_1': '¿Ha tenido problemas con los pulmones/respiración, corazón o sangre?',
                 'pregunta_1_1': 'Cirugía de pecho, corazón, válvulas cardíacas, dispositivos cardiovasculares implantables, neumotórax',
@@ -2416,31 +2402,31 @@ def download_medical_form_pdf(request, customer_id):
                 'pregunta_5_3': 'Historial familiar de ataques cardíacos o derrames cerebrales',
                 'pregunta_5_4': 'Diabetes mellitus actualmente tratada con medicación',
             }
-            
+
             for key, question in questions_text.items():
                 if key in customer.medical_questionnaire_answers:
                     answer = 'SÍ' if customer.medical_questionnaire_answers[key] == '1' else 'NO'
                     color = 'red' if answer == 'SÍ' else 'green'
                     content.append(Paragraph(f"<b>{question}</b><br/><font color='{color}'><b>{answer}</b></font>", normal_style))
                     content.append(Spacer(1, 10))
-        
+
         # Additional Medical Information
         if customer.medical_conditions:
             content.append(Paragraph("Información Médica Adicional", section_style))
             content.append(Paragraph(customer.medical_conditions, normal_style))
             content.append(Spacer(1, 20))
-        
+
         # Creation date
         content.append(Paragraph(f"<b>Formulario completado el:</b> {customer.created_at.strftime('%d/%m/%Y %H:%M')}", normal_style))
-        
-        # Build PDF
+
+        # Build PDF```python
         doc.build(content)
         pdf = buffer.getvalue()
         buffer.close()
         response.write(pdf)
-        
+
         return response
-        
+
     except ImportError:
         # Fallback if reportlab is not installed
         messages.error(request, 'PDF generation library not available. Please contact administrator.')
@@ -2474,7 +2460,7 @@ def generate_qr_code(request, dive_center_uuid=None):
 
     # Create QR code image
     qr_img = qr.make_image(fill_color="black", back_color="white")
-    
+
     # Save to BytesIO
     buffer = io.BytesIO()
     qr_img.save(buffer, format='PNG')
@@ -2483,7 +2469,7 @@ def generate_qr_code(request, dive_center_uuid=None):
     # Return as downloadable file
     response = HttpResponse(buffer.getvalue(), content_type='image/png')
     response['Content-Disposition'] = f'attachment; filename="qr_formulario_alta_{request.user.userprofile.business_name or request.user.username}.png"'
-    
+
     return response
 
 
@@ -2498,7 +2484,7 @@ def get_medical_form_url(request):
     )
 
     print(medical_form_url)
-    
+
     return JsonResponse({'url': medical_form_url})
 
 @login_required
@@ -2509,11 +2495,11 @@ def schedule_multiple_sessions(request):
 
     if request.method == 'POST':
         form = ScheduleMultipleSessionsForm(diving_center=request.user, data=request.POST)
-        
+
         # Get the course and session number from the form data to set the proper queryset
         course_id = request.POST.get('course')
         session_number = request.POST.get('session_number')
-        
+
         if course_id:
             try:
                 course = Course.objects.get(id=course_id, diving_center=request.user)
@@ -2521,23 +2507,23 @@ def schedule_multiple_sessions(request):
                     enrollment__course=course,
                     status='NOT_SCHEDULED'
                 ).select_related('enrollment__customer')
-                
+
                 if session_number:
                     pending_sessions = pending_sessions.filter(session_number=session_number)
-                
+
                 # Update the form's sessions queryset with the actual pending sessions
                 form.fields['sessions'].queryset = pending_sessions
-                
+
             except Course.DoesNotExist:
                 pass
-        
+
         if form.is_valid():
             dive_schedule = form.cleaned_data['dive_schedule']
             sessions = form.cleaned_data['sessions']
             instructor = form.cleaned_data.get('instructor')
 
             scheduled_count = 0
-            
+
             for session in sessions:
                 # Update session details
                 session.dive_schedule = dive_schedule
@@ -2555,7 +2541,7 @@ def schedule_multiple_sessions(request):
                     'assigned_staff': instructor,
                     'tank_size': session.enrollment.customer.default_tank_size,
                 }
-                
+
                 # Auto-set equipment needs if course includes material
                 if session.enrollment.course.includes_material:
                     defaults.update({
@@ -2563,7 +2549,7 @@ def schedule_multiple_sessions(request):
                         'needs_bcd': True,
                         'needs_regulator': True,
                     })
-                
+
                 customer_dive_activity, created = CustomerDiveActivity.objects.get_or_create(
                     customer=session.enrollment.customer,
                     dive_schedule=dive_schedule,
@@ -2575,12 +2561,12 @@ def schedule_multiple_sessions(request):
                     customer_dive_activity.course_session = session
                     if instructor:
                         customer_dive_activity.assigned_staff = instructor
-                    
+
                     if session.enrollment.course.includes_material:
                         customer_dive_activity.needs_wetsuit = True
                         customer_dive_activity.needs_bcd = True
                         customer_dive_activity.needs_regulator = True
-                    
+
                     customer_dive_activity.save()
 
                 # Update enrollment status if needed
@@ -2612,7 +2598,7 @@ def get_pending_sessions(request):
 
     try:
         course = Course.objects.get(id=course_id, diving_center=request.user)
-        
+
         # Get pending sessions for this course
         pending_sessions = CourseSession.objects.filter(
             enrollment__course=course,
@@ -2633,7 +2619,7 @@ def get_pending_sessions(request):
             })
 
         return JsonResponse({'sessions': sessions_data})
-        
+
     except Course.DoesNotExist:
         return JsonResponse({'error': 'Course not found'}, status=404)
 
@@ -2644,12 +2630,12 @@ def get_course_sessions(request, course_id):
 
     try:
         course = Course.objects.get(id=course_id, diving_center=request.user)
-        
+
         # Get template sessions for this course
         template_sessions = CourseSession.objects.filter(
             template_course=course
         ).order_by('session_number')
-        
+
         sessions_data = []
         if template_sessions.exists():
             for session in template_sessions:
@@ -2670,12 +2656,12 @@ def get_course_sessions(request, course_id):
                     'description': f'Sesión de inmersión {i} de {course.name}',
                     'skills_covered': ''
                 })
-        
+
         return JsonResponse({
             'course_name': course.name,
             'total_dives': course.total_dives,
             'sessions': sessions_data
         })
-        
+
     except Course.DoesNotExist:
         return JsonResponse({'error': 'Course not found'}, status=404)

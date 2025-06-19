@@ -255,12 +255,18 @@ class DiveSchedule(models.Model):
     def get_participant_count(self):
         """Get the count of participants for this dive, considering group sizes"""
         total_count = 0
+        group_placeholders = set()  # Track processed groups to avoid double counting
         
         for activity in self.customer_activities.all():
             # Check if this is a group placeholder customer
             if activity.customer.first_name.startswith("GRUPO-"):
                 # Find the corresponding group and use its group_size
                 group_name = activity.customer.first_name[6:]  # Remove "GRUPO-" prefix
+                
+                # Skip if we've already counted this group
+                if group_name in group_placeholders:
+                    continue
+                    
                 try:
                     from users.models import DivingGroup
                     group = DivingGroup.objects.get(
@@ -268,12 +274,21 @@ class DiveSchedule(models.Model):
                         diving_center=self.diving_center
                     )
                     total_count += group.group_size
+                    group_placeholders.add(group_name)
                 except DivingGroup.DoesNotExist:
                     # Fallback to counting as 1 if group not found
                     total_count += 1
             else:
-                # Regular individual customer
-                total_count += 1
+                # Check if this customer is part of a group that already has a placeholder
+                customer_groups = activity.customer.group_memberships.filter(
+                    group__diving_center=self.diving_center
+                ).values_list('group__name', flat=True)
+                
+                # Only count individual customers if they're not part of a group with placeholder
+                is_part_of_counted_group = any(group_name in group_placeholders for group_name in customer_groups)
+                
+                if not is_part_of_counted_group:
+                    total_count += 1
                 
         return total_count
     
