@@ -6,7 +6,7 @@
 {% block users_content %}
 <div class="p-3">
     <h2>Programar sesiones múltiples</h2>
-
+    <!-- //{{ form }}// -->
     <div style="margin-bottom: 20px;">
         <a href="{% url 'users:course_enrollments' %}" class="btn btn-secondary">← Volver a inscripciones</a>
     </div>
@@ -21,7 +21,7 @@
 
         <div class="form-row">
             <div class="form-group col-md-6">
-                <label for="{{ form.course.id_for_label }}">Curso:</label>
+                <label for="{{ form.course.id_for_label }}">Curso / Actividad:</label>
                 {{ form.course }}
                 <small class="help-text">Selecciona el curso para ver las sesiones pendientes</small>
             </div>
@@ -279,7 +279,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="customer-name">${session.customer_name}</div>
                     <div class="session-details">ID Inscripción: ${session.enrollment_id}</div>
                 </div>
-                <input type="checkbox" class="session-checkbox" value="${session.id}" style="display: none;">
+                <input type="checkbox" name="sessions" class="session-checkbox" value="${session.id}" style="display: none;">
             </div>
         `).join('');
 
@@ -310,6 +310,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function updateSelection() {
+        console.log(selectedSessions)
+        console.log(sessionsInput)
         totalSessionsSpan.textContent = selectedSessions.length;
         submitBtn.disabled = selectedSessions.length === 0;
         
@@ -322,10 +324,10 @@ document.addEventListener('DOMContentLoaded', function() {
     sessionNumberSelect.addEventListener('change', loadPendingSessions);
 
     // Hide the original sessions select field since we're using the custom interface
-    sessionsInput.style.display = 'none';
-    if (sessionsInput.parentElement.querySelector('label')) {
-        sessionsInput.parentElement.style.display = 'none';
-    }
+    // sessionsInput.style.display = 'none';
+    // if (sessionsInput.parentElement.querySelector('label')) {
+    //     sessionsInput.parentElement.style.display = 'none';
+    // }
 
     // Initial load if course is pre-selected
     if (courseSelect.value) {

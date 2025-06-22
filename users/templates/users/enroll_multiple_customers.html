@@ -6,7 +6,7 @@
 {% block users_content %}
 <div class="p-3">
     <h2>Inscripciones múltiples</h2>
-
+{{ form.errors }}
     <div style="margin-bottom: 20px;">
         <a href="{% url 'users:course_enrollments' %}" class="btn btn-secondary">← Volver a inscripciones</a>
     </div>
@@ -45,7 +45,7 @@
             </div>
         </div>
 
-        <div class="form-group">
+        <!-- <div class="form-group">
             <label for="{{ form.primary_instructor.id_for_label }}">Instructor principal:</label>
             {{ form.primary_instructor }}
             <small class="help-text">Instructor principal para todos los cursos (opcional)</small>
@@ -66,7 +66,7 @@
             <label>
                 {{ form.is_paid }} Pago completado para todos
             </label>
-        </div>
+        </div> -->
 
         <div class="form-group">
             <label for="{{ form.notes.id_for_label }}">Notas:</label>

@@ -1598,7 +1598,11 @@ def course_enrollments(request):
 
     enrollments = CourseEnrollment.objects.filter(
         course__diving_center=request.user
-    ).select_related('customer', 'course', 'primary_instructor').order_by('-created_at')
+    ).exclude(
+        status__in=["COMPLETED", "CANCELLED"]
+    ).select_related(
+        'customer', 'course', 'primary_instructor'
+    ).order_by('-created_at')
 
     # Filter by status if requested
     status_filter = request.GET.get('status')
@@ -2467,6 +2471,7 @@ def schedule_multiple_sessions(request):
             messages.success(request, f'¡{scheduled_count} sesiones programadas exitosamente!')
             return redirect('users:schedule_multiple_sessions')
         else:
+            print(form.errors)
             messages.error(request, 'Por favor corrige los errores del formulario.')
     else:
         form = ScheduleMultipleSessionsForm(diving_center=request.user)
